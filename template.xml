@@ -32,34 +32,13 @@
 
   <front>
     <title>OpenPGP Message Format</title>
-    <author initials="J." surname="Callas"
-            fullname="Jon Callas">
+    <author initials="W." surname="Koch"
+            fullname="Werner Koch">
       <address>
-        <email>jon@callas.org</email>
+        <email>wk@gnupg.org</email>
       </address>
     </author>
-    <author initials="L." surname="Donnerhacke"
-            fullname="Lutz Donnerhacke">
-      <address>
-        <email>lutz@iks-jena.de</email>
-      </address>
-    </author>
-    <author initials="H." surname="Finney"
-            fullname="Hal Finney">
-    </author>
-    <author initials="D." surname="Shaw"
-            fullname="David Shaw">
-      <address>
-        <email>dshaw@jabberwocky.com</email>
-      </address>
-    </author>
-    <author initials="R." surname="Thayer"
-            fullname="Rodney Thayer">
-      <address>
-        <email>rodney@canola-jones.com</email>
-      </address>
-    </author>
-    <date month="May" year="2015" />
+    <date month="November" year="2015" />
     <area>Security</area>
 
     <abstract>

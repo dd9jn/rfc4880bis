@@ -1,7 +1,22 @@
-# Changes since -00
+# Changes since RFC-4880
 
-  - xxxx
-
+  - Applied errata 2270, 2271, 2242, 3298.
 
   <!-- To avoid warnings from pandoc2rfc we add some references -->
   { Informational rfcs: [](#RFC1423) }
+
+# The principal authors of RFC-4880 are as follows:
+
+      Jon Callas
+      EMail: jon@callas.org
+
+      Lutz Donnerhacke
+      EMail: lutz@iks-jena.de
+
+      Hal Finney
+
+      David Shaw
+      EMail: dshaw@jabberwocky.com
+
+      Rodney Thayer
+      EMail: rodney@canola-jones.com
