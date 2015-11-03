@@ -3,21 +3,21 @@
   <!ENTITY pandocAbstract PUBLIC '' 'abstract.xml'>
   <!ENTITY pandocMiddle   PUBLIC '' 'middle.xml'>
   <!ENTITY pandocBack     PUBLIC '' 'back.xml'>
-  <!ENTITY rfc.1423       PUBLIC '' '../common/reference.RFC.1423.xml'>
-  <!ENTITY rfc.1950       PUBLIC '' '../common/reference.RFC.1950.xml'>
-  <!ENTITY rfc.1951       PUBLIC '' '../common/reference.RFC.1951.xml'>
-  <!ENTITY rfc.1991       PUBLIC '' '../common/reference.RFC.1991.xml'>
-  <!ENTITY rfc.2045       PUBLIC '' '../common/reference.RFC.2045.xml'>
-  <!ENTITY rfc.2119       PUBLIC '' '../common/reference.RFC.2119.xml'>
-  <!ENTITY rfc.2144       PUBLIC '' '../common/reference.RFC.2144.xml'>
-  <!ENTITY rfc.2434       PUBLIC '' '../common/reference.RFC.2434.xml'>
-  <!ENTITY rfc.2440       PUBLIC '' '../common/reference.RFC.2440.xml'>
-  <!ENTITY rfc.2822       PUBLIC '' '../common/reference.RFC.2822.xml'>
-  <!ENTITY rfc.3156       PUBLIC '' '../common/reference.RFC.3156.xml'>
-  <!ENTITY rfc.3447       PUBLIC '' '../common/reference.RFC.3447.xml'>
-  <!ENTITY rfc.3629       PUBLIC '' '../common/reference.RFC.3629.xml'>
-  <!ENTITY rfc.4086       PUBLIC '' '../common/reference.RFC.4086.xml'>
-  <!ENTITY iso.10646      PUBLIC '' '../common/reference.ISO.10646-1.1993.xml'>
+  <!ENTITY rfc.1423       PUBLIC '' 'reference.RFC.1423.xml'>
+  <!ENTITY rfc.1950       PUBLIC '' 'reference.RFC.1950.xml'>
+  <!ENTITY rfc.1951       PUBLIC '' 'reference.RFC.1951.xml'>
+  <!ENTITY rfc.1991       PUBLIC '' 'reference.RFC.1991.xml'>
+  <!ENTITY rfc.2045       PUBLIC '' 'reference.RFC.2045.xml'>
+  <!ENTITY rfc.2119       PUBLIC '' 'reference.RFC.2119.xml'>
+  <!ENTITY rfc.2144       PUBLIC '' 'reference.RFC.2144.xml'>
+  <!ENTITY rfc.2434       PUBLIC '' 'reference.RFC.2434.xml'>
+  <!ENTITY rfc.2440       PUBLIC '' 'reference.RFC.2440.xml'>
+  <!ENTITY rfc.2822       PUBLIC '' 'reference.RFC.2822.xml'>
+  <!ENTITY rfc.3156       PUBLIC '' 'reference.RFC.3156.xml'>
+  <!ENTITY rfc.3447       PUBLIC '' 'reference.RFC.3447.xml'>
+  <!ENTITY rfc.3629       PUBLIC '' 'reference.RFC.3629.xml'>
+  <!ENTITY rfc.4086       PUBLIC '' 'reference.RFC.4086.xml'>
+  <!ENTITY iso.10646      PUBLIC '' 'reference.ISO.10646-1.1993.xml'>
 ]>
 <rfc ipr="trust200902" category="std" updates="4880"
      docName="draft-koch-openpgp-rfc4880bis-00">
