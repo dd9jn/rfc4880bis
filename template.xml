@@ -23,7 +23,7 @@
   <!ENTITY iso.10646      PUBLIC '' 'reference.ISO.10646-1.1993.xml'>
 ]>
 <rfc ipr="trust200902" category="std" updates="4880"
-     docName="draft-koch-openpgp-rfc4880bis-01">
+     docName="draft-koch-openpgp-rfc4880bis-02">
 
 <?rfc toc="yes"?>
 <?rfc symrefs="yes"?>
