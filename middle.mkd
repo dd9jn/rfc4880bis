@@ -1317,6 +1317,75 @@ addresses.
 If there is a critical notation, the criticality applies to that
 specific notation and not to notations in general.
 
+The following subsections define a set of standard notations.
+
+##### The 'manu' Notation
+
+The "manu" notation is a string that declares the device
+manufacturer's name.  The certifier key is asserting this string
+(which may or may not be related to the User ID of the certifier's
+key).
+
+##### The 'make' Notation
+
+This notation defines the product make.  It is a free form string.
+
+##### The 'model' Notation
+
+This notation defines the product model name/number.  It is a free form string.
+
+##### The 'prodid' Notation
+
+This notation contains the product identifier.  It is a free form string.
+
+##### The 'pvers' Notation
+
+This notation defines the product version number (which could be a
+release number, year, or some other identifier to differentiate
+different versions of the same make/model).  It is a free form string.
+
+##### The 'lot' Notation
+
+This notation defines the product lot number (which is an indicator of
+the batch of product).  It is a free form string.
+
+##### The 'qty' Notation
+
+This notation defines the quantity of items in this package.  It is a
+decimal integer representation with no punctuation, e.g. "10", "1000",
+"10000", etc.
+
+##### The 'loc' and 'dest' Notations
+
+The "loc" and 'dest' notations declare a GeoLocation as defined by RFC
+5870 [](#RFC5870) but without the leading "geo:" header.  For example,
+if you had a GeoLocation URI of "geo:13.4125,103.8667" you would
+encode that in these notations as "13.4125,103.8667".
+
+The 'loc' notation is meant to encode the geo location where the
+signature was made.  The 'dest' notation is meant to encode the geo
+location where the device is "destined" (i.e., a "destination" for the
+device).
+
+##### The 'hash' Notation
+
+A 'hash' notation is a means to include external data in the contents
+of a signature without including the data itself.  This is done by
+hashing the external data separately and then including the data's
+name and hash in the signature via this notation.  This is useful, for
+example, to have an external "manifest," "image," or other data that
+might not be vital to the signature itself but still needs to be
+protected and authenticated without requiring a second signature.
+
+The 'hash' notation has the following structure:
+* A single byte specifying the length of the name of the hashed data
+* A UTF-8 string of the name of the hashed data
+* A single byte specifying the hash algorithm (see section 9.4)
+* The binary hash output of the hashed data using the specified algorithm.  (The length of this data is implicit based on the algorithm specified).
+
+Due to its nature a 'hash' notation is not human readable and MUST NOT
+be marked as such when used.
+
 #### {5.2.3.17} Key Server Preferences
 
 (N octets of flags)
@@ -2123,10 +2192,16 @@ The header consists of:
 
 and is followed by the subpacket specific data.
 
-The only currently defined subpacket type is 1, signifying an
-image.  An implementation SHOULD ignore any subpacket of a type that it
-does not recognize.  Subpacket types 100 through 110 are reserved for
-private or experimental use.
+The following table lists the currently known subpackets:
+
+     Type  Attribute Subpacket
+  -------  ---------------------------------------------------------
+        1  Image Attribute Subpacket
+    [TBD1] User ID Attribute Subpacket
+  100-110  Private/Experimental Use
+
+An implementation SHOULD ignore any subpacket of a type that it
+does not recognize.
 
 ### {5.12.1} The Image Attribute Subpacket
 
@@ -2158,6 +2233,22 @@ An implementation MAY try to determine the type of an image by
 examination of the image data if it is unable to handle a particular
 version of the image header or if a specified encoding format value is
 not recognized.
+
+### User ID Attribute Subpacket
+
+A User ID Attribute subpacket has type #[IANA -- assignment TBD1].
+
+A User ID Attribute subpacket, just like a User ID packet, consists of
+UTF-8 text that is intended to represent the name and email address of
+the key holder.  By convention, it includes an RFC 2822 [](#RFC2822)
+mail name-addr, but there are no restrictions on its content.  For
+devices using OpenPGP for device certificates, it may just be the
+device identifier.  The packet length in the header specifies the
+length of the User ID.
+
+Because User Attribute subpackets can be used anywhere a User ID
+packet can be used, implementations MAY choose to trust a signed User
+Attribute subpacket that includes a User ID Attribute subpacket.
 
 ## {5.13} Sym. Encrypted Integrity Protected Data Packet (Tag 18)
 
@@ -2897,6 +2988,13 @@ defining specification.  The initial values for this registry can be
 found in Section 5.12.  Adding a new User Attribute type MUST be done
 through the IETF CONSENSUS method, as described in [](#RFC2434).
 
+This document requests that IANA register the User ID Attribute Type
+found in Section 5.12.2:
+
+  Value   Attribute    Reference
+  -----   ---------    ----------
+  TBD1    User ID      This Document Section 5.12
+
 ### {10.2.1.1} Image Format Subpacket Types
 
 Within User Attribute packets, there is an extensible mechanism for
@@ -2933,6 +3031,28 @@ reference to the defining specification.  The initial values for this
 registry can be found in Section 5.2.3.16.  Adding a new Signature
 Notation Data subpacket MUST be done through the EXPERT REVIEW method,
 as described in [](#RFC2434).
+
+This document requests IANA register the following Signature
+Notatation Data types:
+
+   Allowed Values   Name     Type               Reference
+   --------------   -------  ------------       ----------------
+   Any String       manu     Manufacturer Name  This Doc Section 5.2.3.16.1
+   Any String       make     Product Make       This Doc Section 5.2.3.16.2
+   Any String       model    Product Model      This Doc Section 5.2.3.16.3
+   Any String       prodid   Product ID         This Doc Section 5.2.3.16.4
+   Any String       pvers    Product Version    This Doc Section 5.2.3.16.5
+   Any String       lot      Product Lot Number This Doc Section 5.2.3.16.6
+   Decimal Integer  qty      Package Quantity   This Doc Section 5.2.3.16.7
+     String
+   A geo: URI       loc      Current Geo-       This Doc Section 5.2.3.16.8
+     without the             location
+     "geo:"                  Latitude/Longitude
+   A geo: URI       dest     Destination Geo-   This Doc Section 5.2.3.16.8
+     without the             location
+     "geo:"                  Latitude/Longitude
+   Hash Notation    hash     The Hash of        This Doc Section 5.2.3.16.9
+     data                    external data
 
 #### {10.2.2.2} Key Server Preference Extensions
 
@@ -3059,7 +3179,7 @@ transferable public key are as follows:
 
   - Zero or more revocation signatures
 
-  - One or more User ID packets
+  - Zero or more User ID packets
 
   - After each User ID packet, zero or more Signature packets
     (certifications)
@@ -3198,7 +3318,6 @@ of the primary key.
     Primary-Key
        [Revocation Self Signature]
        [Direct Key Signature...]
-        User ID [Signature ...]
        [User ID [Signature ...] ...]
        [User Attribute [Signature ...] ...]
        [[Subkey [Binding-Signature-Revocation]
@@ -3213,8 +3332,19 @@ embedded primary key binding signature.
 In the above diagram, if the binding signature of a subkey has been
 revoked, the revoked key may be removed, leaving only one key.
 
-In a V4 key, the primary key MUST be a key capable of
-certification.  The subkeys may be keys of any other type.  There may be
+In a V4 key, the primary key SHOULD be a key capable of
+certification.  There are cases, such as device certificates, where
+the primary key may not be capable of certification. A primary key
+capable of making signatures SHOULD be accompanied by either a
+certification signature (on a User ID or User Attribute) or a
+signature directly on the key.
+
+Implementations SHOULD accept encryption-only primary keys without a
+signature.  It also SHOULD allow importing any key accompanied either by
+a certification signature or a signature on itself.  It MAY accept
+signature-capable primary keys without an accompanying signature.
+
+The subkeys may be keys of any other type.  There may be
 other constructions of V4 keys, too.  For example, there may be a
 single- key RSA key in V4 format, a DSA primary key with an RSA
 encryption key, or RSA primary key with an Elgamal subkey, etc.
@@ -4134,6 +4264,56 @@ SHOULD be rejected.
     network interface.  Mitigations at the scalar multiplication level
     seek to eliminate any measurable distinction between the ECC point
     addition and doubling operations.
+
+OpenPGP was designed with security in mind, with many smart,
+intelligent people spending a lot of time thinking about the
+ramifications of their decisions.  Removing the requirement for
+self-certifying User ID (and User Attribute) packets on a key means
+that someone could surreptitiously add an unwanted ID to a key and
+sign it.  If enough "trusted" people sign that surreptitious identity
+then other people might believe it.  The attack could wind up sending
+encrypted mail destined for alice to some other target, bob, because
+someone added "alice" to bob's key without bob's consent.
+
+In the case of device certificates the device itself does not have any
+consent.  It is given an identity by the device manufacturer and the
+manufacturer can insert that ID on the device certificate, signing it
+with the manufacturer's key.  If another people wants to label the
+device by another name, they can do so.  There is no harm in multiple
+IDs, because the verification is all done based on who has signed
+those IDs.
+
+When a key can self-sign, it is still suggested to self-certify IDs,
+even if it no longer required by this modification to OpenPGP.  This
+at least signals to recipients of keys that yes, the owner of this key
+asserts that this identity belongs to herself.  Note, however, that
+mallet could still assert that he is 'alice' and could even
+self-certify that.  So the attack is not truly different.  Moreover,
+in the case of device certificates, it's more the manufacturer than
+the device that wants to assert an identity (even if the device could
+self-certify).
+
+There is no signaling whether a key is using this looser-requirement
+key format.  An attacker could therefore just remove the
+self-signature off a published key.  However one would hope that wide
+publication would result in another copy still having that signature
+and it being returned quickly.  However, the lack of signaling also
+means that a user with an application following RFC 4880 directly
+would see a key following this specification as "broken" and may not
+accept it.
+
+On a different note, including the "geo" notation could leak
+information about where a signer is located.  However it is just an
+assertion (albeit a signed assertion) so there is no verifiable truth
+to the location information released.  Similarly, all the rest of the
+signature notations are pure assertions, so they should be taken with
+the trustworthiness of the signer.
+
+Combining the User ID with the User Attribute means that an ID and
+image would not be separable.  For a person this is probably not good,
+but for a device it's unlikely the image will change so it makes sense
+to combine the ID and image into a single signed packet with a single
+signature.
 
 
 # Compatibility Profiles
