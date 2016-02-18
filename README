@@ -1,0 +1,8 @@
+How to build an I-D:
+
+  pandoc2rfc abstract.mkd middle.mkd back.mkd
+
+RFC references can be found at
+
+  http://xml2rfc.ietf.org/public/rfc/bibxml-rfcs/reference.RFC.NNNN.xml
+
