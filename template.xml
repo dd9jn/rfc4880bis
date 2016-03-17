@@ -25,7 +25,7 @@
   <!ENTITY eddsa          PUBLIC '' 'reference.I-D.irtf-cfrg-eddsa.xml'>
 ]>
 <rfc ipr="trust200902" category="std" updates="4880"
-     docName="draft-koch-openpgp-rfc4880bis-02">
+     docName="draft-koch-openpgp-rfc4880bis-03">
 
 <?rfc toc="yes"?>
 <?rfc symrefs="yes"?>
@@ -43,7 +43,7 @@
         <email>wk@gnupg.org</email>
       </address>
     </author>
-    <date month="March" year="2016" />
+    <date month="XXX" year="2016" />
     <area>Security</area>
 
     <abstract>
