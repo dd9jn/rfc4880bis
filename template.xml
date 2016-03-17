@@ -22,6 +22,7 @@
   <!ENTITY rfc.5870       PUBLIC '' 'reference.RFC.5870.xml'>
   <!ENTITY rfc.6090       PUBLIC '' 'reference.RFC.6090.xml'>
   <!ENTITY iso.10646      PUBLIC '' 'reference.ISO.10646-1.1993.xml'>
+  <!ENTITY eddsa          PUBLIC '' 'reference.I-D.irtf-cfrg-eddsa.xml'>
 ]>
 <rfc ipr="trust200902" category="std" updates="4880"
      docName="draft-koch-openpgp-rfc4880bis-02">
@@ -42,7 +43,7 @@
         <email>wk@gnupg.org</email>
       </address>
     </author>
-    <date month="November" year="2015" />
+    <date month="March" year="2016" />
     <area>Security</area>
 
     <abstract>
@@ -206,6 +207,8 @@
       &rfc.3713;
       &rfc.4086;
       &rfc.5870;
+
+      &eddsa;
 
       <reference anchor='SCHNEIER'>
         <front>
