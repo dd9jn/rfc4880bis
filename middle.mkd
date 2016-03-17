@@ -2502,6 +2502,7 @@ initialization.
 
 ## {6.1} An Implementation of the CRC-24 in "C"
 
+      <CODE BEGINS>
       #define CRC24_INIT 0xB704CEL
       #define CRC24_POLY 0x1864CFBL
 
@@ -2520,6 +2521,7 @@ initialization.
           }
           return crc & 0xFFFFFFL;
       }
+      <CODE ENDS>
 
 ## {6.2} Forming ASCII Armor
 

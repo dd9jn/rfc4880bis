@@ -1,4 +1,4 @@
-{ Work in progress to update OpenPGP }
+{ Work in progress to update the OpenPGP specification from RFC4880 }
 
 This document is maintained in order to publish all necessary
 information needed to develop interoperable applications based on the
