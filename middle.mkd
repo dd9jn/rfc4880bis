@@ -3174,6 +3174,8 @@ algorithms.
        21  Reserved for Diffie-Hellman
                       (X9.42, as defined for IETF-S/MIME)
        22  EdDSA  [](#I-D.irtf-cfrg-eddsa)
+       23  Reserved for AEDH
+       24  Reserved for AEDSA
  100--110  Private/Experimental algorithm
 
 Implementations MUST implement DSA and ECDSA for signatures, and
@@ -3489,6 +3491,8 @@ This document requests IANA register the following public-key algorithm:
    ID    Algorithm                   Reference
    --    --------------------------  ---------
    22    EdDSA public key algorithm  This doc
+   23    Reserved for AEDH           This doc
+   24    Reserved for AEDSA          This doc
 
    [Notes to RFC-Editor: Please remove the table above on publication.
     It is desirable not to reuse old or reserved algorithms because
@@ -4313,7 +4317,9 @@ algorithm.  These are marked in Section 9.1, "Public-Key Algorithms",
 as "reserved for".
 
 The reserved public-key algorithm X9.42 (21) does not have the
-necessary parameters, parameter order, or semantics defined.
+necessary parameters, parameter order, or semantics defined.  The same
+is currently true for reserved public-key algorithms AEDH (23) and
+AEDSA (24).
 
 Previous versions of OpenPGP permitted Elgamal [](#ELGAMAL) signatures
 with a public-key identifier of 20.  These are no longer permitted.  An
