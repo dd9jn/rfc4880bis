@@ -1055,6 +1055,7 @@ The value of the subpacket type octet may be:
           30   Features
           31   Signature Target
           32   Embedded Signature
+          33   Issuer Fingerprint
   100 to 110   Private or experimental
 
 An implementation SHOULD ignore any subpacket of a type that it does
@@ -1155,7 +1156,9 @@ MUST be present in the hashed area.
 
 (8-octet Key ID)
 
-The OpenPGP Key ID of the key issuing the signature.
+The OpenPGP Key ID of the key issuing the signature.  If the version
+of that key is greater than 4, this subpacket MUST NOT be included in
+the signature.
 
 #### {5.2.3.6} Key Expiration Time
 
@@ -1614,6 +1617,19 @@ have 20 octets of hash data.
 This subpacket contains a complete Signature packet body as specified
 in Section 5.2 above.  It is useful when one signature needs to refer
 to, or be incorporated in, another signature.
+
+#### Issuer Fingerprint
+
+(1 octet key version number, N octets of fingerprint)
+
+The OpenPGP Key fingerprint of the key issuing the signature.  This
+subpacket SHOULD be included in all signatures.  If the version of the
+issuing key is 4 and an Issuer subpacket is also included in the
+signature, the key ID of the Issuer subpacket MUST match the low
+64 bits of the fingerprint.
+
+Note that the length N of the fingerprint for a version 4 key is 20
+octets.
 
 ### {5.2.4} Computing Signatures
 
