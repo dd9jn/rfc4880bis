@@ -78,6 +78,7 @@ other values might also be interesting for other ECC specifications:
   - Incorporated RFC 6637 (ECC for OpenPGP)
   - Added draft-atkins-openpgp-device-certificates
   - Added draft-koch-eddsa-for-openpgp-04
+  - Added Issuer Fingerprint signature subpacket.
 
   <!-- To avoid warnings from pandoc2rfc we add some references -->
   { Informational rfcs: [](#RFC1423) }
