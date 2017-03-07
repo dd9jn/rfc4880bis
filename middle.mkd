@@ -1885,89 +1885,9 @@ A version 4 packet contains:
   * A one-octet number denoting the public-key algorithm of this
     key.
 
-  * A series of multiprecision integers comprising the key
-    material.  This algorithm-specific portion is:
+  * A series of values comprising the key material.  This is
+    algorithm-specific and described in section XXXX.
 
-    Algorithm-Specific Fields for RSA public keys:
-
-      - multiprecision integer (MPI) of RSA public modulus n;
-
-      - MPI of RSA public encryption exponent e.
-
-    Algorithm-Specific Fields for DSA public keys:
-
-      - MPI of DSA prime p;
-
-      - MPI of DSA group order q (q is a prime divisor of p-1);
-
-      - MPI of DSA group generator g;
-
-      - MPI of DSA public-key value y (= g**x mod p where x is secret).
-
-    Algorithm-Specific Fields for Elgamal public keys:
-
-      - MPI of Elgamal prime p;
-
-      - MPI of Elgamal group generator g;
-
-      - MPI of Elgamal public key value y (= g**x mod p where x is secret).
-
-    Algorithm-Specific Fields for ECDSA keys:
-
-      - a variable-length field containing a curve OID, formatted
-        as follows:
-
-           - a one-octet size of the following field; values 0 and
-             0xFF are reserved for future extensions,
-
-           - the octets representing a curve OID, defined in
-             section 11{FIXME};
-
-      - a MPI of an EC point representing a public key.
-
-    Algorithm-Specific Fields for EdDSA keys:
-
-      - a variable-length field containing a curve OID, formatted
-        as follows:
-
-           - a one-octet size of the following field; values 0 and
-             0xFF are reserved for future extensions,
-
-           - the octets representing a curve OID, defined in
-             section NN{FIXME};
-
-      - a MPI of an EC point representing a public key Q as described
-        under EdDSA Point Format below.
-
-    Algorithm-Specific Fields for ECDH keys:
-
-      - a variable-length field containing a curve OID, formatted
-        as follows:
-
-           - a one-octet size of the following field; values 0 and
-             0xFF are reserved for future extensions,
-
-           - the octets representing a curve OID, defined in
-             Section 11{FIXME};
-
-      - a MPI of an EC point representing a public key;
-
-      - a variable-length field containing KDF parameters,
-        formatted as follows:
-
-           - a one-octet size of the following fields; values 0
-             and 0xff are reserved for future extensions;
-
-           - a one-octet value 1, reserved for future extensions;
-
-           - a one-octet hash function ID used with a KDF;
-
-           - a one-octet algorithm ID for the symmetric algorithm
-             used to wrap the symmetric key used for the message
-             encryption; see Section 8 for details.
-
-Observe that an ECDH public key is composed of the same sequence of
-fields that define an ECDSA key, plus the KDF parameters field.
 
 ### {5.5.3} Secret-Key Packet Formats
 
@@ -1996,9 +1916,9 @@ The packet contains:
     octet not zero), an Initial Vector (IV) of the same length as
     the cipher's block size.
 
-  * Plain or encrypted multiprecision integers comprising the
-    secret key data.  These algorithm-specific fields are as
-    described below.
+  * Plain or encrypted series of values comprising the secret key
+    material.  This is algorithm-specific and described in section
+    XXXX.
 
   * If the string-to-key usage octet is zero or 255, then a
     two-octet checksum of the plaintext of the algorithm-specific
@@ -2008,35 +1928,6 @@ The packet contains:
     hash is encrypted together with the algorithm-specific fields
     (if string-to-key usage octet is not zero).  Note that for all
     other values, a two-octet checksum is required.
-
-    Algorithm-Specific Fields for RSA secret keys:
-
-      - multiprecision integer (MPI) of RSA secret exponent d.
-
-      - MPI of RSA secret prime value p.
-
-      - MPI of RSA secret prime value q (p < q).
-
-      - MPI of u, the multiplicative inverse of p, mod q.
-
-    Algorithm-Specific Fields for DSA secret keys:
-
-      - MPI of DSA secret exponent x.
-
-    Algorithm-Specific Fields for Elgamal secret keys:
-
-      - MPI of Elgamal secret exponent x.
-
-    Algorithm-Specific Fields for ECDH or ECDSA secret keys:
-
-      - MPI of an integer representing the secret key, which is a
-        scalar of the public EC point.
-
-    Algorithm-Specific Fields for EdDSA keys:
-
-      - MPI of an integer representing the secret key, which is a
-        scalar of the public EC point.
-
 
 
 Secret MPI values can be encrypted using a passphrase.  If a string-
@@ -2070,6 +1961,143 @@ deprecated; an implementation SHOULD NOT use it, but should rather use
 the SHA-1 hash denoted with a usage octet of 254.  The reason for this
 is that there are some attacks that involve undetectably modifying the
 secret key.
+
+
+## Algorithm-specific Parts of Keys
+
+The public and secret key format specifies algorithm-specific parts
+of a key.  The following sections describe them in detail.
+
+### Algorithm-Specific Part for RSA Keys
+
+The public key is this series of multiprecision integers:
+
+  * MPI of RSA public modulus n;
+
+  * MPI of RSA public encryption exponent e.
+
+The secret key is this series of multiprecision integers:
+
+  * MPI of RSA secret exponent d;
+
+  * MPI of RSA secret prime value p;
+
+  * MPI of RSA secret prime value q (p < q);
+
+  * MPI of u, the multiplicative inverse of p, mod q.
+
+
+### Algorithm-Specific Part for DSA Keys
+
+The public key is this series of multiprecision integers:
+
+  * MPI of DSA prime p;
+
+  * MPI of DSA group order q (q is a prime divisor of p-1);
+
+  * MPI of DSA group generator g;
+
+  * MPI of DSA public-key value y (= g**x mod p where x is secret).
+
+The secret key is this single multiprecision integer:
+
+  * MPI of DSA secret exponent x.
+
+
+### Algorithm-Specific Part for Elgamal Keys
+
+The public key is this series of multiprecision integers:
+
+  * MPI of Elgamal prime p;
+
+  * MPI of Elgamal group generator g;
+
+  * MPI of Elgamal public key value y (= g**x mod p where x is secret).
+
+The secret key is this single multiprecision integer:
+
+  * MPI of Elgamal secret exponent x.
+
+
+### Algorithm-Specific Part for ECDSA Keys
+
+The public key is this series of values:
+
+  * a variable-length field containing a curve OID, formatted
+    as follows:
+
+      - a one-octet size of the following field; values 0 and
+        0xFF are reserved for future extensions,
+
+      - the octets representing a curve OID, defined in
+        section 11{FIXME};
+
+  * a MPI of an EC point representing a public key.
+
+The secret key is this single multiprecision integer:
+
+  * MPI of an integer representing the secret key, which is a
+    scalar of the public EC point.
+
+
+### Algorithm-Specific Part for EdDSA Keys
+
+The public key is this series of values:
+
+  * a variable-length field containing a curve OID, formatted
+    as follows:
+
+      - a one-octet size of the following field; values 0 and
+        0xFF are reserved for future extensions,
+
+      - the octets representing a curve OID, defined in
+        section NN{FIXME};
+
+  * a MPI of an EC point representing a public key Q as described
+    under EdDSA Point Format below.
+
+The secret key is this single multiprecision integer:
+
+  * MPI of an integer representing the secret key, which is a
+    scalar of the public EC point.
+
+
+### Algorithm-Specific Part for ECDH Keys
+
+The public key is this series of values:
+
+  * a variable-length field containing a curve OID, formatted
+    as follows:
+
+      - a one-octet size of the following field; values 0 and
+        0xFF are reserved for future extensions,
+
+      - the octets representing a curve OID, defined in
+        Section 11{FIXME};
+
+  * a MPI of an EC point representing a public key;
+
+  * a variable-length field containing KDF parameters,
+    formatted as follows:
+
+      - a one-octet size of the following fields; values 0
+        and 0xff are reserved for future extensions;
+
+      - a one-octet value 1, reserved for future extensions;
+
+      - a one-octet hash function ID used with a KDF;
+
+      - a one-octet algorithm ID for the symmetric algorithm
+        used to wrap the symmetric key used for the message
+        encryption; see Section 8 for details.
+
+Observe that an ECDH public key is composed of the same sequence of
+fields that define an ECDSA key, plus the KDF parameters field.
+
+The secret key is this single multiprecision integer:
+
+  * MPI of an integer representing the secret key, which is a
+    scalar of the public EC point.
 
 
 ## {5.6} Compressed Data Packet (Tag 8)
