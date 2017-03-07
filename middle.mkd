@@ -1279,8 +1279,11 @@ description of the syntax is found in Section 8 below.
 
 #### {5.2.3.15} Revocation Key
 
-(1 octet of class, 1 octet of public-key algorithm ID, 20 octets of
-fingerprint)
+(1 octet of class, 1 octet of public-key algorithm ID, 20 or 25 octets
+of fingerprint)
+
+V4 keys use the untruncated 20 octet fingerprint; V5 keys use the
+right truncated 25 octet fingerprint
 
 Authorizes the specified key to issue revocation signatures for this
 key.  Class octet must have bit 0x80 set.  If the bit 0x40 is set, then
@@ -1629,7 +1632,9 @@ signature, the key ID of the Issuer subpacket MUST match the low
 64 bits of the fingerprint.
 
 Note that the length N of the fingerprint for a version 4 key is 20
-octets.
+octets.  For a version 5 key N is 25 and the fingerprint is right
+truncated to 25 octets.
+
 
 ### {5.2.4} Computing Signatures
 
@@ -1888,6 +1893,27 @@ A version 4 packet contains:
   * A series of values comprising the key material.  This is
     algorithm-specific and described in section XXXX.
 
+The version 5 format is similar to the version 4 format except for the
+addition of a count for the key material.  This count helps parsing
+secret key packets (which are an extension of the public key packet
+format) in the case of an unknown algoritm.  In addition, fingerprints
+of version 5 keys are calculated differently from version 4 keys, as
+described in the section "Enhanced Key Formats".
+
+A version 5 packet contains:
+
+  * A one-octet version number (5).
+
+  * A four-octet number denoting the time that the key was created.
+
+  * A one-octet number denoting the public-key algorithm of this
+    key.
+
+  * A four-octet scalar octet count for the following key material.
+
+  * A series of values comprising the key material.  This is
+    algorithm-specific and described in section XXXX.
+
 
 ### {5.5.3} Secret-Key Packet Formats
 
@@ -1903,7 +1929,10 @@ The packet contains:
     indicates that the secret-key data is not encrypted.  255 or
     254 indicates that a string-to-key specifier is being given.
     Any other value is a symmetric-key encryption algorithm
-    identifier.
+    identifier.  A version 5 packet MUST NOT use the value 255.
+
+  * Only for a version 5 packet, a one-octet scalar octet count of the
+    next 3 optional fields.
 
   * [Optional] If string-to-key usage octet was 255 or 254, a one-
     octet symmetric encryption algorithm.
@@ -1915,6 +1944,9 @@ The packet contains:
   * [Optional] If secret data is encrypted (string-to-key usage
     octet not zero), an Initial Vector (IV) of the same length as
     the cipher's block size.
+
+  * Only for a version 5 packet, a four-octet scalar octet count for
+    the following key material.
 
   * Plain or encrypted series of values comprising the secret key
     material.  This is algorithm-specific and described in section
@@ -1929,6 +1961,8 @@ The packet contains:
     (if string-to-key usage octet is not zero).  Note that for all
     other values, a two-octet checksum is required.
 
+Note that the version 5 packet format adds two count values
+to help parsing packets with unknown S2K or public key algorithms.
 
 Secret MPI values can be encrypted using a passphrase.  If a string-
 to-key specifier is given, that describes the algorithm for converting
@@ -1948,8 +1982,8 @@ prefix data is encrypted.  Furthermore, the CFB state is resynchronized
 at the beginning of each new MPI value, so that the CFB block boundary
 is aligned with the start of the MPI data.
 
-With V4 keys, a simpler method is used.  All secret MPI values are
-encrypted in CFB mode, including the MPI bitcount prefix.
+With V4 and V5 keys, a simpler method is used.  All secret MPI values
+are encrypted in CFB mode, including the MPI bitcount prefix.
 
 The two-octet checksum that follows the algorithm-specific portion is
 the algebraic sum, mod 65536, of the plaintext of all the algorithm-
@@ -3475,17 +3509,15 @@ with the example of a DSA key:
 
     a.1) 0x99 (1 octet)
 
-    a.2) high-order length octet of (b)-(e) (1 octet)
+    a.2) two-octet scalar octet count of (b)-(e)
 
-    a.3) low-order length octet of (b)-(e) (1 octet)
+    b) version number = 4 (1 octet);
 
-         b) version number = 4 (1 octet);
+    c) timestamp of key creation (4 octets);
 
-         c) timestamp of key creation (4 octets);
+    d) algorithm (1 octet): 17 = DSA (example);
 
-         d) algorithm (1 octet): 17 = DSA (example);
-
-         e) Algorithm-specific fields.
+    e) Algorithm-specific fields.
 
     Algorithm-Specific Fields for DSA keys (example):
 
@@ -3497,18 +3529,49 @@ with the example of a DSA key:
 
     e.4) MPI of DSA public-key value y (= g\*\*x mod p where x is secret).
 
+A V5 fingerprint is the 256-bit SHA-256 hash of the octet 0x99, followed
+by the four-octet packet length, followed by the entire Public-Key
+packet starting with the version field.  The Key ID is the high-order 64
+bits of the fingerprint.  Here are the fields of the hash material,
+with the example of a DSA key:
+
+    a.1) 0x9A (1 octet)
+
+    a.2) four-octet scalar octet count of (b)-(f)
+
+    b) version number = 5 (1 octet);
+
+    c) timestamp of key creation (4 octets);
+
+    d) algorithm (1 octet): 17 = DSA (example);
+
+    e) four-octet scalar octet count for the following key material;
+
+    f) algorithm-specific fields.
+
+    Algorithm-Specific Fields for DSA keys (example):
+
+    f.1) MPI of DSA prime p;
+
+    f.2) MPI of DSA group order q (q is a prime divisor of p-1);
+
+    f.3) MPI of DSA group generator g;
+
+    f.4) MPI of DSA public-key value y (= g\*\*x mod p where x is secret).
+
 Note that it is possible for there to be collisions of Key IDs -- two
 different keys with the same Key ID.  Note that there is a much
 smaller, but still non-zero, probability that two different keys have
 the same fingerprint.
 
-Also note that if V3 and V4 format keys share the same RSA key
+Also note that if V3, V4, and V5 format keys share the same RSA key
 material, they will have different Key IDs as well as different
 fingerprints.
 
 Finally, the Key ID and fingerprint of a subkey are calculated in the
-same way as for a primary key, including the 0x99 as the first octet
-(even though this is not a valid packet ID for a public subkey).
+same way as for a primary key, including the 0x99 (V3 and V4 key) or
+0x9A (V5 key) as the first octet (even though this is not a valid
+packet ID for a public subkey).
 
 # Elliptic Curve Cryptography
 
@@ -3648,7 +3711,8 @@ definition of the OtherInfo bitstring [](#SP800-56A):
 
   - 20 octets representing a recipient encryption subkey or a master
     key fingerprint, identifying the key material that is needed for
-    the decryption.
+    the decryption.  For version 5 keys the fingerprint is right
+    truncated to 20 octets.
 
 The size of the KDF parameters sequence, defined above, is either 54
 for the NIST curve P-256 or 51 for the curves P-384 and P-521.
