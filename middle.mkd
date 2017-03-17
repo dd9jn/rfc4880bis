@@ -3078,8 +3078,11 @@ algorithm.
        11  SHA224 [](#FIPS180)              "SHA224"
  100--110  Private/Experimental algorithm
 
-Implementations MUST implement SHA-1.  Implementations MAY implement
-other algorithms.  MD5 is deprecated.
+Implementations MUST implement SHA2-256.  Implementations MAY implement
+other algorithms.  Implementations SHOULD NOT create messages which
+require the use of SHA-1 with the exception of computing version 4 key
+fingerprints and for purposes of the MDC packet.  Implementations
+SHOULD NOT use MD5 or RIPE-MD/160.
 
 # {10} IANA Considerations
 
