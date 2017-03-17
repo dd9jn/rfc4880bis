@@ -1282,8 +1282,8 @@ description of the syntax is found in Section 8 below.
 (1 octet of class, 1 octet of public-key algorithm ID, 20 or 25 octets
 of fingerprint)
 
-V4 keys use the untruncated 20 octet fingerprint; V5 keys use the
-right truncated 25 octet fingerprint
+V4 keys use the full 20 octet fingerprint; V5 keys use the
+leftmost 25 octets of the fingerprint
 
 Authorizes the specified key to issue revocation signatures for this
 key.  Class octet must have bit 0x80 set.  If the bit 0x40 is set, then
@@ -1632,8 +1632,8 @@ signature, the key ID of the Issuer subpacket MUST match the low
 64 bits of the fingerprint.
 
 Note that the length N of the fingerprint for a version 4 key is 20
-octets.  For a version 5 key N is 25 and the fingerprint is right
-truncated to 25 octets.
+octets.  For a version 5 key the leftmost 25 octets of the fingerprint
+are used (N=25).
 
 
 ### {5.2.4} Computing Signatures
@@ -3716,8 +3716,8 @@ definition of the OtherInfo bitstring [](#SP800-56A):
 
   - 20 octets representing a recipient encryption subkey or a master
     key fingerprint, identifying the key material that is needed for
-    the decryption.  For version 5 keys the fingerprint is right
-    truncated to 20 octets.
+    the decryption.  For version 5 keys the 20 leftmost octets of the
+    fingerprint are used.
 
 The size of the KDF parameters sequence, defined above, is either 54
 for the NIST curve P-256 or 51 for the curves P-384 and P-521.
