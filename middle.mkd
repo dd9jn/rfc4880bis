@@ -3992,7 +3992,7 @@ makes sense for her to use a hash algorithm that Bob's software uses.
 This preference allows Bob to state in his key which algorithms Alice
 may use.
 
-Since SHA-1 is the MUST-implement hash algorithm, if it is not
+Since SHA2-256 is the MUST-implement hash algorithm, if it is not
 explicitly in the list, it is tacitly at the end.  However, it is good
 form to place it there explicitly.
 
