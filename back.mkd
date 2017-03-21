@@ -37,7 +37,7 @@ function is:
 
   m: 4f70656e504750040016080006050255f95f9504ff0000000c
 
-Using the SHA-256 hash algorithm yields the digest:
+Using the SHA2-256 hash algorithm yields the digest:
 
   d: f6220a3f757814f4c2176ffbb68b00249cd4ccdc059c4b34ad871f30b1740280
 
