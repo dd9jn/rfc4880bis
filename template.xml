@@ -103,44 +103,39 @@
       </reference>
 
       <reference anchor='FIPS180'
-                 target='http://csrc.nist.gov/publications/fips/fips180-2/fips180-2withchangenotice.pdf'>
+                 target='http://dx.doi.org/10.6028/NIST.FIPS.180-4'>
         <front>
-        <title>Secure Hash Signature Standard (SHS) (FIPS PUB 180-2)</title>
-        <author>
-          <organization>NIST</organization>
-        </author>
-        <date />
-        </front>
-      </reference>
-      <reference anchor='FIPS180-3'>
-        <front>
-        <title>Secure Hash Standard (SHS), FIPS 180-3</title>
+        <title>Secure Hash Standard (SHS), FIPS 180-4</title>
         <author>
           <organization>National Institute of Standards and Technology,
                         U.S. Department of Commerce</organization>
         </author>
-        <date year="2008" month="October" />
+        <date year="2015" month="August" />
         </front>
       </reference>
 
       <reference anchor='FIPS186'
-                 target='http://csrc.nist.gov/publications/fips/fips186-2/fips186-2-change1.pdf'>
+                 target='http://dx.doi.org/10.6028/NIST.FIPS.186-4'>
         <front>
-        <title>Digital Signature Standard (DSS) (FIPS PUB 186-2)</title>
-        <author>
-          <organization>NIST</organization>
-        </author>
-        <date />
-        </front>
-      </reference>
-      <reference anchor='FIPS186-3'>
-        <front>
-        <title>Digital Signature Standard, FIPS 186-3</title>
+        <title>Digital Signature Standard (DSS), FIPS 186-4</title>
         <author>
           <organization>National Institute of Standards and Technology,
                         U.S. Department of Commerce</organization>
         </author>
-        <date year="2009" month="June" />
+        <date year="2013" month="July" />
+        </front>
+      </reference>
+
+      <reference anchor='FIPS202'
+                 target='http://dx.doi.org/10.6028/NIST.FIPS.202'>
+        <front>
+        <title>SHA-3 Standard: Permutation-Based Hash and
+               Extendable-Output Functions, FIPS 202</title>
+        <author>
+          <organization>National Institute of Standards and Technology,
+                        U.S. Department of Commerce</organization>
+        </author>
+        <date year="2015" month="August" />
         </front>
       </reference>
 

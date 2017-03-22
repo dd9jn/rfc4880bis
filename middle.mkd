@@ -2968,7 +2968,7 @@ algorithms.
        16  Elgamal (Encrypt-Only) [](#ELGAMAL) [](#HAC)
        17  DSA (Digital Signature Algorithm) [](#FIPS186) [](#HAC)
        18  ECDH public key algorithm
-       19  ECDSA public key algorithm [](#FIPS186-3)
+       19  ECDSA public key algorithm [](#FIPS186)
        20  Reserved (formerly Elgamal Encrypt or Sign)
        21  Reserved for Diffie-Hellman
                       (X9.42, as defined for IETF-S/MIME)
@@ -2980,7 +2980,7 @@ Elgamal and ECDH for
 encryption.  Implementations SHOULD implement RSA keys (1).  RSA
 Encrypt-Only (2) and RSA Sign-Only are deprecated and SHOULD NOT be
 generated, but may be interpreted.  See Section 13.5.
-See Section 13.8 for notes Elgamal Encrypt or Sign (20), and X9.42 (21).
+See Section 13.8 for notes on Elgamal Encrypt or Sign (20), and X9.42 (21).
 Implementations MAY implement any other algorithm.
 
 A compatible specification of ECDSA is given in [](#RFC6090) as "KT-I
@@ -3072,10 +3072,13 @@ algorithm.
         5  Reserved
         6  Reserved
         7  Reserved
-        8  SHA2-256 [](#FIPS180             "SHA256"
-        9  SHA2-384 [](#FIPS180             "SHA384"
-       10  SHA2-512 [](#FIPS180             "SHA512"
-       11  SHA2-224 [](#FIPS180             "SHA224"
+        8  SHA2-256 [](#FIPS180)             "SHA256"
+        9  SHA2-384 [](#FIPS180)             "SHA384"
+       10  SHA2-512 [](#FIPS180)             "SHA512"
+       11  SHA2-224 [](#FIPS180)             "SHA224"
+       12  SHA3-256 [](#FIPS202)             "SHA3-256"
+       13  Reserved
+       14  SHA3-512 [](#FIPS202)             "SHA3-512"
  100--110  Private/Experimental algorithm
 
 Implementations MUST implement SHA2-256.  Implementations MAY implement
@@ -3297,6 +3300,20 @@ Section 9 for the algorithm identifiers and text names, and
 Section 5.2.2 for the OIDs and expanded signature prefixes.  Adding a
 new hash algorithm MUST be done through the IETF CONSENSUS method, as
 described in [](#RFC2434).
+
+This document requests IANA register the following hash algorithms:
+
+   ID    Algorithm                   Reference
+   --    --------------------------  ---------
+   12    SHA3-256                    This doc
+   13    Reserved
+   14    SHA3-512                    This doc
+
+   [Notes to RFC-Editor: Please remove the table above on publication.
+    It is desirable not to reuse old or reserved algorithms because
+    some existing tools might print a wrong description.  The ID 13
+    has been reserved so that the SHA3 algorithm IDs align nicely with
+    their SHA2 counterparts.]
 
 ### {10.3.4} Compression Algorithms
 
@@ -3590,7 +3607,7 @@ found in [](#KOBLITZ).
 ## Supported ECC Curves
 
 This document references three named prime field curves, defined in
-[](#FIPS186-3) as "Curve P-256", "Curve P-384", and "Curve P-521".
+[](#FIPS186) as "Curve P-256", "Curve P-384", and "Curve P-521".
 Further curve "Ed25519", defined in [](#I-D.irtf-cfrg-eddsa) is
 referenced for use with the EdDSA algorithm.
 
@@ -3648,7 +3665,7 @@ native value of the public key.
 A key derivation function (KDF) is necessary to implement the EC
 encryption.  The Concatenation Key Derivation Function (Approved
 Alternative 1) [](#SP800-56A) with the KDF hash function that is
-SHA2-256 [](#FIPS180-3) or stronger is REQUIRED.  See Section
+SHA2-256 [](#FIPS180) or stronger is REQUIRED.  See Section
 12{FIXME} for the details regarding the choice of the hash function.
 
 For convenience, the synopsis of the encoding method is given below
@@ -4365,7 +4382,7 @@ SHOULD be rejected.
     data is decrypted.  There are many cases in cryptographic engineering
     where the implementer must use care and wisdom, and this is one.
 
-  - Refer to [](#FIPS186-3), B.4.1, for the method to generate a
+  - Refer to [](#FIPS186), B.4.1, for the method to generate a
     uniformly distributed ECC private key.
 
   - The curves proposed in this document correspond to the symmetric
