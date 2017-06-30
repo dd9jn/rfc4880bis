@@ -79,6 +79,13 @@ other values might also be interesting for other ECC specifications:
   - Added draft-atkins-openpgp-device-certificates
   - Added draft-koch-eddsa-for-openpgp-04
   - Added Issuer Fingerprint signature subpacket.
+  - Added a V5 key and fingerprint format.
+  - Added OIDs for brainpool curves and Curve25519.
+  - Marked SHA2-256 as MUST implement.
+  - Marked Curve25519 and Ed25519 as SHOULD implement.
+  - Marked SHA-1 as SHOULD NOT be used to create messages.
+  - Marked MD5 as SHOULD NOT implement.
+
 
   <!-- To avoid warnings from pandoc2rfc we add some references -->
   { Informational rfcs: [](#RFC1423) }
