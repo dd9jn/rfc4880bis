@@ -2932,19 +2932,19 @@ the null string.
 
 An atom is a regular expression in parentheses (matching a match for
 the regular expression), a range (see below), '.' (matching any single
-character), '\^' (matching the null string at the beginning of the
-input string), '\$' (matching the null string at the end of the input
-string), a '' followed by a single character (matching that
+character), '^' (matching the null string at the beginning of the
+input string), '$' (matching the null string at the end of the input
+string), a '\\' followed by a single character (matching that
 character), or a single character with no other significance (matching
 that character).
 
 A range is a sequence of characters enclosed in '[]'.  It normally
 matches any single character from the sequence.  If the sequence begins
-with '\^', it matches any single character not from the rest of the
+with '^', it matches any single character not from the rest of the
 sequence.  If two characters in the sequence are separated by '-', this
 is shorthand for the full list of ASCII characters between them (e.g.,
 '[0-9]' matches any decimal digit).  To include a literal ']' in the
-sequence, make it the first character (following a possible '\^').  To
+sequence, make it the first character (following a possible '^').  To
 include a literal '-', make it the first or last character.
 
 # {9}  Constants
