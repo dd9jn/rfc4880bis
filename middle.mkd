@@ -356,7 +356,7 @@ unencrypted.  The MD5 hash function was always used to convert the
 passphrase to a key for the specified cipher algorithm.
 
 For compatibility, when an S2K specifier is used, the special value
-254 or 255 is stored in the position where the hash algorithm octet
+253, 254, or 255 is stored in the position where the hash algorithm octet
 would have been in the old data structure.  This is then followed
 immediately by a one-octet algorithm identifier, and then by the S2K
 specifier as encoded above.
@@ -364,9 +364,9 @@ specifier as encoded above.
 Therefore, preceding the secret data there will be one of these
 possibilities:
 
-       0:           secret data is unencrypted (no passphrase)
-       255 or 254:  followed by algorithm octet and S2K specifier
-       Cipher alg:  use Simple S2K algorithm using MD5 hash
+       0:                 secret data is unencrypted (no passphrase)
+       255, 254, or 253:  followed by algorithm octet and S2K specifier
+       Cipher alg:        use Simple S2K algorithm using MD5 hash
 
 This last possibility, the cipher algorithm number with an implicit
 use of MD5 and IDEA, is provided for backward compatibility; it MAY be
@@ -1960,10 +1960,13 @@ The packet contains:
   * Only for a version 5 packet, a one-octet scalar octet count of the
     next 3 optional fields.
 
-  * [Optional] If string-to-key usage octet was 255 or 254, a one-
+  * [Optional] If string-to-key usage octet was 255, 254, or 253, a one-
     octet symmetric encryption algorithm.
 
-  * [Optional] If string-to-key usage octet was 255 or 254, a
+  * [Optional] If string-to-key usage octet was 253, a one-octet AEAD
+    algorithm.
+
+  * [Optional] If string-to-key usage octet was 255, 254, or 253, a
     string-to-key specifier.  The length of the string-to-key
     specifier is implied by its type, as described above.
 
@@ -1984,8 +1987,10 @@ The packet contains:
     usage octet was 254, then a 20-octet SHA-1 hash of the
     plaintext of the algorithm-specific portion.  This checksum or
     hash is encrypted together with the algorithm-specific fields
-    (if string-to-key usage octet is not zero).  Note that for all
-    other values, a two-octet checksum is required.
+    (if string-to-key usage octet is not zero).  If the string-to-key
+    usage octet was 253, then an AEAD authentication tag is included
+    here.  Note that for all other values, a two-octet checksum is
+    required.
 
 Note that the version 5 packet format adds two count values
 to help parsing packets with unknown S2K or public key algorithms.
@@ -2009,7 +2014,12 @@ at the beginning of each new MPI value, so that the CFB block boundary
 is aligned with the start of the MPI data.
 
 With V4 and V5 keys, a simpler method is used.  All secret MPI values
-are encrypted in CFB mode, including the MPI bitcount prefix.
+are encrypted, including the MPI bitcount prefix.
+
+If the string-to-key usage octet is 253, the encrypted MPI values are
+encrypted as one combined plaintext exactly as an AEAD Encrypted Data
+packet with a chunk size octet of 10 would be.  This implicit chunk size
+octet is included in the normal calculations of additional data.
 
 The two-octet checksum that follows the algorithm-specific portion is
 the algebraic sum, mod 65536, of the plaintext of all the algorithm-
