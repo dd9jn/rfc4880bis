@@ -92,6 +92,17 @@
         <date></date>
         </front>
       </reference>
+
+      <reference anchor='EAX'>
+        <front>
+        <title>A Conventional Authenticated-Encryption Mode</title>
+        <author surname="Bellare" initials="M." />
+        <author surname="Rogaway" initials="P." />
+        <author surname="Wagner" initials="D." />
+        <date year="2003" month="April" />
+        </front>
+    </reference>
+
       <reference anchor='ELGAMAL'>
         <front>
         <title>A Public-Key Cryptosystem and a

@@ -2550,6 +2550,81 @@ packet length.  The reason for this is that the hashing rules for
 modification detection include a one-octet tag and one-octet length in
 the data hash.  While this is a bit restrictive, it reduces complexity.
 
+## {5.14} AEAD Encrypted Data Packet (Tag 18)
+
+This packet contains data encrypted with an authenticated encryption and
+additional data (AEAD) construction.  When it has been decrypted, it
+will typically contain other packets (often a Literal Data packet or
+Compressed Data packet).
+
+The body of this packet consists of:
+
+  * A one-octet version number.  The only currently defined value
+    is 1.
+
+  * A one-octet cipher algorithm.
+
+  * A one-octet AEAD algorithm.
+
+  * A one-octet chunk size.
+
+  * A starting initialization vector of size specified by the AEAD
+    algorithm.
+
+  * Encrypted data, the output of the selected symmetric-key cipher
+    operating in the given AEAD mode.
+
+  * A final, summary authentication tag for the AEAD mode.
+
+An AEAD encrypted data packet consists of one or more chunks of data.
+The plaintext of each chunk is of a size specified using the chunk size
+octet using the method specified below.
+
+The encrypted data consists of the encryption of each chunk of
+plaintext, followed immediately by the relevant authentication tag.  If
+the last chunk of plaintext is smaller than the chunk size, the
+ciphertext for that data may be shorter; it is nevertheless followed by
+a full authentication tag.
+
+For each chunk, the AEAD construction is given the packet header,
+version number, cipher algorithm octet, AEAD algorithm octet, chunk size
+octet, and an eight-octet, big-endian chunk index as additional
+data.  The index of the first chunk is zero.
+
+After the final chunk, the AEAD algorithm is used to produce a final
+authentication tag encrypting the empty string.  This AEAD instance is
+given the additional data specified above, plus an eight-octet,
+big-endian values specifying the total number of plaintext octets
+encrypted.  This allows detection of a truncated ciphertext.
+
+The chunk size octet specifies the size of chunks using the following
+formula (in C), where c is the chunk size octet:
+
+        chunk_size = ((uint64_t)1 << (c + 6))
+
+An implementation MUST support chunk size octets with values from 0
+to 56.  An implementation MAY support other chunk sizes.  Chunk size
+octets with other values are reserved for future extensions.
+
+A new random initialization vector MUST be used for each message.
+
+### {5.14.1} EAX Mode
+
+The only currently defined AEAD algorithm is EAX Mode
+[](#EAX).  This algorithm can only use block ciphers with 16-octet
+blocks.  The starting initialization vector and authentication tag are
+both 16 octets long.
+
+The starting initialization vector for this mode MUST be unique and
+unpredictable.
+
+The nonce for EAX mode is computed by treating the starting
+initialization vector as a 16-octet, big-endian value and
+exclusive-oring the low eight octets of it with the chunk index.
+
+The security of EAX requires that the nonce is never reused, hence the
+requirement that the starting initialization vector be unique.
+
 # {6}  Radix-64 Conversions
 
 As stated in the introduction, OpenPGP's underlying native
@@ -3092,6 +3167,16 @@ other algorithms.  Implementations SHOULD NOT create messages which
 require the use of SHA-1 with the exception of computing version 4 key
 fingerprints and for purposes of the MDC packet.  Implementations
 SHOULD NOT use MD5 or RIPE-MD/160.
+
+## {9.5} AEAD Algorithms
+
+       ID  Algorithm
+ --------  ---------
+        1  EAX [](#EAX)
+ 100--110  Private/Experimental algorithm
+
+Implementations MUST implement EAX.  Implementations MAY implement
+other algorithms.
 
 # {10} IANA Considerations
 
