@@ -3203,7 +3203,7 @@ require the use of SHA-1 with the exception of computing version 4 key
 fingerprints and for purposes of the MDC packet.  Implementations
 SHOULD NOT use MD5 or RIPE-MD/160.
 
-## {9.5} AEAD Algorithms
+## AEAD Algorithms
 
        ID  Algorithm
  --------  ---------
