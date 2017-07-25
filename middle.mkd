@@ -591,6 +591,7 @@ are as follows:
         17  User Attribute Packet
         18  Sym. Encrypted and Integrity Protected Data Packet
         19  Modification Detection Code Packet
+        20  AEAD Encrypted Data Packet
   60 to 63  Private or Experimental Values
 
 
@@ -2581,7 +2582,7 @@ packet length.  The reason for this is that the hashing rules for
 modification detection include a one-octet tag and one-octet length in
 the data hash.  While this is a bit restrictive, it reduces complexity.
 
-## {5.14} AEAD Encrypted Data Packet (Tag 18)
+## AEAD Encrypted Data Packet (Tag 20)
 
 This packet contains data encrypted with an authenticated encryption and
 additional data (AEAD) construction.  When it has been decrypted, it
@@ -2625,7 +2626,7 @@ data.  The index of the first chunk is zero.
 After the final chunk, the AEAD algorithm is used to produce a final
 authentication tag encrypting the empty string.  This AEAD instance is
 given the additional data specified above, plus an eight-octet,
-big-endian values specifying the total number of plaintext octets
+big-endian value specifying the total number of plaintext octets
 encrypted.  This allows detection of a truncated ciphertext.
 
 The chunk size octet specifies the size of chunks using the following
@@ -2633,13 +2634,13 @@ formula (in C), where c is the chunk size octet:
 
         chunk_size = ((uint64_t)1 << (c + 6))
 
-An implementation MUST support chunk size octets with values from 0
-to 56.  An implementation MAY support other chunk sizes.  Chunk size
-octets with other values are reserved for future extensions.
+An implementation MUST support chunk size octets with values from 0 to
+56.  Chunk size octets with other values are reserved for future
+extensions.
 
 A new random initialization vector MUST be used for each message.
 
-### {5.14.1} EAX Mode
+### EAX Mode
 
 The only currently defined AEAD algorithm is EAX Mode
 [](#EAX).  This algorithm can only use block ciphers with 16-octet
