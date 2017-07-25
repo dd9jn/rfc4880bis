@@ -1594,6 +1594,9 @@ First octet:
 
     0x01 - Modification Detection (packets 18 and 19)
 
+    0x02 - AEAD Encrypted Data Packet (packet 20) and version 5
+           Symmetric-Key Encrypted Session Key Packets (packet 3)
+
 If an implementation implements any of the defined features, it SHOULD
 implement the Features subpacket, too.
 
