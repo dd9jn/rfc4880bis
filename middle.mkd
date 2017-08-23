@@ -1280,11 +1280,11 @@ description of the syntax is found in Section 8 below.
 
 #### {5.2.3.15} Revocation Key
 
-(1 octet of class, 1 octet of public-key algorithm ID, 20 or 25 octets
+(1 octet of class, 1 octet of public-key algorithm ID, 20 or 32 octets
 of fingerprint)
 
 V4 keys use the full 20 octet fingerprint; V5 keys use the
-leftmost 25 octets of the fingerprint
+full 32 octet fingerprint
 
 Authorizes the specified key to issue revocation signatures for this
 key.  Class octet must have bit 0x80 set.  If the bit 0x40 is set, then
@@ -1636,8 +1636,7 @@ signature, the key ID of the Issuer subpacket MUST match the low
 64 bits of the fingerprint.
 
 Note that the length N of the fingerprint for a version 4 key is 20
-octets.  For a version 5 key the leftmost 25 octets of the fingerprint
-are used (N=25).
+octets; for a version 5 key N is 32.
 
 
 ### {5.2.4} Computing Signatures
