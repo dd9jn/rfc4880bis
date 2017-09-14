@@ -2273,7 +2273,8 @@ The body of this packet consists of:
     may need line ends converted to local form, or other text-mode
     changes.  The tag 'u' (0x75) means the same as 't', but also
     indicates that implementation believes that the literal data
-    contains UTF-8 text.
+    contains UTF-8 text.  If it is a 'm' (0x6d), then it contains a
+    MIME message body part [](#RFC2045).
 
     Early versions of PGP also defined a value of 'l' as a 'local'
     mode for machine-local conversions.  RFC 1991 [](#RFC1991)
