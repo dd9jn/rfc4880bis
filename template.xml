@@ -22,6 +22,7 @@
   <!ENTITY rfc.5639       PUBLIC '' 'reference.RFC.5639.xml'>
   <!ENTITY rfc.5870       PUBLIC '' 'reference.RFC.5870.xml'>
   <!ENTITY rfc.6090       PUBLIC '' 'reference.RFC.6090.xml'>
+  <!ENTITY rfc.7748       PUBLIC '' 'reference.RFC.7748.xml'>
   <!ENTITY iso.10646      PUBLIC '' 'reference.ISO.10646-1.1993.xml'>
   <!ENTITY eddsa          PUBLIC '' 'reference.I-D.irtf-cfrg-eddsa.xml'>
 ]>
@@ -215,6 +216,7 @@
       &rfc.4086;
       &rfc.5639;
       &rfc.5870;
+      &rfc.7748;
 
       &eddsa;
 
