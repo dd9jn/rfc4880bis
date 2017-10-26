@@ -22,6 +22,7 @@
   <!ENTITY rfc.5639       PUBLIC '' 'reference.RFC.5639.xml'>
   <!ENTITY rfc.5870       PUBLIC '' 'reference.RFC.5870.xml'>
   <!ENTITY rfc.6090       PUBLIC '' 'reference.RFC.6090.xml'>
+  <!ENTITY rfc.7253       PUBLIC '' 'reference.RFC.7253.xml'>
   <!ENTITY rfc.7748       PUBLIC '' 'reference.RFC.7748.xml'>
   <!ENTITY iso.10646      PUBLIC '' 'reference.ISO.10646-1.1993.xml'>
   <!ENTITY eddsa          PUBLIC '' 'reference.I-D.irtf-cfrg-eddsa.xml'>
@@ -102,7 +103,35 @@
         <author surname="Wagner" initials="D." />
         <date year="2003" month="April" />
         </front>
-    </reference>
+      </reference>
+
+      <reference anchor='OCB1'>
+        <front>
+        <title>OCB: A Block-Cipher Mode of Operation for Efficient Authenticated Encryption</title>
+        <author surname="Rogaway" initials="P." />
+        <author surname="Bellare" initials="M." />
+        <author surname="Black" initials="J." />
+        <author surname="Krovetz" initials="T." />
+        <date year="2001" month="April" />
+        </front>
+      </reference>
+
+      <reference anchor='OCB2'>
+        <front>
+        <title>Efficient Instantiations of Tweakable Blockciphers and Refinements to Modes OCB and PMAC.</title>
+        <author surname="Rogaway" initials="P." />
+        <date year="2004" month="April" />
+        </front>
+      </reference>
+
+      <reference anchor='OCB3'>
+        <front>
+        <title>The Software Performance of Authenticated-Encryption Modes</title>
+        <author surname="Krovetz" initials="T." />
+        <author surname="Rogaway" initials="P." />
+        <date year="2011" month="April" />
+        </front>
+      </reference>
 
       <reference anchor='ELGAMAL'>
         <front>
@@ -216,6 +245,7 @@
       &rfc.4086;
       &rfc.5639;
       &rfc.5870;
+      &rfc.7253;
       &rfc.7748;
 
       &eddsa;
