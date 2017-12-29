@@ -4828,5 +4828,11 @@ backward-compatible.
     requirement for ASCII armor so those implementations will
     necessarily have support.
 
+  * The OCB mode is patented and a debate is still underway on whether
+    it can be included in RFC4880bis or needs to be moved to a
+    separate document.  For the sole purpose of experimenting with the
+    Preferred AEAD Algorithms signature subpacket it is has been
+    included in this I-D.
+
 
 <!-- eof -->
