@@ -2461,8 +2461,9 @@ packet.
 
 The body of this packet consists of:
 
-  * A one-octet version number.  The only currently defined value
-    is 1.
+  * A one-octet version number.  The only defined value is 1.  There
+    won't be any future versions of this packet because the MDC system
+    has been superseded by the AEAD Encrypted Data packet.
 
   * Encrypted data, the output of the selected symmetric-key cipher
     operating in Cipher Feedback mode with shift amount equal to
@@ -2518,9 +2519,6 @@ difference in the hash values, but also the absence of an MDC packet,
 or an MDC packet in any position other than the end of the
 plaintext.  Any failure SHOULD be reported to the user.
 
-Note: future designs of new versions of this packet should consider
-rollback attacks since it will be possible for an attacker to change
-the version back to 1.
 
       NON-NORMATIVE EXPLANATION
 
@@ -4373,46 +4371,6 @@ intentionally managed with the PRIVATE USE method, as described in
 However, implementations need to be careful with these and promote
 them to full IANA-managed parameters when they grow beyond the
 original, limited system.
-
-## {13.11} Extension of the MDC System
-
-{FIXME: We won't extend the MDC system - thus remove this discussion}
-
-As described in the non-normative explanation in Section 5.13, the MDC
-system is uniquely unparameterized in OpenPGP.  This was an intentional
-decision to avoid cross-grade attacks.  If the MDC system is extended
-to a stronger hash function, care must be taken to avoid downgrade and
-cross-grade attacks.
-
-One simple way to do this is to create new packets for a new MDC.  For
-example, instead of the MDC system using packets 18 and 19, a new MDC
-could use 20 and 21.  This has obvious drawbacks (it uses two packet
-numbers for each new hash function in a space that is limited to a
-maximum of 60).
-
-Another simple way to extend the MDC system is to create new versions
-of packet 18, and reflect this in packet 19.  For example, suppose that
-V2 of packet 18 implicitly used SHA2-256.  This would require packet 19
-to have a length of 32 octets.  The change in the version in packet 18
-and the size of packet 19 prevent a downgrade attack.
-
-There are two drawbacks to this latter approach.  The first is that
-using the version number of a packet to carry algorithm information is
-not tidy from a protocol-design standpoint.  It is possible that there
-might be several versions of the MDC system in common use, but this
-untidiness would reflect untidiness in cryptographic consensus about
-hash function security.  The second is that different versions of
-packet 19 would have to have unique sizes.  If there were two versions
-each with 256-bit hashes, they could not both have 32-octet packet 19s
-without admitting the chance of a cross-grade attack.
-
-Yet another, complex approach to extend the MDC system would be a
-hybrid of the two above -- create a new pair of MDC packets that are
-fully parameterized, and yet protected from downgrade and cross-
-grade.
-
-Any change to the MDC system MUST be done through the IETF CONSENSUS
-method, as described in [](#RFC2434).
 
 ## {13.12} Meta-Considerations for Expansion
 
