@@ -1057,6 +1057,7 @@ The value of the subpacket type octet may be:
           31   Signature Target
           32   Embedded Signature
           33   Issuer Fingerprint
+          34   Preferred AEAD Algorithms
   100 to 110   Private or experimental
 
 An implementation SHOULD ignore any subpacket of a type that it does
@@ -1073,8 +1074,8 @@ purpose of the critical bit is to allow the signer to tell an
 evaluator that it would prefer a new, unknown feature to generate an
 error than be ignored.
 
-Implementations SHOULD implement the three preferred algorithm
-subpackets (11, 21, and 22), as well as the "Reason for Revocation"
+Implementations SHOULD implement the four preferred algorithm
+subpackets (11, 21, 22, and 34), as well as the "Reason for Revocation"
 subpacket.  Note, however, that if an implementation chooses not to
 implement some of the preferences, it is required to behave in a
 polite manner to respect the wishes of those users who do implement
@@ -1179,6 +1180,19 @@ holder prefers to use.  The subpacket body is an ordered list of octets
 with the most preferred listed first.  It is assumed that only
 algorithms listed are supported by the recipient's software.  Algorithm
 numbers are in Section 9.  This is only found on a self- signature.
+
+#### Preferred AEAD Algorithms
+
+(array of one-octet values)
+
+AEAD algorithm numbers that indicate which AEAD algorithms the key
+holder prefers to use.  The subpacket body is an ordered list of
+octets with the most preferred listed first.  It is assumed that only
+algorithms listed are supported by the recipient's software.
+Algorithm numbers are in Section [](AEAD Algorithms).  This is only
+found on a self- signature.  Note that support for the AEAD Encrypted
+Data packet in the general is indicated by a Feature Flag.
+
 
 #### {5.2.3.8} Preferred Hash Algorithms
 
