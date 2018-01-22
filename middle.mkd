@@ -2636,9 +2636,10 @@ the last chunk of plaintext is smaller than the chunk size, the
 ciphertext for that data may be shorter; it is nevertheless followed by
 a full authentication tag.
 
-For each chunk, the AEAD construction is given the packet header,
-version number, cipher algorithm octet, AEAD algorithm octet, chunk size
-octet, and an eight-octet, big-endian chunk index as additional
+For each chunk, the AEAD construction is given the Packet Tag in new
+format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag),
+version number, cipher algorithm octet, AEAD algorithm octet, chunk
+size octet, and an eight-octet, big-endian chunk index as additional
 data.  The index of the first chunk is zero.
 
 After the final chunk, the AEAD algorithm is used to produce a final
