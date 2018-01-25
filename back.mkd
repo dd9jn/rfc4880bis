@@ -90,6 +90,8 @@ other values might also be interesting for other ECC specifications:
   - Added Feature Flag for v5 key support.
   - Added AEAD Encrypted Data Packet.
   - Removed notes on extending the MDC packet.
+  - Added v5 Symmetric-Key Encrypted Session Key packet.
+  - Added AEAD encryption of secret keys.
 
   <!-- To avoid warnings from pandoc2rfc we add some references -->
   { Informational rfcs: [](#RFC1423) }
