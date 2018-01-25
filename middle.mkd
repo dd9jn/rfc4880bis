@@ -1984,7 +1984,7 @@ The packet contains:
     identifier.  A version 5 packet MUST NOT use the value 255.
 
   * Only for a version 5 packet, a one-octet scalar octet count of the
-    next 3 optional fields.
+    next 4 optional fields.
 
   * [Optional] If string-to-key usage octet was 255, 254, or 253, a one-
     octet symmetric encryption algorithm.
