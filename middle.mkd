@@ -2338,6 +2338,11 @@ The body of this packet consists of:
     network-normal line endings).  These should be converted to
     native line endings by the receiving software.
 
+Note that the formatting octet, the file name, and the date field of
+the literal packet are not included in a signature hash and thus are
+not protected against tampering in a signed document.
+
+
 ## {5.10} Trust Packet (Tag 12)
 
 The Trust packet is used only within keyrings and is not normally
