@@ -1189,8 +1189,8 @@ AEAD algorithm numbers that indicate which AEAD algorithms the key
 holder prefers to use.  The subpacket body is an ordered list of
 octets with the most preferred listed first.  It is assumed that only
 algorithms listed are supported by the recipient's software.
-Algorithm numbers are in Section [](AEAD Algorithms).  This is only
-found on a self- signature.  Note that support for the AEAD Encrypted
+Algorithm numbers are in Section [](#aead-algorithms).  This is only
+found on a self-signature.  Note that support for the AEAD Encrypted
 Data packet in the general is indicated by a Feature Flag.
 
 
@@ -1423,7 +1423,9 @@ The 'hash' notation has the following structure:
 * A single byte specifying the length of the name of the hashed data
 * A UTF-8 string of the name of the hashed data
 * A single byte specifying the hash algorithm (see section 9.4)
-* The binary hash output of the hashed data using the specified algorithm.  (The length of this data is implicit based on the algorithm specified).
+* The binary hash output of the hashed data using the specified
+  algorithm.  (The length of this data is implicit based on the
+  algorithm specified).
 
 Due to its nature a 'hash' notation is not human readable and MUST NOT
 be marked as such when used.
@@ -1965,7 +1967,6 @@ A version 5 packet contains:
 
   * A series of values comprising the key material.  This is
     algorithm-specific and described in section XXXX.
-
 
 ### {5.5.3} Secret-Key Packet Formats
 
@@ -2700,43 +2701,30 @@ exclusive-oring the low eight octets of it with the chunk index.
 The security of EAX requires that the nonce is never reused, hence the
 requirement that the starting initialization vector be unique.
 
-
 ### OCB Mode
 
 The OCB Authenticated-Encryption Algorithm used in this document is
 defined in [](#RFC7253).
 
-OCB was initially defined in [](#OCB1) (now called "OCB1") for
-authenticated encryption, then as an authenticated encryption with
-associated data algorithm with tweakable blockciphers in [](#OCB2)
-("OCB2"), and finally with performance enhancements as [](#OCB3)
-("OCB3").
-
-The [](#RFC7253) algorithm differs from "OCB3" such that tag length
-is encoded into the internally formatted nonce.
-
 OCB usage requires specification of the following parameters:
 
-  * a blockcipher that operate on 128-bit (16-octet) blocks
-  * an authentication tag length of 128 bits
+* a blockcipher that operate on 128-bit (16-octet) blocks
 
-While OCB [](#RFC7253) allows the authentication tag length to be of
-any number up to 128 bits long, this document requires a fixed
-authentication tag length of 128 bits (16 octets) for simplicity.
+* an authentication tag length of 16 octets
 
-The nonce for a chunk of chunk index "i" in OCB processing is defined
-as:
+* a nonce of 15 octets long (which is the longest nonce allowed
+  specified by [](#RFC7253))
 
-    OCB-Nonce_{i} = IV[1..120] xor i
+* an initialization vector of at least 15 octets long
 
-Where,
+In the case that the initialization vector is longer than 15 octets
+(such as in Section {5.5.3} Secret-Key Packet Formats), only the 15
+leftmost octets are used in calculations; the remaining octets MUST be
+considered as zero.
 
-  * IV is the initialization vector of the message;
-  * IV[i..j] is the substring of IV consisting of bits i through j,
-    inclusive, in big-endian format.
-
-The value of OCB-Nonce_{i} is always 120 bits (15 octets) long as the
-longest allowed nonce length of OCB mode according to [](#RFC7253).
+The nonce for OCB mode is computed by the exclusive-oring of the
+initialization vector as a 15-octet, big endian value, against the
+chunk index.
 
 Security of OCB mode depends on the non-repeated nature of nonces used
 for the same key on distinct plaintext [](#RFC7253). Therefore the
