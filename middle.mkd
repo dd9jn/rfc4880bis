@@ -1490,27 +1490,30 @@ assume a fixed size.  This is so it can grow over time.  If a list is
 shorter than an implementation expects, the unstated flags are
 considered to be zero.  The defined flags are as follows:
 
-0x01
-  :  This key may be used to certify other keys.
+Defined features are as follows:
 
-0x02
-  :  This key may be used to sign data.
+First octet:
 
-0x04
-  :  This key may be used to encrypt communications.
+    0x01 - This key may be used to certify other keys.
 
-0x08
-  :  This key may be used to encrypt storage.
+    0x02 - This key may be used to sign data.
 
-0x10
-  :  The private component of this key may have
-               been split by a secret-sharing mechanism.
-0x20
-  :  This key may be used for authentication.
+    0x04 - This key may be used to encrypt communications.
 
-0x80
-  :  The private component of this key may be in the
-     possession of more than one person.
+    0x08 - This key may be used to encrypt storage.
+
+    0x10 - The private component of this key may have been split by a
+           secret-sharing mechanism.
+
+    0x20 - This key may be used for authentication.
+
+    0x80 - The private component of this key may be in the possession
+           of more than one person.
+
+Second octet:
+
+    0x04 - This key may be used as an additional decryption subkey (ADSK).
+
 
 Usage notes:
 
@@ -1531,6 +1534,8 @@ self-signature only; they are meaningless on a certification
 signature.  They SHOULD be placed only on a direct-key signature (type
 0x1F) or a subkey signature (type 0x18), one that refers to the key
 the flag applies to.
+
+The ADSK flag helps to figure out an encryption subkey.
 
 #### {5.2.3.22} Signer's User ID
 
