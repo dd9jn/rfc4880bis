@@ -365,6 +365,10 @@ other values might also be interesting for other ECC specifications:
   - Removed notes on extending the MDC packet.
   - Added v5 Symmetric-Key Encrypted Session Key packet.
   - Added AEAD encryption of secret keys.
+  - Added test vectors for AEAD.
+  - Added the Additional Encryption Subkey key flag.
+  - Deprecated the Symmetrically Encrypted Data Packet.
+  - Suggest limitation of the AEAD chunksize to 128 MiB.
 
   <!-- To avoid warnings from pandoc2rfc we add some references -->
   { Informational rfcs: [](#RFC1423) }

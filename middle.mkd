@@ -4536,7 +4536,7 @@ SHOULD be rejected.
     provided that the implementation does not let the user naively
     return the data to the attacker.  The modification detection is
     prefereabble implemented by using the AEAD Encrypted Data Packet
-    and only if the recipients don't support this by use of the the
+    and only if the recipients don't supports this by use of the
     Symmmetric Encrypted and Integrity Protected Data Packet.  An
     implementation MUST treat an authentication or MDC failure as a
     security problem, not merely a data problem.
