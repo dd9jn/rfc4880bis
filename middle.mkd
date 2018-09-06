@@ -1301,10 +1301,11 @@ V4 keys use the full 20 octet fingerprint; V5 keys use the
 full 32 octet fingerprint
 
 Authorizes the specified key to issue revocation signatures for this
-key.  Class octet must have bit 0x80 set.  If the bit 0x40 is set, then
-this means that the revocation information is sensitive.  Other bits
-are for future expansion to other kinds of authorizations.  This is
-found on a self-signature.
+key.  Class octet must have bit 0x80 set.  If the bit 0x40 is set,
+then this means that the revocation information is sensitive.  Other
+bits are for future expansion to other kinds of authorizations.  This
+is only found on a direct-key self-signature (type 0x1f).  The use on
+other types of self-signatures is unspecified.
 
 If the "sensitive" flag is set, the keyholder feels this subpacket
 contains private trust information that describes a real-world
