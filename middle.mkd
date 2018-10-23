@@ -671,17 +671,16 @@ A Signature packet describes a binding between some public key and
 some data.  The most common signatures are a signature of a file or a
 block of text, and a signature that is a certification of a User ID.
 
-Two versions of Signature packets are defined.  Version 3 provides
-basic signature information, while version 4 provides an expandable
+Three versions of Signature packets are defined.  Version 3 provides
+basic signature information, while versions 4 and 5 provide an expandable
 format with subpackets that can specify more information about the
 signature.  PGP 2.6.x only accepts version 3 signatures.
 
-Implementations SHOULD accept V3 signatures.  Implementations SHOULD
-generate V4 signatures.
+Implementations MUST generate version 5 signatures when using a
+version 5 key.  Implementations SHOULD generate V4 signatures with
+version 4 keys.  Implementations MUST not create version 3 signatures;
+they MAY accept version 3 signatures.
 
-Note that if an implementation is creating an encrypted and signed
-message that is encrypted to a V3 key, it is reasonable to create a V3
-signature.
 
 ### {5.2.1} Signature Types
 
@@ -924,11 +923,12 @@ leftmost bits equal to the number of bits of q.  This (possibly
 truncated) hash function result is treated as a number and used
 directly in the DSA signature algorithm.
 
-### {5.2.3} Version 4 Signature Packet Format
+### {5.2.3} Version 4 and 5 Signature Packet Formats
 
-The body of a version 4 Signature packet contains:
+The body of a V4 or V5 Signature packet contains:
 
-  * One-octet version number (4).
+  * One-octet version number.  This is 4 for V4 signatures and
+    5 for V5 signatures.
 
   * One-octet signature type.
 
@@ -973,8 +973,8 @@ The body of a version 4 Signature packet contains:
       * MPI of EdDSA compressed value s.
 
 The compressed version of R and S for use with EdDSA is described in
-[](#I-D.irtf-cfrg-eddsa).  The version 3 signature format MUST NOT be
-used with EdDSA.
+[](#I-D.irtf-cfrg-eddsa).  A version 3 signature MUST NOT be created
+and MUST NOT be used with EdDSA.
 
 The concatenation of the data being signed and the signature data from
 the version number through the hashed subpacket data (inclusive) is
@@ -987,6 +987,9 @@ field is hashed with the rest of the signature data, while the second
 is unhashed.  The second set of subpackets is not cryptographically
 protected by the signature and should include only advisory
 information.
+
+The difference between a V4 and V5 signature is that the latter
+creates signatures which include additional meta data.
 
 The algorithms for converting the hash function result to a signature
 are described in a section below.
@@ -1102,7 +1105,7 @@ certification signatures (types 0x10-0x13), the direct-key signature
 (type 0x1F), and the subkey binding signature (type 0x18).  For
 certification self-signatures, each User ID may have a self-
 signature, and thus different subpackets in those self-signatures.  For
-subkey binding signatures, each subkey in fact has a self- signature.
+subkey binding signatures, each subkey in fact has a self-signature.
 Subpackets that appear in a certification self-signature apply to the
 user name, and subpackets that appear in the subkey self-signature
 apply to the subkey.  Lastly, subpackets on the direct-key signature
@@ -1714,7 +1717,8 @@ V4 signatures also hash in a final trailer of six octets: the version
 of the Signature packet, i.e., 0x04; 0xFF; and a four-octet,
 big-endian number that is the length of the hashed data from the
 Signature packet (note that this number does not include these final
-six octets).  {FIXME: truncated or wrap that number on overflow}
+six octets).  The four-octet big-endian number is considered to be an
+unsigned integer modulo 2^32.
 
 V5 signatures instead hash in a ten-octet trailer: the version of the
 Signature packet, i.e., 0x05; 0xFF; and an eight-octet, big-endian
@@ -2351,9 +2355,10 @@ The body of this packet consists of:
     network-normal line endings).  These should be converted to
     native line endings by the receiving software.
 
-Note that the formatting octet, the file name, and the date field of
-the literal packet are not included in a signature hash and thus are
-not protected against tampering in a signed document.
+Note that V3 and V4 signatures do not include the formatting octet,
+the file name, and the date field of the literal packet in a signature
+hash and thus are not protected against tampering in a signed
+document.  In contrast V5 signatures include them.
 
 
 ## {5.10} Trust Packet (Tag 12)
