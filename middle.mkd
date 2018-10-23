@@ -1365,6 +1365,18 @@ specific notation and not to notations in general.
 
 The following subsections define a set of standard notations.
 
+##### The 'charset' Notation
+
+The "charset" notation is a description of the character set used to
+encode the signed plaintext.  The default value is "UTF-8".  If used,
+the value MUST be encoded as human readable and MUST be present in the
+hashed subpacket section of the signature.  This notation is useful
+for cleartext signatures in cases where it is not possible to encode
+the text in UTF-8.  By having the used character set a part of the
+signed data, attacks exploiting different representation of code
+points will be mitigated.
+
+
 ##### The 'manu' Notation
 
 The "manu" notation is a string that declares the device
