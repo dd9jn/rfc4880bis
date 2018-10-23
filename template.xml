@@ -10,7 +10,6 @@
   <!ENTITY rfc.2045       PUBLIC '' 'reference.RFC.2045.xml'>
   <!ENTITY rfc.2119       PUBLIC '' 'reference.RFC.2119.xml'>
   <!ENTITY rfc.2144       PUBLIC '' 'reference.RFC.2144.xml'>
-  <!ENTITY rfc.2434       PUBLIC '' 'reference.RFC.2434.xml'>
   <!ENTITY rfc.2440       PUBLIC '' 'reference.RFC.2440.xml'>
   <!ENTITY rfc.2822       PUBLIC '' 'reference.RFC.2822.xml'>
   <!ENTITY rfc.3156       PUBLIC '' 'reference.RFC.3156.xml'>
@@ -24,11 +23,12 @@
   <!ENTITY rfc.6090       PUBLIC '' 'reference.RFC.6090.xml'>
   <!ENTITY rfc.7253       PUBLIC '' 'reference.RFC.7253.xml'>
   <!ENTITY rfc.7748       PUBLIC '' 'reference.RFC.7748.xml'>
+  <!ENTITY rfc.8126       PUBLIC '' 'reference.RFC.8126.xml'>
   <!ENTITY iso.10646      PUBLIC '' 'reference.ISO.10646-1.1993.xml'>
   <!ENTITY eddsa          PUBLIC '' 'reference.I-D.irtf-cfrg-eddsa.xml'>
 ]>
 <rfc ipr="trust200902" category="std" updates="4880"
-     docName="draft-ietf-openpgp-rfc4880bis-05">
+     docName="draft-ietf-openpgp-rfc4880bis-06">
 
 <?rfc toc="yes"?>
 <?rfc symrefs="yes"?>
@@ -42,11 +42,41 @@
     <title>OpenPGP Message Format</title>
     <author initials="W." surname="Koch"
             fullname="Werner Koch">
+      <organization>GnuPG e.V.</organization>
       <address>
+        <postal>
+          <street>Rochusstr. 44</street>
+          <city>40479 Duesseldorf</city>
+          <country>Germany</country>
+        </postal>
         <email>wk@gnupg.org</email>
+        <uri>https://gnupg.org/verein</uri>
       </address>
     </author>
-    <date month="Jul" year="2018" />
+    <author fullname="brian m. carlson" surname="Carlson" initials="B. M. C.">
+      <address>
+        <email>sandals@crustytoothpaste.net</email>
+      </address>
+    </author>
+    <author fullname="Ronald Henry Tse" surname="Tse" initials="R. H.">
+      <organization>Ribose</organization>
+      <address>
+        <postal>
+          <street>Suite 1111, 1 Pedder Street</street>
+          <city>Central</city>
+          <region>Hong Kong</region>
+          <country>Hong Kong</country>
+        </postal>
+        <email>ronald.tse@ribose.com</email>
+        <uri>https://www.ribose.com</uri>
+      </address>
+    </author>
+    <author fullname="Derek Atkins" surname="Atkins" initials="D. A.">
+      <address>
+        <email>derek@ihtfp.com</email>
+      </address>
+    </author>
+    <date month="Oct" year="2018" />
     <area>Security</area>
 
     <abstract>
@@ -207,7 +237,6 @@
       &rfc.2045;
       &rfc.2119;
       &rfc.2144;
-      &rfc.2434;
       &rfc.2822;
       &rfc.3156;
       &rfc.3394;
@@ -219,6 +248,7 @@
       &rfc.5870;
       &rfc.7253;
       &rfc.7748;
+      &rfc.8126;
 
       &eddsa;
 

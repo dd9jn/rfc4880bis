@@ -369,11 +369,14 @@ other values might also be interesting for other ECC specifications:
   - Added the Additional Encryption Subkey key flag.
   - Deprecated the Symmetrically Encrypted Data Packet.
   - Suggest limitation of the AEAD chunksize to 128 MiB.
+  - Specified the V5 signature format
+  - Deprectated the creation of V3 signatures
+  - Adapted terms from RFC 8126
 
   <!-- To avoid warnings from pandoc2rfc we add some references -->
   { Informational rfcs: [](#RFC1423) }
 
-# The principal authors of RFC-4880 are as follows:
+# The principal authors of RFC-4880
 
       Jon Callas
       EMail: jon@callas.org
