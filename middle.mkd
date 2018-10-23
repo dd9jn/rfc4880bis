@@ -2157,7 +2157,7 @@ The public key is this series of values:
         0xFF are reserved for future extensions,
 
       - the octets representing a curve OID, defined in
-        section 11{FIXME};
+        [](#ecc-curve-oid);
 
   * a MPI of an EC point representing a public key.
 
@@ -2178,7 +2178,7 @@ The public key is this series of values:
         0xFF are reserved for future extensions,
 
       - the octets representing a curve OID, defined in
-        section NN{FIXME};
+        [](#ecc-curve-oid);
 
   * a MPI of an EC point representing a public key Q as described
     under EdDSA Point Format below.
@@ -2200,7 +2200,7 @@ The public key is this series of values:
         0xFF are reserved for future extensions,
 
       - the octets representing a curve OID, defined in
-        Section 11{FIXME};
+        [](#ecc-curve-oid);
 
   * a MPI of an EC point representing a public key;
 
@@ -2748,7 +2748,7 @@ OCB usage requires specification of the following parameters:
 * an initialization vector of at least 15 octets long
 
 In the case that the initialization vector is longer than 15 octets
-(such as in Section {5.5.3} Secret-Key Packet Formats), only the 15
+(such as in [](#secret-key-packet-tag-5), only the 15
 leftmost octets are used in calculations; the remaining octets MUST be
 considered as zero.
 
@@ -3201,9 +3201,10 @@ and RSA (1) and ECDH (18) for encryption.  Implementations SHOULD
 implement EdDSA (22) keys.
 
 RSA Encrypt-Only (2) and RSA Sign-Only (3) are deprecated and SHOULD
-NOT be generated, but may be interpreted.  See Section {FIXME 13.5}.
-See Section {FIXME 13.8} for notes on Elgamal Encrypt or Sign (20),
-and X9.42 (21).  Implementations MAY implement any other algorithm.
+NOT be generated, but may be interpreted.  See [](#rsa).  See
+[](#reserved-algorithm-numbers) for notes on Elgamal Encrypt or Sign
+(20), and X9.42 (21).  Implementations MAY implement any other
+algorithm.
 
 Note that implementations conforming to previous versions of this
 standard (RFC-4880) have DSA (17) and Elgamal (16) as its only
@@ -3899,9 +3900,11 @@ If other conversion methods are defined in the future, a compliant
 application MUST NOT use a new format when in doubt that any recipient
 can support it.  Consider, for example, that while both the public key
 and the per-recipient ECDH data structure, respectively defined in
-Sections 9{FIXME} and 10{FIXME}, contain an encoded point field, the
-format changes to the field in Section 10{FIXME} only affect a given
-recipient of a given message.
+[](#algorithm-specific-part-for-ecdh-keys) and
+[](#public-key-encrypted-session-key-packets-tag-1), contain an
+encoded point field, the format changes to the field in
+[](#public-key-encrypted-session-key-packets-tag-1) only affect a
+given recipient of a given message.
 
 ## EdDSA Point Format
 
@@ -3922,8 +3925,9 @@ native value of the public key.
 A key derivation function (KDF) is necessary to implement the EC
 encryption.  The Concatenation Key Derivation Function (Approved
 Alternative 1) [](#SP800-56A) with the KDF hash function that is
-SHA2-256 [](#FIPS180) or stronger is REQUIRED.  See Section
-12{FIXME} for the details regarding the choice of the hash function.
+SHA2-256 [](#FIPS180) or stronger is REQUIRED.  See
+[](#compatibility-profiles) for the details regarding the choice of
+the hash function.
 
 For convenience, the synopsis of the encoding method is given below
 with significant simplifications attributable to the restricted choice
@@ -3936,7 +3940,7 @@ normative source of the definition.
     //   hBits - the size of output of hash function Hash
     //   Param - octets representing the parameters
     //   Assumes that oBits <= hBits
-    // Convert the point X to the octet string, see section 6{FIXME}:
+    // Convert the point X to the octet string:
     //   ZB' = 04 || x || y
     // and extract the x portion from ZB'
     ZB = x;
@@ -4002,13 +4006,14 @@ for the NIST curve P-256, 51 for the curves P-384 and P-521, or
 
 The key wrapping method is described in [](#RFC3394).  KDF produces a
 symmetric key that is used as a key-encryption key (KEK) as specified
-in [](#RFC3394).  Refer to Section 13{FIXME} for the details regarding the
-choice of the KEK algorithm, which SHOULD be one of three AES
-algorithms.  Key wrapping and unwrapping is performed with the default
-initial value of [](#RFC3394).
+in [](#RFC3394).  Refer to [](#security-considerations) for the
+details regarding the choice of the KEK algorithm, which SHOULD be one
+of three AES algorithms.  Key wrapping and unwrapping is performed
+with the default initial value of [](#RFC3394).
 
 The input to the key wrapping method is the value "m" derived from the
-session key, as described in Section 5.1{FIXME}, "Public-Key
+session key, as described in
+[](#public-key-encrypted-session-key-packets-tag-1), "Public-Key
 Encrypted Session Key Packets (Tag 1)", except that the PKCS #1.5
 padding step is omitted.  The result is padded using the method
 described in [](#PKCS5) to the 8-byte granularity.  For example, the
@@ -4063,9 +4068,12 @@ recipient obtains the shared secret by calculating
 
     S = rV = rvG, where (r,R) is the recipient's key pair.
 
-Consistent with Section 5.13{FIXME}, "Sym. Encrypted Integrity
-Protected Data Packet (Tag 18)", a Modification Detection Code (MDC)
-MUST be used anytime the symmetric key is protected by ECDH.
+Consistent with [](#aead-encrypted-data-packet-tag-20), "AEAD
+Encrypted Data Packet (Tag 20)" and
+[](#sym.-encrypted-integrity-protected-data-packet-tag-18),
+"Sym. Encrypted Integrity Protected Data Packet (Tag 18)", AEAD
+encryption or a Modification Detection Code (MDC) MUST be used anytime
+the symmetric key is protected by ECDH.
 
 
 # Notes on Algorithms
@@ -4698,7 +4706,7 @@ SHOULD be rejected.
     ECDH.  None of the ECC methods described in this document are
     allowed with deprecated V3 keys.  A compliant application MUST only
     use iterated and salted S2K to protect private keys, as defined in
-    Section 3.7.1.3{FIXME}, "Iterated and Salted S2K".
+    [](#iterated-and-salted-s2k), "Iterated and Salted S2K".
 
     Side channel attacks are a concern when a compliant application's
     use of the OpenPGP format can be modeled by a decryption or signing
@@ -4780,8 +4788,8 @@ implement SHA2-256 and SHOULD implement SHA2-384 and SHA2-512.  A
 compliant application MUST implement AES-128 and SHOULD implement
 AES-256.
 
-A compliant application SHOULD follow Section 13{FIXME} regarding the
-choice of the following algorithms for each curve:
+A compliant application SHOULD follow [](#security-considerations)
+regarding the choice of the following algorithms for each curve:
 
   - the KDF hash algorithm,
   - the KEK algorithm,
@@ -4815,8 +4823,8 @@ SHA2-384.
 
 ## Security Strength at 128 Bits
 
-The set of algorithms in Section 12.2.1{FIXME} is extended to allow NIST
-curve P-256, AES-128, and SHA2-256.
+The set of algorithms in [](#security-strength-at-192-bits) is
+extended to allow NIST curve P-256, AES-128, and SHA2-256.
 
 
 # Implementation Nits
