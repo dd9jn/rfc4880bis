@@ -1965,7 +1965,7 @@ A version 4 packet contains:
     key.
 
   * A series of values comprising the key material.  This is
-    algorithm-specific and described in section XXXX.
+    algorithm-specific and described in [](#algorithm-specific-parts-of-keys).
 
 The version 5 format is similar to the version 4 format except for the
 addition of a count for the key material.  This count helps parsing
@@ -1986,7 +1986,7 @@ A version 5 packet contains:
   * A four-octet scalar octet count for the following key material.
 
   * A series of values comprising the key material.  This is
-    algorithm-specific and described in section XXXX.
+    algorithm-specific and described in [](#algorithm-specific-parts-of-keys).
 
 ### Secret-Key Packet Formats
 
@@ -2029,7 +2029,7 @@ The packet contains:
 
   * Plain or encrypted series of values comprising the secret key
     material.  This is algorithm-specific and described in section
-    XXXX.
+    [](#algorithm-specific-parts-of-keys).
 
   * If the string-to-key usage octet is zero or 255, then a
     two-octet checksum of the plaintext of the algorithm-specific
@@ -4355,9 +4355,10 @@ An implementation SHOULD NOT implement Elgamal keys of size less than
 
 Although the EdDSA algorithm allows arbitrary data as input, its use
 with OpenPGP requires that a digest of the message is used as input
-(pre-hashed).  See section XXXXX, "Computing Signatures" for details.
-Truncation of the resulting digest is never applied; the resulting
-digest value is used verbatim as input to the EdDSA algorithm.
+(pre-hashed).  See section [](#computing-signatures), "Computing
+Signatures" for details.  Truncation of the resulting digest is never
+applied; the resulting digest value is used verbatim as input to the
+EdDSA algorithm.
 
 
 ## Reserved Algorithm Numbers
