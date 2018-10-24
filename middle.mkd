@@ -1504,8 +1504,6 @@ assume a fixed size.  This is so it can grow over time.  If a list is
 shorter than an implementation expects, the unstated flags are
 considered to be zero.  The defined flags are as follows:
 
-Defined features are as follows:
-
 First octet:
 
     0x01 - This key may be used to certify other keys.
@@ -1527,6 +1525,8 @@ First octet:
 Second octet:
 
     0x04 - This key may be used as an additional decryption subkey (ADSK).
+    
+    0x08 - This key may be used for timestamping.
 
 
 Usage notes:
