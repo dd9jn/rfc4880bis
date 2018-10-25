@@ -1504,8 +1504,6 @@ assume a fixed size.  This is so it can grow over time.  If a list is
 shorter than an implementation expects, the unstated flags are
 considered to be zero.  The defined flags are as follows:
 
-Defined features are as follows:
-
 First octet:
 
     0x01 - This key may be used to certify other keys.
@@ -1527,6 +1525,8 @@ First octet:
 Second octet:
 
     0x04 - This key may be used as an additional decryption subkey (ADSK).
+    
+    0x08 - This key may be used for timestamping.
 
 
 Usage notes:
@@ -1822,7 +1822,7 @@ A version 4 Symmetric-Key Encrypted Session Key packet consists of:
 If the encrypted session key is not present (which can be detected on
 the basis of packet length and S2K specifier size), then the S2K
 algorithm applied to the passphrase produces the session key for
-decrypting the file, using the symmetric cipher algorithm from the
+decrypting the message, using the symmetric cipher algorithm from the
 Symmetric-Key Encrypted Session Key packet.
 
 If the encrypted session key is present, the result of applying the
@@ -3676,8 +3676,8 @@ maintained on the proper User Attribute or User ID packet.
 
 After the User ID packet or Attribute packet, there may be zero or
 more Subkey packets.  In general, subkeys are provided in cases where
-the top-level public key is a signature-only key.  However, any V4 key
-may have subkeys, and the subkeys may be encryption-only keys,
+the top-level public key is a signature-only key.  However, any V4 or
+V5 key may have subkeys, and the subkeys may be encryption-only keys,
 signature-only keys, or general-purpose keys. V3 keys MUST NOT have
 subkeys.
 
