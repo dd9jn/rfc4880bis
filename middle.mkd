@@ -737,7 +737,7 @@ These meanings are as follows:
       certifications, but few differentiate between the types.
 
 0x18
-  :   Subkey Binding Signature This signature is a statement by
+  :   Subkey Binding Signature. This signature is a statement by
       the top-level signing key that indicates that it owns the
       subkey.  This signature is calculated directly on the primary
       key and subkey, and not on any User ID or other packets. A
@@ -747,14 +747,14 @@ These meanings are as follows:
       key and subkey.
 
 0x19
-  :   Primary Key Binding Signature This signature is a statement
+  :   Primary Key Binding Signature. This signature is a statement
       by a signing subkey, indicating that it is owned by the
       primary key and subkey.  This signature is calculated the
       same way as a 0x18 signature: directly on the primary key
       and subkey, and not on any User ID or other packets.
 
 0x1F
-  :   Signature directly on a key This signature is calculated
+  :   Signature directly on a key. This signature is calculated
       directly on a key.  It binds the information in the Signature
       subpackets to the key, and is appropriate to be used for
       subpackets that provide information about the key, such as
@@ -764,14 +764,14 @@ These meanings are as follows:
       name.
 
 0x20
-  :   Key revocation signature The signature is calculated
+  :   Key revocation signature. The signature is calculated
       directly on the key being revoked. A revoked key is not to
       be used.  Only revocation signatures by the key being
       revoked, or by an authorized revocation key, should be
       considered valid revocation signatures.
 
 0x28
-  :   Subkey revocation signature The signature is calculated
+  :   Subkey revocation signature. The signature is calculated
       directly on the subkey being revoked. A revoked subkey is
       not to be used.  Only revocation signatures by the top-level
       signature key that is bound to this subkey, or by an
@@ -779,7 +779,7 @@ These meanings are as follows:
       revocation signatures.
 
 0x30
-  :   Certification revocation signature This signature revokes an
+  :   Certification revocation signature. This signature revokes an
       earlier User ID certification signature (signature class
       0x10 through 0x13) or direct-key signature (0x1F).  It should
       be issued by the same key that issued the revoked signature
