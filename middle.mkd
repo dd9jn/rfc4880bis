@@ -971,7 +971,7 @@ The body of a V4 or V5 Signature packet contains:
       * MPI of EdDSA compressed value s.
 
 The compressed version of R and S for use with EdDSA is described in
-[](#I-D.irtf-cfrg-eddsa).  A version 3 signature MUST NOT be created
+[](#RFC8032).  A version 3 signature MUST NOT be created
 and MUST NOT be used with EdDSA.
 
 The concatenation of the data being signed and the signature data from
@@ -3222,7 +3222,7 @@ algorithms.
        20  Reserved (formerly Elgamal Encrypt or Sign)
        21  Reserved for Diffie-Hellman
                       (X9.42, as defined for IETF-S/MIME)
-       22  EdDSA  [](#I-D.irtf-cfrg-eddsa)
+       22  EdDSA  [](#RFC8032)
        23  Reserved for AEDH
        24  Reserved for AEDSA
  100--110  Private/Experimental algorithm

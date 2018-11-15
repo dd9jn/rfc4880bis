@@ -23,9 +23,9 @@
   <!ENTITY rfc.6090       PUBLIC '' 'reference.RFC.6090.xml'>
   <!ENTITY rfc.7253       PUBLIC '' 'reference.RFC.7253.xml'>
   <!ENTITY rfc.7748       PUBLIC '' 'reference.RFC.7748.xml'>
+  <!ENTITY rfc.8032       PUBLIC '' 'reference.RFC.8032.xml'>
   <!ENTITY rfc.8126       PUBLIC '' 'reference.RFC.8126.xml'>
   <!ENTITY iso.10646      PUBLIC '' 'reference.ISO.10646-1.1993.xml'>
-  <!ENTITY eddsa          PUBLIC '' 'reference.I-D.irtf-cfrg-eddsa.xml'>
 ]>
 <rfc ipr="trust200902" category="std" updates="4880"
      docName="draft-ietf-openpgp-rfc4880bis-06">
@@ -76,7 +76,7 @@
         <email>derek@ihtfp.com</email>
       </address>
     </author>
-    <date month="Oct" year="2018" />
+    <date month="Nov" year="2018" />
     <area>Security</area>
 
     <abstract>
@@ -248,9 +248,8 @@
       &rfc.5870;
       &rfc.7253;
       &rfc.7748;
+      &rfc.8032;
       &rfc.8126;
-
-      &eddsa;
 
       <reference anchor='SCHNEIER'>
         <front>
