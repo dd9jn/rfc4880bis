@@ -123,7 +123,7 @@ Packet header:
 
       d4 4a
 
-Version, EAX, AES-128, Chunk bits (14):
+Version, AES-128, EAX, Chunk bits (14):
 
       01 07 01 0e
 
@@ -235,7 +235,7 @@ Authentication tag:
 
       c5 29 d3 de 31 e1 5b 4a eb  72 9e 33 00 33 db ed
 
-### Starting AEAD-EAX decryption of CEK
+### Starting AEAD-OCB decryption of CEK
 
 The derived key is:
 
@@ -259,7 +259,7 @@ Packet header:
 
       d4 49
 
-Version, EAX, AES-128, Chunk bits (14):
+Version, AES-128, OCB, Chunk bits (14):
 
       01 07 02 0e
 
@@ -267,7 +267,7 @@ IV:
 
       5e d2 bc 1e 47 0a be 8f 1d 64 4c 7a 6c 8a 56
 
-AEAD-EAX Encrypted data chunk #0:
+AEAD-OCB Encrypted data chunk #0:
 
       7b 0f 77 01 19 66 11 a1  54 ba 9c 25 74 cd 05 62
       84 a8 ef 68 03 5c
@@ -373,6 +373,7 @@ other values might also be interesting for other ECC specifications:
   - Deprectated the creation of V3 signatures.
   - Adapted terms from RFC 8126.
   - Removed editorial marks and updated cross-references.
+  - Added the timestamping usage key flag.
 
   <!-- To avoid warnings from pandoc2rfc we add some references -->
   { Informational rfcs: [](#RFC1423) }
