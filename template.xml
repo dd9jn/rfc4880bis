@@ -18,6 +18,7 @@
   <!ENTITY rfc.3629       PUBLIC '' 'reference.RFC.3629.xml'>
   <!ENTITY rfc.3713       PUBLIC '' 'reference.RFC.3713.xml'>
   <!ENTITY rfc.4086       PUBLIC '' 'reference.RFC.4086.xml'>
+  <!ENTITY rfc.4880       PUBLIC '' 'reference.RFC.4880.xml'>
   <!ENTITY rfc.5639       PUBLIC '' 'reference.RFC.5639.xml'>
   <!ENTITY rfc.5870       PUBLIC '' 'reference.RFC.5870.xml'>
   <!ENTITY rfc.6090       PUBLIC '' 'reference.RFC.6090.xml'>
@@ -27,7 +28,7 @@
   <!ENTITY rfc.8126       PUBLIC '' 'reference.RFC.8126.xml'>
   <!ENTITY iso.10646      PUBLIC '' 'reference.ISO.10646-1.1993.xml'>
 ]>
-<rfc ipr="trust200902" category="std" updates="4880"
+<rfc ipr="trust200902" category="std" obsoletes="4880, 5581, 6637"
      docName="draft-ietf-openpgp-rfc4880bis-06">
 
 <?rfc toc="yes"?>
@@ -300,6 +301,18 @@
     </references>
 
     <references title="Informative References">
+
+      <reference anchor='BLEICHENBACHER'>
+        <front>
+          <title>Generating ElGamal Signatures Without Knowing the Secret
+                 Key</title>
+          <author surname='Bleichenbacher' initials='D.' />
+          <date year='1996' />
+        </front>
+        <seriesInfo name='Lecture Notes in Computer Science'
+                    value='Volume 1070, pp. 10-18' />
+      </reference>
+
       <reference anchor='KOBLITZ'>
         <front>
         <title>A course in number theory and
@@ -312,6 +325,7 @@
       &rfc.1423;
       &rfc.1991;
       &rfc.2440;
+      &rfc.4880;
       &rfc.6090;
       <reference anchor='SEC1'>
         <front>

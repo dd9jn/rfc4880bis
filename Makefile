@@ -6,6 +6,7 @@ all: $(OUTPUTS)
 
 draft.txt: abstract.mkd middle.mkd back.mkd
 	pandoc2rfc -T abstract.mkd middle.mkd back.mkd
+	sed -i 's/R.  Zimmermann/R. Zimmermann/' draft.txt
 
 draft.xml: abstract.mkd middle.mkd back.mkd
 	pandoc2rfc -X abstract.mkd middle.mkd back.mkd
