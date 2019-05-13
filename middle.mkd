@@ -1686,15 +1686,17 @@ hashed directly.  For text document signatures (type 0x01), the
 document is canonicalized by converting line endings to &lt;CR>&lt;LF>, and
 the resulting data is hashed.
 
-When a signature is made over a key, the hash data starts with the
+When a V4 signature is made over a key, the hash data starts with the
 octet 0x99, followed by a two-octet length of the key, and then body
-of the key packet. (Note that this is an old-style packet header for a
-key packet with two-octet length.) A subkey binding signature (type
-0x18) or primary key binding signature (type 0x19) then hashes the
-subkey using the same format as the main key (also using 0x99 as the
-first octet).  Primary key revocation signatures (type 0x20) hash only
-the key being revoked.  Subkey revocation signature (type 0x28) hash
-first the primary key and then the subkey being revoked.
+of the key packet; when a V5 signature is made over a key, the hash
+data starts with the octet 0x9a, followed by a four-octet length of
+the key, and then body of the key packet.  A subkey binding signature
+(type 0x18) or primary key binding signature (type 0x19) then hashes
+the subkey using the same format as the main key (also using 0x99 or
+0x9a as the first octet).  Primary key revocation signatures (type
+0x20) hash only the key being revoked.  Subkey revocation signature
+(type 0x28) hash first the primary key and then the subkey being
+revoked.
 
 A certification signature (type 0x10 through 0x13) hashes the User ID
 being bound to the key into the hash context after the above data. A
@@ -1762,7 +1764,7 @@ depends on the version of the signature.
 
        The three data items hashed for document signatures need to
        mirror the values of the Literal Data packet.  For detached
-       signatures 6 zero bytes are hashed instead.
+       and cleartext signatures 6 zero bytes are hashed instead.
 
 
 After all this has been hashed in a single hash context, the resulting
@@ -2013,9 +2015,9 @@ A version 5 packet contains:
   * A one-octet number denoting the public-key algorithm of this
     key.
 
-  * A four-octet scalar octet count for the following key material.
+  * A four-octet scalar octet count for the following public key material.
 
-  * A series of values comprising the key material.  This is
+  * A series of values comprising the public key material.  This is
     algorithm-specific and described in [](#algorithm-specific-parts-of-keys).
 
 ### Secret-Key Packet Formats
@@ -2037,8 +2039,8 @@ The packet contains:
   * Only for a version 5 packet, a one-octet scalar octet count of the
     next 4 optional fields.
 
-  * [Optional] If string-to-key usage octet was 255, 254, or 253, a one-
-    octet symmetric encryption algorithm.
+  * [Optional] If string-to-key usage octet was 255, 254, or 253, a
+    one-octet symmetric encryption algorithm.
 
   * [Optional] If string-to-key usage octet was 253, a one-octet AEAD
     algorithm.
@@ -2055,22 +2057,21 @@ The packet contains:
     are used and the remaining bits MUST be zero.
 
   * Only for a version 5 packet, a four-octet scalar octet count for
-    the following key material.
+    the following secret key material.  This includes the encrypted
+    SHA-1 hash or AEAD tag if the string-to-key usage octet is 254 or
+    253.
 
   * Plain or encrypted series of values comprising the secret key
     material.  This is algorithm-specific and described in section
-    [](#algorithm-specific-parts-of-keys).
+    [](#algorithm-specific-parts-of-keys).  Note that if the
+    string-to-key usage octet is 254, a 20-octet SHA-1 hash of the
+    plaintext of the algorithm-specific portion is appended to
+    plaintext and encrypted with it.  If the string-to-key usage octet
+    is 253, then an AEAD authentication tag is part of that data.
 
   * If the string-to-key usage octet is zero or 255, then a
     two-octet checksum of the plaintext of the algorithm-specific
-    portion (sum of all octets, mod 65536).  If the string-to-key
-    usage octet was 254, then a 20-octet SHA-1 hash of the
-    plaintext of the algorithm-specific portion.  This checksum or
-    hash is encrypted together with the algorithm-specific fields
-    (if string-to-key usage octet is not zero).  If the string-to-key
-    usage octet was 253, then an AEAD authentication tag is included
-    here.  Note that for all other values, a two-octet checksum is
-    required.
+    portion (sum of all octets, mod 65536).
 
 Note that the version 5 packet format adds two count values
 to help parsing packets with unknown S2K or public key algorithms.
@@ -2281,7 +2282,7 @@ implementation uses more bits of compression, PGP V2.6 cannot
 decompress it.
 
 ZLIB-compressed packets are compressed with RFC 1950 [](#RFC1950)
-ZLIB- style blocks.
+ZLIB-style blocks.
 
 BZip2-compressed packets are compressed using the BZip2 [](#BZ2)
 algorithm.
@@ -3322,8 +3323,9 @@ MAY implement any other algorithm.
  100--110  Private/Experimental algorithm
 
 Implementations MUST implement uncompressed data.  Implementations
-SHOULD implement ZIP.  Implementations MAY implement any other
-algorithm.
+SHOULD implement ZLIB.  For interoperability reasons implementations
+SHOULD be able to decompress using ZIP.  Implementations MAY implement
+any other algorithm.
 
 ## Hash Algorithms
 
@@ -4230,7 +4232,7 @@ Steps:
         If the hash function outputs "message too long," output
         "message too long" and stop.
 
-     2. Using the list in Section 5.2.2, "Version 2 Signature Packet
+     2. Using the list in Section {FIXREF} 5.2.2, "Version 2 Signature Packet
         Format", produce an ASN.1 DER value for the hash function
         used.  Let T be the full hash prefix from the list, and let
         tLen be the length in octets of T.
