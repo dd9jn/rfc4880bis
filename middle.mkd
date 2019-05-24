@@ -2652,7 +2652,7 @@ plaintext.  Any failure SHOULD be reported to the user.
       cross-grade attack would replace SHA-1 with another 160-bit
       hash, such as RIPE-MD/160, for example.)
 
-      However, no update will be needed becuase the MDC will be
+      However, no update will be needed because the MDC will be
       replaced by the AEAD encryption described in this document.
 
 ## Modification Detection Code Packet (Tag 19)
@@ -2728,7 +2728,10 @@ After the final chunk, the AEAD algorithm is used to produce a final
 authentication tag encrypting the empty string.  This AEAD instance is
 given the additional data specified above, plus an eight-octet,
 big-endian value specifying the total number of plaintext octets
-encrypted.  This allows detection of a truncated ciphertext.
+encrypted.  This allows detection of a truncated ciphertext.  Please
+note that the big-endian number representing the chunk index in the
+additional data is increased accordingly, although it's not really a
+chunk.
 
 The chunk size octet specifies the size of chunks using the following
 formula (in C), where c is the chunk size octet:
