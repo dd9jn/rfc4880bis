@@ -2833,7 +2833,7 @@ initialization.
 
       <CODE BEGINS>
       #define CRC24_INIT 0xB704CEL
-      #define CRC24_POLY 0x1864CFBL
+      #define CRC24_POLY 0x864CFBL
 
       typedef long crc24;
       crc24 crc_octets(unsigned char *octets, size_t len)
