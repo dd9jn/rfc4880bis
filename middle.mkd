@@ -1058,6 +1058,7 @@ The value of the subpacket type octet may be:
           32   Embedded Signature
           33   Issuer Fingerprint
           34   Preferred AEAD Algorithms
+          37   Attested Certifications
   100 to 110   Private or experimental
 
 An implementation SHOULD ignore any subpacket of a type that it does
@@ -1451,9 +1452,15 @@ This is a list of one-bit flags that indicate preferences that the key
 holder has about how the key is handled on a key server.  All undefined
 flags MUST be zero.
 
-First octet: 0x80 = No-modify the key holder requests that this key
-only be modified or updated by the key holder or an administrator of
-the key server.
+First octet: 0x80 = No-modify
+
+    The key holder requests that this key only be modified or updated
+    by the key holder or an administrator of the key server.
+
+    If No-modify is set on the most recent self-sig over a user ID,
+    then a keyserver should only redistribute those third-party
+    certifications over that user ID that have been attested to within
+    the self-sig (see "Attested Certifications" below).
 
 This is found only on a self-signature.
 
@@ -1675,6 +1682,62 @@ signature, the key ID of the Issuer subpacket MUST match the low
 Note that the length N of the fingerprint for a version 4 key is 20
 octets; for a version 5 key N is 32.
 
+#### Attested Certifications
+
+(N octets of certification digests)
+
+This subpacket only appears in a self-signature as a hashed subpacket,
+attesting to a set of third-party certifications over the same
+underlying data that the self-signature is made.  This subpacket
+enables the holder of an OpenPGP primary key to mark specific
+third-party certifications over their User ID as re-distributable with
+the rest of the transferable public key (see the "No-modify" flag in
+"Key Server Preferences", above).  Implementations SHOULD include at
+most one Attested Certification subpacket in any generated self-sig.
+
+The contents of the subpacket consists of an ordered series of digests
+using the same hash algorithm used by the signature itself.  Each
+digest is made over one third-party signature (a Certification, of
+signature type 0x10-0x13) that covers the same Primary Key and User ID
+(or User Attribute).  For example, a self-signature made by key X over
+user ID U using hash algorithm SHA512 might contain an Attested
+Certifications subpacket of 192 octets (3*64 octets) covering three
+third-party certification Signatures over <X,U>.  They MUST be ordered
+by binary hash value, so a hash with hexadecimal value
+037a... precedes a hash with value 0392..., etc.  The length of this
+subpacket MUST be an integer multiple of the length of the hash
+algorithm used for the signature.
+
+The listed digests MUST be calculated over the third-party
+certification Signature packet as described in the "Computing
+Signatures" section, but without a trailer: the hash data starts with
+the octet 0x88, followed by the four-octet length of the Signature,
+and then the body of the Signature packet. (Note that this is an
+old-style packet header for a Signature packet with the
+length-of-length field set to zero.)  The unhashed subpacket data of
+the Signature packet being hashed is not included in the hash, and the
+unhashed subpacket data length value is set to zero.
+
+If an implementation encounters more than one such subpacket in a
+self-sig, it MUST treat it as a self-sig with a single Attested
+Certifications subpacket containing the union of all hashes.
+
+As with other subpackets, The Attested Certifications subpacket in the
+most recent self-sig over a given user ID supersedes all Attested
+Certifications subpackets from any previous self-sig.
+
+If a keyholder Alice has already attested to third-party
+certifications from Bob and Carol and she wants to add an attestation
+to a certification from David, she should issue a new self-sig (with a
+more recent Signature Creation timestamp) that contains an Attested
+Certifications subpacket covering all three third-party
+certifications.
+
+If she later decides that she does not want Carol's certification to be
+redistributed with her certificate, she can issue a new self-sig
+(again, with a more recent Signature Creation timestamp) that contains
+an Attested Certifications subpacket covering only the certifications
+from Bob and David.
 
 ### Computing Signatures
 
