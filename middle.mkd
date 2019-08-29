@@ -735,6 +735,20 @@ These meanings are as follows:
       certifications.  Some implementations can issue 0x11-0x13
       certifications, but few differentiate between the types.
 
+0x16
+  :   Attestion Key Signature.  This signature is issued by the primary
+      key over itself and its user ID (or user attribute).  It MUST
+      contain an "Attested Certifications" subpacket and a "Signature
+      Creation Time" subpacket.  This type of key signature does not
+      replace or override any standard certification (0x10-0x13).
+
+      Only the most recent Attestation Key Signature is valid for any
+      given <key,userid> pair.  If more than one Certification
+      Attestation Key Signature is present with the same Signature
+      Creation Time, the set of attestations should be treated as the
+      union of all "Attested Certifications" subpackets from all such
+      signatures with the same timestamp.
+
 0x18
   :   Subkey Binding Signature. This signature is a statement by
       the top-level signing key that indicates that it owns the
@@ -1459,8 +1473,9 @@ First octet: 0x80 = No-modify
 
     If No-modify is set on the most recent self-sig over a user ID,
     then a keyserver should only redistribute those third-party
-    certifications over that user ID that have been attested to within
-    the self-sig (see "Attested Certifications" below).
+    certifications over that user ID that have been attested to in the
+    most recent Attestation Key Signature packet (see "Attested
+    Certifications" below).
 
 This is found only on a self-signature.
 
@@ -1686,30 +1701,33 @@ octets; for a version 5 key N is 32.
 
 (N octets of certification digests)
 
-This subpacket only appears in a self-signature as a hashed subpacket,
-attesting to a set of third-party certifications over the same
-underlying data that the self-signature is made.  This subpacket
+This subpacket MUST only appear as a hashed subpacket of an
+Attestation Key Signature.  It has no meaning in any other signature
+type.  It is used by the primary key to attest to a set of third-party
+certifications over the associated User ID or User Attribute.  This
 enables the holder of an OpenPGP primary key to mark specific
-third-party certifications over their User ID as re-distributable with
-the rest of the transferable public key (see the "No-modify" flag in
-"Key Server Preferences", above).  Implementations SHOULD include at
-most one Attested Certification subpacket in any generated self-sig.
+third-party certifications as re-distributable with the rest of the
+Transferable Public Key (see the "No-modify" flag in "Key Server
+Preferences", above).  Implementations MUST include exactly one
+Attested Certification subpacket in any generated Attestation Key
+Signature.
 
-The contents of the subpacket consists of an ordered series of digests
-using the same hash algorithm used by the signature itself.  Each
-digest is made over one third-party signature (a Certification, of
+The contents of the subpacket consists of a series of digests using
+the same hash algorithm used by the signature itself.  Each digest is
+made over one third-party signature (any Certification, i.e.,
 signature type 0x10-0x13) that covers the same Primary Key and User ID
-(or User Attribute).  For example, a self-signature made by key X over
-user ID U using hash algorithm SHA512 might contain an Attested
-Certifications subpacket of 192 octets (3*64 octets) covering three
-third-party certification Signatures over <X,U>.  They MUST be ordered
-by binary hash value, so a hash with hexadecimal value
-037a... precedes a hash with value 0392..., etc.  The length of this
-subpacket MUST be an integer multiple of the length of the hash
-algorithm used for the signature.
+(or User Attribute).  For example, an Attestation Key Signature made
+by key X over user ID U using hash algorithm SHA256 might contain an
+Attested Certifications subpacket of 192 octets (6*32 octets) covering
+six third-party certification Signatures over <X,U>.  They SHOULD be
+ordered by binary hash value from low to high (e.g., a hash with
+hexadecimal value 037a... precedes a hash with value 0392..., etc).
+The length of this subpacket MUST be an integer multiple of the length
+of the hash algorithm used for the enclosing Attestation Key
+Signature.
 
 The listed digests MUST be calculated over the third-party
-certification Signature packet as described in the "Computing
+certification's Signature packet as described in the "Computing
 Signatures" section, but without a trailer: the hash data starts with
 the octet 0x88, followed by the four-octet length of the Signature,
 and then the body of the Signature packet. (Note that this is an
@@ -1718,26 +1736,36 @@ length-of-length field set to zero.)  The unhashed subpacket data of
 the Signature packet being hashed is not included in the hash, and the
 unhashed subpacket data length value is set to zero.
 
-If an implementation encounters more than one such subpacket in a
-self-sig, it MUST treat it as a self-sig with a single Attested
+If an implementation encounters more than one such subpacket in an
+Attestation Key Signature, it MUST treat it as a single Attested
 Certifications subpacket containing the union of all hashes.
 
-As with other subpackets, The Attested Certifications subpacket in the
-most recent self-sig over a given user ID supersedes all Attested
-Certifications subpackets from any previous self-sig.
+The Attested Certifications subpacket in the most recent Attestation
+Key Signature over a given user ID supersedes all Attested
+Certifications subpackets from any previous Attestation Key Signature.
+However, note that if more than one Attestation Key Signatures has the
+same (most recent) Signature Creation Time subpacket, implementations
+MUST consider the union of the attestations of all Attestation Key
+Signatures (this allows the keyholder to attest to more third-party
+certifications than could fit in a single Attestation Key Signature).
 
 If a keyholder Alice has already attested to third-party
 certifications from Bob and Carol and she wants to add an attestation
-to a certification from David, she should issue a new self-sig (with a
-more recent Signature Creation timestamp) that contains an Attested
-Certifications subpacket covering all three third-party
-certifications.
+to a certification from David, she should issue a new Attestation Key
+Signature (with a more recent Signature Creation timestamp) that
+contains an Attested Certifications subpacket covering all three
+third-party certifications.
 
-If she later decides that she does not want Carol's certification to be
-redistributed with her certificate, she can issue a new self-sig
-(again, with a more recent Signature Creation timestamp) that contains
-an Attested Certifications subpacket covering only the certifications
-from Bob and David.
+If she later decides that she does not want Carol's certification to
+be redistributed with her certificate, she can issue a new Attestation
+Key Signature (again, with a more recent Signature Creation timestamp)
+that contains an Attested Certifications subpacket covering only the
+certifications from Bob and David.
+
+Note that Certification Revocation Signatures are not relevant for
+Attestation Key Signatures.  To rescind all attestations, the primary
+key holder needs only to publish a more recent Attestation Key
+Signature with an empty Attested Certifications subpacket.
 
 ### Computing Signatures
 
@@ -1769,6 +1797,10 @@ constant 0xB4 for User ID certifications or the constant 0xD1 for User
 Attribute certifications, followed by a four-octet number giving the
 length of the User ID or User Attribute data, and then the User ID or
 User Attribute data.
+
+An Attestation Key Signature (0x16) hashes the same data boy that a
+standard certification signature does: primary key, followed by User
+ID or User Attribute.
 
 When a signature is made over a Signature packet (type 0x50,
 "Third-Party Confirmation signature"), the hash data starts with the
@@ -3709,12 +3741,12 @@ transferable public key are as follows:
   - Zero or more User ID packets
 
   - After each User ID packet, zero or more Signature packets
-    (certifications)
+    (certifications and attestation key signatures)
 
   - Zero or more User Attribute packets
 
   - After each User Attribute packet, zero or more Signature packets
-    (certifications)
+    (certifications and attestation key signatures)
 
   - Zero or more Subkey packets
 
@@ -3734,6 +3766,10 @@ immediately preceding User ID packet and the initial Public-Key
 packet.  The signature serves to certify the corresponding public key
 and User ID.  In effect, the signer is testifying to his or her belief
 that this public key belongs to the user identified by this User ID.
+Intermixed with these certifications may be Attestation Key Signature
+packets issued by the primary key over the same User ID and Public Key
+packet. The most recent of these is used to attest to third-party
+certifications over the associated User ID.
 
 Within the same section as the User ID packets, there are zero or more
 User Attribute packets.  Like the User ID packets, a User Attribute
