@@ -743,7 +743,7 @@ These meanings are as follows:
       replace or override any standard certification (0x10-0x13).
 
       Only the most recent Attestation Key Signature is valid for any
-      given <key,userid> pair.  If more than one Certification
+      given \<key,userid\> pair.  If more than one Certification
       Attestation Key Signature is present with the same Signature
       Creation Time, the set of attestations should be treated as the
       union of all "Attested Certifications" subpackets from all such
@@ -1719,7 +1719,7 @@ signature type 0x10-0x13) that covers the same Primary Key and User ID
 (or User Attribute).  For example, an Attestation Key Signature made
 by key X over user ID U using hash algorithm SHA256 might contain an
 Attested Certifications subpacket of 192 octets (6*32 octets) covering
-six third-party certification Signatures over <X,U>.  They SHOULD be
+six third-party certification Signatures over \<X,U\>.  They SHOULD be
 ordered by binary hash value from low to high (e.g., a hash with
 hexadecimal value 037a... precedes a hash with value 0392..., etc).
 The length of this subpacket MUST be an integer multiple of the length
