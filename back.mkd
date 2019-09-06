@@ -373,6 +373,8 @@ other values might also be interesting for other ECC specifications:
   - Adapted terms from RFC 8126.
   - Removed editorial marks and updated cross-references.
   - Added the timestamping usage key flag.
+  - Added Intended Recipient signature subpacket.
+  - Added Attested Certifications signature subpacket and signature class.
 
   <!-- To avoid warnings from pandoc2rfc we add some references -->
   { Informational rfcs: [](#RFC1423) }

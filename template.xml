@@ -29,7 +29,7 @@
   <!ENTITY iso.10646      PUBLIC '' 'reference.ISO.10646-1.1993.xml'>
 ]>
 <rfc ipr="trust200902" category="std" obsoletes="4880, 5581, 6637"
-     docName="draft-ietf-openpgp-rfc4880bis-07">
+     docName="draft-ietf-openpgp-rfc4880bis-08">
 
 <?rfc toc="yes"?>
 <?rfc symrefs="yes"?>
@@ -77,7 +77,13 @@
         <email>derek@ihtfp.com</email>
       </address>
     </author>
-    <date month="May" year="2019" />
+    <author fullname="Daniel Kahn Gillmor" surname="Gillmor"
+            initials="D. K. G.">
+      <address>
+        <email>dkg@fifthhorseman.net</email>
+      </address>
+    </author>
+    <date month="September" year="2019" />
     <area>Security</area>
 
     <abstract>
