@@ -87,13 +87,16 @@ for f in "$@"; do
         exit 1
     fi
     [[ -n "$VERBOSE" ]] && echo pandoc -t docbook -s $f \| xsltproc $NONET $TRANS - \> "$base".xml >&2
-    pandoc -t docbook -s "$f" | xsltproc $NONET $TRANS - > "$base".xml || exit 1
+    pandoc -t docbook -s "$f" | sed '2,5 c <!DOCTYPE article \
+         PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" \
+	  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">\
+	  <article>' | xsltproc $NONET $TRANS - > "$base".xml || exit 1
     XML="$XML $base.xml"
 done
 # if XML is filled we have files to process otherwise process stdin
 if [[ -n "$XML" ]]; then
-    [[ -n "$VERBOSE" ]] && echo xml2rfc $Q $TEMPLATE $OUT \&\& $RM $XML >&2
-    xml2rfc $Q $TEMPLATE $OUT && $RM $XML
+    [[ -n "$VERBOSE" ]] && echo xml2rfc -n $Q $TEMPLATE $OUT \&\& $RM $XML >&2
+    xml2rfc -n $Q $TEMPLATE $OUT && $RM $XML
     if [[ -n "$MARKUP" ]]; then
         [[ -n "$VERBOSE" ]] && echo rfcmarkup url=file:///$PWD/draft.txt \> draft.html \&\& rm draft.txt >&2
         rfcmarkup url=file:///$PWD/draft.txt > draft.html && rm draft.txt
