@@ -932,7 +932,7 @@ These meanings are as follows:
   :   Signature of a canonical text document.  This means the
       signer owns it, created it, or certifies that it has not
       been modified.  The signature is calculated over the text
-      data with its line endings converted to &lt;CR>&lt;LF>.
+      data with its line endings converted to \<CR>\<LF>.
 
 0x02
   :   Standalone signature.  This signature is a signature of only
@@ -2021,7 +2021,7 @@ and then using the resulting hash in the signature algorithm.
 
 For binary document signatures (type 0x00), the document data is
 hashed directly.  For text document signatures (type 0x01), the
-document is canonicalized by converting line endings to &lt;CR>&lt;LF>, and
+document is canonicalized by converting line endings to \<CR>\<LF>, and
 the resulting data is hashed.
 
 When a V4 signature is made over a key, the hash data starts with the
@@ -2734,7 +2734,7 @@ The body of this packet consists of:
 
   * The remainder of the packet is literal data.
 
-    Text data is stored with &lt;CR>&lt;LF> text endings (i.e.,
+    Text data is stored with \<CR>\<LF> text endings (i.e.,
     network-normal line endings).  These should be converted to
     native line endings by the receiving software.
 
@@ -3498,8 +3498,8 @@ dash.  The message digest is computed using the cleartext itself, not
 the dash-escaped form.
 
 As with binary signatures on text documents, a cleartext signature is
-calculated on the text using canonical &lt;CR>&lt;LF> line
-endings.  The line ending (i.e., the &lt;CR>&lt;LF>) before the
+calculated on the text using canonical \<CR>\<LF> line
+endings.  The line ending (i.e., the \<CR>\<LF>) before the
 '-----BEGIN PGP SIGNATURE-----' line that terminates the signed text
 is not considered part of the signed text.
 
