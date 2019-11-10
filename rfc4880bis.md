@@ -4,7 +4,9 @@ docname: draft-ietf-openpgp-rfc4880bis-08
 date: 2019-09-06
 category: std
 
+obsoletes: 4880, 5581, 6637
 ipr: trust200902
+consensus: yes
 area: sec
 workgroup: Network Working Group
 keyword: Internet-Draft
@@ -22,7 +24,7 @@ author:
     email: wk@gnupg.org
     uri: https://gnupg.org/verein
  -
-    ins: B. M. Carlson
+    ins: B. Carlson
     name: brian m. carlson
     email: sandals@crustytoothpaste.net
  -
@@ -77,6 +79,50 @@ informative:
     seriesinfo:
      NIST Special Publication: 800-57
 normative:
+ BZ2:
+    target: http://www.bzip.org/
+    title: The Bzip2 and libbzip2 home page
+    date: 2010
+    author:
+     ins: J. Seward
+     name: Julian Seward, jseward@acm.org
+ ELGAMAL:
+    title: A Public-Key Cryptosystem and a Signature Scheme Based on Discrete Logarithms
+    date: 1985
+    author:
+     ins: T. Elgamal
+    seriesinfo:
+     IEEE Transactions on Information Theory: v. IT-31, n. 4, 1985, pp. 469-472
+ FIPS180:
+    target: http://dx.doi.org/10.6028/NIST.FIPS.180-4
+    title: Secure Hash Standard (SHS), FIPS 180-4
+    author:
+     org: National Institute of Standards and Technology, U.S. Department of Commerce
+    date: August 2015
+ FIPS186:
+    target: http://dx.doi.org/10.6028/NIST.FIPS.186-4
+    title: Digital Signature Standard (DSS), FIPS 186-4
+    author:
+     org: National Institute of Standards and Technology, U.S. Department of Commerce
+    date: July 2013
+ ISO10646:
+    title: "Information Technology - Universal Multiple-octet coded Character Set (UCS) - Part 1: Architecture and Basic Multilingual Plane"
+    author:
+     org: International Organization for Standardization
+    date: May 1993
+    seriesinfo:
+     ISO: Standard 10646-1
+ JFIF:
+    title: JPEG File Interchange Format (Version 1.02).
+    author:
+     org: C-Cube Microsystems
+     name: Eric Hamilton, Milpitas, CA
+    date: September 1996
+ PKCS5:
+    title: "PKCS #5 v2.0: Password-Based Cryptography Standard"
+    author:
+     org: RSA Laboratories
+    date: 1999-03-25
  RFC1950:
  RFC1951:
  RFC2045:
@@ -95,6 +141,46 @@ normative:
  RFC7748:
  RFC8032:
  RFC8126:
+ SCHNEIER:
+    title: "Applied Cryptography Second Edition: protocols, algorithms, and source code in C"
+    author:
+     ins: B. Schneier
+     name: Bruce Schneier
+    date: 1996
+ SP800-56A:
+    title: Recommendation for Pair-Wise Key Establishment Schemes Using Discrete Logarithm Cryptography
+    author:
+     -
+      ins: E. Barker
+     -
+      ins: D. Johnson
+     -
+      ins: M. Smid
+    date: March 2007
+    seriesinfo:
+     NIST Special Publication: 800-56A Revision 1
+ SuiteB:
+    target: http://www.nsa.gov/ia/programs/suiteb_cryptography/
+    title: NSA Suite B Cryptography
+    author:
+     org: National Security Agency
+    date: 2010-03-11
+ TWOFISH:
+    title: The Twofish Encryption Algorithm
+    author:
+     -
+      ins: B. Schneier
+     -
+      ins: J. Kelsey
+     -
+      ins: D. Whiting
+     -
+      ins: D. Wagner
+     -
+      ins: C. Hall
+     -
+      ins: N. Ferguson
+    date: 1999
 
 --- abstract
 
@@ -4356,7 +4442,7 @@ recipient obtains the shared secret by calculating
 
 Consistent with [](#aead-encrypted-data-packet-tag-20), "AEAD
 Encrypted Data Packet (Tag 20)" and
-[](#sym.-encrypted-integrity-protected-data-packet-tag-18),
+[](#sym-encrypted-integrity-protected-data-packet-tag-18),
 "Sym. Encrypted Integrity Protected Data Packet (Tag 18)", AEAD
 encryption or a Modification Detection Code (MDC) MUST be used anytime
 the symmetric key is protected by ECDH.
