@@ -530,13 +530,13 @@ symmetrically encrypted messages.
 There are three types of S2K specifiers currently supported, and some
 reserved values:
 
-          ID  S2K Type
-  ----------  --------
-           0  Simple S2K
-           1  Salted S2K
-           2  Reserved value
-           3  Iterated and Salted S2K
-  100 to 110  Private/Experimental S2K
+ID | S2K Type
+---:|------------------
+  0 | Simple S2K
+  1 | Salted S2K
+  2 | Reserved value
+  3 | Iterated and Salted S2K
+100 to 110 | Private/Experimental S2K
 
 These are described in the following Sections.
 
@@ -851,28 +851,28 @@ old format headers can only have tags less than 16, whereas new format
 headers can have tags as great as 63.  The defined tags (in decimal)
 are as follows:
 
-       Tag  Packet Type
-  --------  --------------------------------------------------
-         0  Reserved - a packet tag MUST NOT have this value
-         1  Public-Key Encrypted Session Key Packet
-         2  Signature Packet
-         3  Symmetric-Key Encrypted Session Key Packet
-         4  One-Pass Signature Packet
-         5  Secret-Key Packet
-         6  Public-Key Packet
-         7  Secret-Subkey Packet
-         8  Compressed Data Packet
-         9  Symmetrically Encrypted Data Packet
-        10  Marker Packet
-        11  Literal Data Packet
-        12  Trust Packet
-        13  User ID Packet
-        14  Public-Subkey Packet
-        17  User Attribute Packet
-        18  Sym. Encrypted and Integrity Protected Data Packet
-        19  Modification Detection Code Packet
-        20  AEAD Encrypted Data Packet
-  60 to 63  Private or Experimental Values
+Tag | Packet Type
+---:|--------------------------------------------------
+  0 | Reserved - a packet tag MUST NOT have this value
+  1 | Public-Key Encrypted Session Key Packet
+  2 | Signature Packet
+  3 | Symmetric-Key Encrypted Session Key Packet
+  4 | One-Pass Signature Packet
+  5 | Secret-Key Packet
+  6 | Public-Key Packet
+  7 | Secret-Subkey Packet
+  8 | Compressed Data Packet
+  9 | Symmetrically Encrypted Data Packet
+ 10 | Marker Packet
+ 11 | Literal Data Packet
+ 12 | Trust Packet
+ 13 | User ID Packet
+ 14 | Public-Subkey Packet
+ 17 | User Attribute Packet
+ 18 | Sym. Encrypted and Integrity Protected Data Packet
+ 19 | Modification Detection Code Packet
+ 20 | AEAD Encrypted Data Packet
+60 to 63 | Private or Experimental Values
 
 
 #  Packet Types
@@ -1322,42 +1322,42 @@ Partial Body Lengths.  That is:
 
 The value of the subpacket type octet may be:
 
-        Type   Description
-  ----------   ---------------------------------------
-           0   Reserved
-           1   Reserved
-           2   Signature Creation Time
-           3   Signature Expiration Time
-           4   Exportable Certification
-           5   Trust Signature
-           6   Regular Expression
-           7   Revocable
-           8   Reserved
-           9   Key Expiration Time
-          10   Placeholder for backward compatibility
-          11   Preferred Symmetric Algorithms
-          12   Revocation Key
-    13 to 15   Reserved
-          16   Issuer
-    17 to 19   Reserved
-          20   Notation Data
-          21   Preferred Hash Algorithms
-          22   Preferred Compression Algorithms
-          23   Key Server Preferences
-          24   Preferred Key Server
-          25   Primary User ID
-          26   Policy URI
-          27   Key Flags
-          28   Signer's User ID
-          29   Reason for Revocation
-          30   Features
-          31   Signature Target
-          32   Embedded Signature
-          33   Issuer Fingerprint
-          34   Preferred AEAD Algorithms
-          35   Intended Recipient Fingerprint
-          37   Attested Certifications
-  100 to 110   Private or experimental
+Type | Description
+---:|---------------------------------------
+  0 | Reserved
+  1 | Reserved
+  2 | Signature Creation Time
+  3 | Signature Expiration Time
+  4 | Exportable Certification
+  5 | Trust Signature
+  6 | Regular Expression
+  7 | Revocable
+  8 | Reserved
+  9 | Key Expiration Time
+ 10 | Placeholder for backward compatibility
+ 11 | Preferred Symmetric Algorithms
+ 12 | Revocation Key
+13 to 15 | Reserved
+ 16 | Issuer
+17 to 19 | Reserved
+ 20 | Notation Data
+ 21 | Preferred Hash Algorithms
+ 22 | Preferred Compression Algorithms
+ 23 | Key Server Preferences
+ 24 | Preferred Key Server
+ 25 | Primary User ID
+ 26 | Policy URI
+ 27 | Key Flags
+ 28 | Signer's User ID
+ 29 | Reason for Revocation
+ 30 | Features
+ 31 | Signature Target
+ 32 | Embedded Signature
+ 33 | Issuer Fingerprint
+ 34 | Preferred AEAD Algorithms
+ 35 | Intended Recipient Fingerprint
+ 37 | Attested Certifications
+100 to 110 | Private or experimental
 
 An implementation SHOULD ignore any subpacket of a type that it does
 not recognize.
@@ -1880,14 +1880,14 @@ certificate was revoked.
 The first octet contains a machine-readable code that denotes the
 reason for the revocation:
 
-     Code  Reason
-  -------  ---------------------------------------------------------
-        0  No reason specified (key revocations or cert revocations)
-        1  Key is superseded (key revocations)
-        2  Key material has been compromised (key revocations)
-        3  Key is retired and no longer used (key revocations)
-       32  User ID information is no longer valid (cert revocations)
-  100-110  Private Use
+Code | Reason
+---:|------------------------------------------------------------
+  0 | No reason specified (key revocations or cert revocations)
+  1 | Key is superseded (key revocations)
+  2 | Key material has been compromised (key revocations)
+  3 | Key is retired and no longer used (key revocations)
+ 32 | User ID information is no longer valid (cert revocations)
+100-110 | Private Use
 
 Following the revocation code is a string of octets that gives
 information about the Reason for Revocation in human-readable form
@@ -2844,11 +2844,11 @@ and is followed by the subpacket specific data.
 
 The following table lists the currently known subpackets:
 
-     Type  Attribute Subpacket
-  -------  ---------------------------------------------------------
-        1  Image Attribute Subpacket
-    [TBD1] User ID Attribute Subpacket
-  100-110  Private/Experimental Use
+Type | Attribute Subpacket
+---:|---------------------------------------------------------
+ 1 | Image Attribute Subpacket
+\[TBD1\] | User ID Attribute Subpacket
+100-110 | Private/Experimental Use
 
 An implementation SHOULD ignore any subpacket of a type that it
 does not recognize.
@@ -3606,22 +3606,21 @@ algorithms.
 
 ## Public-Key Algorithms
 
-       ID  Algorithm
- --------  ---------
-        1  RSA (Encrypt or Sign) [](#HAC)
-        2  RSA Encrypt-Only [](#HAC)
-        3  RSA Sign-Only [](#HAC)
-       16  Elgamal (Encrypt-Only) [](#ELGAMAL) [](#HAC)
-       17  DSA (Digital Signature Algorithm) [](#FIPS186) [](#HAC)
-       18  ECDH public key algorithm
-       19  ECDSA public key algorithm [](#FIPS186)
-       20  Reserved (formerly Elgamal Encrypt or Sign)
-       21  Reserved for Diffie-Hellman
-                      (X9.42, as defined for IETF-S/MIME)
-       22  EdDSA  [](#RFC8032)
-       23  Reserved for AEDH
-       24  Reserved for AEDSA
- 100--110  Private/Experimental algorithm
+ID | Algorithm
+---:|--------------------------
+  1 | RSA (Encrypt or Sign) [](#HAC)
+  2 | RSA Encrypt-Only [](#HAC)
+  3 | RSA Sign-Only [](#HAC)
+ 16 | Elgamal (Encrypt-Only) [](#ELGAMAL) [](#HAC)
+ 17 | DSA (Digital Signature Algorithm) [](#FIPS186) [](#HAC)
+ 18 | ECDH public key algorithm
+ 19 | ECDSA public key algorithm [](#FIPS186)
+ 20 | Reserved (formerly Elgamal Encrypt or Sign)
+ 21 | Reserved for Diffie-Hellman (X9.42, as defined for IETF-S/MIME)
+ 22 | EdDSA  [](#RFC8032)
+ 23 | Reserved for AEDH
+ 24 | Reserved for AEDSA
+100--110 | Private/Experimental algorithm
 
 Implementations MUST implement RSA (1) and ECDSA (19) for signatures,
 and RSA (1) and ECDH (18) for encryption.  Implementations SHOULD
@@ -3647,25 +3646,16 @@ The parameter curve OID is an array of octets that define a named
 curve.  The table below specifies the exact sequence of bytes for each
 named curve referenced in this document:
 
-  ------------           --- -----------------------        -------------
-  ASN.1 Object           OID Curve OID bytes in             Curve name
-  Identifier             len hexadecimal
-                             representation
-  ------------           --- -----------------------        -------------
-  1.2.840.10045.3.1.7     8  2A 86 48 CE 3D 03 01 07        NIST P-256
+ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representation | Curve name
+------------------------|----|-------------------------------|-------------
+1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256
+1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384
+1.3.132.0.35            | 5  | 2B 81 04 00 23                | NIST P-521
+1.3.36.3.3.2.8.1.1.7    | 9  | 2B 24 03 03 02 08 01 01 07    | brainpoolP256r1
+1.3.36.3.3.2.8.1.1.13   | 9  | 2B 24 03 03 02 08 01 01 0D    | brainpoolP512r1
+1.3.6.1.4.1.11591.15.1  | 9  | 2B 06 01 04 01 DA 47 0F 01    | Ed25519
+1.3.6.1.4.1.3029.1.5.1  | 10 | 2B 06 01 04 01 97 55 01 05 01 | Curve25519
 
-  1.3.132.0.34            5  2B 81 04 00 22                 NIST P-384
-
-  1.3.132.0.35            5  2B 81 04 00 23                 NIST P-521
-
-  1.3.36.3.3.2.8.1.1.7    9  2B 24 03 03 02 08 01 01 07     brainpoolP256r1
-
-  1.3.36.3.3.2.8.1.1.13   9  2B 24 03 03 02 08 01 01 0D     brainpoolP512r1
-
-  1.3.6.1.4.1.11591.15.1  9  2B 06 01 04 01 DA 47 0F 01     Ed25519
-
-  1.3.6.1.4.1.3029.1.5.1  10 2B 06 01 04 01 97 55 01 05 01  Curve25519
-  -----------------------------------------------------------------------
 
 The sequence of octets in the third column is the result of applying
 the Distinguished Encoding Rules (DER) to the ASN.1 Object Identifier
@@ -3678,28 +3668,25 @@ complete ASN.1 DER encoding for the NIST P-256 curve OID is "06 08 2A
 is constructed by omitting the first two octets.  Only the truncated
 sequence of octets is the valid representation of a curve OID.
 
-
 ## Symmetric-Key Algorithms
 
-
-       ID  Algorithm
- --------  ---------
-        0  Plaintext or unencrypted data
-        1  IDEA [](#IDEA)
-        2  TripleDES (DES-EDE, [](#SCHNEIER) [](#HAC)
-                       - 168 bit key derived from 192)
-        3  CAST5 (128 bit key, as per [](#RFC2144))
-        4  Blowfish (128 bit key, 16 rounds) [](#BLOWFISH)
-        5  Reserved
-        6  Reserved
-        7  AES with 128-bit key [](#AES)
-        8  AES with 192-bit key
-        9  AES with 256-bit key
-       10  Twofish with 256-bit key [](#TWOFISH)
-       11  Camellia with 128-bit key [](#RFC3713)
-       12  Camellia with 192-bit key
-       13  Camellia with 256-bit key
- 100--110  Private/Experimental algorithm
+ID | Algorithm
+---:|------------------------------------
+  0 | Plaintext or unencrypted data
+  1 | IDEA [](#IDEA)
+  2 | TripleDES (DES-EDE, [](#SCHNEIER) [](#HAC) - 168 bit key derived from 192)
+  3 | CAST5 (128 bit key, as per [](#RFC2144))
+  4 | Blowfish (128 bit key, 16 rounds) [](#BLOWFISH)
+  5 | Reserved
+  6 | Reserved
+  7 | AES with 128-bit key [](#AES)
+  8 | AES with 192-bit key
+  9 | AES with 256-bit key
+ 10 | Twofish with 256-bit key [](#TWOFISH)
+ 11 | Camellia with 128-bit key [](#RFC3713)
+ 12 | Camellia with 192-bit key
+ 13 | Camellia with 256-bit key
+100--110 | Private/Experimental algorithm
 
 Implementations MUST implement AES-128.  Implementations SHOULD
 implement AES-256.  Implementations that interoperate with RFC-4880
@@ -3710,13 +3697,13 @@ MAY implement any other algorithm.
 
 ## Compression Algorithms
 
-       ID  Algorithm
- --------  ---------
-        0  Uncompressed
-        1  ZIP [RFC1951]
-        2  ZLIB [RFC1950]
-        3  BZip2 [](#BZ2)
- 100--110  Private/Experimental algorithm
+ID | Algorithm
+---:|-----------------
+ 0 | Uncompressed
+ 1 | ZIP [RFC1951]
+ 2 | ZLIB [RFC1950]
+ 3 | BZip2 [](#BZ2)
+100--110 | Private/Experimental algorithm
 
 Implementations MUST implement uncompressed data.  Implementations
 SHOULD implement ZLIB.  For interoperability reasons implementations
@@ -3725,23 +3712,23 @@ any other algorithm.
 
 ## Hash Algorithms
 
-       ID  Algorithm                        Text Name
- --------  ---------                        ---------
-        1  MD5 [](#HAC)                     "MD5"
-        2  SHA-1 [](#FIPS180)               "SHA1"
-        3  RIPE-MD/160 [](#HAC)             "RIPEMD160"
-        4  Reserved
-        5  Reserved
-        6  Reserved
-        7  Reserved
-        8  SHA2-256 [](#FIPS180)             "SHA256"
-        9  SHA2-384 [](#FIPS180)             "SHA384"
-       10  SHA2-512 [](#FIPS180)             "SHA512"
-       11  SHA2-224 [](#FIPS180)             "SHA224"
-       12  SHA3-256 [](#FIPS202)             "SHA3-256"
-       13  Reserved
-       14  SHA3-512 [](#FIPS202)             "SHA3-512"
- 100--110  Private/Experimental algorithm
+ID | Algorithm | Text Name
+---:|----------|--------------
+  1 | MD5 [](#HAC)          | "MD5"
+  2 | SHA-1 [](#FIPS180)    | "SHA1"
+  3 | RIPE-MD/160 [](#HAC)  | "RIPEMD160"
+  4 | Reserved
+  5 | Reserved
+  6 | Reserved
+  7 | Reserved
+  8 | SHA2-256 [](#FIPS180) |  "SHA256"
+  9 | SHA2-384 [](#FIPS180) |  "SHA384"
+ 10 | SHA2-512 [](#FIPS180) |  "SHA512"
+ 11 | SHA2-224 [](#FIPS180) |  "SHA224"
+ 12 | SHA3-256 [](#FIPS202) |  "SHA3-256"
+ 13 | Reserved
+ 14 | SHA3-512 [](#FIPS202) |  "SHA3-512"
+100--110 | Private/Experimental algorithm
 
 Implementations MUST implement SHA2-256.  Implementations MAY implement
 other algorithms.  Implementations SHOULD NOT create messages which
@@ -3751,11 +3738,11 @@ SHOULD NOT use MD5 or RIPE-MD/160.
 
 ## AEAD Algorithms
 
-       ID  Algorithm
- --------  ---------
-        1  EAX [](#EAX)
-        2  OCB [](#RFC7253)
- 100--110  Private/Experimental algorithm
+ID | Algorithm
+---:|-----------------
+ 1 | EAX [](#EAX)
+ 2 | OCB [](#RFC7253)
+100--110 | Private/Experimental algorithm
 
 Implementations MUST implement EAX.  Implementations MAY implement
 OCB and other algorithms.
@@ -3805,9 +3792,9 @@ as described in [](#RFC8126).
 This document requests that IANA register the User ID Attribute Type
 found in [](#user-id-attribute-subpacket):
 
-  Value   Attribute    Reference
-  -----   ---------    ----------
-  TBD1    User ID      This Document [](#user-id-attribute-subpacket)
+Value | Attribute | Reference
+-----:|-----------|----------
+ TBD1 |  User ID  | This Document [](#user-id-attribute-subpacket)
 
 ### Image Format Subpacket Types
 
@@ -3852,25 +3839,19 @@ method, as described in [](#RFC8126).
 This document requests IANA register the following Signature
 Notation Data types:
 
-   Allowed Values   Name     Type               Reference
-   --------------   -------  ------------       ----------------
-   A String         charset  Character Set      This Doc [](#the-charset-notation)
-   Any String       manu     Manufacturer Name  This Doc [](#the-manu-notation)
-   Any String       make     Product Make       This Doc [](#the-make-notation)
-   Any String       model    Product Model      This Doc [](#the-model-notation)
-   Any String       prodid   Product ID         This Doc [](#the-prodid-notation)
-   Any String       pvers    Product Version    This Doc [](#the-pvers-notation)
-   Any String       lot      Product Lot Number This Doc [](#the-lot-notation)
-   Decimal Integer  qty      Package Quantity   This Doc [](#the-qty-notation)
-     String
-   A geo: URI       loc      Current Geo-       This Doc [](#the-loc-and-dest-notations)
-     without the             location
-     "geo:"                  Latitude/Longitude
-   A geo: URI       dest     Destination Geo-   This Doc [](#the-loc-and-dest-notations)
-     without the             location
-     "geo:"                  Latitude/Longitude
-   Hash Notation    hash     The Hash of        This Doc [](#the-hash-notation)
-     data                    external data
+Allowed Values | Name | Type | Reference
+---------------|------|------|---------------------
+A String       | charset | Character Set      | This Doc [](#the-charset-notation)
+Any String     | manu    | Manufacturer Name  | This Doc [](#the-manu-notation)
+Any String     | make    | Product Make       | This Doc [](#the-make-notation)
+Any String     | model   | Product Model      | This Doc [](#the-model-notation)
+Any String     | prodid  | Product ID         | This Doc [](#the-prodid-notation)
+Any String     | pvers   | Product Version    | This Doc [](#the-pvers-notation)
+Any String     | lot     | Product Lot Number | This Doc [](#the-lot-notation)
+Decimal Integer String | qty | Package Quantity | This Doc [](#the-qty-notation)
+A geo: URI without the "geo:" | loc | Current Geolocation Latitude/Longitude | This Doc [](#the-loc-and-dest-notations)
+A geo: URI without the "geo:" | dest | Destination Geolocation Latitude/Longitude | This Doc [](#the-loc-and-dest-notations)
+Hash Notation data | hash | The Hash of external data | This Doc [](#the-hash-notation)
 
 #### Signature Notation Data Subpacket Notation Flags
 
@@ -3880,7 +3861,6 @@ Subpacket Notation Flags.  The registry includes the columns "Flag",
 and "Reference".  The initial values for this registry can be found in
 [](#notation-data).  Adding a new item MUST be done through the
 SPECIFICATION REQUIRED method, as described in [](#RFC8126).
-
 
 #### Key Server Preference Extensions
 
@@ -3961,11 +3941,11 @@ SPECIFICATION REQUIRED method, as described in [](#RFC8126).
 
 This document requests IANA register the following new public-key algorithm:
 
-   ID    Algorithm                   Reference
-   --    --------------------------  ---------
-   22    EdDSA public key algorithm  This doc, [](#eddsa)
-   23    Reserved for AEDH           This doc
-   24    Reserved for AEDSA          This doc
+ID | Algorithm | Reference
+---:|----------|----------
+ 22 | EdDSA public key algorithm | This doc, [](#eddsa)
+ 23 | Reserved for AEDH | This doc
+ 24 | Reserved for AEDSA | This doc
 
    \[Notes to RFC-Editor: Please remove the table above on publication.
     It is desirable not to reuse old or reserved algorithms because
@@ -3998,11 +3978,11 @@ method, as described in [](#RFC8126).
 
 This document requests IANA register the following hash algorithms:
 
-   ID    Algorithm                   Reference
-   --    --------------------------  ---------
-   12    SHA3-256                    This doc
-   13    Reserved
-   14    SHA3-512                    This doc
+ID | Algorithm | Reference
+---:|----------|----------
+ 12 | SHA3-256 | This doc
+ 13 | Reserved
+ 14 | SHA3-512 | This doc
 
    \[Notes to RFC-Editor: Please remove the table above on publication.
     It is desirable not to reuse old or reserved algorithms because
@@ -4958,14 +4938,13 @@ SHOULD be rejected.
     Publication 800-57 [](#SP800-57) recommends the following list of
     equivalent strengths:
 
-             Asymmetric  |  Hash  |  Symmetric
-              key size   |  size  |   key size
-             ------------+--------+-----------
-                1024        160         80
-                2048        224        112
-                3072        256        128
-                7680        384        192
-               15360        512        256
+Asymmetric key size | Hash size | Symmetric key size
+-------------------:|-----------|-------------------
+ 1024 | 160 |  80
+ 2048 | 224 | 112
+ 3072 | 256 | 128
+ 7680 | 384 | 192
+15360 | 512 | 256
 
   - There is a somewhat-related potential security problem in
     signatures.  If an attacker can find a message that hashes to the
@@ -5091,15 +5070,13 @@ SHOULD be rejected.
     strength of the hash algorithm or the symmetric key algorithm may
     not increase the overall security offered by the given ECC key.
 
-            Curve name | ECC      | RSA         | Hash size | Symmetric
-                       | strength | strength,   |           | key size
-                       |          | informative |           |
-            -----------+----------+-------------+-----------+-----------
-            NIST P-256      256         3072         256         128
-            NIST P-384      384         7680         384         192
-            NIST P-521      521        15360         512         256
+Curve name | ECC | RSA strength | Hash size strength, informative | Symmetric key size
+-----------|-----|--------------|---------------------------------|-------------------
+NIST P-256 | 256 | 3072 | 256 | 128
+NIST P-384 | 384 | 7680 | 384 | 192
+NIST P-521 | 521 | 15360 | 512 | 256
 
-    Requirement levels indicated elsewhere in this document lead to the
+  - Requirement levels indicated elsewhere in this document lead to the
     following combinations of algorithms in the OpenPGP profile: MUST
     implement NIST curve P-256 / SHA2-256 / AES-128, SHOULD implement
     NIST curve P-521 / SHA2-512 / AES-256, MAY implement NIST curve
@@ -5110,14 +5087,13 @@ SHOULD be rejected.
     used with a given curve for ECDH.  A stronger KDF hash algorithm or
     AES KEK algorithm MAY be used for a given ECC curve.
 
-            Curve name | Recommended KDF | Recommended KEK
-                       | hash algorithm  | encryption algorithm
-            -----------+-----------------+-----------------------
-            NIST P-256      SHA2-256            AES-128
-            NIST P-384      SHA2-384            AES-192
-            NIST P-521      SHA2-512            AES-256
+Curve name | Recommended KDF hash algorithm | Recommended KEK encryption algorithm
+-----------|--------------------------------|-------------------------------------
+NIST P-256 | SHA2-256 | AES-128
+NIST P-384 | SHA2-384 | AES-192
+NIST P-521 | SHA2-512 | AES-256
 
-    This document explicitly discourages the use of algorithms other
+  - This document explicitly discourages the use of algorithms other
     than AES as a KEK algorithm because backward compatibility of the
     ECDH format is not a concern.  The KEK algorithm is only used within
     the scope of a Public-Key Encrypted Session Key Packet, which
