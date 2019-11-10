@@ -1,7 +1,9 @@
-/draft.txt
-/draft.xml
-/abstract.xml
-/back.xml
-/middle.xml
-/draft.html
+rfc4880bis.xmlv2
+rfc4880bis.xml
+rfc4880bis.txt
+rfc4880bis.html
+rfc4880bis.pdf
+rfc4880bis.txt.diff
+.refcache/
+metadata.min.js
 *~
