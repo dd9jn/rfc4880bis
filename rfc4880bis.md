@@ -54,6 +54,17 @@ informative:
     date: 1996
     seriesinfo:
      Lecture Notes in Computer Science: Volume 1070, pp. 10-18
+ JKS02:
+    title: Implementation of Chosen-Ciphertext Attacks against PGP and GnuPG
+    target: http://www.counterpane.com/pgp-attack.html
+    date: 2002
+    author:
+     -
+      name: Kahil Jallad
+     -
+      name: Jonathan Katz
+     -
+      name: Bruce Schneier
  KOBLITZ:
     title: A course in number theory and cryptography, Chapter VI. Elliptic Curves
     seriesinfo:
@@ -61,6 +72,25 @@ informative:
     author:
      ins: N. Koblitz
     date: 1997
+ MZ05:
+    title: An Attack on CFB Mode Encryption As Used By OpenPGP
+    seriesinfo:
+     IACR ePrint Archive: Report 2005/033
+    date: 2005-02-08
+    author:
+     -
+      name: Serge Mister
+     -
+      name: Robert Zuccherato
+    target: http://eprint.iacr.org/2005/033
+ REGEX:
+    title: Mastering Regular Expressions
+    author:
+     name: Jeffrey Friedl
+     org: O'Reilly
+    seriesinfo:
+     ISBN: 0-596-00289-0
+    date: August 2002
  RFC1423:
  RFC1991:
  RFC2440:
