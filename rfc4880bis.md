@@ -20,6 +20,7 @@ author:
     name: Werner Koch
     org: GnuPG e.V.
     street: Rochusstr. 44
+    city: 40479 Duesseldorf
     country: Germany
     email: wk@gnupg.org
     uri: https://gnupg.org/verein
@@ -30,11 +31,11 @@ author:
  -
     ins: R. H. Tse
     name: Ronald Henry Tse
+    org: Ribose
     street: Suite 1111, 1 Pedder Street
-    city: Central
-    region: Hong Kong
+    city: Central, Hong Kong
     country: Hong Kong
-    email: ronal.tse@ribose.com
+    email: ronald.tse@ribose.com
     uri: https://www.ribose.com
  -
     ins: D. A. Atkins
