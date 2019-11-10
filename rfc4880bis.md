@@ -3274,31 +3274,25 @@ that is being encoded in Armor, and how it is being encoded.  Header
 line texts include the following strings:
 
 BEGIN PGP MESSAGE
-
-  ~ Used for signed, encrypted, or compressed files.
+: Used for signed, encrypted, or compressed files.
 
 BEGIN PGP PUBLIC KEY BLOCK
-
-  ~ Used for armoring public keys.
+:   Used for armoring public keys.
 
 BEGIN PGP PRIVATE KEY BLOCK
-
-  ~ Used for armoring private keys.
+:   Used for armoring private keys.
 
 BEGIN PGP MESSAGE, PART X/Y
-
-  ~ Used for multi-part messages, where the armor is split amongst Y
+:   Used for multi-part messages, where the armor is split amongst Y
     parts, and this is the Xth part out of Y.
 
 BEGIN PGP MESSAGE, PART X
-
-  ~ Used for multi-part messages, where this is the Xth part of an
+:   Used for multi-part messages, where this is the Xth part of an
     unspecified number of parts.  Requires the MESSAGE-ID Armor Header
     to be used.
 
 BEGIN PGP SIGNATURE
-
-  ~ Used for detached signatures, OpenPGP/MIME signatures, and
+:   Used for detached signatures, OpenPGP/MIME signatures, and
     cleartext signatures.  Note that PGP 2 uses BEGIN PGP MESSAGE for
     detached signatures.
 
