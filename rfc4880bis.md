@@ -505,7 +505,7 @@ size, the high-order (leftmost) octets of the hash are used as the
 key.
 
 If the hash size is less than the key size, multiple instances of the
-hash context are created -- enough to produce the required key data.
+hash context are created --- enough to produce the required key data.
 These instances are preloaded with 0, 1, 2, ... octets of zeros (that
 is to say, the first instance has no preloading, the second gets
 preloaded with 1 octet of zero, the third is preloaded with two octets
@@ -520,8 +520,8 @@ discarded.
 
 #### Salted S2K
 
-This includes a "salt" value in the S2K specifier -- some arbitrary
-data -- that gets hashed along with the passphrase string, to help
+This includes a "salt" value in the S2K specifier --- some arbitrary
+data --- that gets hashed along with the passphrase string, to help
 prevent dictionary attacks.
 
        Octet 0:        0x01
@@ -1739,7 +1739,7 @@ When appearing on a self-signature on a User ID packet, this subpacket
 applies only to User ID packets.  When appearing on a self-signature on
 a User Attribute packet, this subpacket applies only to User Attribute
 packets.  That is to say, there are two different and independent
-"primaries" -- one for User IDs, and one for User Attributes.
+"primaries" --- one for User IDs, and one for User Attributes.
 
 #### Policy URI
 
@@ -2126,7 +2126,7 @@ errors, and the wishy-washy language here allows a receiver to be
 generous in what they accept, while putting pressure on a creator to
 be stingy in what they generate.
 
-Some apparent conflicts may actually make sense -- for example,
+Some apparent conflicts may actually make sense --- for example,
 suppose a keyholder has a V3 key and a V4 key that share the same RSA
 key material.  Either of these keys can verify a signature created by
 the other, and it may be reasonable for a signature to contain an
@@ -2835,7 +2835,7 @@ not recognized.
 
 ### User ID Attribute Subpacket
 
-A User ID Attribute subpacket has type \[IANA -- assignment TBD1\].
+A User ID Attribute subpacket has type \[IANA --- assignment TBD1\].
 
 A User ID Attribute subpacket, just like a User ID packet, consists of
 UTF-8 text that is intended to represent the name and email address of
@@ -3255,8 +3255,8 @@ Note that all these Armor Header Lines are to consist of a complete
 line.  That is to say, there is always a line ending preceding the
 starting five dashes, and following the ending five dashes.  The header
 lines, therefore, MUST start at the beginning of a line, and MUST NOT
-have text other than whitespace -- space (0x20), tab (0x09) or carriage
-return (0x0d) -- following them on the same line.  These
+have text other than whitespace --- space (0x20), tab (0x09) or carriage
+return (0x0d) --- following them on the same line.  These
 line endings are considered a part of the Armor Header Line for the
 purposes of determining the content they delimit.  This is particularly
 important when computing a cleartext signature (see below).
@@ -3507,8 +3507,8 @@ When reversing dash-escaping, an implementation MUST strip the string
 "- " if it occurs at the beginning of a line, and SHOULD warn on "-"
 and any character other than a space at the beginning of a line.
 
-Also, any trailing whitespace -- spaces (0x20), tabs (0x09) or
-carriage returns (0x0d) -- at the end of any line is removed when
+Also, any trailing whitespace --- spaces (0x20), tabs (0x09) or
+carriage returns (0x0d) --- at the end of any line is removed when
 the cleartext signature is generated and verified.
 
 #  Regular Expressions
@@ -4232,7 +4232,7 @@ with the example of a DSA key:
 
     f.4) MPI of DSA public-key value y (= g\*\*x mod p where x is secret).
 
-Note that it is possible for there to be collisions of Key IDs -- two
+Note that it is possible for there to be collisions of Key IDs --- two
 different keys with the same Key ID.  Note that there is a much
 smaller, but still non-zero, probability that two different keys have
 the same fingerprint.
@@ -4710,7 +4710,7 @@ bits.  DSA keys MUST also be a multiple of 64 bits, and the q size MUST
 be a multiple of 8 bits.  The Digital Signature Standard (DSS)
 [](#FIPS186) specifies that DSA be used in one of the following ways:
 
-  * 1024-bit key, 160-bit q, SHA-1, SHA2--224, SHA2-256, SHA2-384, or
+  * 1024-bit key, 160-bit q, SHA-1, SHA2-224, SHA2-256, SHA2-384, or
     SHA2-512 hash
 
   * 2048-bit key, 224-bit q, SHA2-224, SHA2-256, SHA2-384, or SHA2-512
@@ -4954,8 +4954,8 @@ SHOULD be rejected.
     small vulnerabilities.  For example, if an implementation does not
     compress a message before encryption (perhaps because it knows it
     was already compressed), then that message is vulnerable.  Because of
-    this happenstance -- that modification attacks can be thwarted by
-    decompression errors -- an implementation SHOULD treat a
+    this happenstance --- that modification attacks can be thwarted by
+    decompression errors --- an implementation SHOULD treat a
     decompression error as a security problem, not merely a data
     problem.
 
