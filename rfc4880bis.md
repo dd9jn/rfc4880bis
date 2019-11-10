@@ -20,7 +20,8 @@ author:
     name: Werner Koch
     org: GnuPG e.V.
     street: Rochusstr. 44
-    city: 40479 Duesseldorf
+    city: Duesseldorf
+    code: 40479
     country: Germany
     email: wk@gnupg.org
     uri: https://gnupg.org/verein
