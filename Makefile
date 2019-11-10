@@ -22,8 +22,12 @@ all: $(OUTPUT)
 %.txt: %.xml
 	xml2rfc $< --text
 
+$(draft).txt.diff: $(draft).txt compare canonicalizetxt
+	! ./compare > $@.tmp
+	mv $@.tmp $@
+
 clean:
-	-rm -rf $(OUTPUT) $(draft).xmlv2
+	-rm -rf $(OUTPUT) $(draft).xmlv2 $(draft).txt.diff
 
 .PHONY: clean all
 .SECONDARY: $(draft).xmlv2
