@@ -110,6 +110,20 @@ informative:
     seriesinfo:
      NIST Special Publication: 800-57
 normative:
+ AES:
+    target: http://csrc.nist.gov/publications/fips/fips197/fips-197.{ps,pdf}
+    title: FIPS PUB 197, Advanced Encryption Standard (AES)
+    author:
+     org: NIST
+    date: November 2001'
+ BLOWFISH:
+    target: http://www.counterpane.com/bfsverlag.html
+    title: Description of a New Variable-Length Key, 64-Bit Block Cipher (Blowfish)
+    author:
+     ins: B. Schneier
+    date: December 1993
+    seriesinfo:
+     Fast Software Encryption, Cambridge Security Workshop Proceedings: Springer-Verlag, 1994, pp191-204
  BZ2:
     target: http://www.bzip.org/
     title: The Bzip2 and libbzip2 home page
@@ -117,6 +131,16 @@ normative:
     author:
      ins: J. Seward
      name: Julian Seward, jseward@acm.org
+ EAX:
+    title: A Conventional Authenticated-Encryption Mode
+    date: April 2003
+    author:
+     -
+      ins: M. Bellare
+     -
+      ins: P. Rogaway
+     -
+      ins: D. Wagner
  ELGAMAL:
     title: A Public-Key Cryptosystem and a Signature Scheme Based on Discrete Logarithms
     date: 1985
@@ -136,6 +160,33 @@ normative:
     author:
      org: National Institute of Standards and Technology, U.S. Department of Commerce
     date: July 2013
+ FIPS202:
+    target: http://dx.doi.org/10.6028/NIST.FIPS.202
+    title: "SHA-3 Standard: Permutation-Based Hash and Extendable-Output Functions, FIPS 202"
+    author:
+     org: National Institute of Standards and Technology, U.S. Department of Commerce
+    date: August 2015
+ HAC:
+    title: Handbook of Applied Cryptography
+    date: 1996
+    author:
+     -
+      ins: A. J. Menezes
+      name: Alfred J. Menezes
+     -
+      ins: P. v. Oorschot
+      name: Paul van Oorschot
+     -
+      ins: S. Vanstone
+      name: Scott Vanstone
+ IDEA:
+    title: On the design and security of block ciphers
+    author:
+     -
+      ins: X. Lai
+    date: 1992
+    seriesinfo:
+     ETH Series in Information Processing, J.L. Massey (editor): Vol. 1, Hartung-Gorre Verlag Konstanz, Technische Hochschule (Zurich)
  ISO10646:
     title: "Information Technology - Universal Multiple-octet coded Character Set (UCS) - Part 1: Architecture and Basic Multilingual Plane"
     author:
