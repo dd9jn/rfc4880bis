@@ -235,7 +235,7 @@ flaws.
 # Introduction
 
 { This is work in progress to update OpenPGP.  Editorial notes are
-  enclosed in curly braces.  }
+  enclosed in curly braces. }
 
 This document provides information on the message-exchange packet
 formats used by OpenPGP to provide encryption, decryption, signing,
@@ -246,7 +246,6 @@ replaces RFC 1991, "PGP Message Exchange Formats" [](#RFC1991)
 
 This document obsoletes: RFC 4880 (OpenPGP), RFC 5581 (Camellia
 cipher) and RFC 6637 (ECC for OpenPGP).
-
 
 ## Terms
 
@@ -5643,6 +5642,7 @@ AEAD encrypted data packet:
       25 74 cd 05 62 84 a8 ef  68 03 5c 62 3d 93 cc 70
       8a 43 21 1b b6 ea f2 b2  7f 7c 18 d5 71 bc d8 3b
       20 ad d3 a0 8b 73 af 15  b9 a0 98
+
 # ECC Point compression flag bytes
 
 This specification introduces the new flag byte 0x40 to indicate the
