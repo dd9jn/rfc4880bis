@@ -1,20 +1,29 @@
 #!/usr/bin/make -f
+#
+# Prerequisites: apt install ruby-kramdown-rfc2629 xml2rfc
+#
 
-OUTPUTS = draft.txt draft.xml draft.html
+draft = rfc4880bis
+OUTPUT = $(draft).txt $(draft).html $(draft).xml
 
-all: $(OUTPUTS)
+all: $(OUTPUT)
 
-draft.txt: abstract.mkd middle.mkd back.mkd
-	tools/pandoc2rfc -T abstract.mkd middle.mkd back.mkd
-	sed -i 's/R.  Zimmermann/R. Zimmermann/' draft.txt
+%.xmlv2: %.md
+	kramdown-rfc2629 < $< > $@.tmp
+	mv $@.tmp $@
 
-draft.xml: abstract.mkd middle.mkd back.mkd
-	tools/pandoc2rfc -X abstract.mkd middle.mkd back.mkd
+# convert to v3:
+%.xml: %.xmlv2
+	xml2rfc -o $@ --v2v3 $<
 
-draft.html: abstract.mkd middle.mkd back.mkd
-	tools/pandoc2rfc -H abstract.mkd middle.mkd back.mkd
+%.html: %.xml
+	xml2rfc $< --html
+
+%.txt: %.xml
+	xml2rfc $< --text
 
 clean:
-	rm -f $(OUTPUTS)
+	-rm -rf $(OUTPUT) $(draft).xmlv2
 
 .PHONY: clean all
+.SECONDARY: $(draft).xmlv2
