@@ -3457,7 +3457,7 @@ way to sign cleartext messages for environments that support MIME.)
 
 The cleartext signed message consists of:
 
-  - The cleartext header '-----BEGIN PGP SIGNED MESSAGE-----' on a
+  - The cleartext header `-----BEGIN PGP SIGNED MESSAGE-----` on a
     single line,
 
   - One or more "Hash" Armor Headers,
@@ -3467,8 +3467,8 @@ The cleartext signed message consists of:
   - The dash-escaped cleartext that is included into the message
     digest,
 
-  - The ASCII armored signature(s) including the\
-    '-----BEGIN PGP SIGNATURE-----' Armor Header and Armor Tail Lines.
+  - The ASCII armored signature(s) including the
+    `-----BEGIN PGP SIGNATURE-----` Armor Header and Armor Tail Lines.
 
 If the "Hash" Armor Header is given, the specified message digest
 algorithm(s) are used for the signature.  If there are no such headers,
@@ -3500,7 +3500,7 @@ the dash-escaped form.
 As with binary signatures on text documents, a cleartext signature is
 calculated on the text using canonical \<CR>\<LF> line
 endings.  The line ending (i.e., the \<CR>\<LF>) before the
-'-----BEGIN PGP SIGNATURE-----' line that terminates the signed text
+`-----BEGIN PGP SIGNATURE-----` line that terminates the signed text
 is not considered part of the signed text.
 
 When reversing dash-escaping, an implementation MUST strip the string
