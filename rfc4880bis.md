@@ -406,10 +406,9 @@ This section describes the data elements used by OpenPGP.
 ## Scalar Numbers
 
 Scalar numbers are unsigned and are always stored in big-endian
-format.  Using n[k] to refer to the kth octet being interpreted, the
-value of a two-octet scalar is ((n[0] \<\< 8) + n[1]).  The value of a
-four-octet scalar is ((n[0] \<\< 24) + (n[1] \<\< 16) + (n[2] \<\< 8)
-+ n[3]).
+format.  Using n\[k\] to refer to the kth octet being interpreted, the
+value of a two-octet scalar is ((n\[0\] << 8) + n\[1\]).  The value of a
+four-octet scalar is ((n\[0\] << 24) + (n\[1\] << 16) + (n\[2\] << 8) + n\[3\]).
 
 ## Multiprecision Integers
 
@@ -428,16 +427,16 @@ Examples:
 
 (all numbers are in hexadecimal)
 
-The string of octets [00 01 01] forms an MPI with the value 1.  The
-string [00 09 01 FF] forms an MPI with the value of 511.
+The string of octets \[00 01 01\] forms an MPI with the value 1.  The
+string \[00 09 01 FF\] forms an MPI with the value of 511.
 
 Additional rules:
 
 The size of an MPI is ((MPI.length + 7) / 8) + 2 octets.
 
 The length field of an MPI describes the length starting from its most
-significant non-zero bit.  Thus, the MPI [00 02 01] is not formed
-correctly.  It should be [00 01 01].
+significant non-zero bit.  Thus, the MPI \[00 02 01\] is not formed
+correctly.  It should be \[00 01 01\].
 
 Unused bits of an MPI MUST be zero.
 
@@ -2382,17 +2381,17 @@ The packet contains:
   * Only for a version 5 packet, a one-octet scalar octet count of the
     next 4 optional fields.
 
-  * [Optional] If string-to-key usage octet was 255, 254, or 253, a
+  * \[Optional\] If string-to-key usage octet was 255, 254, or 253, a
     one-octet symmetric encryption algorithm.
 
-  * [Optional] If string-to-key usage octet was 253, a one-octet AEAD
+  * \[Optional\] If string-to-key usage octet was 253, a one-octet AEAD
     algorithm.
 
-  * [Optional] If string-to-key usage octet was 255, 254, or 253, a
+  * \[Optional\] If string-to-key usage octet was 255, 254, or 253, a
     string-to-key specifier.  The length of the string-to-key
     specifier is implied by its type, as described above.
 
-  * [Optional] If secret data is encrypted (string-to-key usage octet
+  * \[Optional\] If secret data is encrypted (string-to-key usage octet
     not zero), an Initial Vector (IV) of the same length as the
     cipher's block size.  If string-to-key usage octet was 253 the IV
     is used as the nonce for the AEAD algorithm.  If the AEAD
@@ -2836,7 +2835,7 @@ not recognized.
 
 ### User ID Attribute Subpacket
 
-A User ID Attribute subpacket has type #[IANA -- assignment TBD1].
+A User ID Attribute subpacket has type \[IANA -- assignment TBD1\].
 
 A User ID Attribute subpacket, just like a User ID packet, consists of
 UTF-8 text that is intended to represent the name and email address of
@@ -3534,12 +3533,12 @@ string), a '\\' followed by a single character (matching that
 character), or a single character with no other significance (matching
 that character).
 
-A range is a sequence of characters enclosed in '[]'.  It normally
+A range is a sequence of characters enclosed in `[]`.  It normally
 matches any single character from the sequence.  If the sequence begins
 with '^', it matches any single character not from the rest of the
 sequence.  If two characters in the sequence are separated by '-', this
 is shorthand for the full list of ASCII characters between them (e.g.,
-'[0-9]' matches any decimal digit).  To include a literal ']' in the
+`[0-9]` matches any decimal digit).  To include a literal ']' in the
 sequence, make it the first character (following a possible '^').  To
 include a literal '-', make it the first or last character.
 
@@ -3917,11 +3916,11 @@ This document requests IANA register the following new public-key algorithm:
    23    Reserved for AEDH           This doc
    24    Reserved for AEDSA          This doc
 
-   [Notes to RFC-Editor: Please remove the table above on publication.
+   \[Notes to RFC-Editor: Please remove the table above on publication.
     It is desirable not to reuse old or reserved algorithms because
     some existing tools might print a wrong description.  A higher
     number is also an indication for a newer algorithm.  As of now
-    22 is the next free number.]
+    22 is the next free number.\]
 
 
 ### Symmetric-Key Algorithms
@@ -3954,11 +3953,11 @@ This document requests IANA register the following hash algorithms:
    13    Reserved
    14    SHA3-512                    This doc
 
-   [Notes to RFC-Editor: Please remove the table above on publication.
+   \[Notes to RFC-Editor: Please remove the table above on publication.
     It is desirable not to reuse old or reserved algorithms because
     some existing tools might print a wrong description.  The ID 13
     has been reserved so that the SHA3 algorithm IDs align nicely with
-    their SHA2 counterparts.]
+    their SHA2 counterparts.\]
 
 ### Compression Algorithms
 
@@ -4659,7 +4658,7 @@ it can support alternate algorithms.
 
 Like the algorithm preferences, an implementation MUST NOT use an
 algorithm that is not in the preference vector.  If the preferences are
-not present, then they are assumed to be [ZIP(1), Uncompressed(0)].
+not present, then they are assumed to be \[ZIP(1), Uncompressed(0)\].
 
 Additionally, an implementation MUST implement this preference to the
 degree of recognizing when to send an uncompressed message. A robust
@@ -4799,29 +4798,29 @@ Step by step, here is the procedure:
     encryption of an all-zero value.
 
 3.  FRE is xored with the first BS octets of random data prefixed to
-    the plaintext to produce C[1] through C[BS], the first BS octets
+    the plaintext to produce C\[1\] through C\[BS\], the first BS octets
     of ciphertext.
 
-4.  FR is loaded with C[1] through C[BS].
+4.  FR is loaded with C\[1\] through C\[BS\].
 
 5.  FR is encrypted to produce FRE, the encryption of the first BS
     octets of ciphertext.
 
 6.  The left two octets of FRE get xored with the next two octets of
-    data that were prefixed to the plaintext.  This produces C[BS+1]
-    and C[BS+2], the next two octets of ciphertext.
+    data that were prefixed to the plaintext.  This produces C\[BS+1\]
+    and C\[BS+2\], the next two octets of ciphertext.
 
-7.  (The resynchronization step) FR is loaded with C[3] through
-    C[BS+2].
+7.  (The resynchronization step) FR is loaded with C\[3\] through
+    C\[BS+2\].
 
 9.  FRE is xored with the first BS octets of the given plaintext, now
     that we have finished encrypting the BS+2 octets of prefixed data.
-    This produces C[BS+3] through C[BS+(BS+2)], the next BS octets of
+    This produces C\[BS+3\] through C\[BS+(BS+2)\], the next BS octets of
     ciphertext.
 
 8.  FR is encrypted to produce FRE.
 
-10. FR is loaded with C[BS+3] to C[BS + (BS+2)] (which is C11-C18 for
+10. FR is loaded with C\[BS+3\] to C\[BS + (BS+2)\] (which is C11-C18 for
     an 8-octet block).
 
 11. FR is encrypted to produce FRE.
