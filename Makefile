@@ -2,6 +2,7 @@
 #
 # Prerequisites: apt install ruby-kramdown-rfc2629 xml2rfc
 #
+# For pdf output, also:     apt install weasyprint
 
 draft = rfc4880bis
 OUTPUT = $(draft).txt $(draft).html $(draft).xml
@@ -21,6 +22,9 @@ all: $(OUTPUT)
 
 %.txt: %.xml
 	xml2rfc $< --text
+
+%.pdf: %.xml
+	xml2rfc $< --pdf
 
 $(draft).txt.diff: $(draft).txt compare canonicalizetxt
 	! ./compare > $@.tmp
