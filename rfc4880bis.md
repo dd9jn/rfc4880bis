@@ -1,7 +1,7 @@
 ---
 title: OpenPGP Message Format
-docname: draft-ietf-openpgp-rfc4880bis-08
-date: 2019-09-06
+docname: draft-ietf-openpgp-rfc4880bis-09
+date: 2020-03-09
 category: std
 
 obsoletes: 4880, 5581, 6637
@@ -5712,8 +5712,6 @@ other values might also be interesting for other ECC specifications:
   - Added Intended Recipient signature subpacket.
   - Added Attested Certifications signature subpacket and signature class.
 
-  <!-- To avoid warnings from pandoc2rfc we add some references -->
-  { Informational rfcs: [](#RFC1423) }
 
 # The principal authors of RFC-4880
 
