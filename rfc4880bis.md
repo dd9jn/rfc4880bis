@@ -1020,7 +1020,7 @@ These meanings are as follows:
       certifications, but few differentiate between the types.
 
 0x16
-  :   Attestion Key Signature.  This signature is issued by the primary
+  :   Attested Key Signature.  This signature is issued by the primary
       key over itself and its user ID (or user attribute).  It MUST
       contain an "Attested Certifications" subpacket and a "Signature
       Creation Time" subpacket.  This type of key signature does not
