@@ -1358,6 +1358,7 @@ Type | Description
  34 | Preferred AEAD Algorithms
  35 | Intended Recipient Fingerprint
  37 | Attested Certifications
+ 38 | Key Block
 100 to 110 | Private or experimental
 
 An implementation SHOULD ignore any subpacket of a type that it does
@@ -2065,6 +2066,22 @@ Note that Certification Revocation Signatures are not relevant for
 Attestation Key Signatures.  To rescind all attestations, the primary
 key holder needs only to publish a more recent Attestation Key
 Signature with an empty Attested Certifications subpacket.
+
+#### Key Block
+
+(1 octet with value 0, N octets of key data)
+
+This subpacket MAY be used to convey key data along with a signature
+of class 0x00, 0x01, or 0x02.  It MUST contain the key used to create
+the signature; either as the primary key or as a subkey.  The key
+SHOULD contain a primary or subkey capable of encryption and the
+entire key must be a valid OpenPGP key including at least one User ID
+packet and the corresponding self-signatures.
+
+Implementations MUST ignore this subpacket if the first octet does not
+have a value of zero or if the key data does not represent a valid
+transferable public key.
+
 
 ### Computing Signatures
 
