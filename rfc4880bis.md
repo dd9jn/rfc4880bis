@@ -4031,7 +4031,8 @@ packets provides the identity of the owner of this public key.  If
 there are multiple User ID packets, this corresponds to multiple means
 of identifying the same unique individual user; for example, a user
 may have more than one email address, and construct a User ID for each
-one.
+one.  A transferable public key SHOULD include at least one User ID
+packet unless storage requirements prohibit this.
 
 Immediately following each User ID packet, there are zero or more
 Signature packets.  Each Signature packet is calculated on the
