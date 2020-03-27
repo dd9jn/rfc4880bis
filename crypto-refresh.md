@@ -2972,7 +2972,7 @@ ESK Sequence :-
 : ESK \| ESK Sequence, ESK.
 
 Encrypted Data :-
-: Symmetrically Encrypted Data Packet \| Symmetrically Encrypted Integrity Protected Data Packet
+: Symmetrically Encrypted Data Packet \| Symmetrically Encrypted Integrity Protected Data Packet \| AEAD Encrypted Data Packet
 
 Encrypted Message :-
 : Encrypted Data \| ESK Sequence, Encrypted Data.
