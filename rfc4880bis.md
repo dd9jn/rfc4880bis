@@ -2114,7 +2114,7 @@ Attribute certifications, followed by a four-octet number giving the
 length of the User ID or User Attribute data, and then the User ID or
 User Attribute data.
 
-An Attestation Key Signature (0x16) hashes the same data boy that a
+An Attestation Key Signature (0x16) hashes the same data body that a
 standard certification signature does: primary key, followed by User
 ID or User Attribute.
 
