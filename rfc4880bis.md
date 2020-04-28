@@ -3806,7 +3806,8 @@ found in [](#user-id-attribute-subpacket):
 
 Value | Attribute | Reference
 -----:|-----------|----------
- TBD1 |  User ID  | This Document [](#user-id-attribute-subpacket)
+    1 |  Image    | This Document
+ TBD1 |  User ID  | This Document
 
 ### Image Format Subpacket Types
 
