@@ -1021,7 +1021,7 @@ These meanings are as follows:
 
 0x16
   :   Attested Key Signature.  This signature is issued by the primary
-      key over itself and its user ID (or user attribute).  It MUST
+      key over itself and its User ID (or User Attribute).  It MUST
       contain an "Attested Certifications" subpacket and a "Signature
       Creation Time" subpacket.  This type of key signature does not
       replace or override any standard certification (0x10-0x13).
@@ -1757,9 +1757,9 @@ First octet: 0x80 = No-modify
     The key holder requests that this key only be modified or updated
     by the key holder or an administrator of the key server.
 
-    If No-modify is set on the most recent self-sig over a user ID,
+    If No-modify is set on the most recent self-sig over a User ID,
     then a keyserver should only redistribute those third-party
-    certifications over that user ID that have been attested to in the
+    certifications over that User ID that have been attested to in the
     most recent Attestation Key Signature packet (see "Attested
     Certifications" below).
 
@@ -2017,7 +2017,7 @@ the same hash algorithm used by the signature itself.  Each digest is
 made over one third-party signature (any Certification, i.e.,
 signature type 0x10-0x13) that covers the same Primary Key and User ID
 (or User Attribute).  For example, an Attestation Key Signature made
-by key X over user ID U using hash algorithm SHA256 might contain an
+by key X over User ID U using hash algorithm SHA256 might contain an
 Attested Certifications subpacket of 192 octets (6*32 octets) covering
 six third-party certification Signatures over \<X,U\>.  They SHOULD be
 ordered by binary hash value from low to high (e.g., a hash with
@@ -2041,7 +2041,7 @@ Attestation Key Signature, it MUST treat it as a single Attested
 Certifications subpacket containing the union of all hashes.
 
 The Attested Certifications subpacket in the most recent Attestation
-Key Signature over a given user ID supersedes all Attested
+Key Signature over a given User ID supersedes all Attested
 Certifications subpackets from any previous Attestation Key Signature.
 However, note that if more than one Attestation Key Signatures has the
 same (most recent) Signature Creation Time subpacket, implementations
@@ -3811,7 +3811,7 @@ Value | Attribute | Reference
 ### Image Format Subpacket Types
 
 Within User Attribute packets, there is an extensible mechanism for
-other types of image-based user attributes.  This specification
+other types of image-based User Attributes.  This specification
 creates a registry of Image Attribute subpacket types.  The registry
 includes the Image Attribute subpacket type, the name of the Image
 Attribute subpacket, and a reference to the defining specification.
@@ -4100,7 +4100,7 @@ OpenPGP users may transfer secret keys.  The format of a transferable
 secret key is the same as a transferable public key except that
 secret-key and secret-subkey packets are used instead of the public
 key and public-subkey packets.  Implementations SHOULD include self-
-signatures on any user IDs and subkeys, as this allows for a complete
+signatures on any User IDs and subkeys, as this allows for a complete
 public key to be automatically extracted from the transferable secret
 key.  Implementations MAY choose to omit the self-signatures,
 especially if a transferable public key accompanies the transferable
@@ -4875,7 +4875,7 @@ Step by step, here is the procedure:
 
 ## Private or Experimental Parameters
 
-S2K specifiers, Signature subpacket types, user attribute types, image
+S2K specifiers, Signature subpacket types, User Attribute types, image
 format types, and algorithms described in [](#constants) all reserve the
 range 100 to 110 for private and experimental use.  Packet types
 reserve the range 60 to 63 for private and experimental use.  These are
