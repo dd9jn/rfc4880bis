@@ -1832,7 +1832,8 @@ First octet:
 
 Second octet:
 
-    0x04 - This key may be used as an additional decryption subkey (ADSK).
+    0x04 - This key may be used as an additional decryption subkey
+           (ADSK).
 
     0x08 - This key may be used for timestamping.
 
