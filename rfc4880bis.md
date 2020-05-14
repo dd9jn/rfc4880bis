@@ -92,7 +92,6 @@ informative:
     seriesinfo:
      ISBN: 0-596-00289-0
     date: August 2002
- RFC1423:
  RFC1991:
  RFC2440:
  RFC4880:
