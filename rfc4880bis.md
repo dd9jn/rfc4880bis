@@ -1263,13 +1263,13 @@ The body of a V4 or V5 Signature packet contains:
 
     Algorithm-Specific Fields for EdDSA signatures:
 
-      * MPI of EdDSA compressed value r.
+      * MPI of an EC point r.
 
-      * MPI of EdDSA compressed value s.
+      * EdDSA value s, in MPI, in the little endian representation.
 
-The compressed version of R and S for use with EdDSA is described in
-[](#RFC8032).  A version 3 signature MUST NOT be created
-and MUST NOT be used with EdDSA.
+The format of R and S for use with EdDSA is described in [](#RFC8032).
+A version 3 signature MUST NOT be created and MUST NOT be used with
+EdDSA.
 
 The concatenation of the data being signed and the signature data from
 the version number through the hashed subpacket data (inclusive) is
