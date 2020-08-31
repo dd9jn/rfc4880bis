@@ -1,7 +1,7 @@
 ---
 title: OpenPGP Message Format
-docname: draft-ietf-openpgp-rfc4880bis-09
-date: 2020-03-09
+docname: draft-ietf-openpgp-rfc4880bis-10
+date: 2020-08-31
 category: std
 
 obsoletes: 4880, 5581, 6637
@@ -5731,7 +5731,7 @@ other values might also be interesting for other ECC specifications:
   - Added the timestamping usage key flag.
   - Added Intended Recipient signature subpacket.
   - Added Attested Certifications signature subpacket and signature class.
-
+  - Added Key Block signature subpacket.
 
 # The principal authors of RFC-4880
 
