@@ -1126,8 +1126,8 @@ The body of a version 3 Signature Packet contains:
     creation time from the Signature packet (5 additional octets) is
     hashed.  The resulting hash value is used in the signature
     algorithm.  The high 16 bits (first two octets) of the hash are
-    included in the Signature packet to provide a quick test to reject
-    some invalid signatures.
+    included in the Signature packet to provide a way to reject
+    invalid signatures without performing a signature verification.
 
     Algorithm-Specific Fields for RSA signatures:
 
@@ -1273,9 +1273,10 @@ EdDSA.
 
 The concatenation of the data being signed and the signature data from
 the version number through the hashed subpacket data (inclusive) is
-hashed.  The resulting hash value is what is signed.  The left 16 bits
-of the hash are included in the Signature packet to provide a quick
-test to reject some invalid signatures.
+hashed.  The resulting hash value is what is signed.  The high 16 bits
+(first two octets) of the hash are included in the Signature packet to
+provide a way to reject invalid signatures without performing a
+signature verification.
 
 There are two fields consisting of Signature subpackets.  The first
 field is hashed with the rest of the signature data, while the second
