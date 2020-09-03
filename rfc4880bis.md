@@ -4627,10 +4627,11 @@ Steps:
         If the hash function outputs "message too long," output
         "message too long" and stop.
 
-     2. Using the list in Section {FIXREF} 5.2.2, "Version 2 Signature Packet
-        Format", produce an ASN.1 DER value for the hash function
-        used.  Let T be the full hash prefix from the list, and let
-        tLen be the length in octets of T.
+     2. Using the list in Section [](#version-3-signature-packet-format),
+        "Version 3 Signature Packet Format", produce an ASN.1 DER
+        value for the hash function used.  Let T be the full hash
+        prefix from the list, and let tLen be the length in octets of
+        T.
 
      3. If emLen < tLen + 11, output "intended encoded message length
         too short" and stop.
