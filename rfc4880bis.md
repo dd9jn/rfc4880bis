@@ -2772,17 +2772,17 @@ The body of this packet consists of:
 
   * A one-octet field that describes how the data is formatted.
 
-    If it is a 'b' (0x62), then the Literal packet contains binary
-    data.  If it is a 't' (0x74), then it contains text data, and thus
+    If it is a `b` (0x62), then the Literal packet contains binary
+    data.  If it is a `t` (0x74), then it contains text data, and thus
     may need line ends converted to local form, or other text-mode
-    changes.  The tag 'u' (0x75) means the same as 't', but also
+    changes.  The tag `u` (0x75) means the same as `t`, but also
     indicates that implementation believes that the literal data
-    contains UTF-8 text.  If it is a 'm' (0x6d), then it contains a
+    contains UTF-8 text.  If it is a `m` (0x6d), then it contains a
     MIME message body part [](#RFC2045).
 
-    Early versions of PGP also defined a value of 'l' as a 'local'
+    Early versions of PGP also defined a value of `l` as a 'local'
     mode for machine-local conversions.  RFC 1991 [](#RFC1991)
-    incorrectly stated this local mode flag as '1' (ASCII numeral
+    incorrectly stated this local mode flag as `1` (ASCII numeral
     one).  Both of these local modes are deprecated.
 
   * File name as a string (one-octet length, followed by a file name).
@@ -3287,7 +3287,7 @@ Concatenating the following data creates ASCII Armor:
   * The Armor Tail, which depends on the Armor Header Line
 
 An Armor Header Line consists of the appropriate header line text
-surrounded by five (5) dashes ('-', 0x2D) on either side of the header
+surrounded by five (5) dashes (`-`, 0x2D) on either side of the header
 line text.  The header line text is chosen based upon the type of data
 that is being encoded in Armor, and how it is being encoded.  Header
 line texts include the following strings:
@@ -3332,7 +3332,7 @@ part of the message, and hence are not protected by any signatures
 applied to the message.
 
 The format of an Armor Header is that of a key-value pair. A colon
-(':' 0x38) and a single space (0x20) separate the key and
+(`:` 0x38) and a single space (0x20) separate the key and
 value.  OpenPGP should consider improperly formatted Armor Headers to
 be corruption of the ASCII Armor.  Unknown keys should be reported to
 the user, but OpenPGP should continue to process the message.
@@ -3553,8 +3553,8 @@ clarity.
 The cleartext content of the message must also be dash-escaped.
 
 Dash-escaped cleartext is the ordinary cleartext where every line
-starting with a dash '-' (0x2D) is prefixed by the sequence dash '-'
-(0x2D) and space ' ' (0x20).  This prevents the parser from recognizing
+starting with a dash `-` (0x2D) is prefixed by the sequence dash `-`
+(0x2D) and space ` ` (0x20).  This prevents the parser from recognizing
 armor headers of the cleartext itself.  An implementation MAY
 dash-escape any line, SHOULD dash-escape lines commencing "From"
 followed by a space, and MUST dash-escape any line commencing in a
@@ -3577,34 +3577,34 @@ the cleartext signature is generated and verified.
 
 #  Regular Expressions
 
-A regular expression is zero or more branches, separated by '|'.  It
+A regular expression is zero or more branches, separated by `|`.  It
 matches anything that matches one of the branches.
 
 A branch is zero or more pieces, concatenated.  It matches a match for
 the first, followed by a match for the second, etc.
 
-A piece is an atom possibly followed by '*', '+', or '?'.  An atom
-followed by '*' matches a sequence of 0 or more matches of the
-atom.  An atom followed by '+' matches a sequence of 1 or more matches
-of the atom.  An atom followed by '?' matches a match of the atom, or
+A piece is an atom possibly followed by `*`, `+`, or `?`.  An atom
+followed by `*` matches a sequence of 0 or more matches of the
+atom.  An atom followed by `+` matches a sequence of 1 or more matches
+of the atom.  An atom followed by `?` matches a match of the atom, or
 the null string.
 
 An atom is a regular expression in parentheses (matching a match for
-the regular expression), a range (see below), '.' (matching any single
-character), '^' (matching the null string at the beginning of the
-input string), '$' (matching the null string at the end of the input
-string), a '\\' followed by a single character (matching that
+the regular expression), a range (see below), `.` (matching any single
+character), `^` (matching the null string at the beginning of the
+input string), `$` (matching the null string at the end of the input
+string), a `\` followed by a single character (matching that
 character), or a single character with no other significance (matching
 that character).
 
 A range is a sequence of characters enclosed in `[]`.  It normally
 matches any single character from the sequence.  If the sequence begins
-with '^', it matches any single character not from the rest of the
-sequence.  If two characters in the sequence are separated by '-', this
+with `^`, it matches any single character not from the rest of the
+sequence.  If two characters in the sequence are separated by `-`, this
 is shorthand for the full list of ASCII characters between them (e.g.,
-`[0-9]` matches any decimal digit).  To include a literal ']' in the
-sequence, make it the first character (following a possible '^').  To
-include a literal '-', make it the first or last character.
+`[0-9]` matches any decimal digit).  To include a literal `]` in the
+sequence, make it the first character (following a possible `^`).  To
+include a literal `-`, make it the first or last character.
 
 #  Constants
 
@@ -5715,7 +5715,7 @@ other values might also be interesting for other ECC specifications:
   - Marked SHA-1 as SHOULD NOT be used to create messages.
   - Marked MD5 as SHOULD NOT implement.
   - Changed v5 key fingerprint format to full 32 octets.
-  - Added Literal Data Packet format octet 'm'.
+  - Added Literal Data Packet format octet `m`.
   - Added Feature Flag for v5 key support.
   - Added AEAD Encrypted Data Packet.
   - Removed notes on extending the MDC packet.
