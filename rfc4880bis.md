@@ -4246,7 +4246,7 @@ with the example of a DSA key:
 
     e.3) MPI of DSA group generator g;
 
-    e.4) MPI of DSA public-key value y (= g\*\*x mod p where x is secret).
+    e.4) MPI of DSA public-key value y (= g**x mod p where x is secret).
 
 A V5 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9A, followed
 by the four-octet packet length, followed by the entire Public-Key
@@ -4276,7 +4276,8 @@ with the example of a DSA key:
 
     f.3) MPI of DSA group generator g;
 
-    f.4) MPI of DSA public-key value y (= g\*\*x mod p where x is secret).
+    f.4) MPI of DSA public-key value y (= g**x mod p where x
+         is secret).
 
 Note that it is possible for there to be collisions of Key IDs --- two
 different keys with the same Key ID.  Note that there is a much
