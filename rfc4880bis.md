@@ -15,7 +15,7 @@ stand_alone: yes
 pi: [toc, sortrefs, symrefs]
 
 author:
- -
+  -
     ins: W. Koch
     name: Werner Koch
     org: GnuPG e.V.
@@ -25,11 +25,11 @@ author:
     country: Germany
     email: wk@gnupg.org
     uri: https://gnupg.org/verein
- -
+  -
     ins: B. Carlson
     name: brian m. carlson
     email: sandals@crustytoothpaste.net
- -
+  -
     ins: R. H. Tse
     name: Ronald Henry Tse
     org: Ribose
@@ -38,230 +38,230 @@ author:
     country: Hong Kong
     email: ronald.tse@ribose.com
     uri: https://www.ribose.com
- -
+  -
     ins: D. A. Atkins
     name: Derek Atkins
     email: derek@ihtfp.com
- -
+  -
     ins: D. K. Gillmor
     name: Daniel Kahn Gillmor
     email: dkg@fifthhorseman.net
 informative:
- BLEICHENBACHER:
+  BLEICHENBACHER:
     title: Generating ElGamal Signatures Without Knowing the Secret Key
     author:
-     -
-      ins: D. Bleichenbacher
+      -
+        ins: D. Bleichenbacher
     date: 1996
     seriesinfo:
-     Lecture Notes in Computer Science: Volume 1070, pp. 10-18
- JKS02:
+      Lecture Notes in Computer Science: Volume 1070, pp. 10-18
+  JKS02:
     title: Implementation of Chosen-Ciphertext Attacks against PGP and GnuPG
     target: http://www.counterpane.com/pgp-attack.html
     date: 2002
     author:
-     -
-      name: Kahil Jallad
-     -
-      name: Jonathan Katz
-     -
-      name: Bruce Schneier
- KOBLITZ:
+      -
+        name: Kahil Jallad
+      -
+        name: Jonathan Katz
+      -
+        name: Bruce Schneier
+  KOBLITZ:
     title: A course in number theory and cryptography, Chapter VI. Elliptic Curves
     seriesinfo:
-     ISBN: 0-387-96576-9
+      ISBN: 0-387-96576-9
     author:
-     ins: N. Koblitz
+      ins: N. Koblitz
     date: 1997
- MZ05:
+  MZ05:
     title: An Attack on CFB Mode Encryption As Used By OpenPGP
     seriesinfo:
-     IACR ePrint Archive: Report 2005/033
+      IACR ePrint Archive: Report 2005/033
     date: 2005-02-08
     author:
-     -
-      name: Serge Mister
-     -
-      name: Robert Zuccherato
+      -
+        name: Serge Mister
+      -
+        name: Robert Zuccherato
     target: http://eprint.iacr.org/2005/033
- REGEX:
+  REGEX:
     title: Mastering Regular Expressions
     author:
-     name: Jeffrey Friedl
-     org: O'Reilly
+      name: Jeffrey Friedl
+      org: O'Reilly
     seriesinfo:
-     ISBN: 0-596-00289-0
+      ISBN: 0-596-00289-0
     date: August 2002
- RFC1991:
- RFC2440:
- RFC4880:
- RFC6090:
- SEC1:
+  RFC1991:
+  RFC2440:
+  RFC4880:
+  RFC6090:
+  SEC1:
     title: "SEC 1: Elliptic Curve Cryptography"
     author:
-     org: Standards for Efficient Cryptography Group
+      org: Standards for Efficient Cryptography Group
     date: September 2000
- SP800-57:
+  SP800-57:
     target: "http://csrc.nist.gov/publications/nistpubs/800-57/SP800-57-Part{1,2}.pdf"
     title: Recommendation on Key Management
     author:
-     org: NIST
+      org: NIST
     date: March 2007
     seriesinfo:
-     NIST Special Publication: 800-57
+      NIST Special Publication: 800-57
 normative:
- AES:
+  AES:
     target: http://csrc.nist.gov/publications/fips/fips197/fips-197.{ps,pdf}
     title: FIPS PUB 197, Advanced Encryption Standard (AES)
     author:
      org: NIST
     date: November 2001'
- BLOWFISH:
+  BLOWFISH:
     target: http://www.counterpane.com/bfsverlag.html
     title: Description of a New Variable-Length Key, 64-Bit Block Cipher (Blowfish)
     author:
-     ins: B. Schneier
+      ins: B. Schneier
     date: December 1993
     seriesinfo:
-     Fast Software Encryption, Cambridge Security Workshop Proceedings: Springer-Verlag, 1994, pp191-204
- BZ2:
+      Fast Software Encryption, Cambridge Security Workshop Proceedings: Springer-Verlag, 1994, pp191-204
+  BZ2:
     target: http://www.bzip.org/
     title: The Bzip2 and libbzip2 home page
     date: 2010
     author:
-     ins: J. Seward
-     name: Julian Seward, jseward@acm.org
- EAX:
+      ins: J. Seward
+      name: Julian Seward, jseward@acm.org
+  EAX:
     title: A Conventional Authenticated-Encryption Mode
     date: April 2003
     author:
-     -
-      ins: M. Bellare
-     -
-      ins: P. Rogaway
-     -
-      ins: D. Wagner
- ELGAMAL:
+      -
+        ins: M. Bellare
+      -
+        ins: P. Rogaway
+      -
+        ins: D. Wagner
+  ELGAMAL:
     title: A Public-Key Cryptosystem and a Signature Scheme Based on Discrete Logarithms
     date: 1985
     author:
-     ins: T. Elgamal
+      ins: T. Elgamal
     seriesinfo:
-     IEEE Transactions on Information Theory: v. IT-31, n. 4, 1985, pp. 469-472
- FIPS180:
+      IEEE Transactions on Information Theory: v. IT-31, n. 4, 1985, pp. 469-472
+  FIPS180:
     target: http://dx.doi.org/10.6028/NIST.FIPS.180-4
     title: Secure Hash Standard (SHS), FIPS 180-4
     author:
-     org: National Institute of Standards and Technology, U.S. Department of Commerce
+      org: National Institute of Standards and Technology, U.S. Department of Commerce
     date: August 2015
- FIPS186:
+  FIPS186:
     target: http://dx.doi.org/10.6028/NIST.FIPS.186-4
     title: Digital Signature Standard (DSS), FIPS 186-4
     author:
-     org: National Institute of Standards and Technology, U.S. Department of Commerce
+      org: National Institute of Standards and Technology, U.S. Department of Commerce
     date: July 2013
- FIPS202:
+  FIPS202:
     target: http://dx.doi.org/10.6028/NIST.FIPS.202
     title: "SHA-3 Standard: Permutation-Based Hash and Extendable-Output Functions, FIPS 202"
     author:
-     org: National Institute of Standards and Technology, U.S. Department of Commerce
+      org: National Institute of Standards and Technology, U.S. Department of Commerce
     date: August 2015
- HAC:
+  HAC:
     title: Handbook of Applied Cryptography
     date: 1996
     author:
-     -
-      ins: A. J. Menezes
-      name: Alfred J. Menezes
-     -
-      ins: P. v. Oorschot
-      name: Paul van Oorschot
-     -
-      ins: S. Vanstone
-      name: Scott Vanstone
- IDEA:
+      -
+        ins: A. J. Menezes
+        name: Alfred J. Menezes
+      -
+        ins: P. v. Oorschot
+        name: Paul van Oorschot
+      -
+        ins: S. Vanstone
+        name: Scott Vanstone
+  IDEA:
     title: On the design and security of block ciphers
     author:
-     -
-      ins: X. Lai
+      -
+        ins: X. Lai
     date: 1992
     seriesinfo:
-     ETH Series in Information Processing, J.L. Massey (editor): Vol. 1, Hartung-Gorre Verlag Konstanz, Technische Hochschule (Zurich)
- ISO10646:
+      ETH Series in Information Processing, J.L. Massey (editor): Vol. 1, Hartung-Gorre Verlag Konstanz, Technische Hochschule (Zurich)
+  ISO10646:
     title: "Information Technology - Universal Multiple-octet coded Character Set (UCS) - Part 1: Architecture and Basic Multilingual Plane"
     author:
-     org: International Organization for Standardization
+      org: International Organization for Standardization
     date: May 1993
     seriesinfo:
-     ISO: Standard 10646-1
- JFIF:
+      ISO: Standard 10646-1
+  JFIF:
     title: JPEG File Interchange Format (Version 1.02).
     author:
-     org: C-Cube Microsystems
-     name: Eric Hamilton, Milpitas, CA
+      org: C-Cube Microsystems
+      name: Eric Hamilton, Milpitas, CA
     date: September 1996
- PKCS5:
+  PKCS5:
     title: "PKCS #5 v2.0: Password-Based Cryptography Standard"
     author:
-     org: RSA Laboratories
+      org: RSA Laboratories
     date: 1999-03-25
- RFC1950:
- RFC1951:
- RFC2045:
- RFC2119:
- RFC2144:
- RFC2822:
- RFC3156:
- RFC3394:
- RFC3447:
- RFC3629:
- RFC3713:
- RFC4086:
- RFC5639:
- RFC5870:
- RFC7253:
- RFC7748:
- RFC8032:
- RFC8126:
- SCHNEIER:
+  RFC1950:
+  RFC1951:
+  RFC2045:
+  RFC2119:
+  RFC2144:
+  RFC2822:
+  RFC3156:
+  RFC3394:
+  RFC3447:
+  RFC3629:
+  RFC3713:
+  RFC4086:
+  RFC5639:
+  RFC5870:
+  RFC7253:
+  RFC7748:
+  RFC8032:
+  RFC8126:
+  SCHNEIER:
     title: "Applied Cryptography Second Edition: protocols, algorithms, and source code in C"
     author:
-     ins: B. Schneier
-     name: Bruce Schneier
+      ins: B. Schneier
+      name: Bruce Schneier
     date: 1996
- SP800-56A:
+  SP800-56A:
     title: Recommendation for Pair-Wise Key Establishment Schemes Using Discrete Logarithm Cryptography
     author:
-     -
-      ins: E. Barker
-     -
-      ins: D. Johnson
-     -
-      ins: M. Smid
+      -
+        ins: E. Barker
+      -
+        ins: D. Johnson
+      -
+        ins: M. Smid
     date: March 2007
     seriesinfo:
-     NIST Special Publication: 800-56A Revision 1
- SuiteB:
+      NIST Special Publication: 800-56A Revision 1
+  SuiteB:
     target: http://www.nsa.gov/ia/programs/suiteb_cryptography/
     title: NSA Suite B Cryptography
     author:
-     org: National Security Agency
+      org: National Security Agency
     date: 2010-03-11
- TWOFISH:
+  TWOFISH:
     title: The Twofish Encryption Algorithm
     author:
-     -
-      ins: B. Schneier
-     -
-      ins: J. Kelsey
-     -
-      ins: D. Whiting
-     -
-      ins: D. Wagner
-     -
-      ins: C. Hall
-     -
-      ins: N. Ferguson
+      -
+        ins: B. Schneier
+      -
+        ins: J. Kelsey
+      -
+        ins: D. Whiting
+      -
+        ins: D. Wagner
+      -
+        ins: C. Hall
+      -
+        ins: N. Ferguson
     date: 1999
 
 --- abstract
