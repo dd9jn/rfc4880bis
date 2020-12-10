@@ -3,17 +3,14 @@ title: OpenPGP Message Format
 docname: draft-ietf-openpgp-rfc4880bis-10
 date: 2020-08-31
 category: std
-
 obsoletes: 4880, 5581, 6637
 ipr: trust200902
 consensus: yes
 area: sec
 workgroup: Network Working Group
 keyword: Internet-Draft
-
 stand_alone: yes
 pi: [toc, sortrefs, symrefs]
-
 author:
   -
     ins: W. Koch
