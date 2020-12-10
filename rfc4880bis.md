@@ -527,6 +527,7 @@ symmetrically encrypted messages.
 There are three types of S2K specifiers currently supported, and some
 reserved values:
 
+{: title="S2K type registry"}
 ID | S2K Type
 ---:|------------------
   0 | Simple S2K
@@ -844,6 +845,7 @@ old format headers can only have tags less than 16, whereas new format
 headers can have tags as great as 63.  The defined tags (in decimal)
 are as follows:
 
+{: title="Packet type registry"}
 Tag | Packet Type
 ---:|--------------------------------------------------
   0 | Reserved - a packet tag MUST NOT have this value
@@ -1305,6 +1307,7 @@ Partial Body Lengths.  That is:
 
 The value of the subpacket type octet may be:
 
+{: title="Subpacket type registry"}
 Type | Description
 ---:|---------------------------------------
   0 | Reserved
@@ -1869,6 +1872,7 @@ certificate was revoked.
 The first octet contains a machine-readable code that denotes the
 reason for the revocation:
 
+{: title="Reasons for revocation"}
 Code | Reason
 ---:|------------------------------------------------------------
   0 | No reason specified (key revocations or cert revocations)
@@ -2836,6 +2840,7 @@ and is followed by the subpacket specific data.
 
 The following table lists the currently known subpackets:
 
+{: title="User Attribute type registry"}
 Type | Attribute Subpacket
 ---:|---------------------------------------------------------
  1 | Image Attribute Subpacket
@@ -3589,6 +3594,7 @@ algorithms.
 
 ## Public-Key Algorithms
 
+{: title="Public-key algorithm registry"}
 ID | Algorithm
 ---:|--------------------------
   1 | RSA (Encrypt or Sign) [](#HAC)
@@ -3629,6 +3635,7 @@ The parameter curve OID is an array of octets that define a named
 curve.  The table below specifies the exact sequence of bytes for each
 named curve referenced in this document:
 
+{: title="ECC Curve OID registry"}
 ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representation | Curve name
 ------------------------|----|-------------------------------|-------------
 1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256
@@ -3652,6 +3659,7 @@ sequence of octets is the valid representation of a curve OID.
 
 ## Symmetric-Key Algorithms
 
+{: title="Symmetric-key algorithm registry"}
 ID | Algorithm
 ---:|------------------------------------
   0 | Plaintext or unencrypted data
@@ -3679,6 +3687,7 @@ MAY implement any other algorithm.
 
 ## Compression Algorithms
 
+{: title="Compression algorithm registry"}
 ID | Algorithm
 ---:|-----------------
  0 | Uncompressed
@@ -3694,6 +3703,7 @@ any other algorithm.
 
 ## Hash Algorithms
 
+{: title="Hash algorithm registry"}
 ID | Algorithm | Text Name
 ---:|----------|--------------
   1 | MD5 [](#HAC)          | "MD5"
@@ -3720,6 +3730,7 @@ packet.  Implementations SHOULD NOT use MD5 or RIPE-MD/160.
 
 ## AEAD Algorithms
 
+{: title="AEAD algorithm registry"}
 ID | Algorithm
 ---:|-----------------
  1 | EAX [](#EAX)
@@ -3773,6 +3784,7 @@ as described in [](#RFC8126).
 This document requests that IANA register the User ID Attribute Type
 found in [](#user-id-attribute-subpacket):
 
+{: title="User Attribute type registry"}
 Value | Attribute | Reference
 -----:|-----------|----------
     1 |  Image    | This Document
@@ -3821,6 +3833,7 @@ REQUIRED method, as described in [](#RFC8126).
 This document requests IANA register the following Signature Notation
 Data types:
 
+{: title="Signature Notation data type registry"}
 Allowed Values | Name | Type | Reference
 ---------------|------|------|---------------------
 A String       | charset | Character Set      | This Doc [](#the-charset-notation)
@@ -3927,6 +3940,7 @@ done through the SPECIFICATION REQUIRED method, as described in
 This document requests IANA register the following new public-key
 algorithm:
 
+{: title="New public-Key algorithms registered"}
 ID | Algorithm | Reference
 ---:|----------|----------
  22 | EdDSA public key algorithm | This doc, [](#eddsa)
@@ -3965,6 +3979,7 @@ REQUIRED method, as described in [](#RFC8126).
 
 This document requests IANA register the following hash algorithms:
 
+{: title="New hash algorithms registered"}
 ID | Algorithm | Reference
 ---:|----------|----------
  12 | SHA3-256 | This doc
@@ -4927,6 +4942,7 @@ SHOULD be rejected.
   Publication 800-57 [](#SP800-57) recommends the following list of
   equivalent strengths:
 
+{: title="Key length equivalences"}
 Asymmetric key size | Hash size | Symmetric key size
 -------------------:|-----------|-------------------
  1024 | 160 |  80
@@ -5059,6 +5075,7 @@ Asymmetric key size | Hash size | Symmetric key size
   strength of the hash algorithm or the symmetric key algorithm may
   not increase the overall security offered by the given ECC key.
 
+{: title="Elliptic Curve cryptographic guidance"}
 Curve name | ECC | RSA strength | Hash size strength, informative | Symmetric key size
 -----------|-----|--------------|---------------------------------|-------------------
 NIST P-256 | 256 | 3072 | 256 | 128
@@ -5076,6 +5093,7 @@ NIST P-521 | 521 | 15360 | 512 | 256
   used with a given curve for ECDH.  A stronger KDF hash algorithm or
   AES KEK algorithm MAY be used for a given ECC curve.
 
+{: title="Elliptic Curve KDF and KEK recommendations"}
 Curve name | Recommended KDF hash algorithm | Recommended KEK encryption algorithm
 -----------|--------------------------------|-------------------------------------
 NIST P-256 | SHA2-256 | AES-128
