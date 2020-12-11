@@ -570,7 +570,7 @@ This allows a message to be decrypted either with a passphrase or a public-key p
 PGP 2 always used IDEA with Simple string-to-key conversion when encrypting a message with a symmetric algorithm.
 This is deprecated, but MAY be used for backward-compatibility.
 
-#  Packet Syntax
+# Packet Syntax
 
 This section describes the packets used by OpenPGP.
 
@@ -746,9 +746,9 @@ Tag | Packet Type
  20 | AEAD Encrypted Data Packet
 60 to 63 | Private or Experimental Values
 
-#  Packet Types
+# Packet Types
 
-##  Public-Key Encrypted Session Key Packets (Tag 1)
+## Public-Key Encrypted Session Key Packets (Tag 1)
 
 A Public-Key Encrypted Session Key packet holds the session key used to encrypt a message.
 Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede a Symmetrically Encrypted Data Packet, which holds an encrypted message.
@@ -2523,7 +2523,7 @@ The nonce for OCB mode is computed by the exclusive-oring of the initialization 
 Security of OCB mode depends on the non-repeated nature of nonces used for the same key on distinct plaintext [](#RFC7253).
 Therefore the initialization vector per message MUST be distinct, and OCB mode SHOULD only be used in environments when there is certainty to fulfilling this requirement.
 
-#  Radix-64 Conversions
+# Radix-64 Conversions
 
 As stated in the introduction, OpenPGP's underlying native representation for objects is a stream of arbitrary octets, and some systems desire these objects to be immune to damage caused by character set translation, data conversions, etc.
 
@@ -2718,7 +2718,7 @@ There are three possibilities:
         group has four zero-value bits added to it, and is processed
         as above.  Two pad characters (=) are added to the output.
 
-##  Decoding Radix-64
+## Decoding Radix-64
 
 In Radix-64 data, characters other than those in the table, line breaks, and other white space probably indicate a transmission error, about which a warning message or even a message rejection might be appropriate under some circumstances.
 Decoding software must ignore all white space.
@@ -2763,7 +2763,7 @@ No such assurance is possible, however, when the number of octets transmitted wa
 
 Note that this example has extra indenting; an actual armored message would have no leading whitespace.
 
-#  Cleartext Signature Framework
+# Cleartext Signature Framework
 
 It is desirable to be able to sign a textual octet stream without ASCII armoring the stream itself, so the signed text is still readable without special software.
 In order to bind a signature to such a cleartext, this framework is used, which follows the same basic format and restrictions as the ASCII armoring described above in "Forming ASCII Armor" ([](#forming-ascii-armor)).
@@ -2808,7 +2808,7 @@ When reversing dash-escaping, an implementation MUST strip the string "- " if it
 
 Also, any trailing whitespace --- spaces (0x20), tabs (0x09) or carriage returns (0x0d) --- at the end of any line is removed when the cleartext signature is generated and verified.
 
-#  Regular Expressions
+# Regular Expressions
 
 A regular expression is zero or more branches, separated by `|`.
 It matches anything that matches one of the branches.
@@ -2830,7 +2830,7 @@ If two characters in the sequence are separated by `-`, this is shorthand for th
 To include a literal `]` in the sequence, make it the first character (following a possible `^`).
 To include a literal `-`, make it the first or last character.
 
-#  Constants
+# Constants
 
 This section describes the constants used in OpenPGP.
 
@@ -3273,7 +3273,7 @@ These detached signatures are simply a Signature packet stored separately from t
 
 # Enhanced Key Formats
 
-##  Key Structures
+## Key Structures
 
 The format of an OpenPGP V3 key is as follows.
 Entries in square brackets are optional and ellipses indicate repetition.
@@ -3548,7 +3548,7 @@ Encrypted Integrity Protected Data Packet (Tag 18)", AEAD encryption or a Modifi
 
 # Notes on Algorithms
 
-##  PKCS\#1 Encoding in OpenPGP
+## PKCS\#1 Encoding in OpenPGP
 
 This standard makes use of the PKCS\#1 functions EME-PKCS1-v1\_5 and EMSA-PKCS1-v1\_5.
 However, the calling conventions of these functions has changed in the past.
