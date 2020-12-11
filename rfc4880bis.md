@@ -5227,9 +5227,12 @@ A compliant application SHOULD follow [](#security-considerations)
 regarding the choice of the following algorithms for each curve:
 
 - the KDF hash algorithm,
+
 - the KEK algorithm,
+
 - the message digest algorithm and the hash algorithm used in the key
   certifications,
+
 - the symmetric algorithm used for message encryption.
 
 It is recommended that the chosen symmetric algorithm for message
