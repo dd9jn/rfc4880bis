@@ -111,7 +111,7 @@ normative:
     target: http://csrc.nist.gov/publications/fips/fips197/fips-197.{ps,pdf}
     title: FIPS PUB 197, Advanced Encryption Standard (AES)
     author:
-     org: NIST
+      org: NIST
     date: November 2001'
   BLOWFISH:
     target: http://www.counterpane.com/bfsverlag.html
