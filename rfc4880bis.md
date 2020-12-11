@@ -5692,9 +5692,9 @@ other values might also be interesting for other ECC specifications:
 
 - Applied errata 2270, 2271, 2242, 3298.
 - Added Camellia cipher from RFC 5581.
-- Incorporated RFC 6637 (ECC for OpenPGP)
-- Added draft-atkins-openpgp-device-certificates
-- Added draft-koch-eddsa-for-openpgp-04
+- Incorporated RFC 6637 (ECC for OpenPGP).
+- Added draft-atkins-openpgp-device-certificates.
+- Added draft-koch-eddsa-for-openpgp-04.
 - Added Issuer Fingerprint signature subpacket.
 - Added a v5 key and fingerprint format.
 - Added OIDs for brainpool curves and Curve25519.
