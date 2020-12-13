@@ -466,7 +466,7 @@ It is beyond the scope of this standard to discuss the details of keyrings or ot
 String-to-key (S2K) specifiers are used to convert passphrase strings into symmetric-key encryption/decryption keys.
 They are used in two places, currently: to encrypt the secret part of private keys in the private keyring, and to convert passphrases to encryption keys for symmetrically encrypted messages.
 
-### String-to-Key (S2K) Specifier Types
+### String-to-Key (S2K) Specifier Types {#s2k-types}
 
 There are three types of S2K specifiers currently supported, and some reserved values:
 
@@ -716,7 +716,7 @@ This is just one possible encoding, and many variations are possible on the size
 
 Please note that in all of these explanations, the total length of the packet is the length of the header(s) plus the length of the body.
 
-## Packet Tags
+## Packet Tags {#packet-tags}
 
 The packet tag denotes what type of packet the body holds.
 Note that old format headers can only have tags less than 16, whereas new format headers can have tags as great as 63.
@@ -746,7 +746,7 @@ Tag | Packet Type
  20 | AEAD Encrypted Data Packet
 60 to 63 | Private or Experimental Values
 
-# Packet Types
+# Packet Types {#packet-types}
 
 ## Public-Key Encrypted Session Key Packets (Tag 1)
 
@@ -790,7 +790,7 @@ The value "m" in the above formulas is derived from the session key as follows.
 First, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following Symmetrically Encrypted Data Packet.
 Then a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, not including the algorithm identifier, modulo 65536.
 This value is then encoded as described in PKCS\#1 block encoding EME-PKCS1-v1\_5 in Section 7.2.1 of {{RFC3447}} to form the "m" value used in the formulas above.
-See {{pkcs1-encoding-in-openpgp}} of this document for notes on OpenPGP's use of PKCS\#1.
+See {{pkcs-encoding}} of this document for notes on OpenPGP's use of PKCS\#1.
 
 Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS\#1 encoding for each key.
 
@@ -798,7 +798,7 @@ An implementation MAY accept or use a Key ID of zero as a "wild card" or "specul
 In this case, the receiving implementation would try all available private keys, checking for a valid decrypted session key.
 This format helps reduce traffic analysis of messages.
 
-## Signature Packet (Tag 2)
+## Signature Packet (Tag 2) {#signature-packet}
 
 A Signature packet describes a binding between some public key and some data.
 The most common signatures are a signature of a file or a block of text, and a signature that is a certification of a User ID.
@@ -811,7 +811,7 @@ Implementations MUST generate version 5 signatures when using a version 5 key.
 Implementations SHOULD generate V4 signatures with version 4 keys.
 Implementations MUST NOT create version 3 signatures; they MAY accept version 3 signatures.
 
-### Signature Types
+### Signature Types {#signature-types}
 
 There are a number of possible meanings for a signature, which are indicated in a signature type octet in any given signature.
 Please note that the vagueness of these meanings is not a flaw, but a feature of the system.
@@ -910,7 +910,7 @@ These meanings are as follows:
   Note that we really do mean SHOULD.
   There are plausible uses for this (such as a blind party that only sees the signature, not the key or source document) that cannot include a target subpacket.
 
-### Version 3 Signature Packet Format
+### Version 3 Signature Packet Format {#version-three-sig}
 
 The body of a version 3 Signature Packet contains:
 
@@ -1078,7 +1078,7 @@ The difference between a V4 and V5 signature is that the latter includes additio
 
 The algorithms for converting the hash function result to a signature are described in a section below.
 
-#### Signature Subpacket Specification
+#### Signature Subpacket Specification {#signature-subpacket}
 
 A subpacket data set consists of zero or more Signature subpackets.
 In Signature packets, the subpacket data set is preceded by a two- octet scalar count of the length in octets of all the subpackets.
@@ -1253,7 +1253,7 @@ Note that support for the AEAD Encrypted Data packet in the general is indicated
 
 Message digest algorithm numbers that indicate which algorithms the key holder prefers to receive.
 Like the preferred symmetric algorithms, the list is ordered.
-Algorithm numbers are in {{hash-algorithms}}.
+Algorithm numbers are in {{hash-algos}}.
 This is only found on a self-signature.
 
 #### Preferred Compression Algorithms
@@ -1262,7 +1262,7 @@ This is only found on a self-signature.
 
 Compression algorithm numbers that indicate which algorithms the key holder prefers to use.
 Like the preferred symmetric algorithms, the list is ordered.
-Algorithm numbers are in {{compression-algorithms}}.
+Algorithm numbers are in {{compression-algos}}.
 If this subpacket is not included, ZIP is preferred.
 A zero denotes that uncompressed data is preferred; the key holder's software might have no compression software in that implementation.
 This is only found on a self-signature.
@@ -1343,7 +1343,7 @@ If the "sensitive" flag is set, the keyholder feels this subpacket contains priv
 If this flag is set, implementations SHOULD NOT export this signature to other users except in cases where the data needs to be available: when the signature is being sent to the designated revoker, or when it is accompanied by a revocation signature from that revoker.
 Note that it may be appropriate to isolate this subpacket within a separate signature so that it is not combined with other subpackets that need to be exported.
 
-#### Notation Data
+#### Notation Data {#notation-data}
 
        (4 octets of flags, 2 octets of name length (M),
                            2 octets of value length (N),
@@ -1446,7 +1446,7 @@ The 'hash' notation has the following structure: * A single byte specifying the 
 
 Due to its nature a 'hash' notation is not human readable and MUST NOT be marked as such when used.
 
-#### Key Server Preferences
+#### Key Server Preferences {#key-server-preferences}
 
 (N octets of flags)
 
@@ -1494,7 +1494,7 @@ That is to say, there are two different and independent "primaries" --- one for 
 
 This subpacket contains a URI of a document that describes the policy under which the signature was issued.
 
-#### Key Flags
+#### Key Flags {#key-flags}
 
 (N octets of flags)
 
@@ -1552,7 +1552,7 @@ This subpacket allows such a keyholder to state which of their roles is making a
 
 This subpacket is not appropriate to use to refer to a User Attribute packet.
 
-#### Reason for Revocation
+#### Reason for Revocation {#reason-for-revocation}
 
 (1 octet of revocation code, N octets of reason string)
 
@@ -1586,7 +1586,7 @@ Note that any signature may be revoked, including a certification on some other 
 There are many good reasons for revoking a certification signature, such as the case where the keyholder leaves the employ of a business with an email address.
 A revoked certification is no longer a part of validity calculations.
 
-#### Features
+#### Features {#features-subpacket}
 
 (N octets of flags)
 
@@ -1630,7 +1630,7 @@ For example, a target signature with a SHA-1 hash MUST have 20 octets of hash da
 
 (1 signature packet body)
 
-This subpacket contains a complete Signature packet body as specified in {{signature-packet-tag-2}} above.
+This subpacket contains a complete Signature packet body as specified in {{signature-packet}} above.
 It is useful when one signature needs to refer to, or be incorporated in, another signature.
 
 #### Issuer Fingerprint
@@ -1695,7 +1695,7 @@ The key SHOULD contain a primary or subkey capable of encryption and the entire 
 
 Implementations MUST ignore this subpacket if the first octet does not have a value of zero or if the key data does not represent a valid transferable public key.
 
-### Computing Signatures
+### Computing Signatures {#computing-signatures}
 
 All signatures are formed by producing a hash over the signature data, and then using the resulting hash in the signature algorithm.
 
@@ -2252,7 +2252,7 @@ A User ID packet consists of UTF-8 text that is intended to represent the name a
 By convention, it includes an RFC 2822 {{RFC2822}} mail name-addr, but there are no restrictions on its content.
 The packet length in the header specifies the length of the User ID.
 
-## User Attribute Packet (Tag 17)
+## User Attribute Packet (Tag 17) {#user-attribute-packet}
 
 The User Attribute packet is a variation of the User ID packet.
 It is capable of storing more types of data than the User ID packet, which is limited to text.
@@ -2283,7 +2283,7 @@ Type | Attribute Subpacket
 
 An implementation SHOULD ignore any subpacket of a type that it does not recognize.
 
-### The Image Attribute Subpacket
+### The Image Attribute Subpacket {#uat-image}
 
 The Image Attribute subpacket is used to encode an image, presumably (but not required to be) that of the key owner.
 
@@ -2315,7 +2315,7 @@ The packet length in the header specifies the length of the User ID.
 
 Because User Attribute subpackets can be used anywhere a User ID packet can be used, implementations MAY choose to trust a signed User Attribute subpacket that includes a User ID Attribute subpacket.
 
-## Sym. Encrypted Integrity Protected Data Packet (Tag 18)
+## Sym. Encrypted Integrity Protected Data Packet (Tag 18) {#seipd}
 
 The Symmetrically Encrypted Integrity Protected Data packet is a variant of the Symmetrically Encrypted Data packet.
 It is a new feature created for OpenPGP that addresses the problem of detecting a modification to encrypted data.
@@ -2625,7 +2625,7 @@ OpenPGP should consider improperly formatted Armor Headers to be corruption of t
 Unknown keys should be reported to the user, but OpenPGP should continue to process the message.
 
 Note that some transport methods are sensitive to line length.
-While there is a limit of 76 characters for the Radix-64 data ({{encoding-binary-in-radix-64}}), there is no limit to the length of Armor Headers.
+While there is a limit of 76 characters for the Radix-64 data ({{encoding-binary-radix64}}), there is no limit to the length of Armor Headers.
 Care should be taken that the Armor Headers are short enough to survive transport.
 One way to do this is to repeat an Armor Header Key multiple times with different values for each so that no one line is overly long.
 
@@ -2663,7 +2663,7 @@ The blank line can either be zero-length or contain only whitespace, that is spa
 
 The Armor Tail Line is composed in the same manner as the Armor Header Line, except the string "BEGIN" is replaced by the string "END".
 
-## Encoding Binary in Radix-64
+## Encoding Binary in Radix-64 {#encoding-binary-radix64}
 
 The encoding process represents 24-bit groups of input bits as output strings of 4 encoded characters.
 Proceeding from left to right, a 24-bit input group is formed by concatenating three 8-bit input groups.
@@ -2808,7 +2808,7 @@ When reversing dash-escaping, an implementation MUST strip the string "- " if it
 
 Also, any trailing whitespace --- spaces (0x20), tabs (0x09) or carriage returns (0x0d) --- at the end of any line is removed when the cleartext signature is generated and verified.
 
-# Regular Expressions
+# Regular Expressions {#regular-expressions}
 
 A regular expression is zero or more branches, separated by `|`.
 It matches anything that matches one of the branches.
@@ -2830,7 +2830,7 @@ If two characters in the sequence are separated by `-`, this is shorthand for th
 To include a literal `]` in the sequence, make it the first character (following a possible `^`).
 To include a literal `-`, make it the first or last character.
 
-# Constants
+# Constants {#constants}
 
 This section describes the constants used in OpenPGP.
 
@@ -2838,7 +2838,7 @@ Note that these tables are not exhaustive lists; an implementation MAY implement
 
 See the section "Notes on Algorithms" below for more discussion of the algorithms.
 
-## Public-Key Algorithms
+## Public-Key Algorithms {#pubkey-algos}
 
 {: title="Public-key algorithm registry"}
 ID | Algorithm
@@ -2861,8 +2861,8 @@ Implementations MUST implement RSA (1) and ECDSA (19) for signatures, and RSA (1
 Implementations SHOULD implement EdDSA (22) keys.
 
 RSA Encrypt-Only (2) and RSA Sign-Only (3) are deprecated and SHOULD NOT be generated, but may be interpreted.
-See {{rsa}}.
-See {{reserved-algorithm-numbers}} for notes on Elgamal Encrypt or Sign (20), and X9.42 (21).
+See {{rsa-notes}}.
+See {{reserved-notes}} for notes on Elgamal Encrypt or Sign (20), and X9.42 (21).
 Implementations MAY implement any other algorithm.
 
 Note that implementations conforming to previous versions of this standard (RFC-4880) have DSA (17) and Elgamal (16) as its only MUST-implement algorithm.
@@ -2891,7 +2891,7 @@ The first omitted field is one octet representing the Object Identifier tag, and
 For example, the complete ASN.1 DER encoding for the NIST P-256 curve OID is "06 08 2A 86 48 CE 3D 03 01 07", from which the first entry in the table above is constructed by omitting the first two octets.
 Only the truncated sequence of octets is the valid representation of a curve OID.
 
-## Symmetric-Key Algorithms
+## Symmetric-Key Algorithms {#symmetric-algos}
 
 {: title="Symmetric-key algorithm registry"}
 ID | Algorithm
@@ -2918,7 +2918,7 @@ Implementations that interoperate with RFC-4880 implementations need to support 
 Implementations that interoperate with PGP 2.6 or earlier need to support IDEA, as that is the only symmetric cipher those versions use.
 Implementations MAY implement any other algorithm.
 
-## Compression Algorithms
+## Compression Algorithms {#compression-algos}
 
 {: title="Compression algorithm registry"}
 ID | Algorithm
@@ -2934,7 +2934,7 @@ Implementations SHOULD implement ZLIB.
 For interoperability reasons implementations SHOULD be able to decompress using ZIP.
 Implementations MAY implement any other algorithm.
 
-## Hash Algorithms
+## Hash Algorithms {#hash-algos}
 
 {: title="Hash algorithm registry"}
 ID | Algorithm | Text Name
@@ -3000,7 +3000,7 @@ Adding a new packet type MUST be done through the RFC REQUIRED method, as descri
 The User Attribute packet permits an extensible mechanism for other types of certificate identification.
 This specification creates a registry of User Attribute types.
 The registry includes the User Attribute type, the name of the User Attribute, and a reference to the defining specification.
-The initial values for this registry can be found in {{user-attribute-packet-tag-17}}.
+The initial values for this registry can be found in {{user-attribute-packet}}.
 Adding a new User Attribute type MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 This document requests that IANA register the User ID Attribute Type found in {{user-id-attribute-subpacket}}:
@@ -3016,15 +3016,15 @@ Value | Attribute | Reference
 Within User Attribute packets, there is an extensible mechanism for other types of image-based User Attributes.
 This specification creates a registry of Image Attribute subpacket types.
 The registry includes the Image Attribute subpacket type, the name of the Image Attribute subpacket, and a reference to the defining specification.
-The initial values for this registry can be found in {{the-image-attribute-subpacket}}.
+The initial values for this registry can be found in {{uat-image}}.
 Adding a new Image Attribute subpacket type MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 ### New Signature Subpackets
 
-OpenPGP signatures contain a mechanism for signed (or unsigned) data to be added to them for a variety of purposes in the Signature subpackets as discussed in {{signature-subpacket-specification}}.
+OpenPGP signatures contain a mechanism for signed (or unsigned) data to be added to them for a variety of purposes in the Signature subpackets as discussed in {{signature-subpacket}}.
 This specification creates a registry of Signature subpacket types.
 The registry includes the Signature subpacket type, the name of the subpacket, and a reference to the defining specification.
-The initial values for this registry can be found in {{signature-subpacket-specification}}.
+The initial values for this registry can be found in {{signature-subpacket}}.
 Adding a new Signature subpacket MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 #### Signature Notation Data Subpackets
@@ -3091,7 +3091,7 @@ Adding a new feature flag MUST be done through the SPECIFICATION REQUIRED method
 OpenPGP signatures contain a mechanism for flags to be specified stating which optional features an implementation supports.
 This specification creates a registry of feature-implementation flags.
 The registry includes the feature-implementation flags value, the name of the flag, and a reference to the defining specification.
-The initial values for this registry can be found in {{features}}.
+The initial values for this registry can be found in {{features-subpacket}}.
 Adding a new feature-implementation flag MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 Also see {{meta-considerations-for-expansion}} for more information about when feature flags are needed.
@@ -3118,7 +3118,7 @@ Changes to this document were made mainly for emphasis.
 OpenPGP specifies a number of public-key algorithms.
 This specification creates a registry of public-key algorithm identifiers.
 The registry includes the algorithm name, its key sizes and parameters, and a reference to the defining specification.
-The initial values for this registry can be found in {{public-key-algorithms}}.
+The initial values for this registry can be found in {{pubkey-algos}}.
 Adding a new public-key algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 This document requests IANA register the following new public-key algorithm:
@@ -3140,7 +3140,7 @@ ID | Algorithm | Reference
 OpenPGP specifies a number of symmetric-key algorithms.
 This specification creates a registry of symmetric-key algorithm identifiers.
 The registry includes the algorithm name, its key sizes and block size, and a reference to the defining specification.
-The initial values for this registry can be found in {{symmetric-key-algorithms}}.
+The initial values for this registry can be found in {{symmetric-algos}}.
 Adding a new symmetric-key algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 ### Hash Algorithms
@@ -3148,7 +3148,7 @@ Adding a new symmetric-key algorithm MUST be done through the SPECIFICATION REQU
 OpenPGP specifies a number of hash algorithms.
 This specification creates a registry of hash algorithm identifiers.
 The registry includes the algorithm name, a text representation of that name, its block size, an OID hash prefix, and a reference to the defining specification.
-The initial values for this registry can be found in {{hash-algorithms}} for the algorithm identifiers and text names, and {{ecc-curve-oid}} for the OIDs and expanded signature prefixes.
+The initial values for this registry can be found in {{hash-algos}} for the algorithm identifiers and text names, and {{ecc-curve-oid}} for the OIDs and expanded signature prefixes.
 Adding a new hash algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 This document requests IANA register the following hash algorithms:
@@ -3169,10 +3169,10 @@ ID | Algorithm | Reference
 OpenPGP specifies a number of compression algorithms.
 This specification creates a registry of compression algorithm identifiers.
 The registry includes the algorithm name and a reference to the defining specification.
-The initial values for this registry can be found in {{compression-algorithms}}.
+The initial values for this registry can be found in {{compression-algos}}.
 Adding a new compression key algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
-# Packet Composition
+# Packet Composition {#packet-composition}
 
 OpenPGP packets are assembled into sequences in order to create messages and to transfer keys.
 Not all possible packet sequences are meaningful and correct.
@@ -3271,7 +3271,7 @@ Some OpenPGP applications use so-called "detached signatures".
 For example, a program bundle may contain a file, and with it a second file that is a detached signature of the first file.
 These detached signatures are simply a Signature packet stored separately from the data for which they are a signature.
 
-# Enhanced Key Formats
+# Enhanced Key Formats {#enhanced-key-formats}
 
 ## Key Structures
 
@@ -3475,7 +3475,7 @@ The KDF parameters are encoded as a concatenation of the following 5 variable-le
     + the octets representing a curve OID, defined in
       {{ecc-curve-oid}}
 
-- a one-octet public key algorithm ID defined in {{public-key-algorithms}}
+- a one-octet public key algorithm ID defined in {{pubkey-algos}}
 
 - a variable-length field containing KDF parameters, identical to the corresponding field in the ECDH public key, formatted as follows:
 
@@ -3543,12 +3543,12 @@ Note that the recipient obtains the shared secret by calculating
 
     S = rV = rvG, where (r,R) is the recipient's key pair.
 
-Consistent with {{aead-encrypted-data-packet-tag-20}}, "AEAD Encrypted Data Packet (Tag 20)" and {{sym-encrypted-integrity-protected-data-packet-tag-18}}, "Sym.
+Consistent with {{aead-encrypted-data-packet-tag-20}}, "AEAD Encrypted Data Packet (Tag 20)" and {{seipd}}, "Sym.
 Encrypted Integrity Protected Data Packet (Tag 18)", AEAD encryption or a Modification Detection Code (MDC) MUST be used anytime the symmetric key is protected by ECDH.
 
-# Notes on Algorithms
+# Notes on Algorithms {#notes-on-algorithms}
 
-## PKCS\#1 Encoding in OpenPGP
+## PKCS#1 Encoding in OpenPGP {#pkcs-encoding}
 
 This standard makes use of the PKCS\#1 functions EME-PKCS1-v1\_5 and EMSA-PKCS1-v1\_5.
 However, the calling conventions of these functions has changed in the past.
@@ -3716,7 +3716,7 @@ However, it is good form to place it there explicitly.
 Algorithm 0, "plaintext", may only be used to denote secret keys that are stored in the clear.
 Implementations MUST NOT use plaintext in Symmetrically Encrypted Data packets; they must use Literal Data packets to encode unencrypted or literal data.
 
-## RSA
+## RSA {#rsa-notes}
 
 There are algorithm types for RSA Sign-Only, and RSA Encrypt-Only keys.
 These types are deprecated.
@@ -3757,10 +3757,10 @@ Although the EdDSA algorithm allows arbitrary data as input, its use with OpenPG
 See section {{computing-signatures}}, "Computing Signatures" for details.
 Truncation of the resulting digest is never applied; the resulting digest value is used verbatim as input to the EdDSA algorithm.
 
-## Reserved Algorithm Numbers
+## Reserved Algorithm Numbers {#reserved-notes}
 
 A number of algorithm IDs have been reserved for algorithms that would be useful to use in an OpenPGP implementation, yet there are issues that prevent an implementer from actually implementing the algorithm.
-These are marked in {{public-key-algorithms}}, "Public-Key Algorithms", as "reserved for".
+These are marked in {{pubkey-algos}}, "Public-Key Algorithms", as "reserved for".
 
 The reserved public-key algorithm X9.42 (21) does not have the necessary parameters, parameter order, or semantics defined.
 The same is currently true for reserved public-key algorithms AEDH (23) and AEDSA (24).
@@ -3827,7 +3827,7 @@ These are intentionally managed with the PRIVATE USE method, as described in {{R
 
 However, implementations need to be careful with these and promote them to full IANA-managed parameters when they grow beyond the original, limited system.
 
-## Meta-Considerations for Expansion
+## Meta-Considerations for Expansion {#meta-considerations-for-expansion}
 
 If OpenPGP is extended in a way that is not backwards-compatible, meaning that old implementations will not gracefully handle their absence of a new feature, the extension proposal can be declared in the key holder's self-signature as part of the Features signature subpacket.
 
@@ -3836,7 +3836,7 @@ We cannot state definitively what extensions will not be upwards-compatible, but
 If an extension proposal does not update the Features system, it SHOULD include an explanation of why this is unnecessary.
 If the proposal contains neither an extension to the Features system nor an explanation of why such an extension is unnecessary, the proposal SHOULD be rejected.
 
-# Security Considerations
+# Security Considerations {#security-considerations}
 
 - As with any technology involving cryptography, you should check the current literature to determine if any algorithms used here have been found to be vulnerable to attack.
 
