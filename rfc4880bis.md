@@ -3011,7 +3011,7 @@ Value | Attribute | Reference
     1 |  Image    | This Document
  TBD1 |  User ID  | This Document
 
-### Image Format Subpacket Types
+#### Image Format Subpacket Types
 
 Within User Attribute packets, there is an extensible mechanism for other types of image-based User Attributes.
 This specification creates a registry of Image Attribute subpacket types.
