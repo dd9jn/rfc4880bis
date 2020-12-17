@@ -2373,59 +2373,59 @@ Any failure of the MDC indicates that the message has been modified and MUST be 
 Failures include a difference in the hash values, but also the absence of an MDC packet, or an MDC packet in any position other than the end of the plaintext.
 Any failure SHOULD be reported to the user.
 
-      NON-NORMATIVE EXPLANATION
-
-      The MDC system, as packets 18 and 19 are called, were created to
-      provide an integrity mechanism that is less strong than a
-      signature, yet stronger than bare CFB encryption.
-
-      It is a limitation of CFB encryption that damage to the
-      ciphertext will corrupt the affected cipher blocks and the block
-      following.  Additionally, if data is removed from the end of a
-      CFB-encrypted block, that removal is undetectable.  (Note also
-      that CBC mode has a similar limitation, but data removed from
-      the front of the block is undetectable.)
-
-      The obvious way to protect or authenticate an encrypted block is
-      to digitally sign it.  However, many people do not wish to
-      habitually sign data, for a large number of reasons beyond the
-      scope of this document.  Suffice it to say that many people
-      consider properties such as deniability to be as valuable as
-      integrity.
-
-      OpenPGP addresses this desire to have more security than raw
-      encryption and yet preserve deniability with the MDC system.  An
-      MDC is intentionally not a MAC.  Its name was not selected by
-      accident.  It is analogous to a checksum.
-
-      Despite the fact that it is a relatively modest system, it has
-      proved itself in the real world.  It is an effective defense to
-      several attacks that have surfaced since it has been created.
-      It has met its modest goals admirably.
-
-      Consequently, because it is a modest security system, it has
-      modest requirements on the hash function(s) it employs.  It does
-      not rely on a hash function being collision-free, it relies on a
-      hash function being one-way.  If a forger, Frank, wishes to send
-      Alice a (digitally) unsigned message that says, "I've always
-      secretly loved you, signed Bob", it is far easier for him to
-      construct a new message than it is to modify anything
-      intercepted from Bob.  (Note also that if Bob wishes to
-      communicate secretly with Alice, but without authentication or
-      identification and with a threat model that includes forgers, he
-      has a problem that transcends mere cryptography.)
-
-      Note also that unlike nearly every other OpenPGP subsystem,
-      there are no parameters in the MDC system.  It hard-defines
-      SHA-1 as its hash function.  This is not an accident.  It is an
-      intentional choice to avoid downgrade and cross-grade attacks
-      while making a simple, fast system.  (A downgrade attack would
-      be an attack that replaced SHA2-256 with SHA-1, for example.  A
-      cross-grade attack would replace SHA-1 with another 160-bit
-      hash, such as RIPE-MD/160, for example.)
-
-      However, no update will be needed because the MDC will be
-      replaced by the AEAD encryption described in this document.
+>   NON-NORMATIVE EXPLANATION
+>
+>   The MDC system, as packets 18 and 19 are called, were created to
+>   provide an integrity mechanism that is less strong than a
+>   signature, yet stronger than bare CFB encryption.
+>
+>   It is a limitation of CFB encryption that damage to the
+>   ciphertext will corrupt the affected cipher blocks and the block
+>   following.  Additionally, if data is removed from the end of a
+>   CFB-encrypted block, that removal is undetectable.  (Note also
+>   that CBC mode has a similar limitation, but data removed from
+>   the front of the block is undetectable.)
+>
+>   The obvious way to protect or authenticate an encrypted block is
+>   to digitally sign it.  However, many people do not wish to
+>   habitually sign data, for a large number of reasons beyond the
+>   scope of this document.  Suffice it to say that many people
+>   consider properties such as deniability to be as valuable as
+>   integrity.
+>
+>   OpenPGP addresses this desire to have more security than raw
+>   encryption and yet preserve deniability with the MDC system.  An
+>   MDC is intentionally not a MAC.  Its name was not selected by
+>   accident.  It is analogous to a checksum.
+>
+>   Despite the fact that it is a relatively modest system, it has
+>   proved itself in the real world.  It is an effective defense to
+>   several attacks that have surfaced since it has been created.
+>   It has met its modest goals admirably.
+>
+>   Consequently, because it is a modest security system, it has
+>   modest requirements on the hash function(s) it employs.  It does
+>   not rely on a hash function being collision-free, it relies on a
+>   hash function being one-way.  If a forger, Frank, wishes to send
+>   Alice a (digitally) unsigned message that says, "I've always
+>   secretly loved you, signed Bob", it is far easier for him to
+>   construct a new message than it is to modify anything
+>   intercepted from Bob.  (Note also that if Bob wishes to
+>   communicate secretly with Alice, but without authentication or
+>   identification and with a threat model that includes forgers, he
+>   has a problem that transcends mere cryptography.)
+>
+>   Note also that unlike nearly every other OpenPGP subsystem,
+>   there are no parameters in the MDC system.  It hard-defines
+>   SHA-1 as its hash function.  This is not an accident.  It is an
+>   intentional choice to avoid downgrade and cross-grade attacks
+>   while making a simple, fast system.  (A downgrade attack would
+>   be an attack that replaced SHA2-256 with SHA-1, for example.  A
+>   cross-grade attack would replace SHA-1 with another 160-bit
+>   hash, such as RIPE-MD/160, for example.)
+>
+>   However, no update will be needed because the MDC will be
+>   replaced by the AEAD encryption described in this document.
 
 ## Modification Detection Code Packet (Tag 19)
 
