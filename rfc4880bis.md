@@ -2984,7 +2984,7 @@ This section describes how IANA should look at extensions to the protocol as des
 OpenPGP S2K specifiers contain a mechanism for new algorithms to turn a string into a key.
 This specification creates a registry of S2K specifier types.
 The registry includes the S2K type, the name of the S2K, and a reference to the defining specification.
-The initial values for this registry can be found in {{string-to-key-s2k-specifier-types}}.
+The initial values for this registry can be found in {{s2k-types}}.
 Adding a new S2K specifier MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 ## New Packets
@@ -3330,56 +3330,55 @@ A V4 fingerprint is the 160-bit SHA-1 hash of the octet 0x99, followed by the tw
 The Key ID is the low-order 64 bits of the fingerprint.
 Here are the fields of the hash material, with the example of a DSA key:
 
-    a.1) 0x99 (1 octet)
+a.1) 0x99 (1 octet)
 
-    a.2) two-octet scalar octet count of (b)-(e)
+a.2) two-octet scalar octet count of (b)-(e)
 
-    b) version number = 4 (1 octet);
+b) version number = 4 (1 octet);
 
-    c) timestamp of key creation (4 octets);
+c) timestamp of key creation (4 octets);
 
-    d) algorithm (1 octet): 17 = DSA (example);
+d) algorithm (1 octet): 17 = DSA (example);
 
-    e) Algorithm-specific fields.
+e) Algorithm-specific fields.
 
-    Algorithm-Specific Fields for DSA keys (example):
+Algorithm-Specific Fields for DSA keys (example):
 
-    e.1) MPI of DSA prime p;
+e.1) MPI of DSA prime p;
 
-    e.2) MPI of DSA group order q (q is a prime divisor of p-1);
+e.2) MPI of DSA group order q (q is a prime divisor of p-1);
 
-    e.3) MPI of DSA group generator g;
+e.3) MPI of DSA group generator g;
 
-    e.4) MPI of DSA public-key value y (= g**x mod p where x is secret).
+e.4) MPI of DSA public-key value y (= g**x mod p where x is secret).
 
 A V5 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9A, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
 The Key ID is the high-order 64 bits of the fingerprint.
 Here are the fields of the hash material, with the example of a DSA key:
 
-    a.1) 0x9A (1 octet)
+a.1) 0x9A (1 octet)
 
-    a.2) four-octet scalar octet count of (b)-(f)
+a.2) four-octet scalar octet count of (b)-(f)
 
-    b) version number = 5 (1 octet);
+b) version number = 5 (1 octet);
 
-    c) timestamp of key creation (4 octets);
+c) timestamp of key creation (4 octets);
 
-    d) algorithm (1 octet): 17 = DSA (example);
+d) algorithm (1 octet): 17 = DSA (example);
 
-    e) four-octet scalar octet count for the following key material;
+e) four-octet scalar octet count for the following key material;
 
-    f) algorithm-specific fields.
+f) algorithm-specific fields.
 
-    Algorithm-Specific Fields for DSA keys (example):
+Algorithm-Specific Fields for DSA keys (example):
 
-    f.1) MPI of DSA prime p;
+f.1) MPI of DSA prime p;
 
-    f.2) MPI of DSA group order q (q is a prime divisor of p-1);
+f.2) MPI of DSA group order q (q is a prime divisor of p-1);
 
-    f.3) MPI of DSA group generator g;
+f.3) MPI of DSA group generator g;
 
-    f.4) MPI of DSA public-key value y (= g**x mod p where x
-         is secret).
+f.4) MPI of DSA public-key value y (= g**x mod p where x is secret).
 
 Note that it is possible for there to be collisions of Key IDs --- two different keys with the same Key ID.
 Note that there is a much smaller, but still non-zero, probability that two different keys have the same fingerprint.
@@ -3558,44 +3557,44 @@ Nonetheless, we believe that there is value in having a self- contained document
 
 ### EME-PKCS1-v1\_5-ENCODE
 
-    Input:
+Input:
 
-    k = the length in octets of the key modulus.
+k =
+: the length in octets of the key modulus.
 
-    M = message to be encoded, an octet string of length mLen,
-        where mLen <= k - 11.
+M =
+: message to be encoded, an octet string of length mLen, where mLen <= k - 11.
 
-    Output:
+Output:
 
-    EM = encoded message, an octet string of length k.
+EM =
+: encoded message, an octet string of length k.
 
-    Error: "message too long".
+Error: "message too long".
 
-     1. Length checking: If mLen > k - 11, output "message too long"
-        and stop.
+1. Length checking: If mLen > k - 11, output "message too long" and stop.
 
-     2. Generate an octet string PS of length k - mLen - 3 consisting
-        of pseudo-randomly generated nonzero octets.  The length of PS
-        will be at least eight octets.
+2. Generate an octet string PS of length k - mLen - 3 consisting of pseudo-randomly generated nonzero octets.  The length of PS will be at least eight octets.
 
-     3. Concatenate PS, the message M, and other padding to form an
-        encoded message EM of length k octets as
+3. Concatenate PS, the message M, and other padding to form an encoded message EM of length k octets as
 
-        EM = 0x00 || 0x02 || PS || 0x00 || M.
+       EM = 0x00 || 0x02 || PS || 0x00 || M.
 
-     4. Output EM.
+4. Output EM.
 
 ### EME-PKCS1-v1\_5-DECODE
 
-    Input:
+Input:
 
-    EM = encoded message, an octet string
+EM =
+: encoded message, an octet string
 
-    Output:
+Output:
 
-    M = message, an octet string,
+M =
+: message, an octet string,
 
-    Error: "decryption error",
+Error: "decryption error",
 
 To decode an EME-PKCS1\_v1\_5 message, separate the encoded message EM into an octet string PS consisting of nonzero octets and a message M as follows
 
@@ -3604,59 +3603,50 @@ To decode an EME-PKCS1\_v1\_5 message, separate the encoded message EM into an o
 If the first octet of EM does not have hexadecimal value 0x00, if the second octet of EM does not have hexadecimal value 0x02, if there is no octet with hexadecimal value 0x00 to separate PS from M, or if the length of PS is less than 8 octets, output "decryption error" and stop.
 See also the security note in {{security-considerations}} regarding differences in reporting between a decryption error and a padding error.
 
-### EMSA-PKCS1-v1\_5
+### EMSA-PKCS1-v1_5
 
 This encoding method is deterministic and only has an encoding operation.
 
-    Option:
+Option:
 
-    Hash - a hash function in which hLen denotes the length in octets
-           of the hash function output.
+Hash -
+: a hash function in which hLen denotes the length in octets of the hash function output.
 
-    Input:
+Input:
 
-    M = message to be encoded.
+M =
+: message to be encoded.
 
-    emLen = intended length in octets of the encoded message, at least
-         tLen + 11, where tLen is the octet length of the DER encoding
-         T of a certain value computed during the encoding operation.
+emLen =
+: intended length in octets of the encoded message, at least tLen + 11, where tLen is the octet length of the DER encoding T of a certain value computed during the encoding operation.
 
-    Output:
+Output:
 
-    EM = encoded message, an octet string of length emLen.
+EM =
+: encoded message, an octet string of length emLen.
 
-    Errors: "message too long";
-            "intended encoded message length too short".
+Errors: "message too long"; "intended encoded message length too short".
 
 Steps:
 
-     1. Apply the hash function to the message M to produce a hash
-        value H:
+1. Apply the hash function to the message M to produce a hash value H:
 
-        H = Hash(M).
+   H = Hash(M).
 
-        If the hash function outputs "message too long," output
-        "message too long" and stop.
+   If the hash function outputs "message too long," output "message too long" and stop.
 
-     2. Using the list in Section {{version-3-signature-packet-format}},
-        "Version 3 Signature Packet Format", produce an ASN.1 DER
-        value for the hash function used.  Let T be the full hash
-        prefix from the list, and let tLen be the length in octets of
-        T.
+2. Using the list in Section {{version-three-sig}}, "Version 3 Signature Packet Format", produce an ASN.1 DER value for the hash function used.
+   Let T be the full hash prefix from the list, and let tLen be the length in octets of T.
 
-     3. If emLen < tLen + 11, output "intended encoded message length
-        too short" and stop.
+3. If emLen < tLen + 11, output "intended encoded message length too short" and stop.
 
-     4. Generate an octet string PS consisting of emLen - tLen - 3
-        octets with hexadecimal value 0xFF.  The length of PS will be
-        at least 8 octets.
+4. Generate an octet string PS consisting of emLen - tLen - 3 octets with hexadecimal value 0xFF.  The length of PS will be at least 8 octets.
 
-     5. Concatenate PS, the hash prefix T, and other padding to form
-        the encoded message EM as
+5. Concatenate PS, the hash prefix T, and other padding to form the encoded message EM as
 
-            EM = 0x00 || 0x01 || PS || 0x00 || T.
+       EM = 0x00 || 0x01 || PS || 0x00 || T.
 
-     6. Output EM.
+6. Output EM.
 
 ## Symmetric Algorithm Preferences
 
