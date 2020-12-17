@@ -3489,7 +3489,7 @@ The KDF parameters are encoded as a concatenation of the following 5 variable-le
       wrap the symmetric key for message encryption; see
       {{ec-dh-algorithm-ecdh}} for details
 
-- 20 octets representing the UTF-8 encoding of the string "Anonymous Sender ", which is the octet sequence 41 6E 6F 6E 79 6D 6F 75 73 20 53 65 6E 64 65 72 20 20 20 20
+- 20 octets representing the UTF-8 encoding of the string `Anonymous Sender    `, which is the octet sequence 41 6E 6F 6E 79 6D 6F 75 73 20 53 65 6E 64 65 72 20 20 20 20
 
 - 20 octets representing a recipient encryption subkey or a master key fingerprint, identifying the key material that is needed for the decryption.
   For version 5 keys the 20 leftmost octets of the fingerprint are used.
@@ -3523,19 +3523,27 @@ Note that for session key sizes 128, 192, and 256 bits, the size of the result o
 
 For convenience, the synopsis of the encoding method is given below; however, this section, {{SP800-56A}}, and {{RFC3394}} are the normative sources of the definition.
 
-    Obtain the authenticated recipient public key R
-    Generate an ephemeral key pair {v, V=vG}
-    Compute the shared point S = vR;
-    m = symm_alg_ID || session key || checksum || pkcs5_padding;
-    curve_OID_len = (byte)len(curve_OID);
-    Param = curve_OID_len || curve_OID || public_key_alg_ID || 03
-    || 01 || KDF_hash_ID || KEK_alg_ID for AESKeyWrap || "Anonymous
-    Sender    " || recipient_fingerprint;
-    Z_len = the key size for the KEK_alg_ID used with AESKeyWrap
-    Compute Z = KDF( S, Z_len, Param );
-    Compute C = AESKeyWrap( Z, m ) as per {{RFC3394}}
-    VB = convert point V to the octet string
-    Output (MPI(VB) || len(C) || C).
+- Obtain the authenticated recipient public key R
+
+- Generate an ephemeral key pair {v, V=vG}
+
+- Compute the shared point S = vR;
+
+- m = symm_alg_ID \|\| session key \|\| checksum \|\| pkcs5_padding;
+
+- curve_OID_len = (byte)len(curve_OID);
+
+- Param = curve_OID_len \|\| curve_OID \|\| public_key_alg_ID \|\| 03 \|\| 01 \|\| KDF_hash_ID \|\| KEK_alg_ID for AESKeyWrap \|\| `Anonymous Sender    ` \|\| recipient_fingerprint;
+
+- Z_len = the key size for the KEK_alg_ID used with AESKeyWrap
+
+- Compute Z = KDF( S, Z_len, Param );
+ 
+- Compute C = AESKeyWrap( Z, m ) as per {{RFC3394}}
+
+- VB = convert point V to the octet string
+
+- Output (MPI(VB) \|\| len(C) \|\| C).
 
 The decryption is the inverse of the method given.
 Note that the recipient obtains the shared secret by calculating
