@@ -3908,15 +3908,11 @@ However, the signer would be foolish to use a weak algorithm simply because the 
   While this attack is somewhat obscure, requiring a special set of circumstances to create it, it is nonetheless quite serious as it permits someone to trick a user to decrypt a message.
   Consequently, it is important that:
 
-    1.  Implementers treat authentication errors, MDC errors,
-        decompression failures or no use of MDC or AEAD as security
-        problems.
+  1. Implementers treat authentication errors, MDC errors, decompression failures or no use of MDC or AEAD as security problems.
 
-    2.  Implementers implement AEAD with all due speed and encourage
-        its spread.
+  2. Implementers implement AEAD with all due speed and encourage its spread.
 
-    3.  Users migrate to implementations that support AEAD encryption
-        with all due speed.
+  3. Users migrate to implementations that support AEAD encryption with all due speed.
 
 - PKCS\#1 has been found to be vulnerable to attacks in which a system that reports errors in padding differently from errors in decryption becomes a random oracle that can leak the private key in mere millions of queries.
   Implementations must be aware of this attack and prevent it from happening.
