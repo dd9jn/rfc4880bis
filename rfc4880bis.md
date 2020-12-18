@@ -1140,7 +1140,7 @@ If a subpacket is not hashed, then the information in it cannot be considered de
 
 A self-signature is a binding signature made by the key to which the signature refers.
 There are three types of self-signatures, the certification signatures (types 0x10-0x13), the direct-key signature (type 0x1F), and the subkey binding signature (type 0x18).
-For certification self-signatures, each User ID may have a self- signature, and thus different subpackets in those self-signatures.
+For certification self-signatures, each User ID may have a self-signature, and thus different subpackets in those self-signatures.
 For subkey binding signatures, each subkey in fact has a self-signature.
 Subpackets that appear in a certification self-signature apply to the user name, and subpackets that appear in the subkey self-signature apply to the subkey.
 Lastly, subpackets on the direct-key signature apply to the entire key.
@@ -1152,7 +1152,7 @@ If the software locates this key via Alice's name, then the preferred algorithm 
 If the key is located by Key ID, the algorithm of the primary User ID of the key provides the preferred symmetric algorithm.
 
 Revoking a self-signature or allowing it to expire has a semantic meaning that varies with the signature type.
-Revoking the self- signature on a User ID effectively retires that user name.
+Revoking the self-signature on a User ID effectively retires that user name.
 The self-signature is a statement, "My name X is tied to my signing key K" and is corroborated by other users' certifications.
 If another user revokes their certification, they are effectively saying that they no longer believe that name and that key are tied together.
 Similarly, if the users themselves revoke their self-signature, then the users no longer go by that name, no longer have that email address, etc.
@@ -3195,7 +3195,7 @@ Transferable public-key packet sequences may be concatenated to allow transferri
 
 OpenPGP users may transfer secret keys.
 The format of a transferable secret key is the same as a transferable public key except that secret-key and secret-subkey packets are used instead of the public key and public-subkey packets.
-Implementations SHOULD include self- signatures on any User IDs and subkeys, as this allows for a complete public key to be automatically extracted from the transferable secret key.
+Implementations SHOULD include self-signatures on any User IDs and subkeys, as this allows for a complete public key to be automatically extracted from the transferable secret key.
 Implementations MAY choose to omit the self-signatures, especially if a transferable public key accompanies the transferable secret key.
 
 ## OpenPGP Messages
@@ -3523,7 +3523,7 @@ This standard makes use of the PKCS#1 functions EME-PKCS1-v1_5 and EMSA-PKCS1-v1
 However, the calling conventions of these functions has changed in the past.
 To avoid potential confusion and interoperability problems, we are including local copies in this document, adapted from those in PKCS#1 v2.1 {{RFC3447}}.
 {{RFC3447}} should be treated as the ultimate authority on PKCS#1 for OpenPGP.
-Nonetheless, we believe that there is value in having a self- contained document that avoids problems in the future with needed changes in the conventions.
+Nonetheless, we believe that there is value in having a self-contained document that avoids problems in the future with needed changes in the conventions.
 
 ### EME-PKCS1-v1_5-ENCODE
 
