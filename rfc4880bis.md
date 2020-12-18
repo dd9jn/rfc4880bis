@@ -1196,7 +1196,7 @@ This is found only on a self-signature.
 Symmetric algorithm numbers that indicate which algorithms the key holder prefers to use.
 The subpacket body is an ordered list of octets with the most preferred listed first.
 It is assumed that only algorithms listed are supported by the recipient's software.
-Algorithm numbers are in {{constants}}.
+Algorithm numbers are in {{symmetric-algos}}.
 This is only found on a self-signature.
 
 #### Preferred AEAD Algorithms
@@ -1894,7 +1894,7 @@ An implementation MUST NOT generate them and MAY accept or reject them as it see
 
 The version 4 format is similar to the version 3 format except for the absence of a validity period.
 This has been moved to the Signature packet.
-In addition, fingerprints of version 4 keys are calculated differently from version 3 keys, as described in the section "Enhanced Key Formats".
+In addition, fingerprints of version 4 keys are calculated differently from version 3 keys, as described {{enhanced-key-formats}}.
 
 A version 4 packet contains:
 
@@ -2115,13 +2115,13 @@ The body of this packet consists of:
 - Compressed data, which makes up the remainder of the packet.
 
 A Compressed Data Packet's body contains an block that compresses some set of packets.
-See section "Packet Composition" for details on how messages are formed.
+See {{packet-composition}} for details on how messages are formed.
 
-ZIP-compressed packets are compressed with raw RFC 1951 {{RFC1951}} DEFLATE blocks.
+ZIP-compressed packets are compressed with raw {{RFC1951}} DEFLATE blocks.
 Note that PGP V2.6 uses 13 bits of compression.
 If an implementation uses more bits of compression, PGP V2.6 cannot decompress it.
 
-ZLIB-compressed packets are compressed with RFC 1950 {{RFC1950}} ZLIB-style blocks.
+ZLIB-compressed packets are compressed with {{RFC1950}} ZLIB-style blocks.
 
 BZip2-compressed packets are compressed using the BZip2 {{BZ2}} algorithm.
 
@@ -2183,7 +2183,7 @@ The body of this packet consists of:
   If it is a `m` (0x6d), then it contains a MIME message body part {{RFC2045}}.
 
   Early versions of PGP also defined a value of `l` as a 'local' mode for machine-local conversions.
-  RFC 1991 {{RFC1991}} incorrectly stated this local mode flag as `1` (ASCII numeral one).
+  {{RFC1991}} incorrectly stated this local mode flag as `1` (ASCII numeral one).
   Both of these local modes are deprecated.
 
 - File name as a string (one-octet length, followed by a file name).
