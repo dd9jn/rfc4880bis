@@ -2808,9 +2808,9 @@ See {{notes-on-algorithms}} for more discussion of the algorithms.
 {: title="Public-key algorithm registry"}
 ID | Algorithm
 ---:|--------------------------
-  1 | RSA (Encrypt or Sign) {{HAC}}
-  2 | RSA Encrypt-Only {{HAC}}
-  3 | RSA Sign-Only {{HAC}}
+ 1 | RSA (Encrypt or Sign) {{HAC}}
+ 2 | RSA Encrypt-Only {{HAC}}
+ 3 | RSA Sign-Only {{HAC}}
  16 | Elgamal (Encrypt-Only) {{ELGAMAL}} {{HAC}}
  17 | DSA (Digital Signature Algorithm) {{FIPS186}} {{HAC}}
  18 | ECDH public key algorithm
