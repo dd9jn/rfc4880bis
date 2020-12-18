@@ -771,20 +771,19 @@ The body of this packet consists of:
 
   Algorithm Specific Fields for RSA encryption:
 
-    - Multiprecision integer (MPI) of RSA encrypted value m**e mod n.
+  - Multiprecision integer (MPI) of RSA encrypted value m**e mod n.
 
   Algorithm Specific Fields for Elgamal encryption:
 
-    - MPI of Elgamal (Diffie-Hellman) value g**k mod p.
+  - MPI of Elgamal (Diffie-Hellman) value g**k mod p.
 
-    - MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
+  - MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
 
   Algorithm-Specific Fields for ECDH encryption:
 
-    - MPI of an EC point representing an ephemeral public key.
+  - MPI of an EC point representing an ephemeral public key.
 
-    - a one-octet size, followed by a symmetric key encoded using the
-      method described in {{ec-dh-algorithm-ecdh}}.
+  - a one-octet size, followed by a symmetric key encoded using the method described in {{ec-dh-algorithm-ecdh}}.
 
 The value "m" in the above formulas is derived from the session key as follows.
 First, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following Symmetrically Encrypted Data Packet.
