@@ -1894,7 +1894,7 @@ An implementation MUST NOT generate them and MAY accept or reject them as it see
 
 The version 4 format is similar to the version 3 format except for the absence of a validity period.
 This has been moved to the Signature packet.
-In addition, fingerprints of version 4 keys are calculated differently from version 3 keys, as described {{enhanced-key-formats}}.
+In addition, fingerprints of version 4 keys are calculated differently from version 3 keys, as described in {{enhanced-key-formats}}.
 
 A version 4 packet contains:
 
