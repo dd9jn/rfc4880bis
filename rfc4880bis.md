@@ -904,9 +904,9 @@ The body of a version 3 Signature Packet contains:
 - One-octet length of following hashed material.
   MUST be 5.
 
-- One-octet signature type.
+  - One-octet signature type.
 
-- Four-octet creation time.
+  - Four-octet creation time.
 
 - Eight-octet Key ID of signer.
 
@@ -919,19 +919,19 @@ The body of a version 3 Signature Packet contains:
 - One or more multiprecision integers comprising the signature.
   This portion is algorithm specific, as described below.
 
-  The concatenation of the data to be signed, the signature type, and creation time from the Signature packet (5 additional octets) is hashed.
-  The resulting hash value is used in the signature algorithm.
-  The high 16 bits (first two octets) of the hash are included in the Signature packet to provide a way to reject some invalid signatures without performing a signature verification.
+The concatenation of the data to be signed, the signature type, and creation time from the Signature packet (5 additional octets) is hashed.
+The resulting hash value is used in the signature algorithm.
+The high 16 bits (first two octets) of the hash are included in the Signature packet to provide a way to reject some invalid signatures without performing a signature verification.
 
-  Algorithm-Specific Fields for RSA signatures:
+Algorithm-Specific Fields for RSA signatures:
 
-  - Multiprecision integer (MPI) of RSA signature value m**d mod n.
+- Multiprecision integer (MPI) of RSA signature value m**d mod n.
 
-  Algorithm-Specific Fields for DSA and ECDSA signatures:
+Algorithm-Specific Fields for DSA and ECDSA signatures:
 
-  - MPI of DSA or ECDSA value r.
+- MPI of DSA or ECDSA value r.
 
-  - MPI of DSA or ECDSA value s.
+- MPI of DSA or ECDSA value s.
 
 The signature calculation is based on a hash of the signed data, as described above.
 The details of the calculation are different for DSA signatures than for RSA signatures.
