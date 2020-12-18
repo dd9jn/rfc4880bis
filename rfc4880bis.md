@@ -1320,8 +1320,14 @@ The "flags" field holds four octets of flags.
 All undefined flags MUST be zero.
 Defined flags are as follows:
 
-       First octet: 0x80 = human-readable.  This note value is text.
-       Other octets: none.
+First octet:
+
+{: title="Notation flag registry (first octet)"}
+flag | shorthand | definition
+---|---|---
+0x80 | human-readable | This note value is text.
+
+Other octets: none.
 
 Notation names are arbitrary strings encoded in UTF-8.
 They reside in two namespaces: The IETF namespace and the user namespace.
@@ -1422,16 +1428,14 @@ Due to its nature a 'hash' notation is not human readable and MUST NOT be marked
 This is a list of one-bit flags that indicate preferences that the key holder has about how the key is handled on a key server.
 All undefined flags MUST be zero.
 
-First octet: 0x80 = No-modify
+First octet:
 
-    The key holder requests that this key only be modified or updated
-    by the key holder or an administrator of the key server.
+{: title="Key server preferences flag registry (first octet)"}
+flag | shorthand | definition
+---|---|---
+0x80 | No-modify | The key holder requests that this key only be modified or updated by the key holder or an administrator of the key server.
 
-    If No-modify is set on the most recent self-sig over a User ID,
-    then a keyserver should only redistribute those third-party
-    certifications over that User ID that have been attested to in the
-    most recent Attestation Key Signature packet (see "Attested
-    Certifications" below).
+If the No-modify flag is set on the most recent self-sig over a User ID, then a keyserver should only redistribute those third-party certifications over that User ID that have been attested to in the most recent Attestation Key Signature packet (see {{attested-certifications}}).
 
 This is found only on a self-signature.
 
@@ -1475,28 +1479,24 @@ The defined flags are as follows:
 
 First octet:
 
-    0x01 - This key may be used to certify other keys.
-
-    0x02 - This key may be used to sign data.
-
-    0x04 - This key may be used to encrypt communications.
-
-    0x08 - This key may be used to encrypt storage.
-
-    0x10 - The private component of this key may have been split by a
-           secret-sharing mechanism.
-
-    0x20 - This key may be used for authentication.
-
-    0x80 - The private component of this key may be in the possession
-           of more than one person.
+{: title="Key flags registry (first octet)"}
+flag | definition
+---|-------------
+0x01 | This key may be used to certify other keys.
+0x02 | This key may be used to sign data.
+0x04 | This key may be used to encrypt communications.
+0x08 | This key may be used to encrypt storage.
+0x10 | The private component of this key may have been split by a secret-sharing mechanism.
+0x20 | This key may be used for authentication.
+0x80 | The private component of this key may be in the possession of more than one person.
 
 Second octet:
 
-    0x04 - This key may be used as an additional decryption subkey
-           (ADSK).
-
-    0x08 - This key may be used for timestamping.
+{: title="Key flags registry (second octet)"}
+flag | definition
+---|-------------
+0x04 | This key may be used as an additional decryption subkey (ADSK).
+0x08 | This key may be used for timestamping.
 
 Usage notes:
 
@@ -1571,13 +1571,12 @@ Defined features are as follows:
 
 First octet:
 
-    0x01 - Modification Detection (packets 18 and 19)
-
-    0x02 - AEAD Encrypted Data Packet (packet 20) and version 5
-           Symmetric-Key Encrypted Session Key Packets (packet 3)
-
-    0x04 - Version 5 Public-Key Packet format and corresponding new
-           fingerprint format
+{: title="Features registry"}
+feature | definition
+---|--------------
+0x01 | Modification Detection (packets 18 and 19)
+0x02 | AEAD Encrypted Data Packet (packet 20) and version 5 Symmetric-Key Encrypted Session Key Packets (packet 3)
+0x04 | Version 5 Public-Key Packet format and corresponding new fingerprint format
 
 If an implementation implements any of the defined features, it SHOULD implement the Features subpacket, too.
 
