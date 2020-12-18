@@ -1971,7 +1971,7 @@ The cipher for encrypting the MPIs is specified in the Secret-Key packet.
 Encryption/decryption of the secret data is done in CFB mode using the key created from the passphrase and the Initial Vector from the packet.
 A different mode is used with V3 keys (which are only RSA) than with other key formats.
 With V3 keys, the MPI bit count prefix (i.e., the first two octets) is not encrypted.
-Only the MPI non- prefix data is encrypted.
+Only the MPI non-prefix data is encrypted.
 Furthermore, the CFB state is resynchronized at the beginning of each new MPI value, so that the CFB block boundary is aligned with the start of the MPI data.
 
 With V4 and V5 keys, a simpler method is used.
