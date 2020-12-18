@@ -2555,6 +2555,7 @@ An Armor Header Line consists of the appropriate header line text surrounded by 
 The header line text is chosen based upon the type of data that is being encoded in Armor, and how it is being encoded.
 Header line texts include the following strings:
 
+{: vspace="0"}
 BEGIN PGP MESSAGE
 : Used for signed, encrypted, or compressed files.
 
