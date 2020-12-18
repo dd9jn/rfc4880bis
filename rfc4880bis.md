@@ -2819,7 +2819,7 @@ ID | Algorithm
  22 | EdDSA  {{RFC8032}}
  23 | Reserved for AEDH
  24 | Reserved for AEDSA
-100--110 | Private/Experimental algorithm
+100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement RSA (1) and ECDSA (19) for signatures, and RSA (1) and ECDH (18) for encryption.
 Implementations SHOULD implement EdDSA (22) keys.
@@ -2874,7 +2874,7 @@ ID | Algorithm
  11 | Camellia with 128-bit key {{RFC3713}}
  12 | Camellia with 192-bit key
  13 | Camellia with 256-bit key
-100--110 | Private/Experimental algorithm
+100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement AES-128.
 Implementations SHOULD implement AES-256.
@@ -2891,7 +2891,7 @@ ID | Algorithm
  1 | ZIP {{RFC1951}}
  2 | ZLIB {{RFC1950}}
  3 | BZip2 {{BZ2}}
-100--110 | Private/Experimental algorithm
+100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement uncompressed data.
 Implementations SHOULD implement ZLIB.
@@ -2917,7 +2917,7 @@ ID | Algorithm | Text Name
  12 | SHA3-256 {{FIPS202}} |  "SHA3-256"
  13 | Reserved
  14 | SHA3-512 {{FIPS202}} |  "SHA3-512"
-100--110 | Private/Experimental algorithm
+100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement SHA2-256.
 Implementations MAY implement other algorithms.
@@ -2931,7 +2931,7 @@ ID | Algorithm
 ---:|-----------------
  1 | EAX {{EAX}}
  2 | OCB {{RFC7253}}
-100--110 | Private/Experimental algorithm
+100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement EAX.
 Implementations MAY implement OCB and other algorithms.
