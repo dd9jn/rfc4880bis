@@ -289,21 +289,21 @@ This document obsoletes: RFC 4880 (OpenPGP), RFC 5581 (Camellia cipher) and RFC 
 
 ## Terms
 
-* OpenPGP - This is a term for security software that uses PGP 5 as a basis, formalized in this document.
+- OpenPGP - This is a term for security software that uses PGP 5 as a basis, formalized in this document.
 
-* PGP - Pretty Good Privacy.
+- PGP - Pretty Good Privacy.
   PGP is a family of software systems developed by Philip R.
   Zimmermann from which OpenPGP is based.
 
-* PGP 2 - This version of PGP has many variants; where necessary a more detailed version number is used here.
+- PGP 2 - This version of PGP has many variants; where necessary a more detailed version number is used here.
   PGP 2 uses only RSA, MD5, and IDEA for its cryptographic transforms.
   An informational RFC, RFC 1991, was written describing this version of PGP.
 
-* PGP 5 - This version of PGP is formerly known as "PGP 3" in the community.
+- PGP 5 - This version of PGP is formerly known as "PGP 3" in the community.
   It has new formats and corrects a number of problems in the PGP 2 design.
   It is referred to here as PGP 5 because that software was the first release of the "PGP 3" code base.
 
-* GnuPG - GNU Privacy Guard, also called GPG.
+- GnuPG - GNU Privacy Guard, also called GPG.
   GnuPG is an OpenPGP implementation that avoids all encumbered algorithms.
   Consequently, early versions of GnuPG did not include RSA public keys.
 
@@ -758,15 +758,15 @@ The recipient of the message finds a session key that is encrypted to their publ
 
 The body of this packet consists of:
 
-* A one-octet number giving the version number of the packet type.
+- A one-octet number giving the version number of the packet type.
   The currently defined value for packet version is 3.
 
-* An eight-octet number that gives the Key ID of the public key to which the session key is encrypted.
+- An eight-octet number that gives the Key ID of the public key to which the session key is encrypted.
   If the session key is encrypted to a subkey, then the Key ID of this subkey is used here instead of the Key ID of the primary key.
 
-* A one-octet number giving the public-key algorithm used.
+- A one-octet number giving the public-key algorithm used.
 
-* A string of octets that is the encrypted session key.
+- A string of octets that is the encrypted session key.
   This string takes up the remainder of the packet, and its contents are dependent on the public-key algorithm used.
 
   Algorithm Specific Fields for RSA encryption:
@@ -816,95 +816,80 @@ Implementations MUST NOT create version 3 signatures; they MAY accept version 3 
 There are a number of possible meanings for a signature, which are indicated in a signature type octet in any given signature.
 Please note that the vagueness of these meanings is not a flaw, but a feature of the system.
 Because OpenPGP places final authority for validity upon the receiver of a signature, it may be that one signer's casual act might be more rigorous than some other authority's positive act.
-See {{computing-signatures}}, "Computing Signatures", for detailed information on how to compute and verify signatures of each type.
+See {{computing-signatures}} for detailed information on how to compute and verify signatures of each type.
 
 These meanings are as follows:
 
-0x00
-: Signature of a binary document.
-  This means the signer owns it, created it, or certifies that it has not been modified.
+{:vspace="0"}
+0x00: Signature of a binary document.
+: This means the signer owns it, created it, or certifies that it has not been modified.
 
-0x01
-: Signature of a canonical text document.
-  This means the signer owns it, created it, or certifies that it has not been modified.
+0x01: Signature of a canonical text document.
+: This means the signer owns it, created it, or certifies that it has not been modified.
   The signature is calculated over the text data with its line endings converted to \<CR>\<LF>.
 
-0x02
-: Standalone signature.
-  This signature is a signature of only its own subpacket contents.
+0x02: Standalone signature.
+:  This signature is a signature of only its own subpacket contents.
   It is calculated identically to a signature over a zero-length binary document.
   Note that it doesn't make sense to have a V3 standalone signature.
 
-0x10
-: Generic certification of a User ID and Public-Key packet.
-  The issuer of this certification does not make any particular assertion as to how well the certifier has checked that the owner of the key is in fact the person described by the User ID.
+0x10: Generic certification of a User ID and Public-Key packet.
+:  The issuer of this certification does not make any particular assertion as to how well the certifier has checked that the owner of the key is in fact the person described by the User ID.
 
-0x11
-: Persona certification of a User ID and Public-Key packet.
-  The issuer of this certification has not done any verification of the claim that the owner of this key is the User ID specified.
+0x11: Persona certification of a User ID and Public-Key packet.
+:  The issuer of this certification has not done any verification of the claim that the owner of this key is the User ID specified.
 
-0x12
-: Casual certification of a User ID and Public-Key packet.
-  The issuer of this certification has done some casual verification of the claim of identity.
+0x12: Casual certification of a User ID and Public-Key packet.
+:  The issuer of this certification has done some casual verification of the claim of identity.
 
-0x13
-: Positive certification of a User ID and Public-Key packet.
-  The issuer of this certification has done substantial verification of the claim of identity.
+0x13: Positive certification of a User ID and Public-Key packet.
+: The issuer of this certification has done substantial verification of the claim of identity.
 
   Most OpenPGP implementations make their "key signatures" as 0x10 certifications.
   Some implementations can issue 0x11-0x13 certifications, but few differentiate between the types.
 
-0x16
-: Attested Key Signature.
-  This signature is issued by the primary key over itself and its User ID (or User Attribute).
+0x16: Attested Key Signature.
+: This signature is issued by the primary key over itself and its User ID (or User Attribute).
   It MUST contain an "Attested Certifications" subpacket and a "Signature Creation Time" subpacket.
   This type of key signature does not replace or override any standard certification (0x10-0x13).
 
-  Only the most recent Attestation Key Signature is valid for any given \<key,userid\> pair.
+  Only the most recent Attestation Key Signature is valid for any given \<key,userid> pair.
   If more than one Certification Attestation Key Signature is present with the same Signature Creation Time, the set of attestations should be treated as the union of all "Attested Certifications" subpackets from all such signatures with the same timestamp.
 
-0x18
-: Subkey Binding Signature.
-  This signature is a statement by the top-level signing key that indicates that it owns the subkey.
+0x18: Subkey Binding Signature.
+: This signature is a statement by the top-level signing key that indicates that it owns the subkey.
   This signature is calculated directly on the primary key and subkey, and not on any User ID or other packets.
   A signature that binds a signing subkey MUST have an Embedded Signature subpacket in this binding signature that contains a 0x19 signature made by the signing subkey on the primary key and subkey.
 
-0x19
-: Primary Key Binding Signature.
-  This signature is a statement by a signing subkey, indicating that it is owned by the primary key and subkey.
+0x19: Primary Key Binding Signature.
+: This signature is a statement by a signing subkey, indicating that it is owned by the primary key and subkey.
   This signature is calculated the same way as a 0x18 signature: directly on the primary key and subkey, and not on any User ID or other packets.
 
-0x1F
-: Signature directly on a key.
-  This signature is calculated directly on a key.
+0x1F: Signature directly on a key.
+: This signature is calculated directly on a key.
   It binds the information in the Signature subpackets to the key, and is appropriate to be used for subpackets that provide information about the key, such as the Revocation Key subpacket.
   It is also appropriate for statements that non-self certifiers want to make about the key itself, rather than the binding between a key and a name.
 
-0x20
-: Key revocation signature.
-  The signature is calculated directly on the key being revoked.
+0x20: Key revocation signature.
+: The signature is calculated directly on the key being revoked.
   A revoked key is not to be used.
   Only revocation signatures by the key being revoked, or by an authorized revocation key, should be considered valid revocation signatures.
 
-0x28
-: Subkey revocation signature.
-  The signature is calculated directly on the subkey being revoked.
+0x28: Subkey revocation signature.
+: The signature is calculated directly on the subkey being revoked.
   A revoked subkey is not to be used.
   Only revocation signatures by the top-level signature key that is bound to this subkey, or by an authorized revocation key, should be considered valid revocation signatures.
 
-0x30
-: Certification revocation signature.
-  This signature revokes an earlier User ID certification signature (signature class 0x10 through 0x13) or direct-key signature (0x1F).
+0x30: Certification revocation signature.
+: This signature revokes an earlier User ID certification signature (signature class 0x10 through 0x13) or direct-key signature (0x1F).
   It should be issued by the same key that issued the revoked signature or an authorized revocation key.
   The signature is computed over the same data as the certificate that it revokes, and should have a later creation date than that certificate.
 
-0x40
-: Timestamp signature.
-  This signature is only meaningful for the timestamp contained in it.
+0x40: Timestamp signature.
+: This signature is only meaningful for the timestamp contained in it.
 
-0x50
-: Third-Party Confirmation signature.
-  This signature is a signature over some other OpenPGP Signature packet(s).
+0x50: Third-Party Confirmation signature.
+: This signature is a signature over some other OpenPGP Signature packet(s).
   It is analogous to a notary seal on the signed data.
   A third-party signature SHOULD include Signature Target subpacket(s) to give easy identification.
   Note that we really do mean SHOULD.
@@ -914,24 +899,24 @@ These meanings are as follows:
 
 The body of a version 3 Signature Packet contains:
 
-* One-octet version number (3).
+- One-octet version number (3).
 
-* One-octet length of following hashed material.
-MUST be 5.
+- One-octet length of following hashed material.
+  MUST be 5.
 
-* One-octet signature type.
+- One-octet signature type.
 
-* Four-octet creation time.
+- Four-octet creation time.
 
-* Eight-octet Key ID of signer.
+- Eight-octet Key ID of signer.
 
-* One-octet public-key algorithm.
+- One-octet public-key algorithm.
 
-* One-octet hash algorithm.
+- One-octet hash algorithm.
 
-* Two-octet field holding left 16 bits of signed hash value.
+- Two-octet field holding left 16 bits of signed hash value.
 
-* One or more multiprecision integers comprising the signature.
+- One or more multiprecision integers comprising the signature.
   This portion is algorithm specific, as described below.
 
   The concatenation of the data to be signed, the signature type, and creation time from the Signature packet (5 additional octets) is hashed.
@@ -940,79 +925,58 @@ MUST be 5.
 
   Algorithm-Specific Fields for RSA signatures:
 
-    * Multiprecision integer (MPI) of RSA signature value m**d mod n.
+  - Multiprecision integer (MPI) of RSA signature value m**d mod n.
 
   Algorithm-Specific Fields for DSA and ECDSA signatures:
 
-    * MPI of DSA or ECDSA value r.
+  - MPI of DSA or ECDSA value r.
 
-    * MPI of DSA or ECDSA value s.
+  - MPI of DSA or ECDSA value s.
 
 The signature calculation is based on a hash of the signed data, as described above.
 The details of the calculation are different for DSA signatures than for RSA signatures.
 
-With RSA signatures, the hash value is encoded using PKCS\#1 encoding type EMSA-PKCS1-v1\_5 as described in Section 9.2 of RFC 3447.
+With RSA signatures, the hash value is encoded using PKCS#1 encoding type EMSA-PKCS1-v1_5 as described in Section 9.2 of {{RFC3447}}.
 This requires inserting the hash value as an octet string into an ASN.1 structure.
 The object identifier for the type of hash being used is included in the structure.
 The hexadecimal representations for the currently defined hash algorithms are as follows:
 
-     - MD5:        0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x02, 0x05
-
-     - RIPEMD-160: 0x2B, 0x24, 0x03, 0x02, 0x01
-
-     - SHA-1:      0x2B, 0x0E, 0x03, 0x02, 0x1A
-
-     - SHA2-224:   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x04
-
-     - SHA2-256:   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01
-
-     - SHA2-384:   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02
-
-     - SHA2-512:   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03
+{: title="Hash hexadecimal representations"}
+algorithm | hexadecimal represenatation
+---|------------------
+MD5 | 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x02, 0x05
+RIPEMD-160 | 0x2B, 0x24, 0x03, 0x02, 0x01
+SHA-1 | 0x2B, 0x0E, 0x03, 0x02, 0x1A
+SHA224 | 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x04
+SHA256 | 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01
+SHA384 | 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02
+SHA512 | 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03
 
 The ASN.1 Object Identifiers (OIDs) are as follows:
 
-     - MD5:        1.2.840.113549.2.5
-
-     - RIPEMD-160: 1.3.36.3.2.1
-
-     - SHA-1:      1.3.14.3.2.26
-
-     - SHA2-224:   2.16.840.1.101.3.4.2.4
-
-     - SHA2-256:   2.16.840.1.101.3.4.2.1
-
-     - SHA2-384:   2.16.840.1.101.3.4.2.2
-
-     - SHA2-512:   2.16.840.1.101.3.4.2.3
+{: title="Hash OIDs"}
+algorithm | OID
+---|------------------
+MD5 | 1.2.840.113549.2.5
+RIPEMD-160 | 1.3.36.3.2.1
+SHA-1 | 1.3.14.3.2.26
+SHA224 | 2.16.840.1.101.3.4.2.4
+SHA256 | 2.16.840.1.101.3.4.2.1
+SHA384 | 2.16.840.1.101.3.4.2.2
+SHA512 | 2.16.840.1.101.3.4.2.3
 
 The full hash prefixes for these are as follows:
 
-     - MD5:        0x30, 0x20, 0x30, 0x0C, 0x06, 0x08, 0x2A, 0x86,
-                   0x48, 0x86, 0xF7, 0x0D, 0x02, 0x05, 0x05, 0x00,
-                   0x04, 0x10
-
-     - RIPEMD-160: 0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2B, 0x24,
-                   0x03, 0x02, 0x01, 0x05, 0x00, 0x04, 0x14
-
-     - SHA-1:      0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2b, 0x0E,
-                   0x03, 0x02, 0x1A, 0x05, 0x00, 0x04, 0x14
-
-     - SHA2-224:   0x30, 0x2D, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86,
-                   0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x04, 0x05,
-                   0x00, 0x04, 0x1C
-
-     - SHA2-256:   0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86,
-                   0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05,
-                   0x00, 0x04, 0x20
-
-     - SHA2-384:   0x30, 0x41, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86,
-                   0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02, 0x05,
-                   0x00, 0x04, 0x30
-
-     - SHA2-512:   0x30, 0x51, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86,
-                   0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03, 0x05,
-                   0x00, 0x04, 0x40
+{: title="Hash hexadecimal prefixes"}
+algorithm | full hash prefix
+---|------------------
+MD5 | 0x30, 0x20, 0x30, 0x0C, 0x06, 0x08, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x02, 0x05, 0x05, 0x00, 0x04, 0x10
+RIPEMD-160 | 0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2B, 0x24, 0x03, 0x02, 0x01, 0x05, 0x00, 0x04, 0x14
+SHA-1 | 0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2b, 0x0E, 0x03, 0x02, 0x1A, 0x05, 0x00, 0x04, 0x14
+SHA224 | 0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x04, 0x05, 0x00, 0x04, 0x1C
+SHA256 | 0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20
+SHA384 | 0x30, 0x41, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02, 0x05, 0x00, 0x04, 0x30
+SHA512 | 0x30, 0x51, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03, 0x05, 0x00, 0x04, 0x40
 
 DSA signatures MUST use hashes that are equal in size to the number of bits of q, the group generated by the DSA key's generator value.
 
@@ -1023,45 +987,45 @@ This (possibly truncated) hash function result is treated as a number and used d
 
 The body of a V4 or V5 Signature packet contains:
 
-* One-octet version number.
+- One-octet version number.
   This is 4 for V4 signatures and 5 for V5 signatures.
 
-* One-octet signature type.
+- One-octet signature type.
 
-* One-octet public-key algorithm.
+- One-octet public-key algorithm.
 
-* One-octet hash algorithm.
+- One-octet hash algorithm.
 
-* Two-octet scalar octet count for following hashed subpacket data.
+- Two-octet scalar octet count for following hashed subpacket data.
   Note that this is the length in octets of all of the hashed subpackets; a pointer incremented by this number will skip over the hashed subpackets.
 
-* Hashed subpacket data set (zero or more subpackets).
+- Hashed subpacket data set (zero or more subpackets).
 
-* Two-octet scalar octet count for the following unhashed subpacket data.
+- Two-octet scalar octet count for the following unhashed subpacket data.
   Note that this is the length in octets of all of the unhashed subpackets; a pointer incremented by this number will skip over the unhashed subpackets.
 
-* Unhashed subpacket data set (zero or more subpackets).
+- Unhashed subpacket data set (zero or more subpackets).
 
-* Two-octet field holding the left 16 bits of the signed hash value.
+- Two-octet field holding the left 16 bits of the signed hash value.
 
-* One or more multiprecision integers comprising the signature.
+- One or more multiprecision integers comprising the signature.
   This portion is algorithm specific:
 
   Algorithm-Specific Fields for RSA signatures:
 
-    * Multiprecision integer (MPI) of RSA signature value m**d mod n.
+  - Multiprecision integer (MPI) of RSA signature value m**d mod n.
 
   Algorithm-Specific Fields for DSA or ECDSA signatures:
 
-    * MPI of DSA or ECDSA value r.
+  - MPI of DSA or ECDSA value r.
 
-    * MPI of DSA or ECDSA value s.
+  - MPI of DSA or ECDSA value s.
 
   Algorithm-Specific Fields for EdDSA signatures:
 
-    * MPI of an EC point r.
+  - MPI of an EC point r.
 
-    * EdDSA value s, in MPI, in the little endian representation.
+  - EdDSA value s, in MPI, in the little endian representation.
 
 The format of R and S for use with EdDSA is described in {{RFC8032}}.
 A version 3 signature MUST NOT be created and MUST NOT be used with EdDSA.
@@ -1087,9 +1051,9 @@ A pointer incremented by this number will skip over the subpacket data set.
 Each subpacket consists of a subpacket header and a body.
 The header consists of:
 
-* the subpacket length (1, 2, or 5 octets),
+- the subpacket length (1, 2, or 5 octets),
 
-* the subpacket type (1 octet),
+- the subpacket type (1 octet),
 
 and is followed by the subpacket-specific data.
 
@@ -1719,49 +1683,58 @@ When a signature is made over a Signature packet (type 0x50, "Third-Party Confir
 Once the data body is hashed, then a trailer is hashed.
 This trailer depends on the version of the signature.
 
-* A V3 signature hashes five octets of the packet body, starting from the signature type field.
+- A V3 signature hashes five octets of the packet body, starting from the signature type field.
   This data is the signature type, followed by the four-octet signature time.
 
-* A V4 signature hashes the packet body starting from its first field, the version number, through the end of the hashed subpacket data and a final extra trailer.
+- A V4 signature hashes the packet body starting from its first field, the version number, through the end of the hashed subpacket data and a final extra trailer.
   Thus, the hashed fields are:
 
-    - the signature version (0x04),
-    - the signature type,
-    - the public-key algorithm,
-    - the hash algorithm,
-    - the hashed subpacket length,
-    - the hashed subpacket body,
-    - the two octets 0x04 and 0xFF,
-    - a four-octet big-endian number that is the length of the hashed
-      data from the Signature packet stopping right before the 0x04,
-      0xff octets.
+  - the signature version (0x04),
 
-      The four-octet big-endian number is considered to be an unsigned
-      integer modulo 2^32.
+  - the signature type,
 
-* A V5 signature hashes the packet body starting from its first field, the version number, through the end of the hashed subpacket data and a final extra trailer.
+  - the public-key algorithm,
+
+  - the hash algorithm,
+
+  - the hashed subpacket length,
+
+  - the hashed subpacket body,
+
+  - the two octets 0x04 and 0xFF,
+
+  - a four-octet big-endian number that is the length of the hashed data from the Signature packet stopping right before the 0x04, 0xff octets.
+
+    The four-octet big-endian number is considered to be an unsigned integer modulo 2^32.
+
+- A V5 signature hashes the packet body starting from its first field, the version number, through the end of the hashed subpacket data and a final extra trailer.
   Thus, the hashed fields are:
 
-    - the signature version (0x05),
-    - the signature type,
-    - the public-key algorithm,
-    - the hash algorithm,
-    - the hashed subpacket length,
-    - the hashed subpacket body,
-    - Only for document signatures (type 0x00 or 0x01) the following
-      three data items are hashed here:
-        - the one-octet content format,
-        - the file name as a string (one octet length, followed by the
-          file name),
-        - a four-octet number that indicates a date,
-    - the two octets 0x05 and 0xFF,
-    - a eight-octet big-endian number that is the length of the hashed
-      data from the Signature packet stopping right before the 0x05,
-      0xff octets.
+  - the signature version (0x05),
 
-      The three data items hashed for document signatures need to
-      mirror the values of the Literal Data packet.  For detached and
-      cleartext signatures 6 zero bytes are hashed instead.
+  - the signature type,
+
+  - the public-key algorithm,
+
+  - the hash algorithm,
+
+  - the hashed subpacket length,
+
+  - the hashed subpacket body,
+
+  - Only for document signatures (type 0x00 or 0x01) the following three data items are hashed here:
+
+    - the one-octet content format,
+
+    - the file name as a string (one octet length, followed by the file name),
+
+    - a four-octet number that indicates a date,
+
+  - the two octets 0x05 and 0xFF,
+
+  - a eight-octet big-endian number that is the length of the hashed  data from the Signature packet stopping right before the 0x05, 0xff octets.
+
+    The three data items hashed for document signatures need to mirror the values of the Literal Data packet.  For detached and cleartext signatures 6 zero bytes are hashed instead.
 
 After all this has been hashed in a single hash context, the resulting hash field is used in the signature algorithm and placed at the end of the Signature packet.
 
@@ -1787,13 +1760,13 @@ This packet type is new and is not generated by PGP 2 or PGP version 5.0.
 
 A version 4 Symmetric-Key Encrypted Session Key packet consists of:
 
-* A one-octet version number with value 4.
+- A one-octet version number with value 4.
 
-* A one-octet number describing the symmetric algorithm used.
+- A one-octet number describing the symmetric algorithm used.
 
-* A string-to-key (S2K) specifier, length as defined above.
+- A string-to-key (S2K) specifier, length as defined above.
 
-* Optionally, the encrypted session key itself, which is decrypted with the string-to-key object.
+- Optionally, the encrypted session key itself, which is decrypted with the string-to-key object.
 
 If the encrypted session key is not present (which can be detected on the basis of packet length and S2K specifier size), then the S2K algorithm applied to the passphrase produces the session key for decrypting the message, using the symmetric cipher algorithm from the Symmetric-Key Encrypted Session Key packet.
 
@@ -1805,19 +1778,19 @@ The salt value will ensure that the decryption key is not repeated even if the p
 
 A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 
-* A one-octet version number with value 5.
+- A one-octet version number with value 5.
 
-* A one-octet cipher algorithm.
+- A one-octet cipher algorithm.
 
-* A one-octet AEAD algorithm.
+- A one-octet AEAD algorithm.
 
-* A string-to-key (S2K) specifier, length as defined above.
+- A string-to-key (S2K) specifier, length as defined above.
 
-* A starting initialization vector of size specified by the AEAD algorithm.
+- A starting initialization vector of size specified by the AEAD algorithm.
 
-* The encrypted session key itself, which is decrypted with the string-to-key object using the given cipher and AEAD mode.
+- The encrypted session key itself, which is decrypted with the string-to-key object using the given cipher and AEAD mode.
 
-* An authentication tag for the AEAD mode.
+- An authentication tag for the AEAD mode.
 
 The encrypted session key is encrypted using one of the AEAD algorithms specified for the AEAD Encrypted Packet.
 Note that no chunks are used and that there is only one authentication tag.
@@ -1833,19 +1806,19 @@ A One-Pass Signature does not interoperate with PGP 2.6.x or earlier.
 
 The body of this packet consists of:
 
-* A one-octet version number.
-The current version is 3.
+- A one-octet version number.
+  The current version is 3.
 
-* A one-octet signature type.
+- A one-octet signature type.
   Signature types are described in {{signature-types}}.
 
-* A one-octet number describing the hash algorithm used.
+- A one-octet number describing the hash algorithm used.
 
-* A one-octet number describing the public-key algorithm used.
+- A one-octet number describing the public-key algorithm used.
 
-* An eight-octet number holding the Key ID of the signing key.
+- An eight-octet number holding the Key ID of the signing key.
 
-* A one-octet number holding a flag showing whether the signature is nested.
+- A one-octet number holding a flag showing whether the signature is nested.
   A zero value indicates that the next packet is another One-Pass Signature packet that describes another signature to be applied to the same message data.
 
 Note that if a message contains more than one one-pass signature, then the Signature packets bracket the message; that is, the first Signature packet after the message corresponds to the last one-pass packet and the final Signature packet corresponds to the first one-pass packet.
@@ -1891,16 +1864,16 @@ V3 keys are deprecated; an implementation MUST NOT generate a V3 key, but MAY ac
 
 A version 3 public key or public-subkey packet contains:
 
-* A one-octet version number (3).
+- A one-octet version number (3).
 
-* A four-octet number denoting the time that the key was created.
+- A four-octet number denoting the time that the key was created.
 
-* A two-octet number denoting the time in days that this key is valid.
+- A two-octet number denoting the time in days that this key is valid.
   If this number is zero, then it does not expire.
 
-* A one-octet number denoting the public-key algorithm of this key.
+- A one-octet number denoting the public-key algorithm of this key.
 
-* A series of multiprecision integers comprising the key material:
+- A series of multiprecision integers comprising the key material:
 
   - a multiprecision integer (MPI) of RSA public modulus n;
 
@@ -1922,13 +1895,13 @@ In addition, fingerprints of version 4 keys are calculated differently from vers
 
 A version 4 packet contains:
 
-* A one-octet version number (4).
+- A one-octet version number (4).
 
-* A four-octet number denoting the time that the key was created.
+- A four-octet number denoting the time that the key was created.
 
-* A one-octet number denoting the public-key algorithm of this key.
+- A one-octet number denoting the public-key algorithm of this key.
 
-* A series of values comprising the key material.
+- A series of values comprising the key material.
   This is algorithm-specific and described in {{algorithm-specific-parts-of-keys}}.
 
 The version 5 format is similar to the version 4 format except for the addition of a count for the key material.
@@ -1937,15 +1910,15 @@ In addition, fingerprints of version 5 keys are calculated differently from vers
 
 A version 5 packet contains:
 
-* A one-octet version number (5).
+- A one-octet version number (5).
 
-* A four-octet number denoting the time that the key was created.
+- A four-octet number denoting the time that the key was created.
 
-* A one-octet number denoting the public-key algorithm of this key.
+- A one-octet number denoting the public-key algorithm of this key.
 
-* A four-octet scalar octet count for the following public key material.
+- A four-octet scalar octet count for the following public key material.
 
-* A series of values comprising the public key material.
+- A series of values comprising the public key material.
   This is algorithm-specific and described in {{algorithm-specific-parts-of-keys}}.
 
 ### Secret-Key Packet Formats
@@ -1954,36 +1927,36 @@ The Secret-Key and Secret-Subkey packets contain all the data of the Public-Key 
 
 The packet contains:
 
-* A Public-Key or Public-Subkey packet, as described above.
+- A Public-Key or Public-Subkey packet, as described above.
 
-* One octet indicating string-to-key usage conventions.
+- One octet indicating string-to-key usage conventions.
   Zero indicates that the secret-key data is not encrypted.
   255 or 254 indicates that a string-to-key specifier is being given.
   Any other value is a symmetric-key encryption algorithm identifier.
   A version 5 packet MUST NOT use the value 255.
 
-* Only for a version 5 packet, a one-octet scalar octet count of the next 4 optional fields.
+- Only for a version 5 packet, a one-octet scalar octet count of the next 4 optional fields.
 
-* \[Optional\] If string-to-key usage octet was 255, 254, or 253, a one-octet symmetric encryption algorithm.
+- \[Optional\] If string-to-key usage octet was 255, 254, or 253, a one-octet symmetric encryption algorithm.
 
-* \[Optional\] If string-to-key usage octet was 253, a one-octet AEAD algorithm.
+- \[Optional\] If string-to-key usage octet was 253, a one-octet AEAD algorithm.
 
-* \[Optional\] If string-to-key usage octet was 255, 254, or 253, a string-to-key specifier.
+- \[Optional\] If string-to-key usage octet was 255, 254, or 253, a string-to-key specifier.
   The length of the string-to-key specifier is implied by its type, as described above.
 
-* \[Optional\] If secret data is encrypted (string-to-key usage octet not zero), an Initial Vector (IV) of the same length as the cipher's block size.
+- \[Optional\] If secret data is encrypted (string-to-key usage octet not zero), an Initial Vector (IV) of the same length as the cipher's block size.
   If string-to-key usage octet was 253 the IV is used as the nonce for the AEAD algorithm.
   If the AEAD algorithm requires a shorter nonce, the high-order bits of the IV are used and the remaining bits MUST be zero.
 
-* Only for a version 5 packet, a four-octet scalar octet count for the following secret key material.
+- Only for a version 5 packet, a four-octet scalar octet count for the following secret key material.
   This includes the encrypted SHA-1 hash or AEAD tag if the string-to-key usage octet is 254 or 253.
 
-* Plain or encrypted series of values comprising the secret key material.
+- Plain or encrypted series of values comprising the secret key material.
   This is algorithm-specific and described in section {{algorithm-specific-parts-of-keys}}.
   Note that if the string-to-key usage octet is 254, a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion is appended to plaintext and encrypted with it.
   If the string-to-key usage octet is 253, then an AEAD authentication tag is part of that data.
 
-* If the string-to-key usage octet is zero or 255, then a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536).
+- If the string-to-key usage octet is zero or 255, then a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536).
 
 Note that the version 5 packet format adds two count values to help parsing packets with unknown S2K or public key algorithms.
 
@@ -2023,118 +1996,109 @@ The following sections describe them in detail.
 
 The public key is this series of multiprecision integers:
 
-* MPI of RSA public modulus n;
+- MPI of RSA public modulus n;
 
-* MPI of RSA public encryption exponent e.
+- MPI of RSA public encryption exponent e.
 
 The secret key is this series of multiprecision integers:
 
-* MPI of RSA secret exponent d;
+- MPI of RSA secret exponent d;
 
-* MPI of RSA secret prime value p;
+- MPI of RSA secret prime value p;
 
-* MPI of RSA secret prime value q (p < q);
+- MPI of RSA secret prime value q (p < q);
 
-* MPI of u, the multiplicative inverse of p, mod q.
+- MPI of u, the multiplicative inverse of p, mod q.
 
 ### Algorithm-Specific Part for DSA Keys
 
 The public key is this series of multiprecision integers:
 
-* MPI of DSA prime p;
+- MPI of DSA prime p;
 
-* MPI of DSA group order q (q is a prime divisor of p-1);
+- MPI of DSA group order q (q is a prime divisor of p-1);
 
-* MPI of DSA group generator g;
+- MPI of DSA group generator g;
 
-* MPI of DSA public-key value y (= g**x mod p where x is secret).
+- MPI of DSA public-key value y (= g**x mod p where x is secret).
 
 The secret key is this single multiprecision integer:
 
-* MPI of DSA secret exponent x.
+- MPI of DSA secret exponent x.
 
 ### Algorithm-Specific Part for Elgamal Keys
 
 The public key is this series of multiprecision integers:
 
-* MPI of Elgamal prime p;
+- MPI of Elgamal prime p;
 
-* MPI of Elgamal group generator g;
+- MPI of Elgamal group generator g;
 
-* MPI of Elgamal public key value y (= g**x mod p where x is secret).
+- MPI of Elgamal public key value y (= g**x mod p where x is secret).
 
 The secret key is this single multiprecision integer:
 
-* MPI of Elgamal secret exponent x.
+- MPI of Elgamal secret exponent x.
 
 ### Algorithm-Specific Part for ECDSA Keys
 
 The public key is this series of values:
 
-* a variable-length field containing a curve OID, formatted as follows:
+- a variable-length field containing a curve OID, formatted as follows:
 
-    - a one-octet size of the following field; values 0 and 0xFF are
-      reserved for future extensions,
+  - a one-octet size of the following field; values 0 and 0xFF are reserved for future extensions,
 
-    - the octets representing a curve OID, defined in
-      {{ecc-curve-oid}};
+  - the octets representing a curve OID, defined in {{ecc-curve-oid}};
 
-* a MPI of an EC point representing a public key.
+- a MPI of an EC point representing a public key.
 
 The secret key is this single multiprecision integer:
 
-* MPI of an integer representing the secret key, which is a scalar of the public EC point.
+- MPI of an integer representing the secret key, which is a scalar of the public EC point.
 
 ### Algorithm-Specific Part for EdDSA Keys
 
 The public key is this series of values:
 
-* a variable-length field containing a curve OID, formatted as follows:
+- a variable-length field containing a curve OID, formatted as follows:
 
-    - a one-octet size of the following field; values 0 and 0xFF are
-      reserved for future extensions,
+  - a one-octet size of the following field; values 0 and 0xFF are reserved for future extensions,
 
-    - the octets representing a curve OID, defined in
-      {{ecc-curve-oid}};
+  - the octets representing a curve OID, defined in {{ecc-curve-oid}};
 
-* a MPI of an EC point representing a public key Q as described under EdDSA Point Format below.
+- a MPI of an EC point representing a public key Q as described under EdDSA Point Format below.
 
 The secret key is this single multiprecision integer:
 
-* MPI of an integer representing the secret key, which is a scalar of the public EC point.
+- MPI of an integer representing the secret key, which is a scalar of the public EC point.
 
 ### Algorithm-Specific Part for ECDH Keys
 
 The public key is this series of values:
 
-* a variable-length field containing a curve OID, formatted as follows:
+- a variable-length field containing a curve OID, formatted as follows:
 
-    - a one-octet size of the following field; values 0 and 0xFF are
-      reserved for future extensions,
+  - a one-octet size of the following field; values 0 and 0xFF are reserved for future extensions,
 
-    - the octets representing a curve OID, defined in
-      {{ecc-curve-oid}};
+  - the octets representing a curve OID, defined in {{ecc-curve-oid}};
 
-* a MPI of an EC point representing a public key;
+- a MPI of an EC point representing a public key;
 
-* a variable-length field containing KDF parameters, formatted as follows:
+- a variable-length field containing KDF parameters, formatted as follows:
 
-    - a one-octet size of the following fields; values 0 and 0xff are
-      reserved for future extensions;
+  - a one-octet size of the following fields; values 0 and 0xff are reserved for future extensions;
 
-    - a one-octet value 1, reserved for future extensions;
+  - a one-octet value 1, reserved for future extensions;
 
-    - a one-octet hash function ID used with a KDF;
+  - a one-octet hash function ID used with a KDF;
 
-    - a one-octet algorithm ID for the symmetric algorithm used to
-      wrap the symmetric key used for the message encryption; see
-      {{ec-dh-algorithm-ecdh}} for details.
+  - a one-octet algorithm ID for the symmetric algorithm used to wrap the symmetric key used for the message encryption; see {{ec-dh-algorithm-ecdh}} for details.
 
 Observe that an ECDH public key is composed of the same sequence of fields that define an ECDSA key, plus the KDF parameters field.
 
 The secret key is this single multiprecision integer:
 
-* MPI of an integer representing the secret key, which is a scalar of the public EC point.
+- MPI of an integer representing the secret key, which is a scalar of the public EC point.
 
 ## Compressed Data Packet (Tag 8)
 
@@ -2143,9 +2107,9 @@ Typically, this packet is found as the contents of an encrypted packet, or follo
 
 The body of this packet consists of:
 
-* One octet that gives the algorithm used to compress the packet.
+- One octet that gives the algorithm used to compress the packet.
 
-* Compressed data, which makes up the remainder of the packet.
+- Compressed data, which makes up the remainder of the packet.
 
 A Compressed Data Packet's body contains an block that compresses some set of packets.
 See section "Packet Composition" for details on how messages are formed.
@@ -2170,7 +2134,7 @@ The implementation SHOULD also return an error in this case and stop processing.
 
 The body of this packet consists of:
 
-* Encrypted data, the output of the selected symmetric-key cipher operating in OpenPGP's variant of Cipher Feedback (CFB) mode.
+- Encrypted data, the output of the selected symmetric-key cipher operating in OpenPGP's variant of Cipher Feedback (CFB) mode.
 
 The symmetric cipher used may be specified in a Public-Key or Symmetric-Key Encrypted Session Key packet that precedes the Symmetrically Encrypted Data packet.
 In that case, the cipher algorithm octet is prefixed to the session key before it is encrypted.
@@ -2197,7 +2161,7 @@ With PGP 5, this packet has been reassigned and is reserved for use as the Marke
 
 The body of this packet consists of:
 
-* The three octets 0x50, 0x47, 0x50 (which spell "PGP" in UTF-8).
+- The three octets 0x50, 0x47, 0x50 (which spell "PGP" in UTF-8).
 
 Such a packet MUST be ignored when received.
 It may be placed at the beginning of a message that uses features not available in PGP version 2.6 in order to cause that version to report that newer software is necessary to process the message.
@@ -2208,7 +2172,7 @@ A Literal Data packet contains the body of a message; data that is not to be fur
 
 The body of this packet consists of:
 
-* A one-octet field that describes how the data is formatted.
+- A one-octet field that describes how the data is formatted.
 
   If it is a `b` (0x62), then the Literal packet contains binary data.
   If it is a `t` (0x74), then it contains text data, and thus may need line ends converted to local form, or other text-mode changes.
@@ -2219,7 +2183,7 @@ The body of this packet consists of:
   RFC 1991 {{RFC1991}} incorrectly stated this local mode flag as `1` (ASCII numeral one).
   Both of these local modes are deprecated.
 
-* File name as a string (one-octet length, followed by a file name).
+- File name as a string (one-octet length, followed by a file name).
   This may be a zero-length string.
   Commonly, if the source of the encrypted data is a file, this will be the name of the encrypted file.
   An implementation MAY consider the file name in the Literal packet to be a more authoritative name than the actual file name.
@@ -2227,10 +2191,10 @@ The body of this packet consists of:
   If the special name "\_CONSOLE" is used, the message is considered to be "for your eyes only".
   This advises that the message data is unusually sensitive, and the receiving program should process it more carefully, perhaps avoiding storing the received data to disk, for example.
 
-* A four-octet number that indicates a date associated with the literal data.
+- A four-octet number that indicates a date associated with the literal data.
   Commonly, the date might be the modification date of a file, or the time the packet was created, or a zero that indicates no specific time.
 
-* The remainder of the packet is literal data.
+- The remainder of the packet is literal data.
 
   Text data is stored with \<CR>\<LF> text endings (i.e., network-normal line endings).
   These should be converted to native line endings by the receiving software.
@@ -2266,9 +2230,9 @@ The User Attribute packet is made up of one or more attribute subpackets.
 Each subpacket consists of a subpacket header and a body.
 The header consists of:
 
-* the subpacket length (1, 2, or 5 octets)
+- the subpacket length (1, 2, or 5 octets)
 
-* the subpacket type (1 octet)
+- the subpacket type (1 octet)
 
 and is followed by the subpacket specific data.
 
@@ -2329,7 +2293,7 @@ An implementation SHOULD specifically denote support for this packet, but it MAY
 
 For example, an implementation might infer from the use of a cipher such as Advanced Encryption Standard (AES) or Twofish that a user supports this feature.
 It might place in the unhashed portion of another user's key signature a Features subpacket.
-It might also present a user with an opportunity to regenerate their own self- signature with a Features subpacket.
+It might also present a user with an opportunity to regenerate their own self-signature with a Features subpacket.
 
 This packet contains data encrypted with a symmetric-key algorithm and protected against modification by the SHA-1 hash algorithm.
 When it has been decrypted, it will typically contain other packets (often a Literal Data packet or Compressed Data packet).
@@ -2337,11 +2301,11 @@ The last decrypted packet in this packet's payload MUST be a Modification Detect
 
 The body of this packet consists of:
 
-* A one-octet version number.
+- A one-octet version number.
   The only defined value is 1.
   There won't be any future versions of this packet because the MDC system has been superseded by the AEAD Encrypted Data packet.
 
-* Encrypted data, the output of the selected symmetric-key cipher operating in Cipher Feedback mode with shift amount equal to the block size of the cipher (CFB-n where n is the block size).
+- Encrypted data, the output of the selected symmetric-key cipher operating in Cipher Feedback mode with shift amount equal to the block size of the cipher (CFB-n where n is the block size).
 
 The symmetric cipher used MUST be specified in a Public-Key or Symmetric-Key Encrypted Session Key packet that precedes the Symmetrically Encrypted Data packet.
 In either case, the cipher algorithm octet is prefixed to the session key before it is encrypted.
@@ -2437,7 +2401,7 @@ A Modification Detection Code packet MUST have a length of 20 octets.
 
 The body of this packet consists of:
 
-* A 20-octet SHA-1 hash of the preceding plaintext data of the Symmetrically Encrypted Integrity Protected Data packet, including prefix data, the tag octet, and length octet of the Modification Detection Code packet.
+- A 20-octet SHA-1 hash of the preceding plaintext data of the Symmetrically Encrypted Integrity Protected Data packet, including prefix data, the tag octet, and length octet of the Modification Detection Code packet.
 
 Note that the Modification Detection Code packet MUST always use a new format encoding of the packet tag, and a one-octet encoding of the packet length.
 The reason for this is that the hashing rules for modification detection include a one-octet tag and one-octet length in the data hash.
@@ -2450,20 +2414,20 @@ When it has been decrypted, it will typically contain other packets (often a Lit
 
 The body of this packet consists of:
 
-* A one-octet version number.
-The only currently defined value is 1.
+- A one-octet version number.
+  The only currently defined value is 1.
 
-* A one-octet cipher algorithm.
+- A one-octet cipher algorithm.
 
-* A one-octet AEAD algorithm.
+- A one-octet AEAD algorithm.
 
-* A one-octet chunk size.
+- A one-octet chunk size.
 
-* A starting initialization vector of size specified by the AEAD algorithm.
+- A starting initialization vector of size specified by the AEAD algorithm.
 
-* Encrypted data, the output of the selected symmetric-key cipher operating in the given AEAD mode.
+- Encrypted data, the output of the selected symmetric-key cipher operating in the given AEAD mode.
 
-* A final, summary authentication tag for the AEAD mode.
+- A final, summary authentication tag for the AEAD mode.
 
 An AEAD encrypted data packet consists of one or more chunks of data.
 The plaintext of each chunk is of a size specified using the chunk size octet using the method specified below.
@@ -2508,13 +2472,13 @@ The OCB Authenticated-Encryption Algorithm used in this document is defined in {
 
 OCB usage requires specification of the following parameters:
 
-* a blockcipher that operate on 128-bit (16-octet) blocks
+- a blockcipher that operate on 128-bit (16-octet) blocks
 
-* an authentication tag length of 16 octets
+- an authentication tag length of 16 octets
 
-* a nonce of 15 octets long (which is the longest nonce allowed specified by {{RFC7253}})
+- a nonce of 15 octets long (which is the longest nonce allowed specified by {{RFC7253}})
 
-* an initialization vector of at least 15 octets long
+- an initialization vector of at least 15 octets long
 
 In the case that the initialization vector is longer than 15 octets (such as in {{secret-key-packet-tag-5}}, only the 15 leftmost octets are used in calculations; the remaining octets MUST be considered as zero.
 
@@ -2545,26 +2509,24 @@ The nonzero initialization can detect more errors than a zero initialization.
 
 ## An Implementation of the CRC-24 in "C"
 
-      <CODE BEGINS>
-      #define CRC24_INIT 0xB704CEL
-      #define CRC24_POLY 0x864CFBL
+    #define CRC24_INIT 0xB704CEL
+    #define CRC24_POLY 0x864CFBL
 
-      typedef long crc24;
-      crc24 crc_octets(unsigned char *octets, size_t len)
-      {
-          crc24 crc = CRC24_INIT;
-          int i;
-          while (len--) {
-              crc ^= (*octets++) << 16;
-              for (i = 0; i < 8; i++) {
-                  crc <<= 1;
-                  if (crc & 0x1000000)
-                      crc ^= CRC24_POLY;
-              }
-          }
-          return crc & 0xFFFFFFL;
-      }
-      <CODE ENDS>
+    typedef long crc24;
+    crc24 crc_octets(unsigned char *octets, size_t len)
+    {
+        crc24 crc = CRC24_INIT;
+        int i;
+        while (len--) {
+            crc ^= (*octets++) << 16;
+            for (i = 0; i < 8; i++) {
+                crc <<= 1;
+                if (crc & 0x1000000)
+                    crc ^= CRC24_POLY;
+            }
+        }
+        return crc & 0xFFFFFFL;
+    }
 
 ## Forming ASCII Armor
 
@@ -2574,17 +2536,17 @@ OpenPGP informs the user what kind of data is encoded in the ASCII armor through
 
 Concatenating the following data creates ASCII Armor:
 
-* An Armor Header Line, appropriate for the type of data
+- An Armor Header Line, appropriate for the type of data
 
-* Armor Headers
+- Armor Headers
 
-* A blank line
+- A blank line
 
-* The ASCII-Armored data
+- The ASCII-Armored data
 
-* An Armor Checksum
+- An Armor Checksum
 
-* The Armor Tail, which depends on the Armor Header Line
+- The Armor Tail, which depends on the Armor Header Line
 
 An Armor Header Line consists of the appropriate header line text surrounded by five (5) dashes (`-`, 0x2D) on either side of the header line text.
 The header line text is chosen based upon the type of data that is being encoded in Armor, and how it is being encoded.
@@ -3730,13 +3692,13 @@ It MUST NOT implement a DSA key with a q size of less than 160 bits.
 DSA keys MUST also be a multiple of 64 bits, and the q size MUST be a multiple of 8 bits.
 The Digital Signature Standard (DSS) {{FIPS186}} specifies that DSA be used in one of the following ways:
 
-* 1024-bit key, 160-bit q, SHA-1, SHA2-224, SHA2-256, SHA2-384, or SHA2-512 hash
+- 1024-bit key, 160-bit q, SHA-1, SHA2-224, SHA2-256, SHA2-384, or SHA2-512 hash
 
-* 2048-bit key, 224-bit q, SHA2-224, SHA2-256, SHA2-384, or SHA2-512 hash
+- 2048-bit key, 224-bit q, SHA2-224, SHA2-256, SHA2-384, or SHA2-512 hash
 
-* 2048-bit key, 256-bit q, SHA2-256, SHA2-384, or SHA2-512 hash
+- 2048-bit key, 256-bit q, SHA2-256, SHA2-384, or SHA2-512 hash
 
-* 3072-bit key, 256-bit q, SHA2-256, SHA2-384, or SHA2-512 hash
+- 3072-bit key, 256-bit q, SHA2-256, SHA2-384, or SHA2-512 hash
 
 The above key and q size pairs were chosen to best balance the strength of the key with the strength of the hash.
 Implementations SHOULD use one of the above key and q size pairs when generating DSA keys.
@@ -4065,43 +4027,43 @@ Previous implementations of PGP are not OpenPGP compliant.
 Often the differences are small, but small differences are frequently more vexing than large differences.
 Thus, this is a non-comprehensive list of potential problems and gotchas for a developer who is trying to be backward-compatible.
 
-* The IDEA algorithm is patented, and yet it is required for PGP 2 interoperability.
-  It is also the de-facto preferred algorithm for a V3 key with a V3 self-signature (or no self- signature).
+- The IDEA algorithm is patented, and yet it is required for PGP 2 interoperability.
+  It is also the de-facto preferred algorithm for a V3 key with a V3 self-signature (or no self-signature).
 
-* When exporting a private key, PGP 2 generates the header "BEGIN PGP SECRET KEY BLOCK" instead of "BEGIN PGP PRIVATE KEY BLOCK".
+- When exporting a private key, PGP 2 generates the header "BEGIN PGP SECRET KEY BLOCK" instead of "BEGIN PGP PRIVATE KEY BLOCK".
   All previous versions ignore the implied data type, and look directly at the packet data type.
 
-* PGP versions 2.0 through 2.5 generated V2 Public-Key packets.
+- PGP versions 2.0 through 2.5 generated V2 Public-Key packets.
   These are identical to the deprecated V3 keys except for the version number.
   An implementation MUST NOT generate them and may accept or reject them as it sees fit.
   Some older PGP versions generated V2 PKESK packets (Tag 1) as well.
   An implementation may accept or reject V2 PKESK packets as it sees fit, and MUST NOT generate them.
 
-* PGP version 2.6 will not accept key-material packets with versions greater than 3.
+- PGP version 2.6 will not accept key-material packets with versions greater than 3.
 
-* There are many ways possible for two keys to have the same key material, but different fingerprints (and thus Key IDs).
+- There are many ways possible for two keys to have the same key material, but different fingerprints (and thus Key IDs).
   Perhaps the most interesting is an RSA key that has been "upgraded" to V4 format, but since a V4 fingerprint is constructed by hashing the key creation time along with other things, two V4 keys created at different times, yet with the same key material will have different fingerprints.
 
-* If an implementation is using zlib to interoperate with PGP 2, then the "windowBits" parameter should be set to -13.
+- If an implementation is using zlib to interoperate with PGP 2, then the "windowBits" parameter should be set to -13.
 
-* The 0x19 back signatures were not required for signing subkeys until relatively recently.
+- The 0x19 back signatures were not required for signing subkeys until relatively recently.
   Consequently, there may be keys in the wild that do not have these back signatures.
   Implementing software may handle these keys as it sees fit.
 
-* OpenPGP does not put limits on the size of public keys.
+- OpenPGP does not put limits on the size of public keys.
   However, larger keys are not necessarily better keys.
   Larger keys take more computation time to use, and this can quickly become impractical.
   Different OpenPGP implementations may also use different upper bounds for public key sizes, and so care should be taken when choosing sizes to maintain interoperability.
   As of 2007 most implementations have an upper bound of 4096 bits.
 
-* ASCII armor is an optional feature of OpenPGP.
+- ASCII armor is an optional feature of OpenPGP.
   The OpenPGP working group strives for a minimal set of mandatory-to-implement features, and since there could be useful implementations that only use binary object formats, this is not a "MUST" feature for an implementation.
   For example, an implementation that is using OpenPGP as a mechanism for file signatures may find ASCII armor unnecessary.
   OpenPGP permits an implementation to declare what features it does and does not support, but ASCII armor is not one of these.
   Since most implementations allow binary and armored objects to be used indiscriminately, an implementation that does not implement ASCII armor may find itself with compatibility issues with general-purpose implementations.
   Moreover, implementations of OpenPGP-MIME {{RFC3156}} already have a requirement for ASCII armor so those implementations will necessarily have support.
 
-* The OCB mode is patented and a debate is still underway on whether it can be included in RFC4880bis or needs to be moved to a separate document.
+- The OCB mode is patented and a debate is still underway on whether it can be included in RFC4880bis or needs to be moved to a separate document.
   For the sole purpose of experimenting with the Preferred AEAD Algorithms signature subpacket it is has been included in this I-D.
 
 --- back
