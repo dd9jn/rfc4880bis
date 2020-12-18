@@ -3547,7 +3547,8 @@ Error: "message too long".
 
 1. Length checking: If mLen > k - 11, output "message too long" and stop.
 
-2. Generate an octet string PS of length k - mLen - 3 consisting of pseudo-randomly generated nonzero octets.  The length of PS will be at least eight octets.
+2. Generate an octet string PS of length k - mLen - 3 consisting of pseudo-randomly generated nonzero octets.
+   The length of PS will be at least eight octets.
 
 3. Concatenate PS, the message M, and other padding to form an encoded message EM of length k octets as
 
@@ -3613,7 +3614,8 @@ Steps:
 
 3. If emLen < tLen + 11, output "intended encoded message length too short" and stop.
 
-4. Generate an octet string PS consisting of emLen - tLen - 3 octets with hexadecimal value 0xFF.  The length of PS will be at least 8 octets.
+4. Generate an octet string PS consisting of emLen - tLen - 3 octets with hexadecimal value 0xFF.
+   The length of PS will be at least 8 octets.
 
 5. Concatenate PS, the hash prefix T, and other padding to form the encoded message EM as
 
@@ -3848,7 +3850,7 @@ Asymmetric key size | Hash size | Symmetric key size
   Should this ever occur, a revision will have to be made to this document to revise the allowed hash algorithms.
 
 - If you are building an authentication system, the recipient may specify a preferred signing algorithm.
-However, the signer would be foolish to use a weak algorithm simply because the recipient requests it.
+  However, the signer would be foolish to use a weak algorithm simply because the recipient requests it.
 
 - Some of the encryption algorithms mentioned in this document have been analyzed less than others.
   For example, although CAST5 is presently considered strong, it has been analyzed less than TripleDES.
