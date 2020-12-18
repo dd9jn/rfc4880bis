@@ -1044,7 +1044,7 @@ The algorithms for converting the hash function result to a signature are descri
 #### Signature Subpacket Specification {#signature-subpacket}
 
 A subpacket data set consists of zero or more Signature subpackets.
-In Signature packets, the subpacket data set is preceded by a two- octet scalar count of the length in octets of all the subpackets.
+In Signature packets, the subpacket data set is preceded by a two-octet scalar count of the length in octets of all the subpackets.
 A pointer incremented by this number will skip over the subpacket data set.
 
 Each subpacket consists of a subpacket header and a body.
@@ -1926,7 +1926,7 @@ A version 5 packet contains:
 
 ### Secret-Key Packet Formats
 
-The Secret-Key and Secret-Subkey packets contain all the data of the Public-Key and Public-Subkey packets, with additional algorithm- specific secret-key data appended, usually in encrypted form.
+The Secret-Key and Secret-Subkey packets contain all the data of the Public-Key and Public-Subkey packets, with additional algorithm-specific secret-key data appended, usually in encrypted form.
 
 The packet contains:
 
@@ -1964,7 +1964,7 @@ The packet contains:
 Note that the version 5 packet format adds two count values to help parsing packets with unknown S2K or public key algorithms.
 
 Secret MPI values can be encrypted using a passphrase.
-If a string- to-key specifier is given, that describes the algorithm for converting the passphrase to a key, else a simple MD5 hash of the passphrase is used.
+If a string-to-key specifier is given, that describes the algorithm for converting the passphrase to a key, else a simple MD5 hash of the passphrase is used.
 Implementations MUST use a string-to-key specifier; the simple hash is for backward compatibility and is deprecated, though implementations MAY continue to use existing private keys in the old format.
 The cipher for encrypting the MPIs is specified in the Secret-Key packet.
 
@@ -1982,7 +1982,7 @@ Note that no chunks are used and that there is only one authentication tag.
 The Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are given as additional data.
 For example, the additional data used with EAX and AES-128 in a Secret-Key Packet of version 4 consists of the octets 0xC5, 0x04, 0x07, and 0x01; in a Secret-Subkey Packet the first octet would be 0xC7.
 
-The two-octet checksum that follows the algorithm-specific portion is the algebraic sum, mod 65536, of the plaintext of all the algorithm- specific octets (including MPI prefix and data).
+The two-octet checksum that follows the algorithm-specific portion is the algebraic sum, mod 65536, of the plaintext of all the algorithm-specific octets (including MPI prefix and data).
 With V3 keys, the checksum is stored in the clear.
 With V4 keys, the checksum is encrypted like the algorithm-specific data.
 This value is used to check that the passphrase was correct.
