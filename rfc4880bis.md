@@ -1309,10 +1309,7 @@ Note that it may be appropriate to isolate this subpacket within a separate sign
 
 #### Notation Data {#notation-data}
 
-       (4 octets of flags, 2 octets of name length (M),
-                           2 octets of value length (N),
-                           M octets of name data,
-                           N octets of value data)
+(4 octets of flags, 2 octets of name length (M), 2 octets of value length (N), M octets of name data, N octets of value data)
 
 This subpacket describes a "notation" on the signature that the issuer wishes to make.
 The notation has a name and a value, each of which are strings of octets.
