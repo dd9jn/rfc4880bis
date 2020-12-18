@@ -2769,7 +2769,7 @@ The message digest is computed using the cleartext itself, not the dash-escaped 
 As with binary signatures on text documents, a cleartext signature is calculated on the text using canonical \<CR>\<LF> line endings.
 The line ending (i.e., the \<CR>\<LF>) before the `-----BEGIN PGP SIGNATURE-----` line that terminates the signed text is not considered part of the signed text.
 
-When reversing dash-escaping, an implementation MUST strip the string "- " if it occurs at the beginning of a line, and SHOULD warn on "-" and any character other than a space at the beginning of a line.
+When reversing dash-escaping, an implementation MUST strip the string `- ` if it occurs at the beginning of a line, and SHOULD warn on `-` and any character other than a space at the beginning of a line.
 
 Also, any trailing whitespace --- spaces (0x20), tabs (0x09) or carriage returns (0x0d) --- at the end of any line is removed when the cleartext signature is generated and verified.
 
