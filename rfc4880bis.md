@@ -445,7 +445,7 @@ It may be ill-formed in its ciphertext.
 
 A Key ID is an eight-octet scalar that identifies a key.
 Implementations SHOULD NOT assume that Key IDs are unique.
-The section "Enhanced Key Formats" below describes how Key IDs are formed.
+{{enhanced-key-formats}} below describes how Key IDs are formed.
 
 ## Text
 
@@ -1158,7 +1158,7 @@ If another user revokes their certification, they are effectively saying that th
 Similarly, if the users themselves revoke their self-signature, then the users no longer go by that name, no longer have that email address, etc.
 Revoking a binding signature effectively retires that subkey.
 Revoking a direct-key signature cancels that signature.
-Please see the "Reason for Revocation" subpacket ({{reason-for-revocation}}) for more relevant detail.
+Please see {{reason-for-revocation}} for more relevant detail.
 
 Since a self-signature contains important information about the key's use, an implementation SHOULD allow the user to rewrite the self-signature, and important information in it, such as preferences and key expiration.
 
@@ -1288,7 +1288,7 @@ Implementations SHOULD emit values of 60 for partial trust and 120 for complete 
 Used in conjunction with trust Signature packets (of level > 0) to limit the scope of trust that is extended.
 Only signatures by the target key on User IDs that match the regular expression in the body of this packet have trust extended by the trust Signature subpacket.
 The regular expression uses the same syntax as the Henry Spencer's "almost public domain" regular expression {{REGEX}} package.
-A description of the syntax is found in {{regular-expressions}} below.
+A description of the syntax is found in {{regular-expressions}}.
 
 #### Revocation Key
 
@@ -1594,7 +1594,7 @@ For example, a target signature with a SHA-1 hash MUST have 20 octets of hash da
 
 (1 signature packet body)
 
-This subpacket contains a complete Signature packet body as specified in {{signature-packet}} above.
+This subpacket contains a complete Signature packet body as specified in {{signature-packet}}.
 It is useful when one signature needs to refer to, or be incorporated in, another signature.
 
 #### Issuer Fingerprint
@@ -1617,7 +1617,7 @@ This can be used to prevent forwarding a signature outside of its intended, encr
 
 Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 5 key N is 32.
 
-#### Attested Certifications
+#### Attested Certifications {#attested-certifications}
 
 (N octets of certification digests)
 
@@ -2152,7 +2152,7 @@ After encrypting the first block-size-plus-two octets, the CFB state is resynchr
 The last block-size octets of ciphertext are passed through the cipher and the block boundary is reset.
 
 The repetition of 16 bits in the random data prefixed to the message allows the receiver to immediately check whether the session key is incorrect.
-See the "Security Considerations" section for hints on the proper use of this "quick check".
+See {{security-considerations}} for hints on the proper use of this "quick check".
 
 ## Marker Packet (Obsolete Literal Packet) (Tag 10)
 
@@ -2213,7 +2213,7 @@ Trust packets SHOULD NOT be emitted to output streams that are transferred to ot
 ## User ID Packet (Tag 13)
 
 A User ID packet consists of UTF-8 text that is intended to represent the name and email address of the key holder.
-By convention, it includes an RFC 2822 {{RFC2822}} mail name-addr, but there are no restrictions on its content.
+By convention, it includes an {{RFC2822}} mail name-addr, but there are no restrictions on its content.
 The packet length in the header specifies the length of the User ID.
 
 ## User Attribute Packet (Tag 17) {#user-attribute-packet}
@@ -2317,7 +2317,7 @@ The length of the octet string equals the block size of the cipher in octets, pl
 The first octets in the group, of length equal to the block size of the cipher, are random; the last two octets are each copies of their 2nd preceding octet.
 For example, with a cipher whose block size is 128 bits or 16 octets, the prefix data will contain 16 random octets, then two more octets, which are copies of the 15th and 16th octets, respectively.
 Unlike the Symmetrically Encrypted Data Packet, no special CFB resynchronization is done after encrypting this prefix data.
-See "OpenPGP CFB Mode" below for more details.
+See {{cfb-mode}} for more details.
 
 The repetition of 16 bits in the random data prefixed to the message allows the receiver to immediately check whether the session key is incorrect.
 
@@ -2729,7 +2729,7 @@ Note that this example has extra indenting; an actual armored message would have
 It is desirable to be able to sign a textual octet stream without ASCII armoring the stream itself, so the signed text is still readable without special software.
 In order to bind a signature to such a cleartext, this framework is used, which follows the same basic format and restrictions as the ASCII armoring described above in "Forming ASCII Armor" ({{forming-ascii-armor}}).
 (Note that this framework is not intended to be reversible.
-RFC 3156 {{RFC3156}} defines another way to sign cleartext messages for environments that support MIME.)
+{{RFC3156}} defines another way to sign cleartext messages for environments that support MIME.)
 
 The cleartext signed message consists of:
 
@@ -2797,7 +2797,7 @@ This section describes the constants used in OpenPGP.
 
 Note that these tables are not exhaustive lists; an implementation MAY implement an algorithm not on these lists, so long as the algorithm numbers are chosen from the private or experimental algorithm range.
 
-See the section "Notes on Algorithms" below for more discussion of the algorithms.
+See {{notes-on-algorithms}} for more discussion of the algorithms.
 
 ## Public-Key Algorithms {#pubkey-algos}
 
@@ -3730,7 +3730,7 @@ An implementation MUST NOT generate such keys.
 An implementation MUST NOT generate Elgamal signatures.
 See {{BLEICHENBACHER}}.
 
-## OpenPGP CFB Mode
+## OpenPGP CFB Mode {#cfb-mode}
 
 OpenPGP does symmetric encryption using a variant of Cipher Feedback mode (CFB mode).
 This section describes the procedure it uses in detail.
