@@ -1061,17 +1061,17 @@ The length includes the type octet but not this length.
 Its format is similar to the "new" format packet header lengths, but cannot have Partial Body Lengths.
 That is:
 
-       if the 1st octet <  192, then
-           lengthOfLength = 1
-           subpacketLen = 1st_octet
+    if the 1st octet <  192, then
+        lengthOfLength = 1
+        subpacketLen = 1st_octet
 
-       if the 1st octet >= 192 and < 255, then
-           lengthOfLength = 2
-           subpacketLen = ((1st_octet - 192) << 8) + (2nd_octet) + 192
+    if the 1st octet >= 192 and < 255, then
+        lengthOfLength = 2
+        subpacketLen = ((1st_octet - 192) << 8) + (2nd_octet) + 192
 
-       if the 1st octet = 255, then
-           lengthOfLength = 5
-           subpacket length = [four-octet scalar starting at 2nd_octet]
+    if the 1st octet = 255, then
+        lengthOfLength = 5
+        subpacket length = [four-octet scalar starting at 2nd_octet]
 
 The value of the subpacket type octet may be:
 
@@ -2642,24 +2642,24 @@ That is, the first bit in the stream will be the high-order bit in the first 8-b
 Each 6-bit group is used as an index into an array of 64 printable characters from the table below.
 The character referenced by the index is placed in the output string.
 
-     Value Encoding  Value Encoding  Value Encoding  Value Encoding
-         0 A            17 R            34 i            51 z
-         1 B            18 S            35 j            52 0
-         2 C            19 T            36 k            53 1
-         3 D            20 U            37 l            54 2
-         4 E            21 V            38 m            55 3
-         5 F            22 W            39 n            56 4
-         6 G            23 X            40 o            57 5
-         7 H            24 Y            41 p            58 6
-         8 I            25 Z            42 q            59 7
-         9 J            26 a            43 r            60 8
-        10 K            27 b            44 s            61 9
-        11 L            28 c            45 t            62 +
-        12 M            29 d            46 u            63 /
-        13 N            30 e            47 v
-        14 O            31 f            48 w         (pad) =
-        15 P            32 g            49 x
-        16 Q            33 h            50 y
+    Value Encoding  Value Encoding  Value Encoding  Value Encoding
+        0 A            17 R            34 i            51 z
+        1 B            18 S            35 j            52 0
+        2 C            19 T            36 k            53 1
+        3 D            20 U            37 l            54 2
+        4 E            21 V            38 m            55 3
+        5 F            22 W            39 n            56 4
+        6 G            23 X            40 o            57 5
+        7 H            24 Y            41 p            58 6
+        8 I            25 Z            42 q            59 7
+        9 J            26 a            43 r            60 8
+       10 K            27 b            44 s            61 9
+       11 L            28 c            45 t            62 +
+       12 M            29 d            46 u            63 /
+       13 N            30 e            47 v
+       14 O            31 f            48 w         (pad) =
+       15 P            32 g            49 x
+       16 Q            33 h            50 y
 
 The encoded output stream must be represented in lines of no more than 76 characters each.
 
