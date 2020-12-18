@@ -1405,8 +1405,16 @@ A 'hash' notation is a means to include external data in the contents of a signa
 This is done by hashing the external data separately and then including the data's name and hash in the signature via this notation.
 This is useful, for example, to have an external "manifest," "image," or other data that might not be vital to the signature itself but still needs to be protected and authenticated without requiring a second signature.
 
-The 'hash' notation has the following structure: * A single byte specifying the length of the name of the hashed data * A UTF-8 string of the name of the hashed data * A single byte specifying the hash algorithm (see section 9.4) * The binary hash output of the hashed data using the specified algorithm.
-(The length of this data is implicit based on the algorithm specified).
+The 'hash' notation has the following structure:
+
+- A single byte specifying the length of the name of the hashed data
+
+- A UTF-8 string of the name of the hashed data
+
+- A single byte specifying the hash algorithm (see {{hash-algos}})
+
+- The binary hash output of the hashed data using the specified algorithm.
+  (The length of this data is implicit based on the algorithm specified).
 
 Due to its nature a 'hash' notation is not human readable and MUST NOT be marked as such when used.
 
