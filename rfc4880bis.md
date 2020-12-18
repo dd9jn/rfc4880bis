@@ -2731,7 +2731,7 @@ Note that this example has extra indenting; an actual armored message would have
 # Cleartext Signature Framework
 
 It is desirable to be able to sign a textual octet stream without ASCII armoring the stream itself, so the signed text is still readable without special software.
-In order to bind a signature to such a cleartext, this framework is used, which follows the same basic format and restrictions as the ASCII armoring described above in "Forming ASCII Armor" ({{forming-ascii-armor}}).
+In order to bind a signature to such a cleartext, this framework is used, which follows the same basic format and restrictions as the ASCII armoring described in {{forming-ascii-armor}}.
 (Note that this framework is not intended to be reversible.
 {{RFC3156}} defines another way to sign cleartext messages for environments that support MIME.)
 
@@ -3608,7 +3608,7 @@ Steps:
 
    If the hash function outputs "message too long," output "message too long" and stop.
 
-2. Using the list in Section {{version-three-sig}}, "Version 3 Signature Packet Format", produce an ASN.1 DER value for the hash function used.
+2. Using the list in {{version-three-sig}}, produce an ASN.1 DER value for the hash function used.
    Let T be the full hash prefix from the list, and let tLen be the length in octets of T.
 
 3. If emLen < tLen + 11, output "intended encoded message length too short" and stop.
@@ -3723,7 +3723,7 @@ Truncation of the resulting digest is never applied; the resulting digest value 
 ## Reserved Algorithm Numbers {#reserved-notes}
 
 A number of algorithm IDs have been reserved for algorithms that would be useful to use in an OpenPGP implementation, yet there are issues that prevent an implementer from actually implementing the algorithm.
-These are marked in {{pubkey-algos}}, "Public-Key Algorithms", as "reserved for".
+These are marked in {{pubkey-algos}} as "reserved for".
 
 The reserved public-key algorithm X9.42 (21) does not have the necessary parameters, parameter order, or semantics defined.
 The same is currently true for reserved public-key algorithms AEDH (23) and AEDSA (24).
