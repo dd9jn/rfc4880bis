@@ -789,10 +789,10 @@ The body of this packet consists of:
 The value "m" in the above formulas is derived from the session key as follows.
 First, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following Symmetrically Encrypted Data Packet.
 Then a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, not including the algorithm identifier, modulo 65536.
-This value is then encoded as described in PKCS\#1 block encoding EME-PKCS1-v1\_5 in Section 7.2.1 of {{RFC3447}} to form the "m" value used in the formulas above.
-See {{pkcs-encoding}} of this document for notes on OpenPGP's use of PKCS\#1.
+This value is then encoded as described in PKCS#1 block encoding EME-PKCS1-v1_5 in Section 7.2.1 of {{RFC3447}} to form the "m" value used in the formulas above.
+See {{pkcs-encoding}} in this document for notes on OpenPGP's use of PKCS#1.
 
-Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS\#1 encoding for each key.
+Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
 
 An implementation MAY accept or use a Key ID of zero as a "wild card" or "speculative" Key ID.
 In this case, the receiving implementation would try all available private keys, checking for a valid decrypted session key.
@@ -1285,7 +1285,7 @@ Implementations SHOULD emit values of 60 for partial trust and 120 for complete 
 
 (null-terminated regular expression)
 
-Used in conjunction with trust Signature packets (of level \> 0) to limit the scope of trust that is extended.
+Used in conjunction with trust Signature packets (of level > 0) to limit the scope of trust that is extended.
 Only signatures by the target key on User IDs that match the regular expression in the body of this packet have trust extended by the trust Signature subpacket.
 The regular expression uses the same syntax as the Henry Spencer's "almost public domain" regular expression {{REGEX}} package.
 A description of the syntax is found in {{regular-expressions}} below.
@@ -1629,7 +1629,7 @@ Implementations MUST include exactly one Attested Certification subpacket in any
 
 The contents of the subpacket consists of a series of digests using the same hash algorithm used by the signature itself.
 Each digest is made over one third-party signature (any Certification, i.e., signature type 0x10-0x13) that covers the same Primary Key and User ID (or User Attribute).
-For example, an Attestation Key Signature made by key X over User ID U using hash algorithm SHA256 might contain an Attested Certifications subpacket of 192 octets (6*32 octets) covering six third-party certification Signatures over \<X,U\>.
+For example, an Attestation Key Signature made by key X over User ID U using hash algorithm SHA256 might contain an Attested Certifications subpacket of 192 octets (6*32 octets) covering six third-party certification Signatures over \<X,U>.
 They SHOULD be ordered by binary hash value from low to high (e.g., a hash with hexadecimal value 037a...
 precedes a hash with value 0392..., etc).
 The length of this subpacket MUST be an integer multiple of the length of the hash algorithm used for the enclosing Attestation Key Signature.
@@ -2188,7 +2188,7 @@ The body of this packet consists of:
   Commonly, if the source of the encrypted data is a file, this will be the name of the encrypted file.
   An implementation MAY consider the file name in the Literal packet to be a more authoritative name than the actual file name.
 
-  If the special name "\_CONSOLE" is used, the message is considered to be "for your eyes only".
+  If the special name `_CONSOLE` is used, the message is considered to be "for your eyes only".
   This advises that the message data is unusually sensitive, and the receiving program should process it more carefully, perhaps avoiding storing the received data to disk, for example.
 
 - A four-octet number that indicates a date associated with the literal data.
@@ -3519,13 +3519,13 @@ Encrypted Integrity Protected Data Packet (Tag 18)", AEAD encryption or a Modifi
 
 ## PKCS#1 Encoding in OpenPGP {#pkcs-encoding}
 
-This standard makes use of the PKCS\#1 functions EME-PKCS1-v1\_5 and EMSA-PKCS1-v1\_5.
+This standard makes use of the PKCS#1 functions EME-PKCS1-v1_5 and EMSA-PKCS1-v1_5.
 However, the calling conventions of these functions has changed in the past.
-To avoid potential confusion and interoperability problems, we are including local copies in this document, adapted from those in PKCS\#1 v2.1 {{RFC3447}}.
-RFC 3447 should be treated as the ultimate authority on PKCS\#1 for OpenPGP.
+To avoid potential confusion and interoperability problems, we are including local copies in this document, adapted from those in PKCS#1 v2.1 {{RFC3447}}.
+{{RFC3447}} should be treated as the ultimate authority on PKCS#1 for OpenPGP.
 Nonetheless, we believe that there is value in having a self- contained document that avoids problems in the future with needed changes in the conventions.
 
-### EME-PKCS1-v1\_5-ENCODE
+### EME-PKCS1-v1_5-ENCODE
 
 Input:
 
@@ -3552,7 +3552,7 @@ Error: "message too long".
 
 4. Output EM.
 
-### EME-PKCS1-v1\_5-DECODE
+### EME-PKCS1-v1_5-DECODE
 
 Input:
 
@@ -3566,7 +3566,7 @@ M =
 
 Error: "decryption error",
 
-To decode an EME-PKCS1\_v1\_5 message, separate the encoded message EM into an octet string PS consisting of nonzero octets and a message M as follows
+To decode an EME-PKCS1_v1_5 message, separate the encoded message EM into an octet string PS consisting of nonzero octets and a message M as follows
 
      EM = 0x00 || 0x02 || PS || 0x00 || M.
 
@@ -3876,7 +3876,7 @@ However, the signer would be foolish to use a weak algorithm simply because the 
 
   3. Users migrate to implementations that support AEAD encryption with all due speed.
 
-- PKCS\#1 has been found to be vulnerable to attacks in which a system that reports errors in padding differently from errors in decryption becomes a random oracle that can leak the private key in mere millions of queries.
+- PKCS#1 has been found to be vulnerable to attacks in which a system that reports errors in padding differently from errors in decryption becomes a random oracle that can leak the private key in mere millions of queries.
   Implementations must be aware of this attack and prevent it from happening.
   The simplest solution is to report a single error code for all variants of decryption errors so as not to leak information to an attacker.
 
