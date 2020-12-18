@@ -1395,7 +1395,7 @@ It is a decimal integer representation with no punctuation, e.g.
 
 ##### The 'loc' and 'dest' Notations
 
-The "loc" and 'dest' notations declare a GeoLocation as defined by RFC 5870 {{RFC5870}} but without the leading "geo:" header.
+The "loc" and 'dest' notations declare a GeoLocation as defined by {{RFC5870}} but without the leading "geo:" header.
 For example, if you had a GeoLocation URI of "geo:13.4125,103.8667" you would encode that in these notations as "13.4125,103.8667".
 
 The 'loc' notation is meant to encode the geo location where the signature was made.
@@ -2276,7 +2276,7 @@ An implementation MAY try to determine the type of an image by examination of th
 A User ID Attribute subpacket has type \[IANA --- assignment TBD1\].
 
 A User ID Attribute subpacket, just like a User ID packet, consists of UTF-8 text that is intended to represent the name and email address of the key holder.
-By convention, it includes an RFC 2822 {{RFC2822}} mail name-addr, but there are no restrictions on its content.
+By convention, it includes an {{RFC2822}} mail name-addr, but there are no restrictions on its content.
 For devices using OpenPGP for device certificates, it may just be the device identifier.
 The packet length in the header specifies the length of the User ID.
 
@@ -2830,7 +2830,7 @@ See {{rsa-notes}}.
 See {{reserved-notes}} for notes on Elgamal Encrypt or Sign (20), and X9.42 (21).
 Implementations MAY implement any other algorithm.
 
-Note that implementations conforming to previous versions of this standard (RFC-4880) have DSA (17) and Elgamal (16) as its only MUST-implement algorithm.
+Note that implementations conforming to previous versions of this standard {{RFC4880}} have DSA (17) and Elgamal (16) as its only MUST-implement algorithm.
 
 A compatible specification of ECDSA is given in {{RFC6090}} as "KT-I Signatures" and in {{SEC1}}; ECDH is defined in {{ec-dh-algorithm-ecdh}} this document.
 
@@ -2879,7 +2879,7 @@ ID | Algorithm
 
 Implementations MUST implement AES-128.
 Implementations SHOULD implement AES-256.
-Implementations that interoperate with RFC-4880 implementations need to support TripleDES and CAST5.
+Implementations that interoperate with {{RFC4880}} implementations need to support TripleDES and CAST5.
 Implementations that interoperate with PGP 2.6 or earlier need to support IDEA, as that is the only symmetric cipher those versions use.
 Implementations MAY implement any other algorithm.
 
@@ -3633,7 +3633,7 @@ Note that it is also possible for preferences to be in a subkey's binding signat
 Since AES-128 is the MUST-implement algorithm, if it is not explicitly in the list, it is tacitly at the end.
 However, it is good form to place it there explicitly.
 Note also that if an implementation does not implement the preference, then it is implicitly an AES-128-only implementation.
-Note further that implementations conforming to previous versions of this standard (RFC-4880) have TripleDES as its only MUST-implement algorithm.
+Note further that implementations conforming to previous versions of this standard {{RFC4880}} have TripleDES as its only MUST-implement algorithm.
 
 An implementation MUST NOT use a symmetric algorithm that is not in the recipient's preference list.
 When encrypting to more than one recipient, the implementation finds a suitable algorithm by taking the intersection of the preferences of the recipients.
@@ -3980,7 +3980,7 @@ Moreover, in the case of device certificates, it's more the manufacturer than th
 There is no signaling whether a key is using this looser-requirement key format.
 An attacker could therefore just remove the self-signature off a published key.
 However one would hope that wide publication would result in another copy still having that signature and it being returned quickly.
-However, the lack of signaling also means that a user with an application following RFC 4880 directly would see a key following this specification as "broken" and may not accept it.
+However, the lack of signaling also means that a user with an application following {{RFC4880}} directly would see a key following this specification as "broken" and may not accept it.
 
 On a different note, including the "geo" notation could leak information about where a signer is located.
 However it is just an assertion (albeit a signed assertion) so there is no verifiable truth to the location information released.
@@ -4434,7 +4434,7 @@ Two other values might also be interesting for other ECC specifications:
 - Suggest limitation of the AEAD chunksize to 128 MiB.
 - Specified the V5 signature format.
 - Deprectated the creation of V3 signatures.
-- Adapted terms from RFC 8126.
+- Adapted terms from {{RFC8126}}.
 - Removed editorial marks and updated cross-references.
 - Added the timestamping usage key flag.
 - Added Intended Recipient signature subpacket.
