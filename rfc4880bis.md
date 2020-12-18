@@ -3572,7 +3572,7 @@ Error: "decryption error".
 
 To decode an EME-PKCS1_v1_5 message, separate the encoded message EM into an octet string PS consisting of nonzero octets and a message M as follows
 
-     EM = 0x00 || 0x02 || PS || 0x00 || M.
+      EM = 0x00 || 0x02 || PS || 0x00 || M.
 
 If the first octet of EM does not have hexadecimal value 0x00, if the second octet of EM does not have hexadecimal value 0x02, if there is no octet with hexadecimal value 0x00 to separate PS from M, or if the length of PS is less than 8 octets, output "decryption error" and stop.
 See also the security note in {{security-considerations}} regarding differences in reporting between a decryption error and a padding error.
