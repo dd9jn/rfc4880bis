@@ -2666,19 +2666,18 @@ The encoded output stream must be represented in lines of no more than 76 charac
 Special processing is performed if fewer than 24 bits are available at the end of the data being encoded.
 There are three possibilities:
 
-    1.  The last data group has 24 bits (3 octets).  No special
-        processing is needed.
+1. The last data group has 24 bits (3 octets).
+   No special processing is needed.
 
-    2.  The last data group has 16 bits (2 octets).  The first two
-        6-bit groups are processed as above.  The third (incomplete)
-        data group has two zero-value bits added to it, and is
-        processed as above. A pad character (=) is added to the
-        output.
+2. The last data group has 16 bits (2 octets).
+   The first two 6-bit groups are processed as above.
+   The third (incomplete) data group has two zero-value bits added to it, and is processed as above.
+   A pad character (=) is added to the output.
 
-    3.  The last data group has 8 bits (1 octet).  The first 6-bit
-        group is processed as above.  The second (incomplete) data
-        group has four zero-value bits added to it, and is processed
-        as above.  Two pad characters (=) are added to the output.
+3. The last data group has 8 bits (1 octet).
+   The first 6-bit group is processed as above.
+   The second (incomplete) data group has four zero-value bits added to it, and is processed as above.
+   Two pad characters (=) are added to the output.
 
 ## Decoding Radix-64
 
