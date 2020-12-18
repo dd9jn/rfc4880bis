@@ -820,7 +820,7 @@ See {{computing-signatures}} for detailed information on how to compute and veri
 
 These meanings are as follows:
 
-{:vspace="0"}
+{: vspace="0"}
 0x00: Signature of a binary document.
 : This means the signer owns it, created it, or certifies that it has not been modified.
 
@@ -829,18 +829,18 @@ These meanings are as follows:
   The signature is calculated over the text data with its line endings converted to \<CR>\<LF>.
 
 0x02: Standalone signature.
-:  This signature is a signature of only its own subpacket contents.
+: This signature is a signature of only its own subpacket contents.
   It is calculated identically to a signature over a zero-length binary document.
   Note that it doesn't make sense to have a V3 standalone signature.
 
 0x10: Generic certification of a User ID and Public-Key packet.
-:  The issuer of this certification does not make any particular assertion as to how well the certifier has checked that the owner of the key is in fact the person described by the User ID.
+: The issuer of this certification does not make any particular assertion as to how well the certifier has checked that the owner of the key is in fact the person described by the User ID.
 
 0x11: Persona certification of a User ID and Public-Key packet.
-:  The issuer of this certification has not done any verification of the claim that the owner of this key is the User ID specified.
+: The issuer of this certification has not done any verification of the claim that the owner of this key is the User ID specified.
 
 0x12: Casual certification of a User ID and Public-Key packet.
-:  The issuer of this certification has done some casual verification of the claim of identity.
+: The issuer of this certification has done some casual verification of the claim of identity.
 
 0x13: Positive certification of a User ID and Public-Key packet.
 : The issuer of this certification has done substantial verification of the claim of identity.
