@@ -3565,9 +3565,9 @@ EM =
 Output:
 
 M =
-: message, an octet string,
+: message, an octet string.
 
-Error: "decryption error",
+Error: "decryption error".
 
 To decode an EME-PKCS1_v1_5 message, separate the encoded message EM into an octet string PS consisting of nonzero octets and a message M as follows
 
