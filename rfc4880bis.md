@@ -2904,20 +2904,20 @@ Implementations MAY implement any other algorithm.
 {: title="Hash algorithm registry"}
 ID | Algorithm | Text Name
 ---:|----------|--------------
-  1 | MD5 {{HAC}}          | "MD5"
-  2 | SHA-1 {{FIPS180}}    | "SHA1"
-  3 | RIPE-MD/160 {{HAC}}  | "RIPEMD160"
+  1 | MD5 {{HAC}} | "MD5"
+  2 | SHA-1 {{FIPS180}} | "SHA1"
+  3 | RIPE-MD/160 {{HAC}} | "RIPEMD160"
   4 | Reserved
   5 | Reserved
   6 | Reserved
   7 | Reserved
-  8 | SHA2-256 {{FIPS180}} |  "SHA256"
-  9 | SHA2-384 {{FIPS180}} |  "SHA384"
- 10 | SHA2-512 {{FIPS180}} |  "SHA512"
- 11 | SHA2-224 {{FIPS180}} |  "SHA224"
- 12 | SHA3-256 {{FIPS202}} |  "SHA3-256"
+  8 | SHA2-256 {{FIPS180}} | "SHA256"
+  9 | SHA2-384 {{FIPS180}} | "SHA384"
+ 10 | SHA2-512 {{FIPS180}} | "SHA512"
+ 11 | SHA2-224 {{FIPS180}} | "SHA224"
+ 12 | SHA3-256 {{FIPS202}} | "SHA3-256"
  13 | Reserved
- 14 | SHA3-512 {{FIPS202}} |  "SHA3-512"
+ 14 | SHA3-512 {{FIPS202}} | "SHA3-512"
 100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement SHA2-256.
