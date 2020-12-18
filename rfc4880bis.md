@@ -2863,7 +2863,7 @@ ID | Algorithm
 ---:|------------------------------------
   0 | Plaintext or unencrypted data
   1 | IDEA {{IDEA}}
-  2 | TripleDES (DES-EDE, {{SCHNEIER}} {{HAC}} - 168 bit key derived from 192)
+  2 | TripleDES (DES-EDE, {{SCHNEIER}}, {{HAC}} - 168 bit key derived from 192)
   3 | CAST5 (128 bit key, as per {{RFC2144}})
   4 | Blowfish (128 bit key, 16 rounds) {{BLOWFISH}}
   5 | Reserved
