@@ -445,7 +445,7 @@ It may be ill-formed in its ciphertext.
 
 A Key ID is an eight-octet scalar that identifies a key.
 Implementations SHOULD NOT assume that Key IDs are unique.
-{{enhanced-key-formats}} below describes how Key IDs are formed.
+{{enhanced-key-formats}} describes how Key IDs are formed.
 
 ## Text
 
@@ -479,7 +479,7 @@ ID | S2K Type
   3 | Iterated and Salted S2K
 100 to 110 | Private/Experimental S2K
 
-These are described in the following Sections.
+These are described in the subsections below.
 
 #### Simple S2K
 
