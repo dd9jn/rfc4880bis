@@ -5,7 +5,7 @@
 # For pdf output, also:     apt install weasyprint
 
 draft = rfc4880bis
-OUTPUT = $(draft).txt $(draft).html $(draft).xml
+OUTPUT = $(draft).txt $(draft).html $(draft).xml rfc4880.trimmed.txt
 
 all: $(OUTPUT)
 
@@ -30,8 +30,13 @@ $(draft).txt.diff: $(draft).txt compare canonicalizetxt
 	! ./compare > $@.tmp
 	mv $@.tmp $@
 
+# for cleaner rfcdiff:
+rfc4880.trimmed.txt: rfc4880.txt
+	grep -v '^ *OpenPGP Message Format *November 2007$$' < $< > $@.tmp
+	mv $@.tmp $@
+
 clean:
-	-rm -rf $(OUTPUT) $(draft).xmlv2 $(draft).txt.diff
+	-rm -rf $(OUTPUT) *.tmp $(draft).xmlv2 $(draft).txt.diff
 
 .PHONY: clean all
 .SECONDARY: $(draft).xmlv2
