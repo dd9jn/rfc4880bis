@@ -3,7 +3,7 @@ title: OpenPGP Message Format
 docname: draft-ietf-openpgp-crypto-refresh-00
 date: 2021-01-29
 category: std
-obsoletes: 4880
+obsoletes: 4880, 5581
 ipr: trust200902
 consensus: yes
 area: sec
@@ -172,6 +172,7 @@ normative:
   RFC3156:
   RFC3447:
   RFC3629:
+  RFC3713:
   RFC4086:
   SCHNEIER:
     title: "Applied Cryptography Second Edition: protocols, algorithms, and source code in C"
@@ -220,7 +221,7 @@ It does, however, discuss implementation issues necessary to avoid security flaw
 This document provides information on the message-exchange packet formats used by OpenPGP to provide encryption, decryption, signing, and key management functions.
 It is a revision of RFC 4880, "OpenPGP Message Format", which is a revision of RFC 2440, which itself replaces RFC 1991, "PGP Message Exchange Formats" {{RFC1991}} {{RFC2440}} {{RFC4880}}.
 
-This document obsoletes: RFC 4880 (OpenPGP).
+This document obsoletes: RFC 4880 (OpenPGP) and RFC 5581 (Camellia cipher).
 
 ## Terms
 
@@ -2297,6 +2298,9 @@ ID | Algorithm
   8 | AES with 192-bit key
   9 | AES with 256-bit key
  10 | Twofish with 256-bit key {{TWOFISH}}
+ 11 | Camellia with 128-bit key {{RFC3713}}
+ 12 | Camellia with 192-bit key
+ 13 | Camellia with 256-bit key
 100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement TripleDES.
