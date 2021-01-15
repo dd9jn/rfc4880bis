@@ -3872,7 +3872,7 @@ Asymmetric key size | Hash size | Symmetric key size
   For example, if an implementation does not compress a message before encryption (perhaps because it knows it was already compressed), then that message is vulnerable.
   Because of this happenstance --- that modification attacks can be thwarted by decompression errors --- an implementation SHOULD treat a decompression error as a security problem, not merely a data problem.
 
-  This attack can be defeated by the use of modification detection, provided that the implementation does not let the user naively return the data to the attacker.
+  This attack can be defeated by the use of Modification Detection, provided that the implementation does not let the user naively return the data to the attacker.
   The modification detection is prefereabble implemented by using the AEAD Encrypted Data Packet and only if the recipients don't supports this by use of the Symmmetric Encrypted and Integrity Protected Data Packet.
   An implementation MUST treat an authentication or MDC failure as a security problem, not merely a data problem.
 
