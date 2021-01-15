@@ -1920,7 +1920,7 @@ Note: future designs of new versions of this packet should consider rollback att
 >   hash function.  This is not an accident.  It is an intentional
 >   choice to avoid downgrade and cross-grade attacks while making a
 >   simple, fast system.  (A downgrade attack would be an attack that
->   replaced SHA-256 with SHA-1, for example.   A cross-grade attack
+>   replaced SHA2-256 with SHA-1, for example.  A cross-grade attack
 >   would replace SHA-1 with another 160-bit hash, such as
 >   RIPE-MD/160, for example.)
 >
@@ -2330,10 +2330,10 @@ ID | Algorithm | Text Name
   5 | Reserved
   6 | Reserved
   7 | Reserved
-  8 | SHA256 {{FIPS180}} | "SHA256"
-  9 | SHA384 {{FIPS180}} | "SHA384"
- 10 | SHA512 {{FIPS180}} | "SHA512"
- 11 | SHA224 {{FIPS180}} | "SHA224"
+  8 | SHA2-256 {{FIPS180}} | "SHA256"
+  9 | SHA2-384 {{FIPS180}} | "SHA384"
+ 10 | SHA2-512 {{FIPS180}} | "SHA512"
+ 11 | SHA2-224 {{FIPS180}} | "SHA224"
 100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement SHA-1.
@@ -2841,13 +2841,13 @@ It MUST NOT implement a DSA key with a q size of less than 160 bits.
 DSA keys MUST also be a multiple of 64 bits, and the q size MUST be a multiple of 8 bits.
 The Digital Signature Standard (DSS) {{FIPS186}} specifies that DSA be used in one of the following ways:
 
-- 1024-bit key, 160-bit q, SHA-1, SHA-224, SHA-256, SHA-384, or SHA-512 hash
+- 1024-bit key, 160-bit q, SHA-1, SHA2-224, SHA2-256, SHA2-384, or SHA2-512 hash
 
-- 2048-bit key, 224-bit q, SHA-224, SHA-256, SHA-384, or SHA-512 hash
+- 2048-bit key, 224-bit q, SHA2-224, SHA2-256, SHA2-384, or SHA2-512 hash
 
-- 2048-bit key, 256-bit q, SHA-256, SHA-384, or SHA-512 hash
+- 2048-bit key, 256-bit q, SHA2-256, SHA2-384, or SHA2-512 hash
 
-- 3072-bit key, 256-bit q, SHA-256, SHA-384, or SHA-512 hash
+- 3072-bit key, 256-bit q, SHA2-256, SHA2-384, or SHA2-512 hash
 
 The above key and q size pairs were chosen to best balance the strength of the key with the strength of the hash.
 Implementations SHOULD use one of the above key and q size pairs when generating DSA keys.
@@ -2978,7 +2978,7 @@ If the proposal contains neither an extension to the Features system nor an expl
   Implementations MUST NOT generate new signatures using MD5 as a hash function.
   They MAY continue to consider old signatures that used MD5 as valid.
 
-- SHA-224 and SHA-384 require the same work as SHA-256 and SHA-512, respectively.
+- SHA2-224 and SHA2-384 require the same work as SHA2-256 and SHA2-512, respectively.
   In general, there are few reasons to use them outside of DSS compatibility.
   You need a situation where one needs more security than smaller hashes, but does not want to have the full 256-bit or 512-bit data length.
 
