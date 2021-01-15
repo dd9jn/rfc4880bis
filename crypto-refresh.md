@@ -48,14 +48,6 @@ informative:
         name: Jonathan Katz
       -
         name: Bruce Schneier
-  MAURER:
-    title: Modelling a Public-Key Infrastructure
-    author:
-      -
-        name: Ueli Maurer
-    seriesinfo:
-      Proc. 1996 European Symposium on Research in Computer Security (ESORICS' 96), Lecture Notes in Computer Science, Springer-Verlag, vol. 1146, pp. 325-350
-    date: Sep 1996
   MZ05:
     title: An Attack on CFB Mode Encryption As Used By OpenPGP
     seriesinfo:
