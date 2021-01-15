@@ -2737,7 +2737,7 @@ Input:
 M =
 : message to be encoded.
 
-mL =
+emLen =
 : intended length in octets of the encoded message, at least tLen + 11, where tLen is the octet length of the DER encoding T of a certain value computed during the encoding operation.
 
 Output:
