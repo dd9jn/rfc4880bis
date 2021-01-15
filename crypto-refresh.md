@@ -1405,7 +1405,8 @@ For text document signatures (type 0x01), the document is canonicalized by conve
 
 When a signature is made over a key, the hash data starts with the octet 0x99, followed by a two-octet length of the key, and then body of the key packet.
 (Note that this is an old-style packet header for a key packet with two-octet length.)  A subkey binding signature (type 0x18) or primary key binding signature (type 0x19) then hashes the subkey using the same format as the main key (also using 0x99 as the first octet).
-Key revocation signatures (types 0x20 and 0x28) hash only the key being revoked.
+Primary key revocation signatures (type 0x20) hash only the key being revoked.
+Subkey revocation signature (type 0x28) hash first the primary key and then the subkey being revoked.
 
 A certification signature (type 0x10 through 0x13) hashes the User ID being bound to the key into the hash context after the above data.
 A V3 certification hashes the contents of the User ID or attribute packet packet, without any header.
