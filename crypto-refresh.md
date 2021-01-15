@@ -396,13 +396,14 @@ They are used in two places, currently: to encrypt the secret part of private ke
 
 There are three types of S2K specifiers currently supported, and some reserved values:
 
-       ID          S2K Type
-       --          --------
-       0           Simple S2K
-       1           Salted S2K
-       2           Reserved value
-       3           Iterated and Salted S2K
-       100 to 110  Private/Experimental S2K
+{: title="S2K type registry"}
+ID | S2K Type
+---:|------------------
+  0 | Simple S2K
+  1 | Salted S2K
+  2 | Reserved value
+  3 | Iterated and Salted S2K
+100 to 110 | Private/Experimental S2K
 
 These are described in the subsections below.
 
@@ -647,25 +648,28 @@ The packet tag denotes what type of packet the body holds.
 Note that old format headers can only have tags less than 16, whereas new format headers can have tags as great as 63.
 The defined tags (in decimal) are as follows:
 
-       0        -- Reserved - a packet tag MUST NOT have this value
-       1        -- Public-Key Encrypted Session Key Packet
-       2        -- Signature Packet
-       3        -- Symmetric-Key Encrypted Session Key Packet
-       4        -- One-Pass Signature Packet
-       5        -- Secret-Key Packet
-       6        -- Public-Key Packet
-       7        -- Secret-Subkey Packet
-       8        -- Compressed Data Packet
-       9        -- Symmetrically Encrypted Data Packet
-       10       -- Marker Packet
-       11       -- Literal Data Packet
-       12       -- Trust Packet
-       13       -- User ID Packet
-       14       -- Public-Subkey Packet
-       17       -- User Attribute Packet
-       18       -- Sym. Encrypted and Integrity Protected Data Packet
-       19       -- Modification Detection Code Packet
-       60 to 63 -- Private or Experimental Values
+{: title="Packet type registry"}
+Tag | Packet Type
+---:|--------------------------------------------------
+  0 | Reserved - a packet tag MUST NOT have this value
+  1 | Public-Key Encrypted Session Key Packet
+  2 | Signature Packet
+  3 | Symmetric-Key Encrypted Session Key Packet
+  4 | One-Pass Signature Packet
+  5 | Secret-Key Packet
+  6 | Public-Key Packet
+  7 | Secret-Subkey Packet
+  8 | Compressed Data Packet
+  9 | Symmetrically Encrypted Data Packet
+ 10 | Marker Packet
+ 11 | Literal Data Packet
+ 12 | Trust Packet
+ 13 | User ID Packet
+ 14 | Public-Subkey Packet
+ 17 | User Attribute Packet
+ 18 | Sym. Encrypted and Integrity Protected Data Packet
+ 19 | Modification Detection Code Packet
+60 to 63 | Private or Experimental Values
 
 # Packet Types {#packet-types}
 
@@ -848,63 +852,42 @@ This requires inserting the hash value as an octet string into an ASN.1 structur
 The object identifier for the type of hash being used is included in the structure.
 The hexadecimal representations for the currently defined hash algorithms are as follows:
 
-     - MD5:        0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x02, 0x05
-
-     - RIPEMD-160: 0x2B, 0x24, 0x03, 0x02, 0x01
-
-     - SHA-1:      0x2B, 0x0E, 0x03, 0x02, 0x1A
-
-     - SHA224:     0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x04
-
-     - SHA256:     0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01
-
-     - SHA384:     0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02
-
-     - SHA512:     0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03
+{: title="Hash hexadecimal representations"}
+algorithm | hexadecimal represenatation
+---|------------------
+MD5 | 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x02, 0x05
+RIPEMD-160 | 0x2B, 0x24, 0x03, 0x02, 0x01
+SHA-1 | 0x2B, 0x0E, 0x03, 0x02, 0x1A
+SHA224 | 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x04
+SHA256 | 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01
+SHA384 | 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02
+SHA512 | 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03
 
 The ASN.1 Object Identifiers (OIDs) are as follows:
 
-     - MD5:        1.2.840.113549.2.5
-
-     - RIPEMD-160: 1.3.36.3.2.1
-
-     - SHA-1:      1.3.14.3.2.26
-
-     - SHA224:     2.16.840.1.101.3.4.2.4
-
-     - SHA256:     2.16.840.1.101.3.4.2.1
-
-     - SHA384:     2.16.840.1.101.3.4.2.2
-
-     - SHA512:     2.16.840.1.101.3.4.2.3
+{: title="Hash OIDs"}
+algorithm | OID
+---|------------------
+MD5 | 1.2.840.113549.2.5
+RIPEMD-160 | 1.3.36.3.2.1
+SHA-1 | 1.3.14.3.2.26
+SHA224 | 2.16.840.1.101.3.4.2.4
+SHA256 | 2.16.840.1.101.3.4.2.1
+SHA384 | 2.16.840.1.101.3.4.2.2
+SHA512 | 2.16.840.1.101.3.4.2.3
 
 The full hash prefixes for these are as follows:
 
-       MD5:        0x30, 0x20, 0x30, 0x0C, 0x06, 0x08, 0x2A, 0x86,
-                   0x48, 0x86, 0xF7, 0x0D, 0x02, 0x05, 0x05, 0x00,
-                   0x04, 0x10
-
-       RIPEMD-160: 0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2B, 0x24,
-                   0x03, 0x02, 0x01, 0x05, 0x00, 0x04, 0x14
-
-       SHA-1:      0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2b, 0x0E,
-                   0x03, 0x02, 0x1A, 0x05, 0x00, 0x04, 0x14
-
-       SHA224:     0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86,
-                   0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x04, 0x05,
-                   0x00, 0x04, 0x1C
-
-       SHA256:     0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86,
-                   0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05,
-                   0x00, 0x04, 0x20
-
-       SHA384:     0x30, 0x41, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86,
-                   0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02, 0x05,
-                   0x00, 0x04, 0x30
-
-       SHA512:     0x30, 0x51, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86,
-                   0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03, 0x05,
-                   0x00, 0x04, 0x40
+{: title="Hash hexadecimal prefixes"}
+algorithm | full hash prefix
+---|------------------
+MD5 | 0x30, 0x20, 0x30, 0x0C, 0x06, 0x08, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x02, 0x05, 0x05, 0x00, 0x04, 0x10
+RIPEMD-160 | 0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2B, 0x24, 0x03, 0x02, 0x01, 0x05, 0x00, 0x04, 0x14
+SHA-1 | 0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2b, 0x0E, 0x03, 0x02, 0x1A, 0x05, 0x00, 0x04, 0x14
+SHA224 | 0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x04, 0x05, 0x00, 0x04, 0x1C
+SHA256 | 0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20
+SHA384 | 0x30, 0x41, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02, 0x05, 0x00, 0x04, 0x30
+SHA512 | 0x30, 0x51, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03, 0x05, 0x00, 0x04, 0x40
 
 DSA signatures MUST use hashes that are equal in size to the number of bits of q, the group generated by the DSA key's generator value.
 
@@ -981,40 +964,43 @@ That is:
 
 The value of the subpacket type octet may be:
 
-            0 = Reserved
-            1 = Reserved
-            2 = Signature Creation Time
-            3 = Signature Expiration Time
-            4 = Exportable Certification
-            5 = Trust Signature
-            6 = Regular Expression
-            7 = Revocable
-            8 = Reserved
-            9 = Key Expiration Time
-           10 = Placeholder for backward compatibility
-           11 = Preferred Symmetric Algorithms
-           12 = Revocation Key
-           13 = Reserved
-           14 = Reserved
-           15 = Reserved
-           16 = Issuer
-           17 = Reserved
-           18 = Reserved
-           19 = Reserved
-           20 = Notation Data
-           21 = Preferred Hash Algorithms
-           22 = Preferred Compression Algorithms
-           23 = Key Server Preferences
-           24 = Preferred Key Server
-           25 = Primary User ID
-           26 = Policy URI
-           27 = Key Flags
-           28 = Signer's User ID
-           29 = Reason for Revocation
-           30 = Features
-           31 = Signature Target
-           32 = Embedded Signature
-    100 To 110 = Private or experimental
+{: title="Subpacket type registry"}
+Type | Description
+---:|---------------------------------------
+  0 | Reserved
+  1 | Reserved
+  2 | Signature Creation Time
+  3 | Signature Expiration Time
+  4 | Exportable Certification
+  5 | Trust Signature
+  6 | Regular Expression
+  7 | Revocable
+  8 | Reserved
+  9 | Key Expiration Time
+ 10 | Placeholder for backward compatibility
+ 11 | Preferred Symmetric Algorithms
+ 12 | Revocation Key
+ 13 | Reserved
+ 14 | Reserved
+ 15 | Reserved
+ 16 | Issuer
+ 17 | Reserved
+ 18 | Reserved
+ 19 | Reserved
+ 20 | Notation Data
+ 21 | Preferred Hash Algorithms
+ 22 | Preferred Compression Algorithms
+ 23 | Key Server Preferences
+ 24 | Preferred Key Server
+ 25 | Primary User ID
+ 26 | Policy URI
+ 27 | Key Flags
+ 28 | Signer's User ID
+ 29 | Reason for Revocation
+ 30 | Features
+ 31 | Signature Target
+ 32 | Embedded Signature
+100 to 110 | Private or experimental
 
 An implementation SHOULD ignore any subpacket of a type that it does not recognize.
 
@@ -1207,8 +1193,14 @@ The "flags" field holds four octets of flags.
 All undefined flags MUST be zero.
 Defined flags are as follows:
 
-       First octet: 0x80 = human-readable.  This note value is text.
-       Other octets: none.
+First octet:
+
+{: title="Notation flag registry (first octet)"}
+flag | shorthand | definition
+---|---|---
+0x80 | human-readable | This note value is text.
+
+Other octets: none.
 
 Notation names are arbitrary strings encoded in UTF-8.
 They reside in two namespaces: The IETF namespace and the user namespace.
@@ -1236,9 +1228,12 @@ If there is a critical notation, the criticality applies to that specific notati
 This is a list of one-bit flags that indicate preferences that the key holder has about how the key is handled on a key server.
 All undefined flags MUST be zero.
 
-    First octet: 0x80 = No-modify
-        the key holder requests that this key only be modified or updated
-        by the key holder or an administrator of the key server.
+First octet:
+
+{: title="Key server preferences flag registry (first octet)"}
+flag | shorthand | definition
+---|---|---
+0x80 | No-modify | The key holder requests that this key only be modified or updated by the key holder or an administrator of the key server.
 
 This is found only on a self-signature.
 
@@ -1280,23 +1275,18 @@ This is so it can grow over time.
 If a list is shorter than an implementation expects, the unstated flags are considered to be zero.
 The defined flags are as follows:
 
-       First octet:
+First octet:
 
-       0x01 - This key may be used to certify other keys.
-
-       0x02 - This key may be used to sign data.
-
-       0x04 - This key may be used to encrypt communications.
-
-       0x08 - This key may be used to encrypt storage.
-
-       0x10 - The private component of this key may have been split
-              by a secret-sharing mechanism.
-
-       0x20 - This key may be used for authentication.
-
-       0x80 - The private component of this key may be in the
-              possession of more than one person.
+{: title="Key flags registry"}
+flag | definition
+---|-------------
+0x01 | This key may be used to certify other keys.
+0x02 | This key may be used to sign data.
+0x04 | This key may be used to encrypt communications.
+0x08 | This key may be used to encrypt storage.
+0x10 | The private component of this key may have been split by a secret-sharing mechanism.
+0x20 | This key may be used for authentication.
+0x80 | The private component of this key may be in the possession of more than one person.
 
 Usage notes:
 
@@ -1328,12 +1318,15 @@ It describes the reason why the key or certificate was revoked.
 
 The first octet contains a machine-readable code that denotes the reason for the revocation:
 
-         0  - No reason specified (key revocations or cert revocations)
-         1  - Key is superseded (key revocations)
-         2  - Key material has been compromised (key revocations)
-         3  - Key is retired and no longer used (key revocations)
-         32 - User ID information is no longer valid (cert revocations)
-    100-110 - Private Use
+{: title="Reasons for revocation"}
+Code | Reason
+---:|------------------------------------------------------------
+  0 | No reason specified (key revocations or cert revocations)
+  1 | Key is superseded (key revocations)
+  2 | Key material has been compromised (key revocations)
+  3 | Key is retired and no longer used (key revocations)
+ 32 | User ID information is no longer valid (cert revocations)
+100-110 | Private Use
 
 Following the revocation code is a string of octets that gives information about the Reason for Revocation in human-readable form (UTF-8).
 The string may be null, that is, of zero length.
@@ -1364,9 +1357,12 @@ An implementation SHOULD NOT use a feature listed when sending to a user who doe
 
 Defined features are as follows:
 
-       First octet:
+First octet:
 
-       0x01 - Modification Detection (packets 18 and 19)
+{: title="Features registry"}
+feature | definition
+---|--------------
+0x01 | Modification Detection (packets 18 and 19)
 
 If an implementation implements any of the defined features, it SHOULD implement the Features subpacket, too.
 
@@ -1961,7 +1957,6 @@ The nonzero initialization can detect more errors than a zero initialization.
 
 ## An Implementation of the CRC-24 in "C"
 
-
     #define CRC24_INIT 0xB704CEL
     #define CRC24_POLY 0x1864CFBL
 
@@ -2094,24 +2089,26 @@ That is, the first bit in the stream will be the high-order bit in the first 8-b
 Each 6-bit group is used as an index into an array of 64 printable characters from the table below.
 The character referenced by the index is placed in the output string.
 
-     Value Encoding  Value Encoding  Value Encoding  Value Encoding
-         0 A            17 R            34 i            51 z
-         1 B            18 S            35 j            52 0
-         2 C            19 T            36 k            53 1
-         3 D            20 U            37 l            54 2
-         4 E            21 V            38 m            55 3
-         5 F            22 W            39 n            56 4
-         6 G            23 X            40 o            57 5
-         7 H            24 Y            41 p            58 6
-         8 I            25 Z            42 q            59 7
-         9 J            26 a            43 r            60 8
-        10 K            27 b            44 s            61 9
-        11 L            28 c            45 t            62 +
-        12 M            29 d            46 u            63 /
-        13 N            30 e            47 v
-        14 O            31 f            48 w         (pad) =
-        15 P            32 g            49 x
-        16 Q            33 h            50 y
+{: title="Encoding for Radix-64"}
+Value | Encoding || Value | Encoding || Value | Encoding || Value | Encoding
+---:|---|-|---:|---|-|---:|---|-|---:|---
+0 | A || 17 | R || 34 | i || 51 | z
+1 | B || 18 | S || 35 | j || 52 | 0
+2 | C || 19 | T || 36 | k || 53 | 1
+3 | D || 20 | U || 37 | l || 54 | 2
+4 | E || 21 | V || 38 | m || 55 | 3
+5 | F || 22 | W || 39 | n || 56 | 4
+6 | G || 23 | X || 40 | o || 57 | 5
+7 | H || 24 | Y || 41 | p || 58 | 6
+8 | I || 25 | Z || 42 | q || 59 | 7
+9 | J || 26 | a || 43 | r || 60 | 8
+10 | K || 27 | b || 44 | s || 61 | 9
+11 | L || 28 | c || 45 | t || 62 | +
+12 | M || 29 | d || 46 | u || 63 | /
+13 | N || 30 | e || 47 | v
+14 | O || 31 | f || 48 | w || (pad) | =
+15 | P || 32 | g || 49 | x
+16 | Q || 33 | h || 50 | y
 
 The encoded output stream must be represented in lines of no more than 76 characters each.
 
@@ -2253,19 +2250,19 @@ See {{notes-on-algorithms}} for more discussion of the algorithms.
 
 ## Public-Key Algorithms {#pubkey-algos}
 
-      ID           Algorithm
-      --           ---------
-      1          - RSA (Encrypt or Sign) [HAC]
-      2          - RSA Encrypt-Only [HAC]
-      3          - RSA Sign-Only [HAC]
-      16         - Elgamal (Encrypt-Only) [ELGAMAL] [HAC]
-      17         - DSA (Digital Signature Algorithm) [FIPS186] [HAC]
-      18         - Reserved for Elliptic Curve
-      19         - Reserved for ECDSA
-      20         - Reserved (formerly Elgamal Encrypt or Sign)
-      21         - Reserved for Diffie-Hellman (X9.42,
-                   as defined for IETF-S/MIME)
-      100 to 110 - Private/Experimental algorithm
+{: title="Public-key algorithm registry"}
+ID | Algorithm
+---:|--------------------------
+ 1 | RSA (Encrypt or Sign) {{HAC}}
+ 2 | RSA Encrypt-Only {{HAC}}
+ 3 | RSA Sign-Only {{HAC}}
+ 16 | Elgamal (Encrypt-Only) {{ELGAMAL}} {{HAC}}
+ 17 | DSA (Digital Signature Algorithm) {{FIPS186}} {{HAC}}
+ 18 | Reserved for Elliptic Curve
+ 19 | Reserved for ECDSA
+ 20 | Reserved (formerly Elgamal Encrypt or Sign)
+ 21 | Reserved for Diffie-Hellman (X9.42, as defined for IETF-S/MIME)
+ 100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement DSA for signatures, and Elgamal for encryption.
 Implementations SHOULD implement RSA keys (1).
@@ -2276,21 +2273,21 @@ Implementations MAY implement any other algorithm.
 
 ## Symmetric-Key Algorithms {#symmetric-algos}
 
-       ID           Algorithm
-       --           ---------
-       0          - Plaintext or unencrypted data
-       1          - IDEA [IDEA]
-       2          - TripleDES (DES-EDE, [SCHNEIER] [HAC] -
-                    168 bit key derived from 192)
-       3          - CAST5 (128 bit key, as per [RFC2144])
-       4          - Blowfish (128 bit key, 16 rounds) [BLOWFISH]
-       5          - Reserved
-       6          - Reserved
-       7          - AES with 128-bit key [AES]
-       8          - AES with 192-bit key
-       9          - AES with 256-bit key
-       10         - Twofish with 256-bit key [TWOFISH]
-       100 to 110 - Private/Experimental algorithm
+{: title="Symmetric-key algorithm registry"}
+ID | Algorithm
+---:|------------------------------------
+  0 | Plaintext or unencrypted data
+  1 | IDEA {{IDEA}}
+  2 | TripleDES (DES-EDE, {{SCHNEIER}}, {{HAC}} - 168 bit key derived from 192)
+  3 | CAST5 (128 bit key, as per {{RFC2144}})
+  4 | Blowfish (128 bit key, 16 rounds) {{BLOWFISH}}
+  5 | Reserved
+  6 | Reserved
+  7 | AES with 128-bit key {{AES}}
+  8 | AES with 192-bit key
+  9 | AES with 256-bit key
+ 10 | Twofish with 256-bit key {{TWOFISH}}
+100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement TripleDES.
 Implementations SHOULD implement AES-128 and CAST5.
@@ -2299,13 +2296,14 @@ Implementations MAY implement any other algorithm.
 
 ## Compression Algorithms {#compression-algos}
 
-       ID           Algorithm
-       --           ---------
-       0          - Uncompressed
-       1          - ZIP [RFC1951]
-       2          - ZLIB [RFC1950]
-       3          - BZip2 [BZ2]
-       100 to 110 - Private/Experimental algorithm
+{: title="Compression algorithm registry"}
+ID | Algorithm
+---:|-----------------
+ 0 | Uncompressed
+ 1 | ZIP {{RFC1951}}
+ 2 | ZLIB {{RFC1950}}
+ 3 | BZip2 {{BZ2}}
+100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement uncompressed data.
 Implementations SHOULD implement ZIP.
@@ -2313,20 +2311,21 @@ Implementations MAY implement any other algorithm.
 
 ## Hash Algorithms {#hash-algos}
 
-      ID           Algorithm                             Text Name
-      --           ---------                             ---------
-      1          - MD5 [HAC]                             "MD5"
-      2          - SHA-1 [FIPS180]                       "SHA1"
-      3          - RIPE-MD/160 [HAC]                     "RIPEMD160"
-      4          - Reserved
-      5          - Reserved
-      6          - Reserved
-      7          - Reserved
-      8          - SHA256 [FIPS180]                      "SHA256"
-      9          - SHA384 [FIPS180]                      "SHA384"
-      10         - SHA512 [FIPS180]                      "SHA512"
-      11         - SHA224 [FIPS180]                      "SHA224"
-      100 to 110 - Private/Experimental algorithm
+{: title="Hash algorithm registry"}
+ID | Algorithm | Text Name
+---:|----------|--------------
+  1 | MD5 {{HAC}} | "MD5"
+  2 | SHA-1 {{FIPS180}} | "SHA1"
+  3 | RIPE-MD/160 {{HAC}} | "RIPEMD160"
+  4 | Reserved
+  5 | Reserved
+  6 | Reserved
+  7 | Reserved
+  8 | SHA256 {{FIPS180}} | "SHA256"
+  9 | SHA384 {{FIPS180}} | "SHA384"
+ 10 | SHA512 {{FIPS180}} | "SHA512"
+ 11 | SHA224 {{FIPS180}} | "SHA224"
+100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement SHA-1.
 Implementations MAY implement other algorithms.
@@ -2985,14 +2984,14 @@ If the proposal contains neither an extension to the Features system nor an expl
 - As OpenPGP combines many different asymmetric, symmetric, and hash algorithms, each with different measures of strength, care should be taken that the weakest element of an OpenPGP message is still sufficiently strong for the purpose at hand.
   While consensus about the strength of a given algorithm may evolve, NIST Special Publication 800-57 {{SP800-57}} recommends the following list of equivalent strengths:
 
-           Asymmetric  |  Hash  |  Symmetric
-            key size   |  size  |   key size
-           ------------+--------+-----------
-              1024        160         80
-              2048        224        112
-              3072        256        128
-              7680        384        192
-             15360        512        256
+{: title="Key length equivalences"}
+Asymmetric key size | Hash size | Symmetric key size
+-------------------:|-----------|-------------------
+ 1024 | 160 |  80
+ 2048 | 224 | 112
+ 3072 | 256 | 128
+ 7680 | 384 | 192
+15360 | 512 | 256
 
 - There is a somewhat-related potential security problem in signatures.
   If an attacker can find a message that hashes to the same hash with a different algorithm, a bogus signature structure can be constructed that evaluates correctly.
