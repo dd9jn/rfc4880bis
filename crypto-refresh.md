@@ -703,9 +703,9 @@ The body of this packet consists of:
 - A string of octets that is the encrypted session key.
   This string takes up the remainder of the packet, and its contents are dependent on the public-key algorithm used.
 
-  Algorithm Specific Fields for RSA encryption
+  Algorithm Specific Fields for RSA encryption:
 
-  - multiprecision integer (MPI) of RSA encrypted value m**e mod n.
+  - Multiprecision integer (MPI) of RSA encrypted value m**e mod n.
 
   Algorithm Specific Fields for Elgamal encryption:
 
@@ -776,31 +776,31 @@ These meanings are as follows:
   Most OpenPGP implementations make their "key signatures" as 0x10 certifications.
   Some implementations can issue 0x11-0x13 certifications, but few differentiate between the types.
 
-0x18: Subkey Binding Signature
+0x18: Subkey Binding Signature.
 : This signature is a statement by the top-level signing key that indicates that it owns the subkey.
   This signature is calculated directly on the primary key and subkey, and not on any User ID or other packets.
   A signature that binds a signing subkey MUST have an Embedded Signature subpacket in this binding signature that contains a 0x19 signature made by the signing subkey on the primary key and subkey.
 
-0x19: Primary Key Binding Signature
+0x19: Primary Key Binding Signature.
 : This signature is a statement by a signing subkey, indicating that it is owned by the primary key and subkey.
   This signature is calculated the same way as a 0x18 signature: directly on the primary key and subkey, and not on any User ID or other packets.
 
-0x1F: Signature directly on a key
+0x1F: Signature directly on a key.
 : This signature is calculated directly on a key.
   It binds the information in the Signature subpackets to the key, and is appropriate to be used for subpackets that provide information about the key, such as the Revocation Key subpacket.
   It is also appropriate for statements that non-self certifiers want to make about the key itself, rather than the binding between a key and a name.
 
-0x20: Key revocation signature
+0x20: Key revocation signature.
 : The signature is calculated directly on the key being revoked.
   A revoked key is not to be used.
   Only revocation signatures by the key being revoked, or by an authorized revocation key, should be considered valid revocation signatures.
 
-0x28: Subkey revocation signature
+0x28: Subkey revocation signature.
 : The signature is calculated directly on the subkey being revoked.
   A revoked subkey is not to be used.
   Only revocation signatures by the top-level signature key that is bound to this subkey, or by an authorized revocation key, should be considered valid revocation signatures.
 
-0x30: Certification revocation signature
+0x30: Certification revocation signature.
 : This signature revokes an earlier User ID certification signature (signature class 0x10 through 0x13) or direct-key signature (0x1F).
   It should be issued by the same key that issued the revoked signature or an authorized revocation key.
   The signature is computed over the same data as the certificate that it revokes, and should have a later creation date than that certificate.
@@ -845,7 +845,7 @@ The high 16 bits (first two octets) of the hash are included in the Signature pa
 
 Algorithm-Specific Fields for RSA signatures:
 
-- multiprecision integer (MPI) of RSA signature value m**d mod n.
+- Multiprecision integer (MPI) of RSA signature value m**d mod n.
 
 Algorithm-Specific Fields for DSA signatures:
 
@@ -2047,7 +2047,7 @@ Unknown keys should be reported to the user, but OpenPGP should continue to proc
 Note that some transport methods are sensitive to line length.
 While there is a limit of 76 characters for the Radix-64 data ({{encoding-binary-radix64}}), there is no limit to the length of Armor Headers.
 Care should be taken that the Armor Headers are short enough to survive transport.
-One way to do this is to repeat an Armor Header key multiple times with different values for each so that no one line is overly long.
+One way to do this is to repeat an Armor Header Key multiple times with different values for each so that no one line is overly long.
 
 Currently defined Armor Header Keys are as follows:
 
@@ -2371,7 +2371,7 @@ Adding a new User Attribute type MUST be done through the IETF CONSENSUS method,
 
 #### Image Format Subpacket Types
 
-Within User Attribute packets, there is an extensible mechanism for other types of image-based user attributes.
+Within User Attribute packets, there is an extensible mechanism for other types of image-based User Attributes.
 This specification creates a registry of Image Attribute subpacket types.
 The registry includes the Image Attribute subpacket type, the name of the Image Attribute subpacket, and a reference to the defining specification.
 The initial values for this registry can be found in {{uat-image}}.
@@ -2537,7 +2537,7 @@ Transferable public-key packet sequences may be concatenated to allow transferri
 
 OpenPGP users may transfer secret keys.
 The format of a transferable secret key is the same as a transferable public key except that secret-key and secret-subkey packets are used instead of the public key and public-subkey packets.
-Implementations SHOULD include self-signatures on any user IDs and subkeys, as this allows for a complete public key to be automatically extracted from the transferable secret key.
+Implementations SHOULD include self-signatures on any User IDs and subkeys, as this allows for a complete public key to be automatically extracted from the transferable secret key.
 Implementations MAY choose to omit the self-signatures, especially if a transferable public key accompanies the transferable secret key.
 
 ## OpenPGP Messages
@@ -2678,17 +2678,17 @@ Nonetheless, we believe that there is value in having a self-contained document 
 Input:
 
 k =
-: the length in octets of the key modulus
+: the length in octets of the key modulus.
 
 M =
-: message to be encoded, an octet string of length mLen, where mLen <= k - 11
+: message to be encoded, an octet string of length mLen, where mLen <= k - 11.
 
 Output:
 
 EM =
-: encoded message, an octet string of length k
+: encoded message, an octet string of length k.
 
-Error: "message too long"
+Error: "message too long".
 
 1. Length checking: If mLen > k - 11, output "message too long" and stop.
 
@@ -2711,9 +2711,9 @@ EM =
 Output:
 
 M =
-: message, an octet string
+: message, an octet string.
 
-Error: "decryption error"
+Error: "decryption error".
 
 To decode an EME-PKCS1_v1_5 message, separate the encoded message EM into an octet string PS consisting of nonzero octets and a message M as follows
 
@@ -2729,22 +2729,22 @@ This encoding method is deterministic and only has an encoding operation.
 Option:
 
 Hash -
-: a hash function in which hLen denotes the length in octets of the hash function output
+: a hash function in which hLen denotes the length in octets of the hash function output.
 
 Input:
 
 M =
-: message to be encoded
+: message to be encoded.
 
 mL =
-: intended length in octets of the encoded message, at least tLen + 11, where tLen is the octet length of the DER encoding T of a certain value computed during the encoding operation
+: intended length in octets of the encoded message, at least tLen + 11, where tLen is the octet length of the DER encoding T of a certain value computed during the encoding operation.
 
 Output:
 
 EM =
-: encoded message, an octet string of length emLen
+: encoded message, an octet string of length emLen.
 
-Errors: "message too long"; "intended encoded message length too short"
+Errors: "message too long"; "intended encoded message length too short".
 
 Steps:
 
@@ -2923,7 +2923,7 @@ Step by step, here is the procedure:
 
 ## Private or Experimental Parameters
 
-S2K specifiers, Signature subpacket types, user attribute types, image format types, and algorithms described in {{constants}} all reserve the range 100 to 110 for private and experimental use.
+S2K specifiers, Signature subpacket types, User Attribute types, image format types, and algorithms described in {{constants}} all reserve the range 100 to 110 for private and experimental use.
 Packet types reserve the range 60 to 63 for private and experimental use.
 These are intentionally managed with the PRIVATE USE method, as described in {{RFC2434}}.
 
