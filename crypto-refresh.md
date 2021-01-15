@@ -1,10 +1,10 @@
 ---
 title: OpenPGP Message Format
-docname: rfc4880
-date: 2007-11
+docname: draft-ietf-openpgp-crypto-refresh-00
+date: 2021-01
 category: std
-obsoletes: 1991, 2440
-ipr: none
+obsoletes: 4880
+ipr: trust200902
 consensus: yes
 area: sec
 workgroup: Network Working Group
@@ -13,27 +13,19 @@ stand_alone: yes
 pi: [toc, sortrefs, symrefs]
 author:
   -
-    ins: J. Callas
-    name: Jon Callas
-    email: jon@callas.org
-    org: PGP Corporation
+    ins: W. Koch
+    name: Werner Koch
+    org: GnuPG e.V.
+    street: Rochusstr. 44
+    city: Duesseldorf
+    code: 40479
+    country: Germany
+    email: wk@gnupg.org
+    uri: https://gnupg.org/verein
   -
-    ins: L. Donnerhacke
-    name: Lutz Donnerhacke
-    email: lutz@iks-jena.de
-    org: IKS GmbH
-  -
-    ins: H. Finney
-    name: Hal Finney
-    email: hal@finney.org
-    org: PGP Corporation
-  -
-    ins: D. Shaw
-    name: David Shaw
-  -
-    ins: R. Thayer
-    name: Rodney Thayer
-    email: rodney@canola-jones.com
+    ins: P. Wouters
+    name: Paul Wouters
+    email: paul@nohats.ca
 informative:
   BLEICHENBACHER:
     title: Generating ElGamal Signatures Without Knowing the Secret Key
