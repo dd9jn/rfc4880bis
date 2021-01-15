@@ -3216,7 +3216,7 @@ Compressed Message :-
 Literal Message :-
 : Literal Data Packet.
 
-ESK :- 
+ESK :-
 : Public-Key Encrypted Session Key Packet \| Symmetric-Key Encrypted Session Key Packet.
 
 ESK Sequence :-
@@ -3509,7 +3509,7 @@ For convenience, the synopsis of the encoding method is given below; however, th
 - Z_len = the key size for the KEK_alg_ID used with AESKeyWrap
 
 - Compute Z = KDF( S, Z_len, Param );
- 
+
 - Compute C = AESKeyWrap( Z, m ) as per {{RFC3394}}
 
 - VB = convert point V to the octet string
