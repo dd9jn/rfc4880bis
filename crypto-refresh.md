@@ -2277,7 +2277,7 @@ ID | Algorithm
 
 Implementations MUST implement DSA for signatures, and Elgamal for encryption.
 Implementations SHOULD implement RSA keys (1).
-RSA Encrypt-Only (2) and RSA Sign-Only are deprecated and SHOULD NOT be generated, but may be interpreted.
+RSA Encrypt-Only (2) and RSA Sign-Only (3) are deprecated and SHOULD NOT be generated, but may be interpreted.
 See {{rsa-notes}}.
 See {{reserved-notes}} for notes on Elliptic Curve (18), ECDSA (19), Elgamal Encrypt or Sign (20), and X9.42 (21).
 Implementations MAY implement any other algorithm.
