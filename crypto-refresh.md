@@ -78,6 +78,7 @@ informative:
   RFC1423:
   RFC1991:
   RFC2440:
+  RFC4880:
   SP800-57:
     target: "http://csrc.nist.gov/publications/nistpubs/800-57/SP800-57-Part{1,2}.pdf"
     title: Recommendation on Key Management
@@ -197,22 +198,29 @@ normative:
 
 --- abstract
 
+{ Work in progress to update the OpenPGP specification from RFC4880 }
+
+This document specifies the message formats used in OpenPGP.
+OpenPGP provides encryption with public-key or symmetric cryptographic algorithms, digital signatures, compression and key management.
+
 This document is maintained in order to publish all necessary information needed to develop interoperable applications based on the OpenPGP format.
 It is not a step-by-step cookbook for writing an application.
 It describes only the format and methods needed to read, check, generate, and write conforming packets crossing any network.
 It does not deal with storage and implementation questions.
 It does, however, discuss implementation issues necessary to avoid security flaws.
 
-OpenPGP software uses a combination of strong public-key and symmetric cryptography to provide security services for electronic communications and data storage.
-These services include confidentiality, key management, authentication, and digital signatures.
-This document specifies the message formats used in OpenPGP.
-
 --- middle
 
 # Introduction
 
+{ This is work in progress to update OpenPGP.
+  Editorial notes are enclosed in curly braces.
+  }
+
 This document provides information on the message-exchange packet formats used by OpenPGP to provide encryption, decryption, signing, and key management functions.
-It is a revision of RFC 2440, "OpenPGP Message Format", which itself replaces RFC 1991, "PGP Message Exchange Formats" {{RFC1991}} {{RFC2440}}.
+It is a revision of RFC 4880, "OpenPGP Message Format", which is a revision of RFC 2440, which itself replaces RFC 1991, "PGP Message Exchange Formats" {{RFC1991}} {{RFC2440}} {{RFC4880}}.
+
+This document obsoletes: RFC 4880 (OpenPGP).
 
 ## Terms
 
