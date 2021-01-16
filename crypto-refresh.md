@@ -673,6 +673,7 @@ Tag | Packet Type
  17 | User Attribute Packet
  18 | Sym. Encrypted and Integrity Protected Data Packet
  19 | Modification Detection Code Packet
+ 20 | Reserved (AEAD Encrypted Data)
 60 to 63 | Private or Experimental Values
 
 # Packet Types {#packet-types}
@@ -984,13 +985,9 @@ Type | Description
  10 | Placeholder for backward compatibility
  11 | Preferred Symmetric Algorithms
  12 | Revocation Key
- 13 | Reserved
- 14 | Reserved
- 15 | Reserved
+13 to 15 | Reserved
  16 | Issuer
- 17 | Reserved
- 18 | Reserved
- 19 | Reserved
+17 to 19 | Reserved
  20 | Notation Data
  21 | Preferred Hash Algorithms
  22 | Preferred Compression Algorithms
@@ -1004,6 +1001,11 @@ Type | Description
  30 | Features
  31 | Signature Target
  32 | Embedded Signature
+ 33 | Reserved (Issuer Fingerprint)
+ 34 | Reserved (Preferred AEAD Algorithms)
+ 35 | Reserved (Intended Recipient Fingerprint)
+ 37 | Reserved (Attested Certifications)
+ 38 | Reserved (Key Block)
 100 to 110 | Private or experimental
 
 An implementation SHOULD ignore any subpacket of a type that it does not recognize.
@@ -1281,7 +1283,7 @@ The defined flags are as follows:
 
 First octet:
 
-{: title="Key flags registry"}
+{: title="Key flags registry (first octet)"}
 flag | definition
 ---|-------------
 0x01 | This key may be used to certify other keys.
@@ -1291,6 +1293,14 @@ flag | definition
 0x10 | The private component of this key may have been split by a secret-sharing mechanism.
 0x20 | This key may be used for authentication.
 0x80 | The private component of this key may be in the possession of more than one person.
+
+Second octet:
+
+{: title="Key flags registry (second octet)"}
+flag | definition
+---|-------------
+0x04 | Reserved (ADSK).
+0x08 | Reserved (timestamping).
 
 Usage notes:
 
@@ -1367,6 +1377,8 @@ First octet:
 feature | definition
 ---|--------------
 0x01 | Modification Detection (packets 18 and 19)
+0x02 | Reserved (AEAD Data & v5 SKESK)
+0x04 | Reserved (v5 pubkey & fingerprint)
 
 If an implementation implements any of the defined features, it SHOULD implement the Features subpacket, too.
 
@@ -1785,9 +1797,15 @@ The header consists of:
 
 and is followed by the subpacket specific data.
 
-The only currently defined subpacket type is 1, signifying an image.
+The following table lists the currently known subpackets:
+
+{: title="User Attribute type registry"}
+Type | Attribute Subpacket
+---:|---------------------------------------------------------
+ 1 | Image Attribute Subpacket
+100-110 | Private/Experimental Use
+
 An implementation SHOULD ignore any subpacket of a type that it does not recognize.
-Subpacket types 100 through 110 are reserved for private or experimental use.
 
 ### The Image Attribute Subpacket {#uat-image}
 
@@ -2267,7 +2285,10 @@ ID | Algorithm
  19 | Reserved for ECDSA
  20 | Reserved (formerly Elgamal Encrypt or Sign)
  21 | Reserved for Diffie-Hellman (X9.42, as defined for IETF-S/MIME)
- 100 to 110 | Private/Experimental algorithm
+ 22 | Reserved (EdDSA)
+ 23 | Reserved (AEDH)
+ 24 | Reserved (AEDSA)
+100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement DSA for signatures, and Elgamal for encryption.
 Implementations SHOULD implement RSA keys (1).
@@ -2333,6 +2354,9 @@ ID | Algorithm | Text Name
   9 | SHA2-384 {{FIPS180}} | "SHA384"
  10 | SHA2-512 {{FIPS180}} | "SHA512"
  11 | SHA2-224 {{FIPS180}} | "SHA224"
+ 12 | Reserved (SHA3-256)
+ 13 | Reserved
+ 14 | Reserved (SHA3-512)
 100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement SHA-1.
@@ -2865,6 +2889,7 @@ A number of algorithm IDs have been reserved for algorithms that would be useful
 These are marked in {{pubkey-algos}} as "reserved for".
 
 The reserved public-key algorithms, Elliptic Curve (18), ECDSA (19), and X9.42 (21), do not have the necessary parameters, parameter order, or semantics defined.
+The same is currently true for reserved public-key algorithms AEDH (23) and AEDSA (24).
 
 Previous versions of OpenPGP permitted Elgamal {{ELGAMAL}} signatures with a public-key identifier of 20.
 These are no longer permitted.
