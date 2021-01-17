@@ -924,7 +924,17 @@ The body of a version 4 Signature packet contains:
 - Two-octet field holding the left 16 bits of the signed hash value.
 
 - One or more multiprecision integers comprising the signature.
-  This portion is algorithm specific, as described above.
+  This portion is algorithm specific:
+
+  Algorithm-Specific Fields for RSA signatures:
+
+  - Multiprecision integer (MPI) of RSA signature value m**d mod n.
+
+  Algorithm-Specific Fields for DSA signatures:
+
+  - MPI of DSA value r.
+
+  - MPI of DSA value s.
 
 The concatenation of the data being signed and the signature data from the version number through the hashed subpacket data (inclusive) is hashed.
 The resulting hash value is what is signed.
@@ -1576,32 +1586,7 @@ A version 4 packet contains:
 - A one-octet number denoting the public-key algorithm of this key.
 
 - A series of multiprecision integers comprising the key material.
-  This algorithm-specific portion is:
-
-  Algorithm-Specific Fields for RSA public keys:
-
-    - multiprecision integer (MPI) of RSA public modulus n;
-
-    - MPI of RSA public encryption exponent e.
-
-  Algorithm-Specific Fields for DSA public keys:
-
-    - MPI of DSA prime p;
-
-    - MPI of DSA group order q (q is a prime divisor of p-1);
-
-    - MPI of DSA group generator g;
-
-    - MPI of DSA public-key value y (= g**x mod p where x is secret).
-
-  Algorithm-Specific Fields for Elgamal public keys:
-
-    - MPI of Elgamal prime p;
-
-    - MPI of Elgamal group generator g;
-
-    - MPI of Elgamal public key value y (= g**x mod p where x is
-      secret).
+  This is algorithm-specific and described in {{algorithm-specific-parts-of-keys}}.
 
 ### Secret-Key Packet Formats
 
@@ -1624,30 +1609,12 @@ The packet contains:
 - \[Optional\] If secret data is encrypted (string-to-key usage octet not zero), an Initial Vector (IV) of the same length as the cipher's block size.
 
 - Plain or encrypted multiprecision integers comprising the secret key data.
-  These algorithm-specific fields are as described below.
+  This is algorithm-specific and described in section {{algorithm-specific-parts-of-keys}}.
 
 - If the string-to-key usage octet is zero or 255, then a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536).
   If the string-to-key usage octet was 254, then a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion.
   This checksum or hash is encrypted together with the algorithm-specific fields (if string-to-key usage octet is not zero).
   Note that for all other values, a two-octet checksum is required.
-
-  Algorithm-Specific Fields for RSA secret keys:
-
-  - multiprecision integer (MPI) of RSA secret exponent d.
-
-  - MPI of RSA secret prime value p.
-
-  - MPI of RSA secret prime value q (p < q).
-
-  - MPI of u, the multiplicative inverse of p, mod q.
-
-  Algorithm-Specific Fields for DSA secret keys:
-
-  - MPI of DSA secret exponent x.
-
-  Algorithm-Specific Fields for Elgamal secret keys:
-
-  - MPI of Elgamal secret exponent x.
 
 Secret MPI values can be encrypted using a passphrase.
 If a string-to-key specifier is given, that describes the algorithm for converting the passphrase to a key, else a simple MD5 hash of the passphrase is used.
@@ -1669,6 +1636,59 @@ With V4 keys, the checksum is encrypted like the algorithm-specific data.
 This value is used to check that the passphrase was correct.
 However, this checksum is deprecated; an implementation SHOULD NOT use it, but should rather use the SHA-1 hash denoted with a usage octet of 254.
 The reason for this is that there are some attacks that involve undetectably modifying the secret key.
+
+## Algorithm-specific Parts of Keys
+
+The public and secret key format specifies algorithm-specific parts of a key.
+The following sections describe them in detail.
+
+### Algorithm-Specific Part for RSA Keys
+
+The public key is this series of multiprecision integers:
+
+- MPI of RSA public modulus n;
+
+- MPI of RSA public encryption exponent e.
+
+The secret key is this series of multiprecision integers:
+
+- MPI of RSA secret exponent d;
+
+- MPI of RSA secret prime value p;
+
+- MPI of RSA secret prime value q (p < q);
+
+- MPI of u, the multiplicative inverse of p, mod q.
+
+### Algorithm-Specific Part for DSA Keys
+
+The public key is this series of multiprecision integers:
+
+- MPI of DSA prime p;
+
+- MPI of DSA group order q (q is a prime divisor of p-1);
+
+- MPI of DSA group generator g;
+
+- MPI of DSA public-key value y (= g**x mod p where x is secret).
+
+The secret key is this single multiprecision integer:
+
+- MPI of DSA secret exponent x.
+
+### Algorithm-Specific Part for Elgamal Keys
+
+The public key is this series of multiprecision integers:
+
+- MPI of Elgamal prime p;
+
+- MPI of Elgamal group generator g;
+
+- MPI of Elgamal public key value y (= g**x mod p where x is secret).
+
+The secret key is this single multiprecision integer:
+
+- MPI of Elgamal secret exponent x.
 
 ## Compressed Data Packet (Tag 8)
 
