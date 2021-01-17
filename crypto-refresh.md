@@ -1433,12 +1433,29 @@ When a signature is made over a Signature packet (type 0x50), the hash data star
 (Note that this is an old-style packet header for a Signature packet with the length-of-length set to zero.)  The unhashed subpacket data of the Signature packet being hashed is not included in the hash, and the unhashed subpacket data length value is set to zero.
 
 Once the data body is hashed, then a trailer is hashed.
-A V3 signature hashes five octets of the packet body, starting from the signature type field.
-This data is the signature type, followed by the four-octet signature time.
-A V4 signature hashes the packet body starting from its first field, the version number, through the end of the hashed subpacket data.
-Thus, the fields hashed are the signature version, the signature type, the public-key algorithm, the hash algorithm, the hashed subpacket length, and the hashed subpacket body.
+This trailer depends on the version of the signature.
 
-V4 signatures also hash in a final trailer of six octets: the version of the Signature packet, i.e., 0x04; 0xFF; and a four-octet, big-endian number that is the length of the hashed data from the Signature packet (note that this number does not include these final six octets).
+- A V3 signature hashes five octets of the packet body, starting from the signature type field.
+  This data is the signature type, followed by the four-octet signature time.
+
+- A V4 signature hashes the packet body starting from its first field, the version number, through the end of the hashed subpacket data and a final extra trailer.
+  Thus, the hashed fields are:
+
+  - the signature version (0x04),
+
+  - the signature type,
+
+  - the public-key algorithm,
+
+  - the hash algorithm,
+
+  - the hashed subpacket length,
+
+  - the hashed subpacket body,
+
+  - the two octets 0x04 and 0xFF,
+
+  - a four-octet big-endian number that is the length of the hashed data from the Signature packet stopping right before the 0x04, 0xff octets.
 
 After all this has been hashed in a single hash context, the resulting hash field is used in the signature algorithm and placed at the end of the Signature packet.
 
