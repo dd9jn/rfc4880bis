@@ -3440,25 +3440,21 @@ The KDF parameters are encoded as a concatenation of the following 5 variable-le
 
 - a variable-length field containing a curve OID, formatted as follows:
 
-    + a one-octet size of the following field
+  - a one-octet size of the following field
 
-    + the octets representing a curve OID, defined in
-      {{ecc-curve-oid}}
+  - the octets representing a curve OID, defined in {{ecc-curve-oid}}
 
 - a one-octet public key algorithm ID defined in {{pubkey-algos}}
 
 - a variable-length field containing KDF parameters, identical to the corresponding field in the ECDH public key, formatted as follows:
 
-    + a one-octet size of the following fields; values 0 and 0xff are
-      reserved for future extensions
+  - a one-octet size of the following fields; values 0 and 0xff are reserved for future extensions
 
-    + a one-octet value 01, reserved for future extensions
+  - a one-octet value 01, reserved for future extensions
 
-    + a one-octet hash function ID used with the KDF
+  - a one-octet hash function ID used with the KDF
 
-    + a one-octet algorithm ID for the symmetric algorithm used to
-      wrap the symmetric key for message encryption; see
-      {{ec-dh-algorithm-ecdh}} for details
+  - a one-octet algorithm ID for the symmetric algorithm used to wrap the symmetric key for message encryption; see {{ec-dh-algorithm-ecdh}} for details
 
 - 20 octets representing the UTF-8 encoding of the string `Anonymous Sender    `, which is the octet sequence 41 6E 6F 6E 79 6D 6F 75 73 20 53 65 6E 64 65 72 20 20 20 20
 
