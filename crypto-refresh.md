@@ -179,7 +179,6 @@ normative:
   RFC2045:
   RFC2119:
   RFC2144:
-  RFC2434:
   RFC2822:
   RFC3156:
   RFC3394:
@@ -187,6 +186,7 @@ normative:
   RFC3629:
   RFC3713:
   RFC4086:
+  RFC8126:
   SCHNEIER:
     title: "Applied Cryptography Second Edition: protocols, algorithms, and source code in C"
     author:
@@ -279,7 +279,7 @@ The term "OpenPGP" refers to the protocol described in this and related document
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in {{RFC2119}}.
 
-The key words "PRIVATE USE", "HIERARCHICAL ALLOCATION", "FIRST COME FIRST SERVED", "EXPERT REVIEW", "SPECIFICATION REQUIRED", "IESG APPROVAL", "IETF CONSENSUS", and "STANDARDS ACTION" that appear in this document when used to describe namespace allocation are to be interpreted as described in {{RFC2434}}.
+The key words "PRIVATE USE", "SPECIFICATION REQUIRED", and "RFC REQUIRED" that appear in this document when used to describe namespace allocation are to be interpreted as described in {{RFC8126}}.
 
 # General functions
 
@@ -2520,7 +2520,7 @@ OpenPGP S2K specifiers contain a mechanism for new algorithms to turn a string i
 This specification creates a registry of S2K specifier types.
 The registry includes the S2K type, the name of the S2K, and a reference to the defining specification.
 The initial values for this registry can be found in {{s2k-types}}.
-Adding a new S2K specifier MUST be done through the IETF CONSENSUS method, as described in {{RFC2434}}.
+Adding a new S2K specifier MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 ## New Packets
 
@@ -2528,7 +2528,7 @@ Major new features of OpenPGP are defined through new packet types.
 This specification creates a registry of packet types.
 The registry includes the packet type, the name of the packet, and a reference to the defining specification.
 The initial values for this registry can be found in {{packet-tags}}.
-Adding a new packet type MUST be done through the IETF CONSENSUS method, as described in {{RFC2434}}.
+Adding a new packet type MUST be done through the RFC REQUIRED method, as described in {{RFC8126}}.
 
 ### User Attribute Types
 
@@ -2536,7 +2536,7 @@ The User Attribute packet permits an extensible mechanism for other types of cer
 This specification creates a registry of User Attribute types.
 The registry includes the User Attribute type, the name of the User Attribute, and a reference to the defining specification.
 The initial values for this registry can be found in {{user-attribute-packet}}.
-Adding a new User Attribute type MUST be done through the IETF CONSENSUS method, as described in {{RFC2434}}.
+Adding a new User Attribute type MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 #### Image Format Subpacket Types
 
@@ -2544,7 +2544,7 @@ Within User Attribute packets, there is an extensible mechanism for other types 
 This specification creates a registry of Image Attribute subpacket types.
 The registry includes the Image Attribute subpacket type, the name of the Image Attribute subpacket, and a reference to the defining specification.
 The initial values for this registry can be found in {{uat-image}}.
-Adding a new Image Attribute subpacket type MUST be done through the IETF CONSENSUS method, as described in {{RFC2434}}.
+Adding a new Image Attribute subpacket type MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 ### New Signature Subpackets
 
@@ -2552,7 +2552,7 @@ OpenPGP signatures contain a mechanism for signed (or unsigned) data to be added
 This specification creates a registry of Signature subpacket types.
 The registry includes the Signature subpacket type, the name of the subpacket, and a reference to the defining specification.
 The initial values for this registry can be found in {{signature-subpacket}}.
-Adding a new Signature subpacket MUST be done through the IETF CONSENSUS method, as described in {{RFC2434}}.
+Adding a new Signature subpacket MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 #### Signature Notation Data Subpackets
 
@@ -2563,7 +2563,13 @@ Notations contain a user space that is completely unmanaged and an IETF space.
 This specification creates a registry of Signature Notation Data types.
 The registry includes the Signature Notation Data type, the name of the Signature Notation Data, its allowed values, and a reference to the defining specification.
 The initial values for this registry can be found in {{notation-data}}.
-Adding a new Signature Notation Data subpacket MUST be done through the EXPERT REVIEW method, as described in {{RFC2434}}.
+Adding a new Signature Notation Data subpacket MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
+
+#### Signature Notation Data Subpacket Notation Flags
+
+This specification creates a new registry of Signature Notation Data Subpacket Notation Flags.
+The registry includes the columns "Flag", "Description", "Security Recommended", "Interoperability Recommended", and "Reference".
+Adding a new item MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 #### Key Server Preference Extensions
 
@@ -2571,7 +2577,7 @@ OpenPGP signatures contain a mechanism for preferences to be specified about key
 This specification creates a registry of key server preferences.
 The registry includes the key server preference, the name of the preference, and a reference to the defining specification.
 The initial values for this registry can be found in {{key-server-preferences}}.
-Adding a new key server preference MUST be done through the IETF CONSENSUS method, as described in {{RFC2434}}.
+Adding a new key server preference MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 #### Key Flags Extensions
 
@@ -2579,7 +2585,7 @@ OpenPGP signatures contain a mechanism for flags to be specified about key usage
 This specification creates a registry of key usage flags.
 The registry includes the key flags value, the name of the flag, and a reference to the defining specification.
 The initial values for this registry can be found in {{key-flags}}.
-Adding a new key usage flag MUST be done through the IETF CONSENSUS method, as described in {{RFC2434}}.
+Adding a new key usage flag MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 #### Reason for Revocation Extensions
 
@@ -2587,7 +2593,7 @@ OpenPGP signatures contain a mechanism for flags to be specified about why a key
 This specification creates a registry of "Reason for Revocation" flags.
 The registry includes the "Reason for Revocation" flags value, the name of the flag, and a reference to the defining specification.
 The initial values for this registry can be found in {{reason-for-revocation}}.
-Adding a new feature flag MUST be done through the IETF CONSENSUS method, as described in {{RFC2434}}.
+Adding a new feature flag MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 #### Implementation Features
 
@@ -2595,7 +2601,7 @@ OpenPGP signatures contain a mechanism for flags to be specified stating which o
 This specification creates a registry of feature-implementation flags.
 The registry includes the feature-implementation flags value, the name of the flag, and a reference to the defining specification.
 The initial values for this registry can be found in {{features-subpacket}}.
-Adding a new feature-implementation flag MUST be done through the IETF CONSENSUS method, as described in {{RFC2434}}.
+Adding a new feature-implementation flag MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 Also see {{meta-considerations-for-expansion}} for more information about when feature flags are needed.
 
@@ -2605,7 +2611,7 @@ The core OpenPGP packets all have version numbers, and can be revised by introdu
 This specification creates a registry of packet types.
 The registry includes the packet type, the number of the version, and a reference to the defining specification.
 The initial values for this registry can be found in {{packet-types}}.
-Adding a new packet version MUST be done through the IETF CONSENSUS method, as described in {{RFC2434}}.
+Adding a new packet version MUST be done through the RFC REQUIRED method, as described in {{RFC8126}}.
 
 ## New Algorithms
 
@@ -2622,7 +2628,7 @@ OpenPGP specifies a number of public-key algorithms.
 This specification creates a registry of public-key algorithm identifiers.
 The registry includes the algorithm name, its key sizes and parameters, and a reference to the defining specification.
 The initial values for this registry can be found in {{pubkey-algos}}.
-Adding a new public-key algorithm MUST be done through the IETF CONSENSUS method, as described in {{RFC2434}}.
+Adding a new public-key algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 ### Symmetric-Key Algorithms
 
@@ -2630,7 +2636,7 @@ OpenPGP specifies a number of symmetric-key algorithms.
 This specification creates a registry of symmetric-key algorithm identifiers.
 The registry includes the algorithm name, its key sizes and block size, and a reference to the defining specification.
 The initial values for this registry can be found in {{symmetric-algos}}.
-Adding a new symmetric-key algorithm MUST be done through the IETF CONSENSUS method, as described in {{RFC2434}}.
+Adding a new symmetric-key algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 ### Hash Algorithms
 
@@ -2638,7 +2644,7 @@ OpenPGP specifies a number of hash algorithms.
 This specification creates a registry of hash algorithm identifiers.
 The registry includes the algorithm name, a text representation of that name, its block size, an OID hash prefix, and a reference to the defining specification.
 The initial values for this registry can be found in {{hash-algos}} for the algorithm identifiers and text names, and {{version-three-sig}} for the OIDs and expanded signature prefixes.
-Adding a new hash algorithm MUST be done through the IETF CONSENSUS method, as described in {{RFC2434}}.
+Adding a new hash algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 ### Compression Algorithms
 
@@ -2646,7 +2652,7 @@ OpenPGP specifies a number of compression algorithms.
 This specification creates a registry of compression algorithm identifiers.
 The registry includes the algorithm name and a reference to the defining specification.
 The initial values for this registry can be found in {{compression-algos}}.
-Adding a new compression key algorithm MUST be done through the IETF CONSENSUS method, as described in {{RFC2434}}.
+Adding a new compression key algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 # Packet Composition {#packet-composition}
 
@@ -3245,7 +3251,7 @@ Step by step, here is the procedure:
 
 S2K specifiers, Signature subpacket types, User Attribute types, image format types, and algorithms described in {{constants}} all reserve the range 100 to 110 for private and experimental use.
 Packet types reserve the range 60 to 63 for private and experimental use.
-These are intentionally managed with the PRIVATE USE method, as described in {{RFC2434}}.
+These are intentionally managed with the PRIVATE USE method, as described in {{RFC8126}}.
 
 However, implementations need to be careful with these and promote them to full IANA-managed parameters when they grow beyond the original, limited system.
 
