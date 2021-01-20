@@ -135,6 +135,12 @@ normative:
     author:
       org: National Institute of Standards and Technology, U.S. Department of Commerce
     date: July 2013
+  FIPS202:
+    target: http://dx.doi.org/10.6028/NIST.FIPS.202
+    title: "SHA-3 Standard: Permutation-Based Hash and Extendable-Output Functions, FIPS 202"
+    author:
+      org: National Institute of Standards and Technology, U.S. Department of Commerce
+    date: August 2015
   HAC:
     title: Handbook of Applied Cryptography
     date: 1996
@@ -2503,9 +2509,9 @@ ID | Algorithm | Text Name
   9 | SHA2-384 {{FIPS180}} | "SHA384"
  10 | SHA2-512 {{FIPS180}} | "SHA512"
  11 | SHA2-224 {{FIPS180}} | "SHA224"
- 12 | Reserved (SHA3-256)
+ 12 | SHA3-256 {{FIPS202}} | "SHA3-256"
  13 | Reserved
- 14 | Reserved (SHA3-512)
+ 14 | SHA3-512 {{FIPS202}} | "SHA3-512"
 100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement SHA-1.
@@ -2648,6 +2654,19 @@ This specification creates a registry of hash algorithm identifiers.
 The registry includes the algorithm name, a text representation of that name, its block size, an OID hash prefix, and a reference to the defining specification.
 The initial values for this registry can be found in {{hash-algos}} for the algorithm identifiers and text names, and {{version-three-sig}} for the OIDs and expanded signature prefixes.
 Adding a new hash algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
+
+This document requests IANA register the following hash algorithms:
+
+{: title="New hash algorithms registered"}
+ID | Algorithm | Reference
+---:|----------|----------
+ 12 | SHA3-256 | This doc
+ 13 | Reserved
+ 14 | SHA3-512 | This doc
+
+   \[Notes to RFC-Editor: Please remove the table above on publication.
+    It is desirable not to reuse old or reserved algorithms because some existing tools might print a wrong description.
+    The ID 13 has been reserved so that the SHA3 algorithm IDs align nicely with their SHA2 counterparts.\]
 
 ### Compression Algorithms
 
