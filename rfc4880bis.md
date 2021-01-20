@@ -3115,7 +3115,7 @@ Adding a new symmetric-key algorithm MUST be done through the SPECIFICATION REQU
 OpenPGP specifies a number of hash algorithms.
 This specification creates a registry of hash algorithm identifiers.
 The registry includes the algorithm name, a text representation of that name, its block size, an OID hash prefix, and a reference to the defining specification.
-The initial values for this registry can be found in {{hash-algos}} for the algorithm identifiers and text names, and {{ecc-curve-oid}} for the OIDs and expanded signature prefixes.
+The initial values for this registry can be found in {{hash-algos}} for the algorithm identifiers and text names, and {{version-three-sig}} for the OIDs and expanded signature prefixes.
 Adding a new hash algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 This document requests IANA register the following hash algorithms:
