@@ -2,7 +2,7 @@
 title: OpenPGP Message Format
 docname: draft-ietf-openpgp-crypto-refresh-01
 category: std
-obsoletes: 4880, 5581
+obsoletes: 4880, 5581, 6637
 ipr: trust200902
 consensus: yes
 area: sec
@@ -51,6 +51,13 @@ informative:
         name: Jonathan Katz
       -
         name: Bruce Schneier
+  KOBLITZ:
+    title: A course in number theory and cryptography, Chapter VI. Elliptic Curves
+    seriesinfo:
+      ISBN: 0-387-96576-9
+    author:
+      ins: N. Koblitz
+    date: 1997
   MZ05:
     title: An Attack on CFB Mode Encryption As Used By OpenPGP
     seriesinfo:
@@ -73,6 +80,12 @@ informative:
   RFC1991:
   RFC2440:
   RFC4880:
+  RFC6090:
+  SEC1:
+    title: "SEC 1: Elliptic Curve Cryptography"
+    author:
+      org: Standards for Efficient Cryptography Group
+    date: September 2000
   SP800-57:
     target: "http://csrc.nist.gov/publications/nistpubs/800-57/SP800-57-Part{1,2}.pdf"
     title: Recommendation on Key Management
@@ -156,6 +169,11 @@ normative:
       org: C-Cube Microsystems
       name: Eric Hamilton, Milpitas, CA
     date: September 1996
+  PKCS5:
+    title: "PKCS #5 v2.0: Password-Based Cryptography Standard"
+    author:
+      org: RSA Laboratories
+    date: 1999-03-25
   RFC1950:
   RFC1951:
   RFC2045:
@@ -164,6 +182,7 @@ normative:
   RFC2434:
   RFC2822:
   RFC3156:
+  RFC3394:
   RFC3447:
   RFC3629:
   RFC3713:
@@ -174,6 +193,24 @@ normative:
       ins: B. Schneier
       name: Bruce Schneier
     date: 1996
+  SP800-56A:
+    title: Recommendation for Pair-Wise Key Establishment Schemes Using Discrete Logarithm Cryptography
+    author:
+      -
+        ins: E. Barker
+      -
+        ins: D. Johnson
+      -
+        ins: M. Smid
+    date: March 2007
+    seriesinfo:
+      NIST Special Publication: 800-56A Revision 1
+  SuiteB:
+    target: http://www.nsa.gov/ia/programs/suiteb_cryptography/
+    title: NSA Suite B Cryptography
+    author:
+      org: National Security Agency
+    date: 2010-03-11
   TWOFISH:
     title: The Twofish Encryption Algorithm
     author:
@@ -215,7 +252,7 @@ It does, however, discuss implementation issues necessary to avoid security flaw
 This document provides information on the message-exchange packet formats used by OpenPGP to provide encryption, decryption, signing, and key management functions.
 It is a revision of RFC 4880, "OpenPGP Message Format", which is a revision of RFC 2440, which itself replaces RFC 1991, "PGP Message Exchange Formats" {{RFC1991}} {{RFC2440}} {{RFC4880}}.
 
-This document obsoletes: RFC 4880 (OpenPGP) and RFC 5581 (Camellia cipher).
+This document obsoletes: RFC 4880 (OpenPGP), RFC 5581 (Camellia cipher) and RFC 6637 (ECC for OpenPGP).
 
 ## Terms
 
@@ -709,6 +746,12 @@ The body of this packet consists of:
 
   - MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
 
+  Algorithm-Specific Fields for ECDH encryption:
+
+  - MPI of an EC point representing an ephemeral public key.
+
+  - a one-octet size, followed by a symmetric key encoded using the method described in {{ec-dh-algorithm-ecdh}}.
+
 The value "m" in the above formulas is derived from the session key as follows.
 First, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following Symmetrically Encrypted Data Packet.
 Then a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, not including the algorithm identifier, modulo 65536.
@@ -843,11 +886,11 @@ Algorithm-Specific Fields for RSA signatures:
 
 - Multiprecision integer (MPI) of RSA signature value m**d mod n.
 
-Algorithm-Specific Fields for DSA signatures:
+Algorithm-Specific Fields for DSA and ECDSA signatures:
 
-- MPI of DSA value r.
+- MPI of DSA or ECDSA value r.
 
-- MPI of DSA value s.
+- MPI of DSA or ECDSA value s.
 
 The signature calculation is based on a hash of the signed data, as described above.
 The details of the calculation are different for DSA signatures than for RSA signatures.
@@ -930,11 +973,12 @@ The body of a version 4 Signature packet contains:
 
   - Multiprecision integer (MPI) of RSA signature value m**d mod n.
 
-  Algorithm-Specific Fields for DSA signatures:
+  Algorithm-Specific Fields for DSA or ECDSA signatures:
 
-  - MPI of DSA value r.
+  - MPI of DSA or ECDSA value r.
 
-  - MPI of DSA value s.
+  - MPI of DSA or ECDSA value s.
+
 
 The concatenation of the data being signed and the signature data from the version number through the hashed subpacket data (inclusive) is hashed.
 The resulting hash value is what is signed.
@@ -1707,6 +1751,50 @@ The secret key is this single multiprecision integer:
 
 - MPI of Elgamal secret exponent x.
 
+### Algorithm-Specific Part for ECDSA Keys
+
+The public key is this series of values:
+
+- a variable-length field containing a curve OID, formatted as follows:
+
+  - a one-octet size of the following field; values 0 and 0xFF are reserved for future extensions,
+
+  - the octets representing a curve OID, defined in {{ecc-curve-oid}};
+
+- a MPI of an EC point representing a public key.
+
+The secret key is this single multiprecision integer:
+
+- MPI of an integer representing the secret key, which is a scalar of the public EC point.
+
+### Algorithm-Specific Part for ECDH Keys
+
+The public key is this series of values:
+
+- a variable-length field containing a curve OID, formatted as follows:
+
+  - a one-octet size of the following field; values 0 and 0xFF are reserved for future extensions,
+
+  - the octets representing a curve OID, defined in {{ecc-curve-oid}};
+
+- a MPI of an EC point representing a public key;
+
+- a variable-length field containing KDF parameters, formatted as follows:
+
+  - a one-octet size of the following fields; values 0 and 0xff are reserved for future extensions;
+
+  - a one-octet value 1, reserved for future extensions;
+
+  - a one-octet hash function ID used with a KDF;
+
+  - a one-octet algorithm ID for the symmetric algorithm used to wrap the symmetric key used for the message encryption; see {{ec-dh-algorithm-ecdh}} for details.
+
+Observe that an ECDH public key is composed of the same sequence of fields that define an ECDSA key, plus the KDF parameters field.
+
+The secret key is this single multiprecision integer:
+
+- MPI of an integer representing the secret key, which is a scalar of the public EC point.
+
 ## Compressed Data Packet (Tag 8)
 
 The Compressed Data packet contains compressed data.
@@ -2318,8 +2406,8 @@ ID | Algorithm
  3 | RSA Sign-Only {{HAC}}
  16 | Elgamal (Encrypt-Only) {{ELGAMAL}} {{HAC}}
  17 | DSA (Digital Signature Algorithm) {{FIPS186}} {{HAC}}
- 18 | Reserved for Elliptic Curve
- 19 | Reserved for ECDSA
+ 18 | ECDH public key algorithm
+ 19 | ECDSA public key algorithm {{FIPS186}}
  20 | Reserved (formerly Elgamal Encrypt or Sign)
  21 | Reserved for Diffie-Hellman (X9.42, as defined for IETF-S/MIME)
  22 | Reserved (EdDSA)
@@ -2331,8 +2419,29 @@ Implementations MUST implement DSA for signatures, and Elgamal for encryption.
 Implementations SHOULD implement RSA keys (1).
 RSA Encrypt-Only (2) and RSA Sign-Only (3) are deprecated and SHOULD NOT be generated, but may be interpreted.
 See {{rsa-notes}}.
-See {{reserved-notes}} for notes on Elliptic Curve (18), ECDSA (19), Elgamal Encrypt or Sign (20), and X9.42 (21).
+See {{reserved-notes}} for notes on Elgamal Encrypt or Sign (20), and X9.42 (21).
 Implementations MAY implement any other algorithm.
+
+
+A compatible specification of ECDSA is given in {{RFC6090}} as "KT-I Signatures" and in {{SEC1}}; ECDH is defined in {{ec-dh-algorithm-ecdh}} this document.
+
+## ECC Curve OID
+
+The parameter curve OID is an array of octets that define a named curve.
+The table below specifies the exact sequence of bytes for each named curve referenced in this document:
+
+{: title="ECC Curve OID registry"}
+ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representation | Curve name
+------------------------|----|-------------------------------|-------------
+1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256
+1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384
+1.3.132.0.35            | 5  | 2B 81 04 00 23                | NIST P-521
+
+The sequence of octets in the third column is the result of applying the Distinguished Encoding Rules (DER) to the ASN.1 Object Identifier with subsequent truncation.
+The truncation removes the two fields of encoded Object Identifier.
+The first omitted field is one octet representing the Object Identifier tag, and the second omitted field is the length of the Object Identifier body.
+For example, the complete ASN.1 DER encoding for the NIST P-256 curve OID is "06 08 2A 86 48 CE 3D 03 01 07", from which the first entry in the table above is constructed by omitting the first two octets.
+Only the truncated sequence of octets is the valid representation of a curve OID.
 
 ## Symmetric-Key Algorithms {#symmetric-algos}
 
@@ -2723,6 +2832,158 @@ Also note that if V3 and V4 format keys share the same RSA key material, they wi
 
 Finally, the Key ID and fingerprint of a subkey are calculated in the same way as for a primary key, including the 0x99 as the first octet (even though this is not a valid packet ID for a public subkey).
 
+# Elliptic Curve Cryptography
+
+This section descripes algorithms and parameters used with Elliptic Curve Cryptography (ECC) keys.
+A thorough introduction to ECC can be found in {{KOBLITZ}}.
+
+## Supported ECC Curves
+
+This document references three named prime field curves, defined in {{FIPS186}} as "Curve P-256", "Curve P-384", and "Curve P-521".
+
+The named curves are referenced as a sequence of bytes in this document, called throughout, curve OID.
+{{ecc-curve-oid}} describes in detail how this sequence of bytes is formed.
+
+## ECDSA and ECDH Conversion Primitives
+
+This document defines the uncompressed point format for ECDSA and ECDH and a custom compression format for certain curves.
+The point is encoded in the Multiprecision Integer (MPI) format.
+
+For an uncompressed point the content of the MPI is:
+
+    B = 04 || x || y
+
+where x and y are coordinates of the point P = (x, y), each encoded in the big-endian format and zero-padded to the adjusted underlying field size.
+The adjusted underlying field size is the underlying field size that is rounded up to the nearest 8-bit boundary.
+This encoding is compatible with the definition given in {{SEC1}}.
+
+For a custom compressed point the content of the MPI is:
+
+    B = 40 || x
+
+where x is the x coordinate of the point P encoded to the rules defined for the specified curve.
+This format is used for ECDH keys based on curves expressed in Montgomery form.
+
+Therefore, the exact size of the MPI payload is 515 bits for "Curve P-256", 771 for "Curve P-384", and 1059 for "Curve P-521".
+
+Even though the zero point, also called the point at infinity, may occur as a result of arithmetic operations on points of an elliptic curve, it SHALL NOT appear in data structures defined in this document.
+
+If other conversion methods are defined in the future, a compliant application MUST NOT use a new format when in doubt that any recipient can support it.
+Consider, for example, that while both the public key and the per-recipient ECDH data structure, respectively defined in {{algorithm-specific-part-for-ecdh-keys}} and {{public-key-encrypted-session-key-packets-tag-1}}, contain an encoded point field, the format changes to the field in {{public-key-encrypted-session-key-packets-tag-1}} only affect a given recipient of a given message.
+
+## Key Derivation Function
+
+A key derivation function (KDF) is necessary to implement the EC encryption.
+The Concatenation Key Derivation Function (Approved Alternative 1) {{SP800-56A}} with the KDF hash function that is SHA2-256 {{FIPS180}} or stronger is REQUIRED.
+See {{compatibility-profiles}} for the details regarding the choice of the hash function.
+
+For convenience, the synopsis of the encoding method is given below with significant simplifications attributable to the restricted choice of hash functions in this document.
+However, {{SP800-56A}} is the normative source of the definition.
+
+    //   Implements KDF( X, oBits, Param );
+    //   Input: point X = (x,y)
+    //   oBits - the desired size of output
+    //   hBits - the size of output of hash function Hash
+    //   Param - octets representing the parameters
+    //   Assumes that oBits <= hBits
+    // Convert the point X to the octet string:
+    //   ZB' = 04 || x || y
+    // and extract the x portion from ZB'
+    ZB = x;
+    MB = Hash ( 00 || 00 || 00 || 01 || ZB || Param );
+    return oBits leftmost bits of MB.
+
+Note that ZB in the KDF description above is the compact representation of X, defined in Section 4.2 of {{RFC6090}}.
+
+## EC DH Algorithm (ECDH)
+
+The method is a combination of an ECC Diffie-Hellman method to establish a shared secret, a key derivation method to process the shared secret into a derived key, and a key wrapping method that uses the derived key to protect a session key used to encrypt a message.
+
+The One-Pass Diffie-Hellman method C(1, 1, ECC CDH) {{SP800-56A}} MUST be implemented with the following restrictions: the ECC CDH primitive employed by this method is modified to always assume the cofactor as 1, the KDF specified in {{key-derivation-function}} is used, and the KDF parameters specified below are used.
+
+The KDF parameters are encoded as a concatenation of the following 5 variable-length and fixed-length fields, compatible with the definition of the OtherInfo bitstring {{SP800-56A}}:
+
+- a variable-length field containing a curve OID, formatted as follows:
+
+  - a one-octet size of the following field
+
+  - the octets representing a curve OID, defined in {{ecc-curve-oid}}
+
+- a one-octet public key algorithm ID defined in {{pubkey-algos}}
+
+- a variable-length field containing KDF parameters, identical to the corresponding field in the ECDH public key, formatted as follows:
+
+  - a one-octet size of the following fields; values 0 and 0xff are reserved for future extensions
+
+  - a one-octet value 01, reserved for future extensions
+
+  - a one-octet hash function ID used with the KDF
+
+  - a one-octet algorithm ID for the symmetric algorithm used to wrap the symmetric key for message encryption; see {{ec-dh-algorithm-ecdh}} for details
+
+- 20 octets representing the UTF-8 encoding of the string `Anonymous Sender    `, which is the octet sequence 41 6E 6F 6E 79 6D 6F 75 73 20 53 65 6E 64 65 72 20 20 20 20
+
+- 20 octets representing a recipient encryption subkey or a master key fingerprint, identifying the key material that is needed for the decryption.
+  For version 5 keys the 20 leftmost octets of the fingerprint are used.
+
+The size of the KDF parameters sequence, defined above, is either 54 for the NIST curve P-256, or 51 for the curves P-384 and P-521.
+
+The key wrapping method is described in {{RFC3394}}.
+KDF produces a symmetric key that is used as a key-encryption key (KEK) as specified in {{RFC3394}}.
+Refer to {{security-considerations}} for the details regarding the choice of the KEK algorithm, which SHOULD be one of three AES algorithms.
+Key wrapping and unwrapping is performed with the default initial value of {{RFC3394}}.
+
+The input to the key wrapping method is the value "m" derived from the session key, as described in {{public-key-encrypted-session-key-packets-tag-1}}, "Public-Key Encrypted Session Key Packets (Tag 1)", except that the PKCS #1.5 padding step is omitted.
+The result is padded using the method described in {{PKCS5}} to the 8-byte granularity.
+For example, the following AES-256 session key, in which 32 octets are denoted from k0 to k31, is composed to form the following 40 octet sequence:
+
+    09 k0 k1 ... k31 c0 c1 05 05 05 05 05
+
+The octets c0 and c1 above denote the checksum.
+This encoding allows the sender to obfuscate the size of the symmetric encryption key used to encrypt the data.
+For example, assuming that an AES algorithm is used for the session key, the sender MAY use 21, 13, and 5 bytes of padding for AES-128, AES-192, and AES-256, respectively, to provide the same number of octets, 40 total, as an input to the key wrapping method.
+
+The output of the method consists of two fields.
+The first field is the MPI containing the ephemeral key used to establish the shared secret.
+The second field is composed of the following two fields:
+
+- a one-octet encoding the size in octets of the result of the key wrapping method; the value 255 is reserved for future extensions;
+
+- up to 254 octets representing the result of the key wrapping method, applied to the 8-byte padded session key, as described above.
+
+Note that for session key sizes 128, 192, and 256 bits, the size of the result of the key wrapping method is, respectively, 32, 40, and 48 octets, unless the size obfuscation is used.
+
+For convenience, the synopsis of the encoding method is given below; however, this section, {{SP800-56A}}, and {{RFC3394}} are the normative sources of the definition.
+
+- Obtain the authenticated recipient public key R
+
+- Generate an ephemeral key pair {v, V=vG}
+
+- Compute the shared point S = vR;
+
+- m = symm_alg_ID \|\| session key \|\| checksum \|\| pkcs5_padding;
+
+- curve_OID_len = (byte)len(curve_OID);
+
+- Param = curve_OID_len \|\| curve_OID \|\| public_key_alg_ID \|\| 03 \|\| 01 \|\| KDF_hash_ID \|\| KEK_alg_ID for AESKeyWrap \|\| `Anonymous Sender    ` \|\| recipient_fingerprint;
+
+- Z_len = the key size for the KEK_alg_ID used with AESKeyWrap
+
+- Compute Z = KDF( S, Z_len, Param );
+
+- Compute C = AESKeyWrap( Z, m ) as per {{RFC3394}}
+
+- VB = convert point V to the octet string
+
+- Output (MPI(VB) \|\| len(C) \|\| C).
+
+The decryption is the inverse of the method given.
+Note that the recipient obtains the shared secret by calculating
+
+    S = rV = rvG, where (r,R) is the recipient's key pair.
+
+Consistent with {{seipd}}, Modification Detection Code (MDC) MUST be used anytime the symmetric key is protected by ECDH.
+
 # Notes on Algorithms {#notes-on-algorithms}
 
 ## PKCS#1 Encoding in OpenPGP {#pkcs-encoding}
@@ -2925,7 +3186,7 @@ An implementation SHOULD NOT implement Elgamal keys of size less than 1024 bits.
 A number of algorithm IDs have been reserved for algorithms that would be useful to use in an OpenPGP implementation, yet there are issues that prevent an implementer from actually implementing the algorithm.
 These are marked in {{pubkey-algos}} as "reserved for".
 
-The reserved public-key algorithms, Elliptic Curve (18), ECDSA (19), and X9.42 (21), do not have the necessary parameters, parameter order, or semantics defined.
+The reserved public-key algorithm X9.42 (21) does not have the necessary parameters, parameter order, or semantics defined.
 The same is currently true for reserved public-key algorithms AEDH (23) and AEDSA (24).
 
 Previous versions of OpenPGP permitted Elgamal {{ELGAMAL}} signatures with a public-key identifier of 20.
@@ -3121,6 +3382,101 @@ Asymmetric key size | Hash size | Symmetric key size
 
   On the other hand, it is inconvenient to the user to be informed that they typed in the wrong passphrase only after a petabyte of data is decrypted.
   There are many cases in cryptographic engineering where the implementer must use care and wisdom, and this is one.
+
+- Refer to {{FIPS186}}, B.4.1, for the method to generate a uniformly distributed ECC private key.
+
+- The curves proposed in this document correspond to the symmetric key sizes 128 bits, 192 bits, and 256 bits, as described in the table below.
+  This allows a compliant application to offer balanced public key security, which is compatible with the symmetric key strength for each AES algorithm defined here.
+
+  The following table defines the hash and the symmetric encryption algorithm that SHOULD be used with a given curve for ECDSA or ECDH.
+  A stronger hash algorithm or a symmetric key algorithm MAY be used for a given ECC curve.
+  However, note that the increase in the strength of the hash algorithm or the symmetric key algorithm may not increase the overall security offered by the given ECC key.
+
+{: title="Elliptic Curve cryptographic guidance"}
+Curve name | ECC | RSA strength | Hash size strength, informative | Symmetric key size
+-----------|-----|--------------|---------------------------------|-------------------
+NIST P-256 | 256 | 3072 | 256 | 128
+NIST P-384 | 384 | 7680 | 384 | 192
+NIST P-521 | 521 | 15360 | 512 | 256
+
+- Requirement levels indicated elsewhere in this document lead to the following combinations of algorithms in the OpenPGP profile: MUST implement NIST curve P-256 / SHA2-256 / AES-128, SHOULD implement NIST curve P-521 / SHA2-512 / AES-256, MAY implement NIST curve P-384 / SHA2-384 / AES-256, among other allowed combinations.
+
+  Consistent with the table above, the following table defines the KDF hash algorithm and the AES KEK encryption algorithm that SHOULD be used with a given curve for ECDH.
+  A stronger KDF hash algorithm or AES KEK algorithm MAY be used for a given ECC curve.
+
+{: title="Elliptic Curve KDF and KEK recommendations"}
+Curve name | Recommended KDF hash algorithm | Recommended KEK encryption algorithm
+-----------|--------------------------------|-------------------------------------
+NIST P-256 | SHA2-256 | AES-128
+NIST P-384 | SHA2-384 | AES-192
+NIST P-521 | SHA2-512 | AES-256
+
+- This document explicitly discourages the use of algorithms other than AES as a KEK algorithm because backward compatibility of the ECDH format is not a concern.
+  The KEK algorithm is only used within the scope of a Public-Key Encrypted Session Key Packet, which represents an ECDH key recipient of a message.
+  Compare this with the algorithm used for the session key of the message, which MAY be different from a KEK algorithm.
+
+  Compliant applications SHOULD implement, advertise through key preferences, and use the strongest algorithms specified in this document.
+
+  Note that the symmetric algorithm preference list may make it impossible to use the balanced strength of symmetric key algorithms for a corresponding public key.
+  For example, the presence of the symmetric key algorithm IDs and their order in the key preference list affects the algorithm choices available to the encoding side, which in turn may make the adherence to the table above infeasible.
+  Therefore, compliance with this specification is a concern throughout the life of the key, starting immediately after the key generation when the key preferences are first added to a key.
+  It is generally advisable to position a symmetric algorithm ID of strength matching the public key at the head of the key preference list.
+
+  Encryption to multiple recipients often results in an unordered intersection subset.
+  For example, if the first recipient's set is {A, B} and the second's is {B, A}, the intersection is an unordered set of two algorithms, A and B.
+  In this case, a compliant application SHOULD choose the stronger encryption algorithm.
+
+  Resource constraints, such as limited computational power, is a likely reason why an application might prefer to use the weakest algorithm.
+  On the other side of the spectrum are applications that can implement every algorithm defined in this document.
+  Most applications are expected to fall into either of two categories.
+  A compliant application in the second, or strongest, category SHOULD prefer AES-256 to AES-192.
+
+  SHA-1 MUST NOT be used with the ECDSA or the KDF in the ECDH method.
+
+  MDC MUST be used when a symmetric encryption key is protected by ECDH.
+  None of the ECC methods described in this document are allowed with deprecated V3 keys.
+  A compliant application MUST only use iterated and salted S2K to protect private keys, as defined in {{iterated-and-salted-s2k}}, "Iterated and Salted S2K".
+
+  Side channel attacks are a concern when a compliant application's use of the OpenPGP format can be modeled by a decryption or signing oracle model, for example, when an application is a network service performing decryption to unauthenticated remote users.
+  ECC scalar multiplication operations used in ECDSA and ECDH are vulnerable to side channel attacks.
+  Countermeasures can often be taken at the higher protocol level, such as limiting the number of allowed failures or time-blinding of the operations associated with each network interface.
+  Mitigations at the scalar multiplication level seek to eliminate any measurable distinction between the ECC point addition and doubling operations.
+
+# Compatibility Profiles
+
+## OpenPGP ECC Profile
+
+A compliant application MUST implement NIST curve P-256, and SHOULD implement NIST curve P-521, as defined in {{ecc-curve-oid}}.
+A compliant application MUST implement SHA2-256 and SHOULD implement SHA2-384 and SHA2-512.
+A compliant application MUST implement AES-128 and SHOULD implement AES-256.
+
+A compliant application SHOULD follow {{security-considerations}} regarding the choice of the following algorithms for each curve:
+
+- the KDF hash algorithm,
+
+- the KEK algorithm,
+
+- the message digest algorithm and the hash algorithm used in the key certifications,
+
+- the symmetric algorithm used for message encryption.
+
+It is recommended that the chosen symmetric algorithm for message encryption be no less secure than the KEK algorithm.
+
+## Suite-B Profile
+
+A subset of algorithms allowed by this document can be used to achieve {{SuiteB}} compatibility.
+The references to {{SuiteB}} in this document are informative.
+This document is primarily concerned with format specification, leaving additional security restrictions unspecified, such as matching the assigned security level of information to authorized recipients or interoperability concerns arising from fewer allowed algorithms in {{SuiteB}} than allowed by this document.
+
+### Security Strength at 192 Bits
+
+To achieve the security strength of 192 bits, {{SuiteB}} requires NIST curve P-384, AES-256, and SHA2-384.
+The symmetric algorithm restriction means that the algorithm of KEK used for key wrapping in {{ec-dh-algorithm-ecdh}} and an OpenPGP session key used for message encryption must be AES-256.
+The hash algorithm restriction means that the hash algorithms of KDF and the OpenPGP message digest calculation must be SHA2-384.
+
+### Security Strength at 128 Bits
+
+The set of algorithms in {{security-strength-at-192-bits}} is extended to allow NIST curve P-256, AES-128, and SHA2-256.
 
 # Implementation Nits
 
