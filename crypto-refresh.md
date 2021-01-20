@@ -880,7 +880,7 @@ The body of a version 3 Signature Packet contains:
 
 The concatenation of the data to be signed, the signature type, and creation time from the Signature packet (5 additional octets) is hashed.
 The resulting hash value is used in the signature algorithm.
-The high 16 bits (first two octets) of the hash are included in the Signature packet to provide a quick test to reject some invalid signatures.
+The high 16 bits (first two octets) of the hash are included in the Signature packet to provide a way to reject some invalid signatures without performing a signature verification.
 
 Algorithm-Specific Fields for RSA signatures:
 
@@ -982,7 +982,7 @@ The body of a version 4 Signature packet contains:
 
 The concatenation of the data being signed and the signature data from the version number through the hashed subpacket data (inclusive) is hashed.
 The resulting hash value is what is signed.
-The left 16 bits of the hash are included in the Signature packet to provide a quick test to reject some invalid signatures.
+The high 16 bits (first two octets) of the hash are included in the Signature packet to provide a way to reject some invalid signatures without performing a signature verification.
 
 There are two fields consisting of Signature subpackets.
 The first field is hashed with the rest of the signature data, while the second is unhashed.
@@ -1473,8 +1473,8 @@ A certification signature (type 0x10 through 0x13) hashes the User ID being boun
 A V3 certification hashes the contents of the User ID or attribute packet packet, without any header.
 A V4 certification hashes the constant 0xB4 for User ID certifications or the constant 0xD1 for User Attribute certifications, followed by a four-octet number giving the length of the User ID or User Attribute data, and then the User ID or User Attribute data.
 
-When a signature is made over a Signature packet (type 0x50), the hash data starts with the octet 0x88, followed by the four-octet length of the signature, and then the body of the Signature packet.
-(Note that this is an old-style packet header for a Signature packet with the length-of-length set to zero.)  The unhashed subpacket data of the Signature packet being hashed is not included in the hash, and the unhashed subpacket data length value is set to zero.
+When a signature is made over a Signature packet (type 0x50, "Third-Party Confirmation signature"), the hash data starts with the octet 0x88, followed by the four-octet length of the signature, and then the body of the Signature packet.
+(Note that this is an old-style packet header for a Signature packet with the length-of-length field set to zero.) The unhashed subpacket data of the Signature packet being hashed is not included in the hash, and the unhashed subpacket data length value is set to zero.
 
 Once the data body is hashed, then a trailer is hashed.
 This trailer depends on the version of the signature.
@@ -1534,7 +1534,7 @@ The body of this packet consists of:
 
 - Optionally, the encrypted session key itself, which is decrypted with the string-to-key object.
 
-If the encrypted session key is not present (which can be detected on the basis of packet length and S2K specifier size), then the S2K algorithm applied to the passphrase produces the session key for decrypting the file, using the symmetric cipher algorithm from the Symmetric-Key Encrypted Session Key packet.
+If the encrypted session key is not present (which can be detected on the basis of packet length and S2K specifier size), then the S2K algorithm applied to the passphrase produces the session key for decrypting the message, using the symmetric cipher algorithm from the Symmetric-Key Encrypted Session Key packet.
 
 If the encrypted session key is present, the result of applying the S2K algorithm to the passphrase is used to decrypt just that encrypted session key field, using CFB mode with an IV of all zeros.
 The decryption result consists of a one-octet algorithm identifier that specifies the symmetric-key encryption algorithm used to encrypt the following Symmetrically Encrypted Data packet, followed by the session key octets themselves.
@@ -2324,7 +2324,7 @@ Note that this example has extra indenting; an actual armored message would have
 # Cleartext Signature Framework
 
 It is desirable to be able to sign a textual octet stream without ASCII armoring the stream itself, so the signed text is still readable without special software.
-In order to bind a signature to such a cleartext, this framework is used.
+In order to bind a signature to such a cleartext, this framework is used, which follows the same basic format and restrictions as the ASCII armoring described in {{forming-ascii-armor}}.
 (Note that this framework is not intended to be reversible.
 {{RFC3156}} defines another way to sign cleartext messages for environments that support MIME.)
 
@@ -2803,9 +2803,7 @@ Here are the fields of the hash material, with the example of a DSA key:
 
 a.1) 0x99 (1 octet)
 
-a.2) high-order length octet of (b)-(e) (1 octet)
-
-a.3) low-order length octet of (b)-(e) (1 octet)
+a.2) two-octet scalar octet count of (b)-(e)
 
 b) version number = 4 (1 octet);
 
@@ -3076,7 +3074,7 @@ Steps:
    If the hash function outputs "message too long," output "message too long" and stop.
 
 2. Using the list in {{version-three-sig}}, produce an ASN.1 DER value for the hash function used.
-   Let T be the full hash prefix from {{version-three-sig}}, and let tLen be the length in octets of T.
+   Let T be the full hash prefix from the list, and let tLen be the length in octets of T.
 
 3. If emLen < tLen + 11, output "intended encoded message length too short" and stop.
 
