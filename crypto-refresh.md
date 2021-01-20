@@ -773,10 +773,8 @@ Two versions of Signature packets are defined.
 Version 3 provides basic signature information, while version 4 provides an expandable format with subpackets that can specify more information about the signature.
 PGP 2.6.x only accepts version 3 signatures.
 
-Implementations SHOULD accept V3 signatures.
 Implementations SHOULD generate V4 signatures.
-
-Note that if an implementation is creating an encrypted and signed message that is encrypted to a V3 key, it is reasonable to create a V3 signature.
+Implementations MUST NOT create version 3 signatures; they MAY accept version 3 signatures.
 
 ### Signature Types {#signature-types}
 
