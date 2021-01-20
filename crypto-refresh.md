@@ -1820,6 +1820,11 @@ BZip2-compressed packets are compressed using the BZip2 {{BZ2}} algorithm.
 The Symmetrically Encrypted Data packet contains data encrypted with a symmetric-key algorithm.
 When it has been decrypted, it contains other packets (usually a literal data packet or compressed data packet, but in theory other Symmetrically Encrypted Data packets or sequences of packets that form whole OpenPGP messages).
 
+This packet is obsolete.
+An implementation MUST NOT create this packet.
+An implementation MAY process such a packet but it MUST return a clear diagnostic that a non-integrity protected packet has been processed.
+The implementation SHOULD also return an error in this case and stop processing.
+
 The body of this packet consists of:
 
 - Encrypted data, the output of the selected symmetric-key cipher operating in OpenPGP's variant of Cipher Feedback (CFB) mode.
