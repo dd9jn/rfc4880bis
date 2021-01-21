@@ -192,6 +192,7 @@ normative:
   RFC3629:
   RFC3713:
   RFC4086:
+  RFC7748:
   RFC8126:
   SCHNEIER:
     title: "Applied Cryptography Second Edition: protocols, algorithms, and source code in C"
@@ -2445,6 +2446,7 @@ ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representatio
 1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256
 1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384
 1.3.132.0.35            | 5  | 2B 81 04 00 23                | NIST P-521
+1.3.6.1.4.1.3029.1.5.1  | 10 | 2B 06 01 04 01 97 55 01 05 01 | Curve25519
 
 The sequence of octets in the third column is the result of applying the Distinguished Encoding Rules (DER) to the ASN.1 Object Identifier with subsequent truncation.
 The truncation removes the two fields of encoded Object Identifier.
@@ -2866,6 +2868,7 @@ A thorough introduction to ECC can be found in {{KOBLITZ}}.
 ## Supported ECC Curves
 
 This document references three named prime field curves, defined in {{FIPS186}} as "Curve P-256", "Curve P-384", and "Curve P-521".
+Further curve "Curve25519", defined in {{RFC7748}} is referenced for use with X25519 (ECDH encryption).
 
 The named curves are referenced as a sequence of bytes in this document, called throughout, curve OID.
 {{ecc-curve-oid}} describes in detail how this sequence of bytes is formed.
@@ -2890,7 +2893,7 @@ For a custom compressed point the content of the MPI is:
 where x is the x coordinate of the point P encoded to the rules defined for the specified curve.
 This format is used for ECDH keys based on curves expressed in Montgomery form.
 
-Therefore, the exact size of the MPI payload is 515 bits for "Curve P-256", 771 for "Curve P-384", and 1059 for "Curve P-521".
+Therefore, the exact size of the MPI payload is 515 bits for "Curve P-256", 771 for "Curve P-384", 1059 for "Curve P-521", and 263 for Curve25519.
 
 Even though the zero point, also called the point at infinity, may occur as a result of arithmetic operations on points of an elliptic curve, it SHALL NOT appear in data structures defined in this document.
 
@@ -2952,7 +2955,7 @@ The KDF parameters are encoded as a concatenation of the following 5 variable-le
 - 20 octets representing a recipient encryption subkey or a master key fingerprint, identifying the key material that is needed for the decryption.
   For version 5 keys the 20 leftmost octets of the fingerprint are used.
 
-The size of the KDF parameters sequence, defined above, is either 54 for the NIST curve P-256, or 51 for the curves P-384 and P-521.
+The size of the KDF parameters sequence, defined above, is either 54 for the NIST curve P-256, 51 for the curves P-384 and P-521, or 56 for Curve25519.
 
 The key wrapping method is described in {{RFC3394}}.
 KDF produces a symmetric key that is used as a key-encryption key (KEK) as specified in {{RFC3394}}.
@@ -3472,7 +3475,7 @@ NIST P-521 | SHA2-512 | AES-256
 
 ## OpenPGP ECC Profile
 
-A compliant application MUST implement NIST curve P-256, and SHOULD implement NIST curve P-521, as defined in {{ecc-curve-oid}}.
+A compliant application MUST implement NIST curve P-256, SHOULD implement NIST curve P-521, and SHOULD implement Curve25519 as defined in {{ecc-curve-oid}}.
 A compliant application MUST implement SHA2-256 and SHOULD implement SHA2-384 and SHA2-512.
 A compliant application MUST implement AES-128 and SHOULD implement AES-256.
 
