@@ -3565,6 +3565,19 @@ An open problem can be recorded and tracked as [an issue](https://gitlab.com/ope
 
 \[Note to RFC-Editor: Please remove this section on publication.\]
 
+# ECC Point compression flag bytes
+
+This specification introduces the new flag byte 0x40 to indicate the point compression format.
+The value has been chosen so that the high bit is not cleared and thus to avoid accidental sign extension.
+Two other values might also be interesting for other ECC specifications:
+
+      Flag  Description
+      ----  -----------
+      0x04  Standard flag for uncompressed format
+      0x40  Native point format of the curve follows
+      0x41  Only X coordinate follows.
+      0x42  Only Y coordinate follows.
+
 # Acknowledgements
 
 This memo also draws on much previous work from a number of other authors, including: Derek Atkins, Charles Breed, Dave Del Torto, Marc Dyksterhouse, Gail Haspert, Gene Hoffman, Paul Hoffman, Ben Laurie, Raph Levien, Colin Plumb, Will Price, David Shaw, William Stallings, Mark Weaver, and Philip R.
