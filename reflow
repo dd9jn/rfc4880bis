@@ -1,4 +1,48 @@
 #!/usr/bin/python3
+'''reflow RFC markdown for one line per sentence
+
+Note that it is intended to focus on a very idiosycratic subset of
+markdown for RFCs.  In particular:
+
+- it expects the leading YAML block, but it ignores its content
+
+- bulleted lists use '-' for bullets, and are indented by only two
+  spaces per level
+
+- all lists start at indent level 0
+
+- headings are all prefixed by #, not underlined
+
+- all tables begin with a clear {: title="foo"} marker
+
+- bulleted lists aren't nested more than two levels deep
+
+- definition lists aren't nested at all
+
+- verbatim text is indicated by indent of four spaces, not delimited
+  by header/footer lines
+
+If your source doesn't (or can't) follow these conventions, you might
+need to augment this tool.
+
+This script operates on standard in and writes to stdout.
+
+You can use it something like:
+
+    reflow < xxx.md > xxx.reflowed.md
+    make xxx.txt xxx.reflowed.txt
+    diff xxx.txt xxx.reflowed.txt
+    # if all looks reasonable:
+    mv xxx.reflowed.md xxx.md
+    git commit xxx.md -m 'reflowed text (no semantic changes)'
+    
+
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+License: CC0
+Please feel free to reuse this and distribute it in any way you like.
+
+'''
+
 
 import re
 import sys
