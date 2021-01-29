@@ -1,7 +1,7 @@
 ---
 title: OpenPGP Message Format
 docname: draft-ietf-openpgp-crypto-refresh-00
-date: 2021-01
+date: 2021-01-29
 category: std
 obsoletes: 4880
 ipr: trust200902
