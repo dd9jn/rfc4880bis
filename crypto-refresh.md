@@ -22,10 +22,12 @@ author:
     country: Germany
     email: wk@gnupg.org
     uri: https://gnupg.org/verein
+    role: editor
   -
     ins: P. Wouters
     name: Paul Wouters
-    email: paul@nohats.ca
+    email: pwouters@redhat.com
+    role: editor
 informative:
   BLEICHENBACHER:
     title: Generating ElGamal Signatures Without Knowing the Secret Key
