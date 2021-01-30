@@ -3099,6 +3099,19 @@ Thus, this is a non-comprehensive list of potential problems and gotchas for a d
 
 --- back
 
+# Document Workflow
+
+This document is built from markdown using [ruby-kramdown-rfc2629](https://rubygems.org/gems/kramdown-rfc2629), and tracked using [git](https://git-scm.com/).
+The markdown source under development can be found in the file `crypto-refresh.md` in the `main` branch of the [git repository](https://gitlab.com/openpgp-wg/rfc4880bis).
+Discussion of this document should take place on the [openpgp@ietf.org mailing list](https://www.ietf.org/mailman/listinfo/openpgp).
+
+A non-substantive editorial nit can be submitted directly as a [merge request](https://gitlab.com/openpgp-wg/rfc4880bis/-/merge_requests/new).
+A substantive proposed edit may also be submitted as a merge request, but should simultaneously be sent to the mailing list for discussion.
+
+An open problem can be recorded and tracked as [an issue](https://gitlab.com/openpgp-wg/rfc4880bis/-/issues) in the gitlab issue tracker, but discussion of the issue should take place on the mailing list.
+
+\[Note to RFC-Editor: Please remove this section on publication.\]
+
 # Acknowledgements
 
 This memo also draws on much previous work from a number of other authors, including: Derek Atkins, Charles Breed, Dave Del Torto, Marc Dyksterhouse, Gail Haspert, Gene Hoffman, Paul Hoffman, Ben Laurie, Raph Levien, Colin Plumb, Will Price, David Shaw, William Stallings, Mark Weaver, and Philip R.
