@@ -7,3 +7,7 @@ rfc4880bis.txt.diff
 .refcache/
 metadata.min.js
 *~
+/crypto-refresh.html
+/crypto-refresh.txt
+/crypto-refresh.xml
+/crypto-refresh.xmlv2

@@ -1,11 +1,12 @@
-#!/usr/bin/make -f
+# Render crypto-refresh.md into an I-D
 #
-# Prerequisites: apt install ruby-kramdown-rfc2629 xml2rfc
+# Prerequisites: ruby-kramdown-rfc2629 xml2rfc GNU-Make python
 #
-# For pdf output, also:     apt install weasyprint
+# For pdf output, also: weasyprint
+# Tested with the Debian versions of the tools
 
-draft = rfc4880bis
-OUTPUT = $(draft).txt $(draft).html $(draft).xml rfc4880.trimmed.txt
+draft = crypto-refresh
+OUTPUT = $(draft).txt $(draft).html $(draft).xml
 
 all: $(OUTPUT)
 
