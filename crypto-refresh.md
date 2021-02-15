@@ -9,7 +9,10 @@ area: sec
 workgroup: Network Working Group
 keyword: Internet-Draft
 stand_alone: yes
-pi: [toc, sortrefs, symrefs]
+pi:
+  toc: yes
+  sortrefs: yes
+  symrefs: yes
 author:
   -
     ins: W. Koch
