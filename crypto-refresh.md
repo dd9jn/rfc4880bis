@@ -11,6 +11,7 @@ keyword: Internet-Draft
 stand_alone: yes
 pi:
   toc: yes
+  tocdepth: 4
   sortrefs: yes
   symrefs: yes
 author:
