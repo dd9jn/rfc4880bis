@@ -1,6 +1,6 @@
 ---
 title: OpenPGP Message Format
-docname: draft-ietf-openpgp-crypto-refresh-01
+docname: draft-ietf-openpgp-crypto-refresh-02
 category: std
 obsoletes: 4880, 5581, 6637
 ipr: trust200902
@@ -3303,7 +3303,7 @@ If there were two versions each with 256-bit hashes, they could not both have 32
 
 Yet another, complex approach to extend the MDC system would be a hybrid of the two above --- create a new pair of MDC packets that are fully parameterized, and yet protected from downgrade and cross-grade.
 
-Any change to the MDC system MUST be done through the IETF CONSENSUS method, as described in {{RFC2434}}.
+Any change to the MDC system MUST be done through the IETF CONSENSUS method, as described in {{RFC8126}}.
 
 ## Meta-Considerations for Expansion {#meta-considerations-for-expansion}
 
