@@ -273,8 +273,7 @@ This document obsoletes: RFC 4880 (OpenPGP), RFC 5581 (Camellia in OpenPGP) and 
 - OpenPGP - This is a term for security software that uses PGP 5 as a basis, formalized in this document.
 
 - PGP - Pretty Good Privacy.
-  PGP is a family of software systems developed by Philip R.
-  Zimmermann from which OpenPGP is based.
+  PGP is a family of software systems developed by Philip R. Zimmermann from which OpenPGP is based.
 
 - PGP 2 - This version of PGP has many variants; where necessary a more detailed version number is used here.
   PGP 2 uses only RSA, MD5, and IDEA for its cryptographic transforms.
@@ -3997,8 +3996,7 @@ Two other values might also be interesting for other ECC specifications:
 
 # Acknowledgements
 
-This memo also draws on much previous work from a number of other authors, including: Derek Atkins, Charles Breed, Dave Del Torto, Marc Dyksterhouse, Gail Haspert, Gene Hoffman, Paul Hoffman, Ben Laurie, Raph Levien, Colin Plumb, Will Price, David Shaw, William Stallings, Mark Weaver, and Philip R.
-Zimmermann.
+This memo also draws on much previous work from a number of other authors, including: Derek Atkins, Charles Breed, Dave Del Torto, Marc Dyksterhouse, Gail Haspert, Gene Hoffman, Paul Hoffman, Ben Laurie, Raph Levien, Colin Plumb, Will Price, David Shaw, William Stallings, Mark Weaver, and Philip R. Zimmermann.
 
 # Document Workflow
 
