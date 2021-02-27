@@ -108,6 +108,12 @@ def reflow(para:str) -> str:
     # assume all sentences split with a period (.), and not ! or ?
     # also, accept accidental breaks on abbreviations like John Q. Public
     sentences:List[str] = x.split('. ')
+    # manually avoid a specific problematic split:
+    i:int
+    for i in range(0,len(sentences)-1):
+        if sentences[i].strip().endswith('Philip R') and sentences[i+1].strip().startswith('Zimmermann'):
+            sentences = sentences[:i] + [sentences[i] + '. ' + sentences[i+1]] + sentences[i+2:]
+            break
 
     # avoid splitting on a numbered list:
     list_number = re.compile('^[0-9]+$').match(sentences[0])
