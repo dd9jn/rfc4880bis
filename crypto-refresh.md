@@ -2944,7 +2944,7 @@ Here are the fields of the hash material, with the example of a DSA key:
 
 a.1) 0x99 (1 octet)
 
-a.2) two-octet scalar octet count of (b)-(e)
+a.2) two-octet, big-endian scalar octet count of (b)-(e)
 
 b) version number = 4 (1 octet);
 
