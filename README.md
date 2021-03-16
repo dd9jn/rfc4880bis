@@ -21,7 +21,8 @@ To build a new version of the draft, use:
     make
 
 This will produce a local `crypto-refresh.html` and `crypto-refresh.txt` for review.
-If both of those resulting files look OK, then one of the editors should submit the generated copy of `crypto-refresh.xml` to [the datatracker](https://datatracker.ietf.org/submit/).
+If both of those resulting files look OK and contain all the intended revisions, then one of the editors should submit the generated copy of `crypto-refresh.xml` to [the datatracker](https://datatracker.ietf.org/submit/).
+When such a draft is submitted, the author should tag the document and immediately update the version number in the `docname` label at the top of `crypto-refresh.md` in preparation for future work.
 
 ## Other Files in this Repository
 
