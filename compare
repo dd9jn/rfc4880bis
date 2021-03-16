@@ -1,9 +1,0 @@
-#!/bin/bash
-
-canon() {
-    ./canonicalizetxt < "$1"
-}
-
-lasttxt="$(ls draft-ietf-openpgp-rfc4880bis-0* | tail -n1)"
-
-exec diff -u <(canon "$lasttxt") <(canon rfc4880bis.txt)
