@@ -2677,6 +2677,7 @@ Adding a new Signature Notation Data subpacket MUST be done through the SPECIFIC
 
 This specification creates a new registry of Signature Notation Data Subpacket Notation Flags.
 The registry includes the columns "Flag", "Description", "Security Recommended", "Interoperability Recommended", and "Reference".
+The initial values for this registry can be found in {{notation-data}}.
 Adding a new item MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 #### Key Server Preference Extensions
