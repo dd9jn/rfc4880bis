@@ -2804,7 +2804,7 @@ The essential elements of a transferable public key are as follows:
 
 - Zero or more revocation signatures
 
-- One or more User ID packets
+- Zero or more User ID packets
 
 - After each User ID packet, zero or more Signature packets (certifications)
 
@@ -2819,6 +2819,7 @@ The essential elements of a transferable public key are as follows:
 The Public-Key packet occurs first.
 Each of the following User ID packets provides the identity of the owner of this public key.
 If there are multiple User ID packets, this corresponds to multiple means of identifying the same unique individual user; for example, a user may have more than one email address, and construct a User ID for each one.
+A transferable public key SHOULD include at least one User ID packet unless storage requirements prohibit this.
 
 Immediately following each User ID packet, there are zero or more Signature packets.
 Each Signature packet is calculated on the immediately preceding User ID packet and the initial Public-Key packet.
@@ -2911,7 +2912,6 @@ The format of an OpenPGP V4 key that uses multiple public keys is similar except
     Primary-Key
        [Revocation Self Signature]
        [Direct Key Signature...]
-        User ID [Signature ...]
        [User ID [Signature ...] ...]
        [User Attribute [Signature ...] ...]
        [[Subkey [Binding-Signature-Revocation]
