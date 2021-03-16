@@ -1137,6 +1137,7 @@ MUST be present in the hashed area.
 (8-octet Key ID)
 
 The OpenPGP Key ID of the key issuing the signature.
+If the version of that key is greater than 4, this subpacket MUST NOT be included in the signature.
 
 #### Key Expiration Time
 
