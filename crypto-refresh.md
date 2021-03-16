@@ -1136,7 +1136,7 @@ Type | Description
  31 | Signature Target
  32 | Embedded Signature
  33 | Issuer Fingerprint
- 34 | Reserved (Preferred AEAD Algorithms)
+ 34 | Preferred AEAD Algorithms
  35 | Intended Recipient Fingerprint
  37 | Reserved (Attested Certifications)
  38 | Reserved (Key Block)
@@ -1151,7 +1151,7 @@ If a subpacket is encountered that is marked critical but is unknown to the eval
 An evaluator may "recognize" a subpacket, but not implement it.
 The purpose of the critical bit is to allow the signer to tell an evaluator that it would prefer a new, unknown feature to generate an error than be ignored.
 
-Implementations SHOULD implement the three preferred algorithm subpackets (11, 21, and 22), as well as the "Reason for Revocation" subpacket.
+Implementations SHOULD implement the four preferred algorithm subpackets (11, 21, 22, and 34), as well as the "Reason for Revocation" subpacket.
 Note, however, that if an implementation chooses not to implement some of the preferences, it is required to behave in a polite manner to respect the wishes of those users who do implement these preferences.
 
 #### Signature Subpacket Types
@@ -1227,6 +1227,17 @@ The subpacket body is an ordered list of octets with the most preferred listed f
 It is assumed that only algorithms listed are supported by the recipient's software.
 Algorithm numbers are in {{symmetric-algos}}.
 This is only found on a self-signature.
+
+#### Preferred AEAD Algorithms
+
+(array of one-octet values)
+
+AEAD algorithm numbers that indicate which AEAD algorithms the key holder prefers to use.
+The subpacket body is an ordered list of octets with the most preferred listed first.
+It is assumed that only algorithms listed are supported by the recipient's software.
+Algorithm numbers are in {{aead-algorithms}}.
+This is only found on a self-signature.
+Note that support for the AEAD Encrypted Data packet in the general is indicated by a Feature Flag.
 
 #### Preferred Hash Algorithms
 
