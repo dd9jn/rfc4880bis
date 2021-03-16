@@ -2234,7 +2234,8 @@ The last decrypted packet in this packet's payload MUST be a Modification Detect
 The body of this packet consists of:
 
 - A one-octet version number.
-  The only currently defined value is 1.
+  The only defined value is 1.
+  There won't be any future versions of this packet because the MDC system has been superseded by the AEAD Encrypted Data packet.
 
 - Encrypted data, the output of the selected symmetric-key cipher operating in Cipher Feedback mode with shift amount equal to the block size of the cipher (CFB-n where n is the block size).
 
@@ -2267,8 +2268,6 @@ The body of the MDC packet, upon decryption, is compared with the result of the 
 Any failure of the MDC indicates that the message has been modified and MUST be treated as a security problem.
 Failures include a difference in the hash values, but also the absence of an MDC packet, or an MDC packet in any position other than the end of the plaintext.
 Any failure SHOULD be reported to the user.
-
-Note: future designs of new versions of this packet should consider rollback attacks since it will be possible for an attacker to change the version back to 1.
 
 >   NON-NORMATIVE EXPLANATION
 >
@@ -2321,9 +2320,8 @@ Note: future designs of new versions of this packet should consider rollback att
 >   would replace SHA-1 with another 160-bit hash, such as
 >   RIPE-MD/160, for example.)
 >
->   However, given the present state of hash function cryptanalysis
->   and cryptography, it may be desirable to upgrade the MDC system to
->   a new hash function.  See {{extension-of-mdc}} for guidance.
+>   However, no update will be needed because the MDC will be replaced
+>   by the AEAD encryption described in this document.
 
 ## Modification Detection Code Packet (Tag 19)
 
@@ -3789,31 +3787,6 @@ These are intentionally managed with the PRIVATE USE method, as described in {{R
 
 However, implementations need to be careful with these and promote them to full IANA-managed parameters when they grow beyond the original, limited system.
 
-## Extension of the MDC System {#extension-of-mdc}
-
-As described in the non-normative explanation in {{seipd}}, the MDC system is uniquely unparameterized in OpenPGP.
-This was an intentional decision to avoid cross-grade attacks.
-If the MDC system is extended to a stronger hash function, care must be taken to avoid downgrade and cross-grade attacks.
-
-One simple way to do this is to create new packets for a new MDC.
-For example, instead of the MDC system using packets 18 and 19, a new MDC could use 20 and 21.
-This has obvious drawbacks (it uses two packet numbers for each new hash function in a space that is limited to a maximum of 60).
-
-Another simple way to extend the MDC system is to create new versions of packet 18, and reflect this in packet 19.
-For example, suppose that V2 of packet 18 implicitly used SHA-256.
-This would require packet 19 to have a length of 32 octets.
-The change in the version in packet 18 and the size of packet 19 prevent a downgrade attack.
-
-There are two drawbacks to this latter approach.
-The first is that using the version number of a packet to carry algorithm information is not tidy from a protocol-design standpoint.
-It is possible that there might be several versions of the MDC system in common use, but this untidiness would reflect untidiness in cryptographic consensus about hash function security.
-The second is that different versions of packet 19 would have to have unique sizes.
-If there were two versions each with 256-bit hashes, they could not both have 32-octet packet 19s without admitting the chance of a cross-grade attack.
-
-Yet another, complex approach to extend the MDC system would be a hybrid of the two above --- create a new pair of MDC packets that are fully parameterized, and yet protected from downgrade and cross-grade.
-
-Any change to the MDC system MUST be done through the IETF CONSENSUS method, as described in {{RFC8126}}.
-
 ## Meta-Considerations for Expansion {#meta-considerations-for-expansion}
 
 If OpenPGP is extended in a way that is not backwards-compatible, meaning that old implementations will not gracefully handle their absence of a new feature, the extension proposal can be declared in the key holder's self-signature as part of the Features signature subpacket.
@@ -3889,18 +3862,19 @@ Asymmetric key size | Hash size | Symmetric key size
   Because of this happenstance --- that modification attacks can be thwarted by decompression errors --- an implementation SHOULD treat a decompression error as a security problem, not merely a data problem.
 
   This attack can be defeated by the use of Modification Detection, provided that the implementation does not let the user naively return the data to the attacker.
-  An implementation MUST treat an MDC failure as a security problem, not merely a data problem.
+  The modification detection is prefereabble implemented by using the AEAD Encrypted Data Packet and only if the recipients don't supports this by use of the Symmmetric Encrypted and Integrity Protected Data Packet.
+  An implementation MUST treat an authentication or MDC failure as a security problem, not merely a data problem.
 
-  In either case, the implementation MAY allow the user access to the erroneous data, but MUST warn the user as to potential security problems should that data be returned to the sender.
+  In either case, the implementation SHOULD NOT allow the user access to the erroneous data, and MUST warn the user as to potential security problems should that data be returned to the sender.
 
   While this attack is somewhat obscure, requiring a special set of circumstances to create it, it is nonetheless quite serious as it permits someone to trick a user to decrypt a message.
   Consequently, it is important that:
 
-  1. Implementers treat MDC errors and decompression failures as security problems.
+  1. Implementers treat authentication errors, MDC errors, decompression failures or no use of MDC or AEAD as security problems.
 
-  2. Implementers implement Modification Detection with all due speed and encourage its spread.
+  2. Implementers implement AEAD with all due speed and encourage its spread.
 
-  3. Users migrate to implementations that support Modification Detection with all due speed.
+  3. Users migrate to implementations that support AEAD encryption with all due speed.
 
 - PKCS#1 has been found to be vulnerable to attacks in which a system that reports errors in padding differently from errors in decryption becomes a random oracle that can leak the private key in mere millions of queries.
   Implementations must be aware of this attack and prevent it from happening.
