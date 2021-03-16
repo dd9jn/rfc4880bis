@@ -2824,7 +2824,8 @@ ID | Algorithm
 100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement uncompressed data.
-Implementations SHOULD implement ZIP.
+Implementations SHOULD implement ZLIB.
+For interoperability reasons implementations SHOULD be able to decompress using ZIP.
 Implementations MAY implement any other algorithm.
 
 ## Hash Algorithms {#hash-algos}
