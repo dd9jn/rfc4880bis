@@ -1107,8 +1107,8 @@ Lastly, subpackets on the direct-key signature apply to the entire key.
 
 Implementing software should interpret a self-signature's preference subpackets as narrowly as possible.
 For example, suppose a key has two user names, Alice and Bob.
-Suppose that Alice prefers the symmetric algorithm CAST5, and Bob prefers IDEA or TripleDES.
-If the software locates this key via Alice's name, then the preferred algorithm is CAST5; if software locates the key via Bob's name, then the preferred algorithm is IDEA.
+Suppose that Alice prefers the symmetric algorithm AES-256, and Bob prefers Camellia-256 or AES-128.
+If the software locates this key via Alice's name, then the preferred algorithm is AES-256; if software locates the key via Bob's name, then the preferred algorithm is Camellia-256.
 If the key is located by Key ID, the algorithm of the primary User ID of the key provides the preferred symmetric algorithm.
 
 Revoking a self-signature or allowing it to expire has a semantic meaning that varies with the signature type.
@@ -3263,7 +3263,7 @@ Steps:
 
 The symmetric algorithm preference is an ordered list of algorithms that the keyholder accepts.
 Since it is found on a self-signature, it is possible that a keyholder may have multiple, different preferences.
-For example, Alice may have TripleDES only specified for "alice@work.com" but CAST5, Blowfish, and TripleDES specified for "alice@home.org".
+For example, Alice may have AES-128 only specified for "alice@work.com" but Camellia-256, Twofish, and AES-128 specified for "alice@home.org".
 Note that it is also possible for preferences to be in a subkey's binding signature.
 
 Since TripleDES is the MUST-implement algorithm, if it is not explicitly in the list, it is tacitly at the end.
