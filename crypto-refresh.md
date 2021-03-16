@@ -3824,6 +3824,169 @@ The entire signature packet is thus:
        d0 9c 4f a1 15 27 f0 38  e0 f5 7f 22 01 d8 2f 2e
        a2 c9 03 32 65 fa 6c eb  48 9e 85 4b ae 61 b4 04
 
+
+## Sample AEAD-EAX encryption and decryption
+
+Encryption is performed with the string `Hello, world!`, using AES-128 with AEAD-EAX encryption.
+
+### Initial Content Encryption Key
+
+This key would typically be extracted from an SKESK or PKESK.
+
+CEK:
+
+      86 f1 ef b8 69 52 32 9f 24 ac d3 bf d0 e5 34 6d
+
+### Sample AEAD encrypted data packet
+
+Packet header:
+
+      d4 4a
+
+Version, AES-128, EAX, Chunk bits (14):
+
+      01 07 01 0e
+
+IV:
+
+      b7 32 37 9f 73 c4 92 8d e2 5f ac fe 65 17 ec 10
+
+AEAD-EAX Encrypted data chunk #0:
+
+      5d c1 1a 81 dc 0c b8 a2 f6 f3 d9 00 16 38 4a 56
+      fc 82 1a e1 1a e8
+
+Chunk #0 authentication tag:
+
+      db cb 49 86 26 55 de a8 8d 06 a8 14 86 80 1b 0f
+
+Final (zero-size chunk #1) authentication tag:
+
+      f3 87 bd 2e ab 01 3d e1 25 95 86 90 6e ab 24 76
+
+### Decryption of data
+
+Starting AEAD-EAX decryption of data, using the CEK.
+
+Chunk #0:
+
+Authenticated data:
+
+      d4 01 07 01 0e 00 00 00 00 00 00 00 00
+
+Nonce:
+
+      b7 32 37 9f 73 c4 92 8d e2 5f ac fe 65 17 ec 10
+
+Decrypted chunk #0.
+
+Literal data packet with the string contents 'Hello, world!\n'.
+
+      cb 14 62 00 00 00 00 00  48 65 6c 6c 6f 2c 20 77
+      6f 72 6c 64 21 0a
+
+Authenticating final tag:
+
+Authenticated data:
+
+      d4 01 07 01 0e 00 00 00  00 00 00 00 01 00 00 00
+      00 00 00 00 16
+
+Nonce:
+
+      b7 32 37 9f 73 c4 92 8d e2 5f ac fe 65 17 ec 11
+
+### Complete AEAD-EAX encrypted packet sequence
+
+AEAD encrypted data packet:
+
+       d4 4a 01 07 01 0e b7 32  37 9f 73 c4 92 8d e2 5f
+       ac fe 65 17 ec 10 5d c1  1a 81 dc 0c b8 a2 f6 f3
+       d9 00 16 38 4a 56 fc 82  1a e1 1a e8 db cb 49 86
+       26 55 de a8 8d 06 a8 14  86 80 1b 0f f3 87 bd 2e
+       ab 01 3d e1 25 95 86 90  6e ab 24 76
+
+## Sample AEAD-OCB encryption and decryption
+
+Encryption is performed with the string `Hello, world!` using AES-128 with AEAD-OCB encryption.
+
+### Initial Content Encryption Key
+
+This key would typically be extracted from an SKESK or PKESK.
+
+Decrypted CEK:
+
+      d1 f0 1b a3 0e 13 0a a7 d2 58 2c 16 e0 50 ae 44
+
+### Sample AEAD encrypted data packet
+
+Packet header:
+
+      d4 49
+
+Version, AES-128, OCB, Chunk bits (14):
+
+      01 07 02 0e
+
+IV:
+
+      5e d2 bc 1e 47 0a be 8f 1d 64 4c 7a 6c 8a 56
+
+AEAD-OCB Encrypted data chunk #0:
+
+      7b 0f 77 01 19 66 11 a1  54 ba 9c 25 74 cd 05 62
+      84 a8 ef 68 03 5c
+
+Chunk #0 authentication tag:
+
+      62 3d 93 cc 70 8a 43 21 1b b6 ea f2 b2 7f 7c 18
+
+Final (zero-size chunk #1) authentication tag:
+
+      d5 71 bc d8 3b 20 ad d3 a0 8b 73 af 15 b9 a0 98
+
+### Decryption of data
+
+Starting AEAD-OCB decryption of data, using the CEK.
+
+Chunk #0:
+
+Authenticated data:
+
+      r4 01 07 02 0e 00 00 00 00 00 00 00 00
+
+Nonce:
+
+      5e d2 bc 1e 47 0a be 8f 1d 64 4c 7a 6c 8a 56
+
+Decrypted chunk #0.
+
+Literal data packet with the string contents 'Hello, world!\n'.
+
+      cb 14 62 00 00 00 00 00  48 65 6c 6c 6f 2c 20 77
+      6f 72 6c 64 21 0a
+
+Authenticating final tag:
+
+Authenticated data:
+
+      d4 01 07 02 0e 00 00 00 00 00 00 00 01 00 00 00
+      00 00 00 00 16
+
+Nonce:
+
+      5e d2 bc 1e 47 0a be 8f 1d 64 4c 7a 6c 8a 57
+
+### Complete AEAD-OCB encrypted packet sequence
+
+AEAD encrypted data packet:
+
+      d4 49 01 07 02 0e 5e d2  bc 1e 47 0a be 8f 1d 64
+      4c 7a 6c 8a 56 7b 0f 77  01 19 66 11 a1 54 ba 9c
+      25 74 cd 05 62 84 a8 ef  68 03 5c 62 3d 93 cc 70
+      8a 43 21 1b b6 ea f2 b2  7f 7c 18 d5 71 bc d8 3b
+      20 ad d3 a0 8b 73 af 15  b9 a0 98
+
 # ECC Point compression flag bytes
 
 This specification introduces the new flag byte 0x40 to indicate the point compression format.
