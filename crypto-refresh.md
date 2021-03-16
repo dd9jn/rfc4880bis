@@ -2807,8 +2807,9 @@ ID | Algorithm
 100 to 110 | Private/Experimental algorithm
 253, 254 and 255 | Reserved to avoid collision with Secret Key Encryption (see {{secret-key-encryption}} and {{secret-key-packet-formats}})
 
-Implementations MUST implement TripleDES.
-Implementations SHOULD implement AES-128 and CAST5.
+Implementations MUST implement AES-128.
+Implementations SHOULD implement AES-256.
+Implementations that interoperate with {{RFC4880}} implementations need to support TripleDES and CAST5.
 Implementations MAY implement any other algorithm.
 
 ## Compression Algorithms {#compression-algos}
@@ -3607,13 +3608,14 @@ Since it is found on a self-signature, it is possible that a keyholder may have 
 For example, Alice may have AES-128 only specified for "alice@work.com" but Camellia-256, Twofish, and AES-128 specified for "alice@home.org".
 Note that it is also possible for preferences to be in a subkey's binding signature.
 
-Since TripleDES is the MUST-implement algorithm, if it is not explicitly in the list, it is tacitly at the end.
+Since AES-128 is the MUST-implement algorithm, if it is not explicitly in the list, it is tacitly at the end.
 However, it is good form to place it there explicitly.
-Note also that if an implementation does not implement the preference, then it is implicitly a TripleDES-only implementation.
+Note also that if an implementation does not implement the preference, then it is implicitly an AES-128-only implementation.
+Note further that implementations conforming to previous versions of this standard {{RFC4880}} have TripleDES as its only MUST-implement algorithm.
 
 An implementation MUST NOT use a symmetric algorithm that is not in the recipient's preference list.
 When encrypting to more than one recipient, the implementation finds a suitable algorithm by taking the intersection of the preferences of the recipients.
-Note that the MUST-implement algorithm, TripleDES, ensures that the intersection is not null.
+Note that the MUST-implement algorithm, AES-128, ensures that the intersection is not null.
 The implementation may use any mechanism to pick an algorithm in the intersection.
 
 If an implementation can decrypt a message that a keyholder doesn't have in their preferences, the implementation SHOULD decrypt the message anyway, but MUST warn the keyholder that the protocol has been violated.
