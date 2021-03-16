@@ -1238,7 +1238,9 @@ A description of the syntax is found in {{regular-expressions}}.
 
 #### Revocation Key
 
-(1 octet of class, 1 octet of public-key algorithm ID, 20 octets of fingerprint)
+(1 octet of class, 1 octet of public-key algorithm ID, 20 or 32 octets of fingerprint)
+
+V4 keys use the full 20 octet fingerprint; V5 keys use the full 32 octet fingerprint
 
 Authorizes the specified key to issue revocation signatures for this key.
 Class octet must have bit 0x80 set.
@@ -1442,7 +1444,7 @@ feature | definition
 ---|--------------
 0x01 | Modification Detection (packets 18 and 19)
 0x02 | Reserved (AEAD Data & v5 SKESK)
-0x04 | Reserved (v5 pubkey & fingerprint)
+0x04 | Version 5 Public-Key Packet format and corresponding new fingerprint format
 
 If an implementation implements any of the defined features, it SHOULD implement the Features subpacket, too.
 
@@ -2907,6 +2909,34 @@ e.2) MPI of DSA group order q (q is a prime divisor of p-1);
 e.3) MPI of DSA group generator g;
 
 e.4) MPI of DSA public-key value y (= g**x mod p where x is secret).
+
+A V5 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9A, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
+The Key ID is the high-order 64 bits of the fingerprint.
+Here are the fields of the hash material, with the example of a DSA key:
+
+a.1) 0x9A (1 octet)
+
+a.2) four-octet scalar octet count of (b)-(f)
+
+b) version number = 5 (1 octet);
+
+c) timestamp of key creation (4 octets);
+
+d) algorithm (1 octet): 17 = DSA (example);
+
+e) four-octet scalar octet count for the following key material;
+
+f) algorithm-specific fields.
+
+Algorithm-Specific Fields for DSA keys (example):
+
+f.1) MPI of DSA prime p;
+
+f.2) MPI of DSA group order q (q is a prime divisor of p-1);
+
+f.3) MPI of DSA group generator g;
+
+f.4) MPI of DSA public-key value y (= g**x mod p where x is secret).
 
 Note that it is possible for there to be collisions of Key IDs --- two different keys with the same Key ID.
 Note that there is a much smaller, but still non-zero, probability that two different keys have the same fingerprint.
