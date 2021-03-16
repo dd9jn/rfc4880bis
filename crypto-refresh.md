@@ -1065,7 +1065,7 @@ Type | Description
  30 | Features
  31 | Signature Target
  32 | Embedded Signature
- 33 | Reserved (Issuer Fingerprint)
+ 33 | Issuer Fingerprint
  34 | Reserved (Preferred AEAD Algorithms)
  35 | Reserved (Intended Recipient Fingerprint)
  37 | Reserved (Attested Certifications)
@@ -1469,6 +1469,16 @@ For example, a target signature with a SHA-1 hash MUST have 20 octets of hash da
 
 This subpacket contains a complete Signature packet body as specified in {{signature-packet}}.
 It is useful when one signature needs to refer to, or be incorporated in, another signature.
+
+#### Issuer Fingerprint
+
+(1 octet key version number, N octets of fingerprint)
+
+The OpenPGP Key fingerprint of the key issuing the signature.
+This subpacket SHOULD be included in all signatures.
+If the version of the issuing key is 4 and an Issuer subpacket is also included in the signature, the key ID of the Issuer subpacket MUST match the low 64 bits of the fingerprint.
+
+Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 5 key N is 32.
 
 ### Computing Signatures {#computing-signatures}
 
