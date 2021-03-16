@@ -193,6 +193,7 @@ normative:
   RFC3713:
   RFC4086:
   RFC7748:
+  RFC8032:
   RFC8126:
   SCHNEIER:
     title: "Applied Cryptography Second Edition: protocols, algorithms, and source code in C"
@@ -978,6 +979,14 @@ The body of a version 4 Signature packet contains:
 
   - MPI of DSA or ECDSA value s.
 
+  Algorithm-Specific Fields for EdDSA signatures:
+
+  - MPI of an EC point r.
+
+  - EdDSA value s, in MPI, in the little endian representation.
+
+The format of R and S for use with EdDSA is described in {{RFC8032}}.
+A version 3 signature MUST NOT be created and MUST NOT be used with EdDSA.
 
 The concatenation of the data being signed and the signature data from the version number through the hashed subpacket data (inclusive) is hashed.
 The resulting hash value is what is signed.
@@ -986,6 +995,8 @@ The high 16 bits (first two octets) of the hash are included in the Signature pa
 There are two fields consisting of Signature subpackets.
 The first field is hashed with the rest of the signature data, while the second is unhashed.
 The second set of subpackets is not cryptographically protected by the signature and should include only advisory information.
+
+The difference between a V4 and V5 signature is that the latter includes additional meta data.
 
 The algorithms for converting the hash function result to a signature are described in a section below.
 
@@ -1766,6 +1777,22 @@ The secret key is this single multiprecision integer:
 
 - MPI of an integer representing the secret key, which is a scalar of the public EC point.
 
+### Algorithm-Specific Part for EdDSA Keys
+
+The public key is this series of values:
+
+- a variable-length field containing a curve OID, formatted as follows:
+
+  - a one-octet size of the following field; values 0 and 0xFF are reserved for future extensions,
+
+  - the octets representing a curve OID, defined in {{ecc-curve-oid}};
+
+- a MPI of an EC point representing a public key Q as described under EdDSA Point Format below.
+
+The secret key is this single multiprecision integer:
+
+- MPI of an integer representing the secret key, which is a scalar of the public EC point.
+
 ### Algorithm-Specific Part for ECDH Keys
 
 The public key is this series of values:
@@ -2414,7 +2441,7 @@ ID | Algorithm
  19 | ECDSA public key algorithm {{FIPS186}}
  20 | Reserved (formerly Elgamal Encrypt or Sign)
  21 | Reserved for Diffie-Hellman (X9.42, as defined for IETF-S/MIME)
- 22 | Reserved (EdDSA)
+ 22 | EdDSA  {{RFC8032}}
  23 | Reserved (AEDH)
  24 | Reserved (AEDSA)
 100 to 110 | Private/Experimental algorithm
@@ -2440,6 +2467,7 @@ ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representatio
 1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256
 1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384
 1.3.132.0.35            | 5  | 2B 81 04 00 23                | NIST P-521
+1.3.6.1.4.1.11591.15.1  | 9  | 2B 06 01 04 01 DA 47 0F 01    | Ed25519
 1.3.6.1.4.1.3029.1.5.1  | 10 | 2B 06 01 04 01 97 55 01 05 01 | Curve25519
 
 The sequence of octets in the third column is the result of applying the Distinguished Encoding Rules (DER) to the ASN.1 Object Identifier with subsequent truncation.
@@ -2634,6 +2662,15 @@ This specification creates a registry of public-key algorithm identifiers.
 The registry includes the algorithm name, its key sizes and parameters, and a reference to the defining specification.
 The initial values for this registry can be found in {{pubkey-algos}}.
 Adding a new public-key algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
+
+This document requests IANA register the following new public-key algorithm:
+
+{: title="New public-Key algorithms registered"}
+ID | Algorithm | Reference
+---:|----------|----------
+ 22 | EdDSA public key algorithm | This doc, {{eddsa}}
+
+   \[ Note to RFC-Editor: Please remove the table above on publication. \]
 
 ### Symmetric-Key Algorithms
 
@@ -2862,7 +2899,7 @@ A thorough introduction to ECC can be found in {{KOBLITZ}}.
 ## Supported ECC Curves
 
 This document references three named prime field curves, defined in {{FIPS186}} as "Curve P-256", "Curve P-384", and "Curve P-521".
-Further curve "Curve25519", defined in {{RFC7748}} is referenced for use with X25519 (ECDH encryption).
+Further curve "Curve25519", defined in {{RFC7748}} is referenced for use with Ed25519 (EdDSA signing) and X25519 (encryption).
 
 The named curves are referenced as a sequence of bytes in this document, called throughout, curve OID.
 {{ecc-curve-oid}} describes in detail how this sequence of bytes is formed.
@@ -2893,6 +2930,14 @@ Even though the zero point, also called the point at infinity, may occur as a re
 
 If other conversion methods are defined in the future, a compliant application MUST NOT use a new format when in doubt that any recipient can support it.
 Consider, for example, that while both the public key and the per-recipient ECDH data structure, respectively defined in {{algorithm-specific-part-for-ecdh-keys}} and {{public-key-encrypted-session-key-packets-tag-1}}, contain an encoded point field, the format changes to the field in {{public-key-encrypted-session-key-packets-tag-1}} only affect a given recipient of a given message.
+
+## EdDSA Point Format
+
+The EdDSA algorithm defines a specific point compression format.
+To indicate the use of this compression format and to make sure that the key can be represented in the Multiprecision Integer (MPI) format the octet string specifying the point is prefixed with the octet 0x40.
+This encoding is an extension of the encoding given in {{SEC1}} which uses 0x04 to indicate an uncompressed point.
+
+For example, the length of a public key for the curve Ed25519 is 263 bit: 7 bit to represent the 0x40 prefix octet and 32 octets for the native value of the public key.
 
 ## Key Derivation Function
 
@@ -3203,6 +3248,12 @@ Note that earlier versions of this standard only allowed a 160-bit q with no tru
 
 An implementation SHOULD NOT implement Elgamal keys of size less than 1024 bits.
 
+## EdDSA
+
+Although the EdDSA algorithm allows arbitrary data as input, its use with OpenPGP requires that a digest of the message is used as input (pre-hashed).
+See section {{computing-signatures}}, "Computing Signatures" for details.
+Truncation of the resulting digest is never applied; the resulting digest value is used verbatim as input to the EdDSA algorithm.
+
 ## Reserved Algorithm Numbers {#reserved-notes}
 
 A number of algorithm IDs have been reserved for algorithms that would be useful to use in an OpenPGP implementation, yet there are issues that prevent an implementer from actually implementing the algorithm.
@@ -3508,6 +3559,59 @@ Thus, this is a non-comprehensive list of potential problems and gotchas for a d
   Moreover, implementations of OpenPGP-MIME {{RFC3156}} already have a requirement for ASCII armor so those implementations will necessarily have support.
 
 --- back
+
+# Test vectors
+
+To help implementing this specification a non-normative example for the EdDSA algorithm is given.
+
+## Sample EdDSA key
+
+The secret key used for this example is:
+
+  D: 1a8b1ff05ded48e18bf50166c664ab023ea70003d78d9e41f5758a91d850f8d2
+
+Note that this is the raw secret key used as input to the EdDSA signing operation.
+The key was created on 2014-08-19 14:28:27 and thus the fingerprint of the OpenPGP key is:
+
+       C959 BDBA FA32 A2F8 9A15  3B67 8CFD E121 9796 5A9A
+
+The algorithm specific input parameters without the MPI length headers are:
+
+  oid: 2b06010401da470f01
+
+  q: 403f098994bdd916ed4053197934e4a87c80733a1280d62f8010992e43ee3b2406
+
+The entire public key packet is thus:
+
+       98 33 04 53 f3 5f 0b 16  09 2b 06 01 04 01 da 47
+       0f 01 01 07 40 3f 09 89  94 bd d9 16 ed 40 53 19
+       79 34 e4 a8 7c 80 73 3a  12 80 d6 2f 80 10 99 2e
+       43 ee 3b 24 06
+
+## Sample EdDSA signature
+
+The signature is created using the sample key over the input data "OpenPGP" on 2015-09-16 12:24:53 and thus the input to the hash function is:
+
+  m: 4f70656e504750040016080006050255f95f9504ff0000000c
+
+Using the SHA2-256 hash algorithm yields the digest:
+
+  d: f6220a3f757814f4c2176ffbb68b00249cd4ccdc059c4b34ad871f30b1740280
+
+Which is fed into the EdDSA signature function and yields this signature:
+
+  r: 56f90cca98e2102637bd983fdb16c131dfd27ed82bf4dde5606e0d756aed3366
+
+  s: d09c4fa11527f038e0f57f2201d82f2ea2c9033265fa6ceb489e854bae61b404
+
+The entire signature packet is thus:
+
+       88 5e 04 00 16 08 00 06  05 02 55 f9 5f 95 00 0a
+       09 10 8c fd e1 21 97 96  5a 9a f6 22 01 00 56 f9
+       0c ca 98 e2 10 26 37 bd  98 3f db 16 c1 31 df d2
+       7e d8 2b f4 dd e5 60 6e  0d 75 6a ed 33 66 01 00
+       d0 9c 4f a1 15 27 f0 38  e0 f5 7f 22 01 d8 2f 2e
+       a2 c9 03 32 65 fa 6c eb  48 9e 85 4b ae 61 b4 04
 
 # Document Workflow
 
