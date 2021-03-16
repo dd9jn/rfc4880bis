@@ -530,14 +530,14 @@ An S2K specifier can be stored in the secret keyring to specify how to convert t
 Older versions of PGP just stored a symmetric cipher algorithm octet preceding the secret data or a zero to indicate that the secret data was unencrypted.
 The MD5 hash function was always used to convert the passphrase to a key for the specified cipher algorithm.
 
-For compatibility, when an S2K specifier is used, the special value 254 or 255 is stored in the position where the cipher algorithm octet would have been in the old data structure.
+For compatibility, when an S2K specifier is used, the special value 253, 254, or 255 is stored in the position where the cipher algorithm octet would have been in the old data structure.
 This is then followed immediately by a one-octet algorithm identifier, and then by the S2K specifier as encoded above.
 
 Therefore, preceding the secret data there will be one of these possibilities:
 
-      0:           secret data is unencrypted (no passphrase)
-      255 or 254:  followed by algorithm octet and S2K specifier
-      Cipher alg:  use Simple S2K algorithm using MD5 hash
+      0:                 secret data is unencrypted (no passphrase)
+      255, 254, or 253:  followed by algorithm octet and S2K specifier
+      Cipher alg:        use Simple S2K algorithm using MD5 hash
 
 This last possibility, the cipher algorithm number with an implicit use of MD5 and IDEA, is provided for backward compatibility; it MAY be understood, but SHOULD NOT be generated, and is deprecated.
 
@@ -1762,18 +1762,23 @@ The packet contains:
 
 - Only for a version 5 packet, a one-octet scalar octet count of the next 4 optional fields.
 
-- \[Optional\] If string-to-key usage octet was 255 or 254, a one-octet symmetric encryption algorithm.
+- \[Optional\] If string-to-key usage octet was 255, 254, or 253, a one-octet symmetric encryption algorithm.
 
-- \[Optional\] If string-to-key usage octet was 255 or 254, a string-to-key specifier.
+- \[Optional\] If string-to-key usage octet was 253, a one-octet AEAD algorithm.
+
+- \[Optional\] If string-to-key usage octet was 255, 254, or 253, a string-to-key specifier.
   The length of the string-to-key specifier is implied by its type, as described above.
 
 - \[Optional\] If secret data is encrypted (string-to-key usage octet not zero), an Initial Vector (IV) of the same length as the cipher's block size.
+  If string-to-key usage octet was 253, the IV is used as the nonce for the AEAD algorithm.
+  If the AEAD algorithm requires a shorter nonce, the high-order bits of the IV are used and the remaining bits MUST be zero.
 
 - Only for a version 5 packet, a four-octet scalar octet count for the following secret key material.
   This includes the encrypted SHA-1 hash or AEAD tag if the string-to-key usage octet is 254 or 253.
 
 - Plain or encrypted multiprecision integers comprising the secret key data.
   This is algorithm-specific and described in section {{algorithm-specific-parts-of-keys}}.
+  If the string-to-key usage octet is 253, then an AEAD authentication tag is part of that data.
   If the string-to-key usage octet is 254, a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion is appended to plaintext and encrypted with it.
   If the string-to-key usage octet is 255 or another nonzero value (i.e., a symmetric-key encryption algorithm identifier), a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536) is appended to plaintext and encrypted with it. (This is deprecated and SHOULD NOT be used, see below.)
 
@@ -1793,7 +1798,12 @@ Only the MPI non-prefix data is encrypted.
 Furthermore, the CFB state is resynchronized at the beginning of each new MPI value, so that the CFB block boundary is aligned with the start of the MPI data.
 
 With V4 and V5 keys, a simpler method is used.
-All secret MPI values are encrypted in CFB mode, including the MPI bitcount prefix.
+All secret MPI values are encrypted, including the MPI bitcount prefix.
+
+If the string-to-key usage octet is 253, the encrypted MPI values are encrypted as one combined plaintext using one of the AEAD algorithms specified for the AEAD Encrypted Data Packet.
+Note that no chunks are used and that there is only one authentication tag.
+The Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are given as additional data.
+For example, the additional data used with EAX and AES-128 in a Secret-Key Packet of version 4 consists of the octets 0xC5, 0x04, 0x07, and 0x01; in a Secret-Subkey Packet the first octet would be 0xC7.
 
 The two-octet checksum that follows the algorithm-specific portion is the algebraic sum, mod 65536, of the plaintext of all the algorithm-specific octets (including MPI prefix and data).
 With V3 keys, the checksum is stored in the clear.
@@ -1801,6 +1811,7 @@ With V4 keys, the checksum is encrypted like the algorithm-specific data.
 This value is used to check that the passphrase was correct.
 However, this checksum is deprecated; an implementation SHOULD NOT use it, but should rather use the SHA-1 hash denoted with a usage octet of 254.
 The reason for this is that there are some attacks that involve undetectably modifying the secret key.
+If the string-to-key usage octet is 253 no checksum or SHA-1 hash is used but the authentication tag of the AEAD algorithm follows.
 
 ## Algorithm-specific Parts of Keys
 
@@ -2663,7 +2674,7 @@ ID | Algorithm
  12 | Camellia with 192-bit key
  13 | Camellia with 256-bit key
 100 to 110 | Private/Experimental algorithm
-254 and 255 | Reserved to avoid collision with Secret Key Encryption (see {{secret-key-encryption}} and {{secret-key-packet-formats}})
+253, 254 and 255 | Reserved to avoid collision with Secret Key Encryption (see {{secret-key-encryption}} and {{secret-key-packet-formats}})
 
 Implementations MUST implement TripleDES.
 Implementations SHOULD implement AES-128 and CAST5.
