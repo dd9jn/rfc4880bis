@@ -2727,12 +2727,15 @@ ID | Algorithm | Public Key Format | Secret Key Format | Signature Format | PKES
  24 | Reserved (AEDSA)
 100 to 110 | Private/Experimental algorithm
 
-Implementations MUST implement DSA for signatures, and Elgamal for encryption.
-Implementations SHOULD implement RSA keys (1).
+Implementations MUST implement RSA (1) and ECDSA (19) for signatures, and RSA (1) and ECDH (18) for encryption.
+Implementations SHOULD implement EdDSA (22) keys.
+
 RSA Encrypt-Only (2) and RSA Sign-Only (3) are deprecated and SHOULD NOT be generated, but may be interpreted.
 See {{rsa-notes}}.
 See {{reserved-notes}} for notes on Elgamal Encrypt or Sign (20), and X9.42 (21).
 Implementations MAY implement any other algorithm.
+
+Note that an implementation conforming to the previous version of this standard ({{RFC4880}}) have only DSA (17) and Elgamal (16) as its MUST-implement algorithms.
 
 A compatible specification of ECDSA is given in {{RFC6090}} as "KT-I Signatures" and in {{SEC1}}; ECDH is defined in {{ec-dh-algorithm-ecdh}} of this document.
 
