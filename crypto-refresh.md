@@ -117,6 +117,16 @@ normative:
     author:
       ins: J. Seward
       name: Julian Seward, jseward@acm.org
+  EAX:
+    title: A Conventional Authenticated-Encryption Mode
+    date: April 2003
+    author:
+      -
+        ins: M. Bellare
+      -
+        ins: P. Rogaway
+      -
+        ins: D. Wagner
   ELGAMAL:
     title: A Public-Key Cryptosystem and a Signature Scheme Based on Discrete Logarithms
     date: 1985
@@ -193,6 +203,7 @@ normative:
   RFC3629:
   RFC3713:
   RFC4086:
+  RFC7253:
   RFC7748:
   RFC8032:
   RFC8126:
@@ -714,7 +725,7 @@ Tag | Packet Type
  17 | User Attribute Packet
  18 | Sym. Encrypted and Integrity Protected Data Packet
  19 | Modification Detection Code Packet
- 20 | Reserved (AEAD Encrypted Data)
+ 20 | AEAD Encrypted Data Packet
 60 to 63 | Private or Experimental Values
 
 # Packet Types {#packet-types}
@@ -2191,6 +2202,86 @@ Note that the Modification Detection Code packet MUST always use a new format en
 The reason for this is that the hashing rules for modification detection include a one-octet tag and one-octet length in the data hash.
 While this is a bit restrictive, it reduces complexity.
 
+## AEAD Encrypted Data Packet (Tag 20) {#aead}
+
+This packet contains data encrypted with an authenticated encryption and additional data (AEAD) construction.
+When it has been decrypted, it will typically contain other packets (often a Literal Data packet or Compressed Data packet).
+
+The body of this packet consists of:
+
+- A one-octet version number.
+  The only currently defined value is 1.
+
+- A one-octet cipher algorithm.
+
+- A one-octet AEAD algorithm.
+
+- A one-octet chunk size.
+
+- A starting initialization vector of size specified by the AEAD algorithm.
+
+- Encrypted data, the output of the selected symmetric-key cipher operating in the given AEAD mode.
+
+- A final, summary authentication tag for the AEAD mode.
+
+An AEAD encrypted data packet consists of one or more chunks of data.
+The plaintext of each chunk is of a size specified using the chunk size octet using the method specified below.
+
+The encrypted data consists of the encryption of each chunk of plaintext, followed immediately by the relevant authentication tag.
+If the last chunk of plaintext is smaller than the chunk size, the ciphertext for that data may be shorter; it is nevertheless followed by a full authentication tag.
+
+For each chunk, the AEAD construction is given the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), version number, cipher algorithm octet, AEAD algorithm octet, chunk size octet, and an eight-octet, big-endian chunk index as additional data.
+The index of the first chunk is zero.
+For example, the additional data of the first chunk using EAX and AES-128 with a chunk size of 64 kiByte consists of the octets 0xD4, 0x01, 0x07, 0x01, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, and 0x00.
+
+After the final chunk, the AEAD algorithm is used to produce a final authentication tag encrypting the empty string.
+This AEAD instance is given the additional data specified above, plus an eight-octet, big-endian value specifying the total number of plaintext octets encrypted.
+This allows detection of a truncated ciphertext.
+Please note that the big-endian number representing the chunk index in the additional data is increased accordingly, although it's not really a chunk.
+
+The chunk size octet specifies the size of chunks using the following formula (in C), where c is the chunk size octet:
+
+      chunk_size = ((uint64_t)1 << (c + 6))
+
+An implementation MUST support chunk size octets with values from 0 to 56.
+Chunk size octets with other values are reserved for future extensions.
+Implementations SHOULD NOT create data with a chunk size octet value larger than 21 (128 MiB chunks) to facilitate buffering of not yet authenticated plaintext.
+
+A new random initialization vector MUST be used for each message.
+Failure to do so for each message will lead to a catastrophic failure depending on the used AEAD mode.
+
+### EAX Mode
+
+The EAX algorithm can only use block ciphers with 16-octet blocks.
+The starting initialization vector and authentication tag are both 16 octets long.
+
+The starting initialization vector for this mode MUST be unique and unpredictable.
+
+The nonce for EAX mode is computed by treating the starting initialization vector as a 16-octet, big-endian value and exclusive-oring the low eight octets of it with the chunk index.
+
+The security of EAX requires that the nonce is never reused, hence the requirement that the starting initialization vector be unique.
+
+### OCB Mode
+
+The OCB Authenticated-Encryption Algorithm used in this document is defined in {{RFC7253}}.
+
+OCB usage requires specification of the following parameters:
+
+- a blockcipher that operate on 128-bit (16-octet) blocks
+
+- an authentication tag length of 16 octets
+
+- a nonce of 15 octets long (which is the longest nonce allowed specified by {{RFC7253}})
+
+- an initialization vector of at least 15 octets long
+
+In the case that the initialization vector is longer than 15 octets (such as in {{secret-key-packet-tag-5}}, only the 15 leftmost octets are used in calculations; the remaining octets MUST be considered as zero.
+
+The nonce for OCB mode is computed by the exclusive-oring of the initialization vector as a 15-octet, big endian value, against the chunk index.
+
+Security of OCB mode depends on the non-repeated nature of nonces used for the same key on distinct plaintext {{RFC7253}}.
+Therefore the initialization vector per message MUST be distinct, and OCB mode SHOULD only be used in environments when there is certainty to fulfilling this requirement.
+
 # Radix-64 Conversions
 
 As stated in the introduction, OpenPGP's underlying native representation for objects is a stream of arbitrary octets, and some systems desire these objects to be immune to damage caused by character set translation, data conversions, etc.
@@ -2620,6 +2711,15 @@ ID | Algorithm | Text Name
 Implementations MUST implement SHA-1.
 Implementations MAY implement other algorithms.
 MD5 is deprecated.
+
+## AEAD Algorithms
+
+{: title="AEAD algorithm registry"}
+ID | Algorithm
+---:|-----------------
+ 1 | EAX {{EAX}}
+ 2 | OCB {{RFC7253}}
+100 to 110 | Private/Experimental algorithm
 
 # IANA Considerations
 
@@ -3158,7 +3258,7 @@ Note that the recipient obtains the shared secret by calculating
 
     S = rV = rvG, where (r,R) is the recipient's key pair.
 
-Consistent with {{seipd}}, a Modification Detection Code (MDC) MUST be used anytime the symmetric key is protected by ECDH.
+Consistent with {{aead}} and {{seipd}}, AEAD encryption or a Modification Detection Code (MDC) MUST be used anytime the symmetric key is protected by ECDH.
 
 # Notes on Algorithms {#notes-on-algorithms}
 
@@ -3665,6 +3765,9 @@ Thus, this is a non-comprehensive list of potential problems and gotchas for a d
   OpenPGP permits an implementation to declare what features it does and does not support, but ASCII armor is not one of these.
   Since most implementations allow binary and armored objects to be used indiscriminately, an implementation that does not implement ASCII armor may find itself with compatibility issues with general-purpose implementations.
   Moreover, implementations of OpenPGP-MIME {{RFC3156}} already have a requirement for ASCII armor so those implementations will necessarily have support.
+
+- The OCB mode is patented and a debate is still underway on whether it can be included in RFC4880bis or needs to be moved to a separate document.
+  For the sole purpose of experimenting with the Preferred AEAD Algorithms signature subpacket it is has been included in this I-D.
 
 --- back
 
