@@ -1732,6 +1732,7 @@ The packet contains:
   Zero indicates that the secret-key data is not encrypted.
   255 or 254 indicates that a string-to-key specifier is being given.
   Any other value is a symmetric-key encryption algorithm identifier.
+  A version 5 packet MUST NOT use the value 255.
 
 - Only for a version 5 packet, a one-octet scalar octet count of the next 4 optional fields.
 
