@@ -1249,7 +1249,8 @@ Authorizes the specified key to issue revocation signatures for this key.
 Class octet must have bit 0x80 set.
 If the bit 0x40 is set, then this means that the revocation information is sensitive.
 Other bits are for future expansion to other kinds of authorizations.
-This is found on a self-signature.
+This is only found on a direct-key self-signature (type 0x1f).
+The use on other types of self-signatures is unspecified.
 
 If the "sensitive" flag is set, the keyholder feels this subpacket contains private trust information that describes a real-world sensitive relationship.
 If this flag is set, implementations SHOULD NOT export this signature to other users except in cases where the data needs to be available: when the signature is being sent to the designated revoker, or when it is accompanied by a revocation signature from that revoker.
@@ -1525,6 +1526,8 @@ This trailer depends on the version of the signature.
   - the two octets 0x04 and 0xFF,
 
   - a four-octet big-endian number that is the length of the hashed data from the Signature packet stopping right before the 0x04, 0xff octets.
+
+    The four-octet big-endian number is considered to be an unsigned integer modulo 2^32.
 
 - A V5 signature hashes the packet body starting from its first field, the version number, through the end of the hashed subpacket data and a final extra trailer.
   Thus, the hashed fields are:
