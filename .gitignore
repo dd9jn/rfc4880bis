@@ -1,9 +1,9 @@
-rfc4880bis.xmlv2
-rfc4880bis.xml
-rfc4880bis.txt
-rfc4880bis.html
-rfc4880bis.pdf
-rfc4880bis.txt.diff
+/rfc4880bis.xmlv2
+/rfc4880bis.xml
+/rfc4880bis.txt
+/rfc4880bis.html
+/rfc4880bis.pdf
+/rfc4880bis.txt.diff
 .refcache/
 metadata.min.js
 *~
@@ -11,3 +11,7 @@ metadata.min.js
 /crypto-refresh.txt
 /crypto-refresh.xml
 /crypto-refresh.xmlv2
+/rfc4880.html
+/rfc4880.txt
+/rfc4880.xml
+/rfc4880.xmlv2
