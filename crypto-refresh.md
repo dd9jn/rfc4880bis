@@ -771,10 +771,11 @@ This format helps reduce traffic analysis of messages.
 A Signature packet describes a binding between some public key and some data.
 The most common signatures are a signature of a file or a block of text, and a signature that is a certification of a User ID.
 
-Two versions of Signature packets are defined.
-Version 3 provides basic signature information, while version 4 provides an expandable format with subpackets that can specify more information about the signature.
+Three versions of Signature packets are defined.
+Version 3 provides basic signature information, while versions 4 and 5 provide an expandable format with subpackets that can specify more information about the signature.
 PGP 2.6.x only accepts version 3 signatures.
 
+Implementations MUST generate version 5 signatures when using a version 5 key.
 Implementations SHOULD generate V4 signatures with version 4 keys.
 Implementations MUST NOT create version 3 signatures; they MAY accept version 3 signatures.
 
@@ -942,11 +943,12 @@ DSA signatures MUST use hashes that are equal in size to the number of bits of q
 If the output size of the chosen hash is larger than the number of bits of q, the hash result is truncated to fit by taking the number of leftmost bits equal to the number of bits of q.
 This (possibly truncated) hash function result is treated as a number and used directly in the DSA signature algorithm.
 
-### Version 4 Signature Packet Format
+### Version 4 and 5 Signature Packet Formats
 
-The body of a version 4 Signature packet contains:
+The body of a V4 or V5 Signature packet contains:
 
-- One-octet version number (4).
+- One-octet version number.
+  This is 4 for V4 signatures and 5 for V5 signatures.
 
 - One-octet signature type.
 
@@ -1487,14 +1489,14 @@ All signatures are formed by producing a hash over the signature data, and then 
 For binary document signatures (type 0x00), the document data is hashed directly.
 For text document signatures (type 0x01), the document is canonicalized by converting line endings to \<CR>\<LF>, and the resulting data is hashed.
 
-When a signature is made over a key, the hash data starts with the octet 0x99, followed by a two-octet length of the key, and then body of the key packet.
-(Note that this is an old-style packet header for a key packet with two-octet length.)  A subkey binding signature (type 0x18) or primary key binding signature (type 0x19) then hashes the subkey using the same format as the main key (also using 0x99 as the first octet).
+When a V4 signature is made over a key, the hash data starts with the octet 0x99, followed by a two-octet length of the key, and then body of the key packet; when a V5 signature is made over a key, the hash data starts with the octet 0x9a, followed by a four-octet length of the key, and then body of the key packet.
+A subkey binding signature (type 0x18) or primary key binding signature (type 0x19) then hashes the subkey using the same format as the main key (also using 0x99 or 0x9a as the first octet).
 Primary key revocation signatures (type 0x20) hash only the key being revoked.
 Subkey revocation signature (type 0x28) hash first the primary key and then the subkey being revoked.
 
 A certification signature (type 0x10 through 0x13) hashes the User ID being bound to the key into the hash context after the above data.
 A V3 certification hashes the contents of the User ID or attribute packet packet, without any header.
-A V4 certification hashes the constant 0xB4 for User ID certifications or the constant 0xD1 for User Attribute certifications, followed by a four-octet number giving the length of the User ID or User Attribute data, and then the User ID or User Attribute data.
+A V4 or V5 certification hashes the constant 0xB4 for User ID certifications or the constant 0xD1 for User Attribute certifications, followed by a four-octet number giving the length of the User ID or User Attribute data, and then the User ID or User Attribute data.
 
 When a signature is made over a Signature packet (type 0x50, "Third-Party Confirmation signature"), the hash data starts with the octet 0x88, followed by the four-octet length of the signature, and then the body of the Signature packet.
 (Note that this is an old-style packet header for a Signature packet with the length-of-length field set to zero.) The unhashed subpacket data of the Signature packet being hashed is not included in the hash, and the unhashed subpacket data length value is set to zero.
@@ -1523,6 +1525,35 @@ This trailer depends on the version of the signature.
   - the two octets 0x04 and 0xFF,
 
   - a four-octet big-endian number that is the length of the hashed data from the Signature packet stopping right before the 0x04, 0xff octets.
+
+- A V5 signature hashes the packet body starting from its first field, the version number, through the end of the hashed subpacket data and a final extra trailer.
+  Thus, the hashed fields are:
+
+  - the signature version (0x05),
+
+  - the signature type,
+
+  - the public-key algorithm,
+
+  - the hash algorithm,
+
+  - the hashed subpacket length,
+
+  - the hashed subpacket body,
+
+  - Only for document signatures (type 0x00 or 0x01) the following three data items are hashed here:
+
+    - the one-octet content format,
+
+    - the file name as a string (one octet length, followed by the file name),
+
+    - a four-octet number that indicates a date,
+
+  - the two octets 0x05 and 0xFF,
+
+  - a eight-octet big-endian number that is the length of the hashed  data from the Signature packet stopping right before the 0x05, 0xff octets.
+
+    The three data items hashed for document signatures need to mirror the values of the Literal Data packet.  For detached and cleartext signatures 6 zero bytes are hashed instead.
 
 After all this has been hashed in a single hash context, the resulting hash field is used in the signature algorithm and placed at the end of the Signature packet.
 
@@ -1955,6 +1986,9 @@ The body of this packet consists of:
 
   Text data is stored with \<CR>\<LF> text endings (i.e., network-normal line endings).
   These should be converted to native line endings by the receiving software.
+
+Note that V3 and V4 signatures do not include the formatting octet, the file name, and the date field of the literal packet in a signature hash and thus are not protected against tampering in a signed document.
+In contrast V5 signatures include them.
 
 ## Trust Packet (Tag 12)
 
