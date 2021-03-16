@@ -2849,9 +2849,10 @@ ID | Algorithm | Text Name
  14 | SHA3-512 {{FIPS202}} | "SHA3-512"
 100 to 110 | Private/Experimental algorithm
 
-Implementations MUST implement SHA-1.
+Implementations MUST implement SHA2-256.
 Implementations MAY implement other algorithms.
-MD5 is deprecated.
+Implementations SHOULD NOT create messages which require the use of SHA-1 with the exception of computing version 4 key fingerprints and for purposes of the MDC packet.
+Implementations SHOULD NOT use MD5 or RIPE-MD/160.
 
 ## AEAD Algorithms
 
@@ -3652,7 +3653,7 @@ This preference, though, allows a protocol based upon digital signatures ease in
 Thus, if Alice is authenticating herself to Bob with a signature, it makes sense for her to use a hash algorithm that Bob's software uses.
 This preference allows Bob to state in his key which algorithms Alice may use.
 
-Since SHA1 is the MUST-implement hash algorithm, if it is not explicitly in the list, it is tacitly at the end.
+Since SHA2-256 is the MUST-implement hash algorithm, if it is not explicitly in the list, it is tacitly at the end.
 However, it is good form to place it there explicitly.
 
 ## Plaintext
