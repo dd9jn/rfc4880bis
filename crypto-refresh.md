@@ -2116,9 +2116,9 @@ The nonzero initialization can detect more errors than a zero initialization.
 ## An Implementation of the CRC-24 in "C"
 
     #define CRC24_INIT 0xB704CEL
-    #define CRC24_POLY 0x1864CFBL
+    #define CRC24_GENERATOR 0x864CFBL
 
-    typedef long crc24;
+    typedef unsigned long crc24;
     crc24 crc_octets(unsigned char *octets, size_t len)
     {
         crc24 crc = CRC24_INIT;
@@ -2128,7 +2128,7 @@ The nonzero initialization can detect more errors than a zero initialization.
             for (i = 0; i < 8; i++) {
                 crc <<= 1;
                 if (crc & 0x1000000)
-                    crc ^= CRC24_POLY;
+                    crc ^= (CRC24_GENERATOR | 0x1000000L);
             }
         }
         return crc & 0xFFFFFFL;
