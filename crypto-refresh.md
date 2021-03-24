@@ -212,12 +212,6 @@ normative:
     date: March 2007
     seriesinfo:
       NIST Special Publication: 800-56A Revision 1
-  SuiteB:
-    target: http://www.nsa.gov/ia/programs/suiteb_cryptography/
-    title: NSA Suite B Cryptography
-    author:
-      org: National Security Agency
-    date: 2010-03-11
   TWOFISH:
     title: The Twofish Encryption Algorithm
     author:
@@ -2904,7 +2898,6 @@ Consider, for example, that while both the public key and the per-recipient ECDH
 
 A key derivation function (KDF) is necessary to implement the EC encryption.
 The Concatenation Key Derivation Function (Approved Alternative 1) {{SP800-56A}} with the KDF hash function that is SHA2-256 {{FIPS180}} or stronger is REQUIRED.
-See {{compatibility-profiles}} for the details regarding the choice of the hash function.
 
 For convenience, the synopsis of the encoding method is given below with significant simplifications attributable to the restricted choice of hash functions in this document.
 However, {{SP800-56A}} is the normative source of the definition.
@@ -3470,42 +3463,6 @@ NIST P-521 | SHA2-512 | AES-256
   ECC scalar multiplication operations used in ECDSA and ECDH are vulnerable to side channel attacks.
   Countermeasures can often be taken at the higher protocol level, such as limiting the number of allowed failures or time-blinding of the operations associated with each network interface.
   Mitigations at the scalar multiplication level seek to eliminate any measurable distinction between the ECC point addition and doubling operations.
-
-# Compatibility Profiles
-
-## OpenPGP ECC Profile
-
-A compliant application MUST implement NIST curve P-256, SHOULD implement NIST curve P-521, and SHOULD implement Curve25519 as defined in {{ecc-curve-oid}}.
-A compliant application MUST implement SHA2-256 and SHOULD implement SHA2-384 and SHA2-512.
-A compliant application MUST implement AES-128 and SHOULD implement AES-256.
-
-A compliant application SHOULD follow {{security-considerations}} regarding the choice of the following algorithms for each curve:
-
-- the KDF hash algorithm,
-
-- the KEK algorithm,
-
-- the message digest algorithm and the hash algorithm used in the key certifications,
-
-- the symmetric algorithm used for message encryption.
-
-It is recommended that the chosen symmetric algorithm for message encryption be no less secure than the KEK algorithm.
-
-## Suite-B Profile
-
-A subset of algorithms allowed by this document can be used to achieve {{SuiteB}} compatibility.
-The references to {{SuiteB}} in this document are informative.
-This document is primarily concerned with format specification, leaving additional security restrictions unspecified, such as matching the assigned security level of information to authorized recipients or interoperability concerns arising from fewer allowed algorithms in {{SuiteB}} than allowed by this document.
-
-### Security Strength at 192 Bits
-
-To achieve the security strength of 192 bits, {{SuiteB}} requires NIST curve P-384, AES-256, and SHA2-384.
-The symmetric algorithm restriction means that the algorithm of KEK used for key wrapping in {{ec-dh-algorithm-ecdh}} and an OpenPGP session key used for message encryption must be AES-256.
-The hash algorithm restriction means that the hash algorithms of KDF and the OpenPGP message digest calculation must be SHA2-384.
-
-### Security Strength at 128 Bits
-
-The set of algorithms in {{security-strength-at-192-bits}} is extended to allow NIST curve P-256, AES-128, and SHA2-256.
 
 # Implementation Nits
 
