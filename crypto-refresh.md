@@ -2915,7 +2915,7 @@ The format of an OpenPGP V4 key that uses multiple public keys is similar except
        [User ID [Signature ...] ...]
        [User Attribute [Signature ...] ...]
        [[Subkey [Binding-Signature-Revocation]
-               Primary-Key-Binding-Signature] ...]
+               Subkey-Binding-Signature] ...]
 
 A subkey always has a single signature after it that is issued using the primary key to tie the two keys together.
 This binding signature may be in either V3 or V4 format, but SHOULD be V4.
