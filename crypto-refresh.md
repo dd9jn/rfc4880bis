@@ -3111,9 +3111,9 @@ The input to the key wrapping method is the value "m" derived from the session k
 The result is padded using the method described in {{PKCS5}} to the 8-byte granularity.
 For example, the following AES-256 session key, in which 32 octets are denoted from k0 to k31, is composed to form the following 40 octet sequence:
 
-    09 k0 k1 ... k31 c0 c1 05 05 05 05 05
+    09 k0 k1 ... k31 s0 s1 05 05 05 05 05
 
-The octets c0 and c1 above denote the checksum.
+The octets s0 and s1 above denote the checksum.
 This encoding allows the sender to obfuscate the size of the symmetric encryption key used to encrypt the data.
 For example, assuming that an AES algorithm is used for the session key, the sender MAY use 21, 13, and 5 bytes of padding for AES-128, AES-192, and AES-256, respectively, to provide the same number of octets, 40 total, as an input to the key wrapping method.
 
