@@ -509,7 +509,8 @@ After the hashing is done, the data is unloaded from the hash context(s) as with
 
 ### String-to-Key Usage
 
-Implementations SHOULD use salted or iterated-and-salted S2K specifiers, as simple S2K specifiers are more vulnerable to dictionary attacks.
+Simple S2K and Salted S2K specifiers are not particularly secure when used with a low-entropy secret, such as those typically provided by users.
+Implementations SHOULD NOT use these methods on encryption of both keys and messages.
 
 #### Secret-Key Encryption
 
@@ -3612,7 +3613,6 @@ NIST P-521 | SHA2-512 | AES-256
 
   MDC MUST be used when a symmetric encryption key is protected by ECDH.
   None of the ECC methods described in this document are allowed with deprecated V3 keys.
-  A compliant application MUST only use iterated and salted S2K to protect private keys, as defined in {{iterated-and-salted-s2k}}, "Iterated and Salted S2K".
 
   Side channel attacks are a concern when a compliant application's use of the OpenPGP format can be modeled by a decryption or signing oracle model, for example, when an application is a network service performing decryption to unauthenticated remote users.
   ECC scalar multiplication operations used in ECDSA and ECDH are vulnerable to side channel attacks.
