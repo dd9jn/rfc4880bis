@@ -2224,8 +2224,10 @@ The nonzero initialization can detect more errors than a zero initialization.
             crc ^= (*octets++) << 16;
             for (i = 0; i < 8; i++) {
                 crc <<= 1;
-                if (crc & 0x1000000)
-                    crc ^= (CRC24_GENERATOR | 0x1000000L);
+                if (crc & 0x1000000) {
+                    crc &= 0xffffff; /* Clear bit 25 to avoid overflow */
+                    crc ^= CRC24_GENERATOR;
+                }
             }
         }
         return crc & 0xFFFFFFL;
