@@ -29,7 +29,8 @@ author:
   -
     ins: P. Wouters
     name: Paul Wouters
-    email: pwouters@redhat.com
+    email: paul@nohats.ca
+    org: No Hats
     role: editor
 informative:
   BLEICHENBACHER:
