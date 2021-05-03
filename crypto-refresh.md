@@ -510,7 +510,7 @@ After the hashing is done, the data is unloaded from the hash context(s) as with
 ### String-to-Key Usage
 
 Simple S2K and Salted S2K specifiers are not particularly secure when used with a low-entropy secret, such as those typically provided by users.
-Implementations SHOULD NOT use these methods on encryption of both keys and messages.
+Implementations SHOULD NOT use these methods on encryption of either keys and messages.
 
 #### Secret-Key Encryption
 
