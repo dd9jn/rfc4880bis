@@ -2197,15 +2197,15 @@ As stated in the introduction, OpenPGP's underlying native representation for ob
 In principle, any printable encoding scheme that met the requirements of the unsafe channel would suffice, since it would not change the underlying binary bit streams of the native OpenPGP data structures.
 The OpenPGP standard specifies one such printable encoding scheme to ensure interoperability.
 
-OpenPGP's Radix-64 encoding is composed of two parts: a base64 encoding of the binary data and a checksum.
+OpenPGP's Radix-64 encoding is composed of two parts: a base64 encoding of the binary data and an optional checksum.
 The base64 encoding is identical to the MIME base64 content-transfer-encoding {{RFC2045}}.
 
-The checksum is a 24-bit Cyclic Redundancy Check (CRC) converted to four characters of radix-64 encoding by the same MIME base64 transformation, preceded by an equal sign (=).
+The optional checksum is a 24-bit Cyclic Redundancy Check (CRC) converted to four characters of radix-64 encoding by the same MIME base64 transformation, preceded by an equal sign (=).
 The CRC is computed by using the generator 0x864CFB and an initialization of 0xB704CE.
 The accumulation is done on the data before it is converted to radix-64, rather than on the converted data.
 A sample implementation of this algorithm is in the next section.
 
-The checksum with its leading equal sign MAY appear on the first line after the base64 encoded data.
+If present, the checksum with its leading equal sign MUST appear on the next line after the base64 encoded data.
 
 Rationale for CRC-24: The size of 24 bits fits evenly into printable base64.
 The nonzero initialization can detect more errors than a zero initialization.
