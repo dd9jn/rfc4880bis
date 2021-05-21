@@ -2301,6 +2301,7 @@ One way to do this is to repeat an Armor Header Key multiple times with differen
 Currently defined Armor Header Keys are as follows:
 
 - "Version", which states the OpenPGP implementation and version used to encode the message.
+  To minimize metadata, implementations SHOULD NOT emit this key and its corresponding value except for debugging purposes with explicit user consent.
 
 - "Comment", a user-defined comment.
   OpenPGP defines all text to be in UTF-8.
@@ -2422,7 +2423,6 @@ No such assurance is possible, however, when the number of octets transmitted wa
 ## Example of an ASCII Armored Message
 
     -----BEGIN PGP MESSAGE-----
-    Version: OpenPrivacy 0.99
 
     yDgBO22WxBHv7O8X7O/jygAEzol56iUKiXmV+XmpCtmpqQUKiQrFqclFqUDBovzS
     vBSFjNSiVHsuAA==
