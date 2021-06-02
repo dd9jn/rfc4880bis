@@ -1556,7 +1556,7 @@ This trailer depends on the version of the signature.
 
   - the two octets 0x05 and 0xFF,
 
-  - a eight-octet big-endian number that is the length of the hashed  data from the Signature packet stopping right before the 0x05, 0xff octets.
+  - a eight-octet big-endian number that is the length of the hashed data from the Signature packet stopping right before the 0x05, 0xff octets.
 
     The three data items hashed for document signatures need to mirror the values of the Literal Data packet.  For detached and cleartext signatures 6 zero bytes are hashed instead.
 
@@ -2532,7 +2532,6 @@ See {{rsa-notes}}.
 See {{reserved-notes}} for notes on Elgamal Encrypt or Sign (20), and X9.42 (21).
 Implementations MAY implement any other algorithm.
 
-
 A compatible specification of ECDSA is given in {{RFC6090}} as "KT-I Signatures" and in {{SEC1}}; ECDH is defined in {{ec-dh-algorithm-ecdh}} of this document.
 
 ## ECC Curve OID
@@ -2752,7 +2751,8 @@ ID | Algorithm | Reference
 ---:|----------|----------
  22 | EdDSA public key algorithm | This doc, {{eddsa}}
 
-   \[ Note to RFC-Editor: Please remove the table above on publication. \]
+   \[ Note to RFC-Editor: Please remove the table above on publication.
+\]
 
 ### Symmetric-Key Algorithms
 
