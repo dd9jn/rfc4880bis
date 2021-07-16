@@ -3001,7 +3001,7 @@ Finally, the Key ID and fingerprint of a subkey are calculated in the same way a
 
 # Elliptic Curve Cryptography
 
-This section descripes algorithms and parameters used with Elliptic Curve Cryptography (ECC) keys.
+This section describes algorithms and parameters used with Elliptic Curve Cryptography (ECC) keys.
 A thorough introduction to ECC can be found in {{KOBLITZ}}.
 
 ## Supported ECC Curves
