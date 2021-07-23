@@ -2464,7 +2464,7 @@ This is for visual clarity.
 
 The cleartext content of the message must also be dash-escaped.
 
-Dash-escaped cleartext is the ordinary cleartext where every line starting with a dash `-` (0x2D) is prefixed by the sequence dash `-` (0x2D) and space ` ` (0x20).
+Dash-escaped cleartext is the ordinary cleartext where every line starting with a <u>-</u> is prefixed by the sequence <u>-</u> and <u> </u>.
 This prevents the parser from recognizing armor headers of the cleartext itself.
 An implementation MAY dash-escape any line, SHOULD dash-escape lines commencing "From" followed by a space, and MUST dash-escape any line commencing in a dash.
 The message digest is computed using the cleartext itself, not the dash-escaped form.
