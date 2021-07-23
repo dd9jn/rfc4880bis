@@ -2623,8 +2623,8 @@ MD5 is deprecated.
 
 # IANA Considerations
 
-Because this document obsoletes {{RFC4880}}, IANA is requested to update all registration information that references [RFC4880] to instead
-reference [[this RFC]].
+Because this document obsoletes {{RFC4880}}, IANA is requested to update all registration information that references {{RFC4880}} to instead
+reference this RFC.
 
 OpenPGP is highly parameterized, and consequently there are a number of considerations for allocating parameters for extensions.
 This section describes how IANA should look at extensions to the protocol as described in this document.
