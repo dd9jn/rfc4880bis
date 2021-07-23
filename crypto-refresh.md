@@ -2809,7 +2809,8 @@ ID | Algorithm
 
 Implementations MUST implement AES-128.
 Implementations SHOULD implement AES-256.
-Implementations that interoperate with {{RFC4880}} implementations need to support TripleDES and CAST5.
+Implementations MUST NOT encrypt data with IDEA, TripleDES, or CAST5.
+Implementations MAY decrypt data that uses IDEA, TripleDES, or CAST5 for the sake of reading older messages or new messages from legacy clients.
 Implementations MAY implement any other algorithm.
 
 ## Compression Algorithms {#compression-algos}
@@ -2852,7 +2853,9 @@ ID | Algorithm | Text Name
 Implementations MUST implement SHA2-256.
 Implementations MAY implement other algorithms.
 Implementations SHOULD NOT create messages which require the use of SHA-1 with the exception of computing version 4 key fingerprints and for purposes of the MDC packet.
-Implementations SHOULD NOT use MD5 or RIPE-MD/160.
+Implementations MUST NOT generate signatures with MD5, SHA-1, or RIPE-MD/160.
+Implementations MUST NOT validate any recent signature that depends on MD5, SHA-1, or RIPE-MD/160.
+Implementations SHOULD NOT validate any old signature that depends on MD5, SHA-1, or RIPE-MD/160 unless the signature's creation date predates known weakness of the algorithm used, and the implementation is confident that the message has been in the secure custody of the user the whole time.
 
 ## AEAD Algorithms
 
