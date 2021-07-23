@@ -3105,6 +3105,9 @@ Finally, the Key ID and fingerprint of a subkey are calculated in the same way a
 This section describes algorithms and parameters used with Elliptic Curve Cryptography (ECC) keys.
 A thorough introduction to ECC can be found in {{KOBLITZ}}.
 
+None of the ECC methods described in this document are allowed with deprecated V3 keys.
+Refer to {{FIPS186}}, B.4.1, for the method to generate a uniformly distributed ECC private key.
+
 ## Supported ECC Curves
 
 This document references three named prime field curves defined in {{FIPS186}} as "Curve P-256", "Curve P-384", and "Curve P-521".
@@ -3664,58 +3667,9 @@ Asymmetric key size | Hash size | Symmetric key size
   On the other hand, it is inconvenient to the user to be informed that they typed in the wrong passphrase only after a petabyte of data is decrypted.
   There are many cases in cryptographic engineering where the implementer must use care and wisdom, and this is one.
 
-- Refer to {{FIPS186}}, B.4.1, for the method to generate a uniformly distributed ECC private key.
-
-- The curves proposed in this document correspond to the symmetric key sizes 128 bits, 192 bits, and 256 bits, as described in the table below.
-  This allows a compliant application to offer balanced public key security, which is compatible with the symmetric key strength for each AES algorithm defined here.
-
-  The following table defines the hash and the symmetric encryption algorithm that SHOULD be used with a given curve for ECDSA or ECDH.
-  A stronger hash algorithm or a symmetric key algorithm MAY be used for a given ECC curve.
-  However, note that the increase in the strength of the hash algorithm or the symmetric key algorithm may not increase the overall security offered by the given ECC key.
-
-{: title="Elliptic Curve cryptographic guidance"}
-Curve name | ECC | RSA strength | Hash size strength, informative | Symmetric key size
------------|-----|--------------|---------------------------------|-------------------
-NIST P-256 | 256 | 3072 | 256 | 128
-NIST P-384 | 384 | 7680 | 384 | 192
-NIST P-521 | 521 | 15360 | 512 | 256
-
-- Requirement levels indicated elsewhere in this document lead to the following combinations of algorithms in the OpenPGP profile: MUST implement NIST curve P-256 / SHA2-256 / AES-128, SHOULD implement NIST curve P-521 / SHA2-512 / AES-256, MAY implement NIST curve P-384 / SHA2-384 / AES-256, among other allowed combinations.
-
-  Consistent with the table above, the following table defines the KDF hash algorithm and the AES KEK encryption algorithm that SHOULD be used with a given curve for ECDH.
-  A stronger KDF hash algorithm or AES KEK algorithm MAY be used for a given ECC curve.
-
-{: title="Elliptic Curve KDF and KEK recommendations"}
-Curve name | Recommended KDF hash algorithm | Recommended KEK encryption algorithm
------------|--------------------------------|-------------------------------------
-NIST P-256 | SHA2-256 | AES-128
-NIST P-384 | SHA2-384 | AES-192
-NIST P-521 | SHA2-512 | AES-256
-
-- This document explicitly discourages the use of algorithms other than AES as a KEK algorithm because backward compatibility of the ECDH format is not a concern.
+- An implementation SHOULD only use an AES algorithm as a KEK algorithm, since backward compatibility of the ECDH format is not a concern.
   The KEK algorithm is only used within the scope of a Public-Key Encrypted Session Key Packet, which represents an ECDH key recipient of a message.
   Compare this with the algorithm used for the session key of the message, which MAY be different from a KEK algorithm.
-
-  Compliant applications SHOULD implement, advertise through key preferences, and use the strongest algorithms specified in this document.
-
-  Note that the symmetric algorithm preference list may make it impossible to use the balanced strength of symmetric key algorithms for a corresponding public key.
-  For example, the presence of the symmetric key algorithm IDs and their order in the key preference list affects the algorithm choices available to the encoding side, which in turn may make the adherence to the table above infeasible.
-  Therefore, compliance with this specification is a concern throughout the life of the key starting immediately after the key generation when the key preferences are first added to a key.
-  It is generally advisable to position a symmetric algorithm ID of strength matching the public key at the head of the key preference list.
-
-  Encryption to multiple recipients often results in an unordered intersection subset.
-  For example, if the first recipient's set is {A, B} and the second's is {B, A}, the intersection is an unordered set of two algorithms, A and B.
-  In this case, a compliant application SHOULD choose the stronger encryption algorithm.
-
-  Resource constraints, such as limited computational power, are a reason why an application might prefer to use the weakest algorithm.
-  On the other side of the spectrum are applications that can implement every algorithm defined in this document.
-  Most applications are expected to fall into either of these two categories.
-  A compliant application in the second, or strongest, category SHOULD prefer AES-256 to AES-192.
-
-  SHA-1 MUST NOT be used with the ECDSA or the KDF in the ECDH method.
-
-  MDC MUST be used when a symmetric encryption key is protected by ECDH.
-  None of the ECC methods described in this document are allowed with deprecated V3 keys.
 
   Side channel attacks are a concern when a compliant application's use of the OpenPGP format can be modeled by a decryption or signing oracle, for example, when an application is a network service performing decryption to unauthenticated remote users.
   ECC scalar multiplication operations used in ECDSA and ECDH are vulnerable to side channel attacks.
