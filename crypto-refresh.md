@@ -2914,14 +2914,14 @@ The format of an OpenPGP V4 key that uses multiple public keys is similar except
         User ID [Signature ...]
        [User ID [Signature ...] ...]
        [User Attribute [Signature ...] ...]
-       [[Subkey [Binding-Signature-Revocation]
-               Primary-Key-Binding-Signature] ...]
+       [[Subkey [Binding-Signature-Revocation ...]
+               Subkey-Binding-Signature ...] ...]
 
-A subkey always has a single signature after it that is issued using the primary key to tie the two keys together.
-This binding signature may be in either V3 or V4 format, but SHOULD be V4.
+A subkey always has at least one subkey binding signature after it that is issued using the primary key to tie the two keys together.
+These binding signatures may be in either V3 or V4 format, but SHOULD be V4.
 Subkeys that can issue signatures MUST have a V4 binding signature due to the REQUIRED embedded primary key binding signature.
 
-In the above diagram, if the binding signature of a subkey has been revoked, the revoked key may be removed, leaving only one key.
+In the above diagram, if all binding signatures of a subkey have been revoked, the revoked key may be removed, leaving only one key.
 
 In a V4 key, the primary key MUST be a key capable of certification.
 The subkeys may be keys of any other type.
