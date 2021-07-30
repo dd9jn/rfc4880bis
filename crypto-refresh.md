@@ -3766,9 +3766,6 @@ Thus, this is a non-comprehensive list of potential problems and gotchas for a d
   Since most implementations allow binary and armored objects to be used indiscriminately, an implementation that does not implement ASCII armor may find itself with compatibility issues with general-purpose implementations.
   Moreover, implementations of OpenPGP-MIME {{RFC3156}} already have a requirement for ASCII armor so those implementations will necessarily have support.
 
-- The OCB mode is patented and a debate is still underway on whether it can be included in RFC4880bis or needs to be moved to a separate document.
-  For the sole purpose of experimenting with the Preferred AEAD Algorithms signature subpacket it is has been included in this I-D.
-
 --- back
 
 # Test vectors
