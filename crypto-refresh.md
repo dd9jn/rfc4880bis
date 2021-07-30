@@ -2220,7 +2220,7 @@ When the version is 1, it is followed by the following fields:
 
 - A one-octet chunk size.
 
-- A starting initialization vector of size specified by the AEAD algorithm.
+- A initialization vector of size specified by the AEAD algorithm.
 
 - Encrypted data, the output of the selected symmetric-key cipher operating in the given AEAD mode.
 
@@ -2257,17 +2257,17 @@ Failure to do so for each message can lead to a catastrophic failure depending o
 The EAX AEAD Algorithm used in this document is defined in {{EAX}}.
 
 The EAX algorithm can only use block ciphers with 16-octet blocks.
-The starting initialization vector is 16 octets long.
+The initialization vector is 16 octets long.
 EAX authentication tags are 16 octets long.
 
-The nonce for EAX mode is computed by treating the starting initialization vector as a 16-octet, big-endian value and exclusive-oring the low eight octets of it with the chunk index.
+The nonce for EAX mode is computed by treating the initialization vector as a 16-octet, big-endian value and exclusive-oring the low eight octets of it with the chunk index.
 
 ### OCB Mode
 
 The OCB AEAD Algorithm used in this document is defined in {{RFC7253}}.
 
 The OCB algorithm can only use block ciphers with 16-octet blocks.
-The starting initialization vector is 15 octets long.
+The initialization vector is 15 octets long.
 OCB authentication tags are 16 octets long.
 
 The nonce for OCB mode is computed by the exclusive-oring of the initialization vector as a 15-octet, big endian value, against the chunk index.
