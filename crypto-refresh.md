@@ -2249,40 +2249,28 @@ An implementation MUST support chunk size octets with values from 0 to 56.
 Chunk size octets with other values are reserved for future extensions.
 Implementations SHOULD NOT create data with a chunk size octet value larger than 21 (128 MiB chunks) to facilitate buffering of not yet authenticated plaintext.
 
-A new random initialization vector MUST be used for each message.
-Failure to do so for each message will lead to a catastrophic failure depending on the used AEAD mode.
+A unique, random, unpredictable initialization vector MUST be used for each message.
+Failure to do so for each message can lead to a catastrophic failure depending on the choice of AEAD mode and symmetric key reuse.
 
 ### EAX Mode
 
-The EAX algorithm can only use block ciphers with 16-octet blocks.
-The starting initialization vector and authentication tag are both 16 octets long.
+The EAX AEAD Algorithm used in this document is defined in {{EAX}}.
 
-The starting initialization vector for this mode MUST be unique and unpredictable.
+The EAX algorithm can only use block ciphers with 16-octet blocks.
+The starting initialization vector is 16 octets long.
+EAX authentication tags are 16 octets long.
 
 The nonce for EAX mode is computed by treating the starting initialization vector as a 16-octet, big-endian value and exclusive-oring the low eight octets of it with the chunk index.
 
-The security of EAX requires that the nonce is never reused, hence the requirement that the starting initialization vector be unique.
-
 ### OCB Mode
 
-The OCB Authenticated-Encryption Algorithm used in this document is defined in {{RFC7253}}.
+The OCB AEAD Algorithm used in this document is defined in {{RFC7253}}.
 
-OCB usage requires specification of the following parameters:
-
-- a blockcipher that operate on 128-bit (16-octet) blocks
-
-- an authentication tag length of 16 octets
-
-- a nonce of 15 octets long (which is the longest nonce allowed specified by {{RFC7253}})
-
-- an initialization vector of at least 15 octets long
-
-In the case that the initialization vector is longer than 15 octets (such as in {{secret-key-packet-tag-5}}, only the 15 leftmost octets are used in calculations; the remaining octets MUST be considered as zero.
+The OCB algorithm can only use block ciphers with 16-octet blocks.
+The starting initialization vector is 15 octets long.
+OCB authentication tags are 16 octets long.
 
 The nonce for OCB mode is computed by the exclusive-oring of the initialization vector as a 15-octet, big endian value, against the chunk index.
-
-Security of OCB mode depends on the non-repeated nature of nonces used for the same key on distinct plaintext {{RFC7253}}.
-Therefore the initialization vector per message MUST be distinct, and OCB mode SHOULD only be used in environments when there is certainty to fulfilling this requirement.
 
 # Radix-64 Conversions
 
@@ -2717,10 +2705,10 @@ MD5 is deprecated.
 ## AEAD Algorithms
 
 {: title="AEAD algorithm registry"}
-ID | Algorithm
----:|-----------------
- 1 | EAX {{EAX}}
- 2 | OCB {{RFC7253}}
+ID | Algorithm | IV length (octets) | authentication tag length (octets)
+---:|-----------------|---|---
+ 1 | EAX {{EAX}} | 16 | 16
+ 2 | OCB {{RFC7253}} | 15 | 16
 100 to 110 | Private/Experimental algorithm
 
 # IANA Considerations
