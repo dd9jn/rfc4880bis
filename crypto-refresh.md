@@ -2207,10 +2207,12 @@ While this is a bit restrictive, it reduces complexity.
 This packet contains data encrypted with an authenticated encryption and additional data (AEAD) construction.
 When it has been decrypted, it will typically contain other packets (often a Literal Data packet or Compressed Data packet).
 
-The body of this packet consists of:
+The body of this packet starts with:
 
 - A one-octet version number.
   The only currently defined value is 1.
+
+When the version is 1, it is followed by the following fields:
 
 - A one-octet cipher algorithm.
 
