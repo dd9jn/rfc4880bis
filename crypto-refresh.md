@@ -566,17 +566,22 @@ Older versions of PGP just stored a symmetric cipher algorithm octet preceding t
 The MD5 hash function was always used to convert the passphrase to a key for the specified cipher algorithm.
 
 For compatibility, when an S2K specifier is used, the special value 253, 254, or 255 is stored in the position where the cipher algorithm octet would have been in the old data structure.
-This is then followed immediately by a one-octet algorithm identifier, and then by the S2K specifier as encoded above.
+This is then followed immediately by a one-octet algorithm identifier, and other fields relevant to the type of encryption used.
 
-Therefore, preceding the secret data there will be one of these possibilities:
+Therefore, the first octet of the secret key material describes how the secret key data is presented.
 
-      0:                 secret data is unencrypted (no passphrase)
-      255, 254, or 253:  followed by algorithm octet and S2K specifier
-      Cipher alg:        use Simple S2K algorithm using MD5 hash
+In the table below, 2OC(x) means the "2-octet checksum" meaning the sum of all octets in x mod 65536.
 
-This last possibility, the cipher algorithm number with an implicit use of MD5 and IDEA, is provided for backward compatibility; it MAY be understood, but SHOULD NOT be generated, and is deprecated.
+{: title="Secret Key protection details" #secret-key-protection-details}
+First octet | Next fields | Encryption | Generate?
+---|--------------------------------------------------|---|---|---
+0 | - | cleartext secrets \|\| 2OC(secrets) | Y
+Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password), secrets \|\| 2OC(secrets)) | N
+253 | cipher-algo, AEAD-mode, S2K-specifier, nonce | AEAD(S2K(password), secrets, pubkey) | Y
+254 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Y
+255 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| 2OC(secrets)) | N
 
-These are followed by an Initial Vector of the same length as the block size of the cipher for the decryption of the secret values, if they are encrypted, and then the secret-key values themselves.
+Each row with "Generate?" marked as "N" is described for backward compatibility, and MUST NOT be generated.
 
 #### Symmetric-Key Message Encryption
 
@@ -1860,6 +1865,8 @@ The packet contains:
   If the string-to-key usage octet is 255 or another nonzero value (i.e., a symmetric-key encryption algorithm identifier), a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536) is appended to plaintext and encrypted with it. (This is deprecated and SHOULD NOT be used, see below.)
 
 - If the string-to-key usage octet is zero, then a two-octet checksum of the algorithm-specific portion (sum of all octets, mod 65536).
+
+The details about storing algorithm-specific secrets above are summarized in {{secret-key-protection-details}}.
 
 Note that the version 5 packet format adds two count values to help parsing packets with unknown S2K or public key algorithms.
 
