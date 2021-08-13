@@ -1071,7 +1071,7 @@ Type | Description
  32 | Embedded Signature
  33 | Issuer Fingerprint
  34 | Reserved (Preferred AEAD Algorithms)
- 35 | Reserved (Intended Recipient Fingerprint)
+ 35 | Intended Recipient Fingerprint
  37 | Reserved (Attested Certifications)
  38 | Reserved (Key Block)
 100 to 110 | Private or experimental
@@ -1482,6 +1482,16 @@ It is useful when one signature needs to refer to, or be incorporated in, anothe
 The OpenPGP Key fingerprint of the key issuing the signature.
 This subpacket SHOULD be included in all signatures.
 If the version of the issuing key is 4 and an Issuer subpacket is also included in the signature, the key ID of the Issuer subpacket MUST match the low 64 bits of the fingerprint.
+
+Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 5 key N is 32.
+
+#### Intended Recipient Fingerprint
+
+(1 octet key version number, N octets of fingerprint)
+
+The OpenPGP Key fingerprint of the intended recipient primary key.
+If one or more subpackets of this type are included in a signature, it SHOULD be considered valid only in an encrypted context, where the key it was encrypted to is one of the indicated primary keys, or one of their subkeys.
+This can be used to prevent forwarding a signature outside of its intended, encrypted context.
 
 Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 5 key N is 32.
 
