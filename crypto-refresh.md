@@ -2245,7 +2245,8 @@ The chunk size octet specifies the size of chunks using the following formula (i
 
       chunk_size = ((uint64_t)1 << (c + 6))
 
-To facilitate interoperability between a wide variety of implementations, from constrained to large compute environments, a chunk size maximum is specified: An implementation MUST accept chunk size octets with values from 0 to 16. An implementation MUST NOT create data with a chunk size octet value larger than 16 (4 MiB chunks).
+To facilitate interoperability between a wide variety of implementations, from constrained to large compute environments, a chunk size maximum is specified: An implementation MUST accept chunk size octets with values from 0 to 16.
+An implementation MUST NOT create data with a chunk size octet value larger than 16 (4 MiB chunks).
 
 A unique, random, unpredictable initialization vector MUST be used for each message.
 Failure to do so for each message can lead to a catastrophic failure depending on the choice of AEAD mode and symmetric key reuse.
@@ -2611,7 +2612,6 @@ See {{rsa-notes}}.
 See {{reserved-notes}} for notes on Elgamal Encrypt or Sign (20), and X9.42 (21).
 Implementations MAY implement any other algorithm.
 
-
 A compatible specification of ECDSA is given in {{RFC6090}} as "KT-I Signatures" and in {{SEC1}}; ECDH is defined in {{ec-dh-algorithm-ecdh}} of this document.
 
 ## ECC Curve OID
@@ -2840,7 +2840,8 @@ ID | Algorithm | Reference
 ---:|----------|----------
  22 | EdDSA public key algorithm | This doc, {{eddsa}}
 
-   \[ Note to RFC-Editor: Please remove the table above on publication. \]
+   \[ Note to RFC-Editor: Please remove the table above on publication.
+\]
 
 ### Symmetric-Key Algorithms
 
@@ -3808,7 +3809,6 @@ The entire signature packet is thus:
        7e d8 2b f4 dd e5 60 6e  0d 75 6a ed 33 66 01 00
        d0 9c 4f a1 15 27 f0 38  e0 f5 7f 22 01 d8 2f 2e
        a2 c9 03 32 65 fa 6c eb  48 9e 85 4b ae 61 b4 04
-
 
 ## Sample AEAD-EAX encryption and decryption
 
