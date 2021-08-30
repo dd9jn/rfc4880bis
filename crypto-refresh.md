@@ -2245,7 +2245,7 @@ The chunk size octet specifies the size of chunks using the following formula (i
 
       chunk_size = ((uint64_t)1 << (c + 6))
 
-To facilitate interoperability between a wide variety of implementations, from constrained to large compute environments, a chunk size maximum is specified: An implementation MUST accept chunk size octets with values from 0 to 16.
+An implementation MUST accept chunk size octets with values from 0 to 16.
 An implementation MUST NOT create data with a chunk size octet value larger than 16 (4 MiB chunks).
 
 A unique, random, unpredictable initialization vector MUST be used for each message.
