@@ -6,6 +6,8 @@ The goal of the document is to revise RFC 4880 with the ability to include more 
 
 Work should be done in this repository within the primary source document `crypto-refresh.md`.
 
+The current version of the draft can be found at [https://openpgp-wg.gitlab.io/rfc4880bis](https://openpgp-wg.gitlab.io/rfc4880bis).
+
 ## Build Dependencies
 
 To build, you need [kramdown-rfc2629](https://github.com/cabo/kramdown-rfc2629), [xml2rfc](https://pypi.org/project/xml2rfc/), and [GNU Make](https://www.gnu.org/software/make/).
