@@ -117,6 +117,16 @@ normative:
     author:
       ins: J. Seward
       name: Julian Seward, jseward@acm.org
+  EAX:
+    title: A Conventional Authenticated-Encryption Mode
+    date: April 2003
+    author:
+      -
+        ins: M. Bellare
+      -
+        ins: P. Rogaway
+      -
+        ins: D. Wagner
   ELGAMAL:
     title: A Public-Key Cryptosystem and a Signature Scheme Based on Discrete Logarithms
     date: 1985
@@ -193,6 +203,7 @@ normative:
   RFC3629:
   RFC3713:
   RFC4086:
+  RFC7253:
   RFC7748:
   RFC8032:
   RFC8126:
@@ -714,7 +725,7 @@ Tag | Packet Type
  17 | User Attribute Packet
  18 | Sym. Encrypted and Integrity Protected Data Packet
  19 | Modification Detection Code Packet
- 20 | Reserved (AEAD Encrypted Data)
+ 20 | AEAD Encrypted Data Packet
 60 to 63 | Private or Experimental Values
 
 # Packet Types {#packet-types}
@@ -2201,6 +2212,75 @@ Note that the Modification Detection Code packet MUST always use a new format en
 The reason for this is that the hashing rules for modification detection include a one-octet tag and one-octet length in the data hash.
 While this is a bit restrictive, it reduces complexity.
 
+## AEAD Encrypted Data Packet (Tag 20) {#aead}
+
+This packet contains data encrypted with an authenticated encryption and additional data (AEAD) construction.
+When it has been decrypted, it will typically contain other packets (often a Literal Data packet or Compressed Data packet).
+
+The body of this packet starts with:
+
+- A one-octet version number.
+  The only currently defined value is 1.
+
+When the version is 1, it is followed by the following fields:
+
+- A one-octet cipher algorithm.
+
+- A one-octet AEAD algorithm.
+
+- A one-octet chunk size.
+
+- A initialization vector of size specified by the AEAD algorithm.
+
+- Encrypted data, the output of the selected symmetric-key cipher operating in the given AEAD mode.
+
+- A final, summary authentication tag for the AEAD mode.
+
+An AEAD encrypted data packet consists of one or more chunks of data.
+The plaintext of each chunk is of a size specified using the chunk size octet using the method specified below.
+
+The encrypted data consists of the encryption of each chunk of plaintext, followed immediately by the relevant authentication tag.
+If the last chunk of plaintext is smaller than the chunk size, the ciphertext for that data may be shorter; it is nevertheless followed by a full authentication tag.
+
+For each chunk, the AEAD construction is given the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), version number, cipher algorithm octet, AEAD algorithm octet, chunk size octet, and an eight-octet, big-endian chunk index as additional data.
+The index of the first chunk is zero.
+For example, the additional data of the first chunk using EAX and AES-128 with a chunk size of 64 kiByte consists of the octets 0xD4, 0x01, 0x07, 0x01, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, and 0x00.
+
+After the final chunk, the AEAD algorithm is used to produce a final authentication tag encrypting the empty string.
+This AEAD instance is given the additional data specified above, plus an eight-octet, big-endian value specifying the total number of plaintext octets encrypted.
+This allows detection of a truncated ciphertext.
+Please note that the big-endian number representing the chunk index in the additional data is increased accordingly, although it's not really a chunk.
+
+The chunk size octet specifies the size of chunks using the following formula (in C), where c is the chunk size octet:
+
+      chunk_size = ((uint64_t)1 << (c + 6))
+
+An implementation MUST accept chunk size octets with values from 0 to 16.
+An implementation MUST NOT create data with a chunk size octet value larger than 16 (4 MiB chunks).
+
+A unique, random, unpredictable initialization vector MUST be used for each message.
+Failure to do so for each message can lead to a catastrophic failure depending on the choice of AEAD mode and symmetric key reuse.
+
+### EAX Mode
+
+The EAX AEAD Algorithm used in this document is defined in {{EAX}}.
+
+The EAX algorithm can only use block ciphers with 16-octet blocks.
+The initialization vector is 16 octets long.
+EAX authentication tags are 16 octets long.
+
+The nonce for EAX mode is computed by treating the initialization vector as a 16-octet, big-endian value and exclusive-oring the low eight octets of it with the chunk index.
+
+### OCB Mode
+
+The OCB AEAD Algorithm used in this document is defined in {{RFC7253}}.
+
+The OCB algorithm can only use block ciphers with 16-octet blocks.
+The initialization vector is 15 octets long.
+OCB authentication tags are 16 octets long.
+
+The nonce for OCB mode is computed by the exclusive-oring of the initialization vector as a 15-octet, big endian value, against the chunk index.
+
 # Radix-64 Conversions
 
 As stated in the introduction, OpenPGP's underlying native representation for objects is a stream of arbitrary octets, and some systems desire these objects to be immune to damage caused by character set translation, data conversions, etc.
@@ -2630,6 +2710,15 @@ Implementations MUST implement SHA-1.
 Implementations MAY implement other algorithms.
 MD5 is deprecated.
 
+## AEAD Algorithms
+
+{: title="AEAD algorithm registry"}
+ID | Algorithm | IV length (octets) | authentication tag length (octets)
+---:|-----------------|---|---
+ 1 | EAX {{EAX}} | 16 | 16
+ 2 | OCB {{RFC7253}} | 15 | 16
+100 to 110 | Private/Experimental algorithm
+
 # IANA Considerations
 
 Because this document obsoletes {{RFC4880}}, IANA is requested to update all registration information that references {{RFC4880}} to instead reference this RFC.
@@ -2882,7 +2971,7 @@ ESK Sequence :-
 : ESK \| ESK Sequence, ESK.
 
 Encrypted Data :-
-: Symmetrically Encrypted Data Packet \| Symmetrically Encrypted Integrity Protected Data Packet
+: Symmetrically Encrypted Data Packet \| Symmetrically Encrypted Integrity Protected Data Packet \| AEAD Encrypted Data Packet
 
 Encrypted Message :-
 : Encrypted Data \| ESK Sequence, Encrypted Data.
@@ -3168,7 +3257,7 @@ Note that the recipient obtains the shared secret by calculating
 
     S = rV = rvG, where (r,R) is the recipient's key pair.
 
-Consistent with {{seipd}}, a Modification Detection Code (MDC) MUST be used anytime the symmetric key is protected by ECDH.
+Consistent with {{aead}} and {{seipd}}, AEAD encryption or a Modification Detection Code (MDC) MUST be used anytime the symmetric key is protected by ECDH.
 
 # Notes on Algorithms {#notes-on-algorithms}
 
@@ -3730,6 +3819,168 @@ The entire signature packet is thus:
        7e d8 2b f4 dd e5 60 6e  0d 75 6a ed 33 66 01 00
        d0 9c 4f a1 15 27 f0 38  e0 f5 7f 22 01 d8 2f 2e
        a2 c9 03 32 65 fa 6c eb  48 9e 85 4b ae 61 b4 04
+
+## Sample AEAD-EAX encryption and decryption
+
+Encryption is performed with the string `Hello, world!`, using AES-128 with AEAD-EAX encryption.
+
+### Initial Content Encryption Key
+
+This key would typically be extracted from an SKESK or PKESK.
+
+CEK:
+
+      86 f1 ef b8 69 52 32 9f 24 ac d3 bf d0 e5 34 6d
+
+### Sample AEAD encrypted data packet
+
+Packet header:
+
+      d4 4a
+
+Version, AES-128, EAX, Chunk bits (14):
+
+      01 07 01 0e
+
+IV:
+
+      b7 32 37 9f 73 c4 92 8d e2 5f ac fe 65 17 ec 10
+
+AEAD-EAX Encrypted data chunk #0:
+
+      5d c1 1a 81 dc 0c b8 a2 f6 f3 d9 00 16 38 4a 56
+      fc 82 1a e1 1a e8
+
+Chunk #0 authentication tag:
+
+      db cb 49 86 26 55 de a8 8d 06 a8 14 86 80 1b 0f
+
+Final (zero-size chunk #1) authentication tag:
+
+      f3 87 bd 2e ab 01 3d e1 25 95 86 90 6e ab 24 76
+
+### Decryption of data
+
+Starting AEAD-EAX decryption of data, using the CEK.
+
+Chunk #0:
+
+Authenticated data:
+
+      d4 01 07 01 0e 00 00 00 00 00 00 00 00
+
+Nonce:
+
+      b7 32 37 9f 73 c4 92 8d e2 5f ac fe 65 17 ec 10
+
+Decrypted chunk #0.
+
+Literal data packet with the string contents 'Hello, world!\n'.
+
+      cb 14 62 00 00 00 00 00  48 65 6c 6c 6f 2c 20 77
+      6f 72 6c 64 21 0a
+
+Authenticating final tag:
+
+Authenticated data:
+
+      d4 01 07 01 0e 00 00 00  00 00 00 00 01 00 00 00
+      00 00 00 00 16
+
+Nonce:
+
+      b7 32 37 9f 73 c4 92 8d e2 5f ac fe 65 17 ec 11
+
+### Complete AEAD-EAX encrypted packet sequence
+
+AEAD encrypted data packet:
+
+       d4 4a 01 07 01 0e b7 32  37 9f 73 c4 92 8d e2 5f
+       ac fe 65 17 ec 10 5d c1  1a 81 dc 0c b8 a2 f6 f3
+       d9 00 16 38 4a 56 fc 82  1a e1 1a e8 db cb 49 86
+       26 55 de a8 8d 06 a8 14  86 80 1b 0f f3 87 bd 2e
+       ab 01 3d e1 25 95 86 90  6e ab 24 76
+
+## Sample AEAD-OCB encryption and decryption
+
+Encryption is performed with the string `Hello, world!` using AES-128 with AEAD-OCB encryption.
+
+### Initial Content Encryption Key
+
+This key would typically be extracted from an SKESK or PKESK.
+
+Decrypted CEK:
+
+      d1 f0 1b a3 0e 13 0a a7 d2 58 2c 16 e0 50 ae 44
+
+### Sample AEAD encrypted data packet
+
+Packet header:
+
+      d4 49
+
+Version, AES-128, OCB, Chunk bits (14):
+
+      01 07 02 0e
+
+IV:
+
+      5e d2 bc 1e 47 0a be 8f 1d 64 4c 7a 6c 8a 56
+
+AEAD-OCB Encrypted data chunk #0:
+
+      7b 0f 77 01 19 66 11 a1  54 ba 9c 25 74 cd 05 62
+      84 a8 ef 68 03 5c
+
+Chunk #0 authentication tag:
+
+      62 3d 93 cc 70 8a 43 21 1b b6 ea f2 b2 7f 7c 18
+
+Final (zero-size chunk #1) authentication tag:
+
+      d5 71 bc d8 3b 20 ad d3 a0 8b 73 af 15 b9 a0 98
+
+### Decryption of data
+
+Starting AEAD-OCB decryption of data, using the CEK.
+
+Chunk #0:
+
+Authenticated data:
+
+      d4 01 07 02 0e 00 00 00 00 00 00 00 00
+
+Nonce:
+
+      5e d2 bc 1e 47 0a be 8f 1d 64 4c 7a 6c 8a 56
+
+Decrypted chunk #0.
+
+Literal data packet with the string contents 'Hello, world!\n'.
+
+      cb 14 62 00 00 00 00 00  48 65 6c 6c 6f 2c 20 77
+      6f 72 6c 64 21 0a
+
+Authenticating final tag:
+
+Authenticated data:
+
+      d4 01 07 02 0e 00 00 00 00 00 00 00 01 00 00 00
+      00 00 00 00 16
+
+Nonce:
+
+      5e d2 bc 1e 47 0a be 8f 1d 64 4c 7a 6c 8a 57
+
+### Complete AEAD-OCB encrypted packet sequence
+
+AEAD encrypted data packet:
+
+      d4 49 01 07 02 0e 5e d2  bc 1e 47 0a be 8f 1d 64
+      4c 7a 6c 8a 56 7b 0f 77  01 19 66 11 a1 54 ba 9c
+      25 74 cd 05 62 84 a8 ef  68 03 5c 62 3d 93 cc 70
+      8a 43 21 1b b6 ea f2 b2  7f 7c 18 d5 71 bc d8 3b
+      20 ad d3 a0 8b 73 af 15  b9 a0 98
 
 # ECC Point compression flag bytes
 
