@@ -5,7 +5,7 @@ pages:
   script:
     - find /etc/apt -name '*.list' -exec sed -i 's/main/main non-free/' {} \; # xml2rfc is non-free
     - apt update -y -qq && apt install -y -qq --no-install-recommends make weasyprint xml2rfc ruby-kramdown-rfc2629
-    - sed -i 's/^docname: draft-ietf-openpgp-crypto-refresh-.*/docname: draft-ietf-openpgp-crypto-refresh-latest/' crypto-refresh.md
+    - "sed -i 's/^docname: draft-ietf-openpgp-crypto-refresh-.*/docname: draft-ietf-openpgp-crypto-refresh-latest/' crypto-refresh.md"
     - make crypto-refresh.html
     - mkdir public
     - cp -v crypto-refresh.html public/index.html
