@@ -1873,7 +1873,7 @@ The public key is this series of values:
 
   - A one-octet size of the following field; values 0 and 0xFF are reserved for future extensions,
 
-  - The octets representing a curve OID (defined in {{ecc-curve-oid}});
+  - The octets representing a curve OID (defined in {{ec-curves}});
 
 - MPI of an EC point representing a public key.
 
@@ -1889,7 +1889,7 @@ The public key is this series of values:
 
   - a one-octet size of the following field; values 0 and 0xFF are reserved for future extensions,
 
-  - the octets representing a curve OID, defined in {{ecc-curve-oid}};
+  - the octets representing a curve OID, defined in {{ec-curves}};
 
 - a MPI of an EC point representing a public key Q as described under EdDSA Point Format below.
 
@@ -1905,7 +1905,7 @@ The public key is this series of values:
 
   - A one-octet size of the following field; values 0 and 0xFF are reserved for future extensions,
 
-  - Octets representing a curve OID, defined in {{ecc-curve-oid}};
+  - Octets representing a curve OID, defined in {{ec-curves}};
 
 - MPI of an EC point representing a public key;
 
@@ -2633,7 +2633,7 @@ Implementations MAY implement any other algorithm.
 
 A compatible specification of ECDSA is given in {{RFC6090}} as "KT-I Signatures" and in {{SEC1}}; ECDH is defined in {{ec-dh-algorithm-ecdh}} of this document.
 
-## ECC Curve OID
+## ECC Curves for OpenPGP {#ec-curves}
 
 The parameter curve OID is an array of octets that define a named curve.
 The table below specifies the exact sequence of bytes for each named curve referenced in this document:
@@ -2899,6 +2899,14 @@ The registry includes the algorithm name and a reference to the defining specifi
 The initial values for this registry can be found in {{compression-algos}}.
 Adding a new compression key algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
+### Elliptic Curve Algorithms
+
+This document requests IANA add a registry of elliptic curves for use in OpenPGP.
+
+Each curve is identified on the wire by OID, and is acceptable for use in certain OpenPGP public key algorithms.
+The table's initial headings and values can be found in {{ec-curves}}.
+Adding a new elliptic curve algorithm to OpenPGP MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
+
 ## Elliptic Curve Point and Value Wire Formats
 
 This document requests IANA add a registry of wire formats that represent elliptic curve points.
@@ -3138,10 +3146,11 @@ A thorough introduction to ECC can be found in {{KOBLITZ}}.
 ## Supported ECC Curves
 
 This document references three named prime field curves defined in {{FIPS186}} as "Curve P-256", "Curve P-384", and "Curve P-521".
-Further curve "Curve25519", defined in {{RFC7748}} is referenced for use with Ed25519 (EdDSA signing) and X25519 (ECDH encryption).
+These three {{FIPS186}} curves can be used with ECDSA and ECDH public key algorithms.
+Additionally, curve "Curve25519", defined in {{RFC7748}} is referenced for use with Ed25519 (EdDSA signing) and X25519 (ECDH encryption).
 
 The named curves are referenced as a sequence of bytes in this document, called throughout, curve OID.
-{{ecc-curve-oid}} describes in detail how this sequence of bytes is formed.
+{{ec-curves}} describes in detail how this sequence of bytes is formed.
 
 ## EC Point Wire Formats {#ec-point-wire-formats}
 
@@ -3248,7 +3257,7 @@ The KDF parameters are encoded as a concatenation of the following 5 variable-le
 
   - A one-octet size of the following field,
 
-  - The octets representing a curve OID defined in {{ecc-curve-oid}};
+  - The octets representing a curve OID defined in {{ec-curves}};
 
 - A one-octet public key algorithm ID defined in {{pubkey-algos}};
 
