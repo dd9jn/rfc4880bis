@@ -3281,6 +3281,7 @@ Type | Description | Reference
 -----|-------------|-----------
 integer | An integer, big-endian encoded as a standard OpenPGP MPI | {{mpi}}
 octet string | An octet string of fixed length, that may be shorter on the wire due to leading zeros being stripped by the MPI encoding, and may need to be zero-padded before usage | {{ec-octet-string}}
+prefixed N octets | An octet string of fixed length N, prefixed with octet 0x40 to ensure no leading zero octet | {{ec-prefix}}
 
 ### EC Octet String Wire Format {#ec-octet-string}
 
@@ -3297,6 +3298,23 @@ To reverse the process, an implementation that knows this value has an expected 
 - ensure that the MPI's two-octet bitcount is less than or equal to 40 (5 octets of 8 bits)
 - allocate 5 octets, setting all to zero initially
 - copy the MPI data octets (without the two count octets) into the lower octets of the allocated space
+
+### Elliptic Curve Prefixed Octet String Wire Format {#ec-prefix}
+
+Another way to ensure that a fixed-length bytestring is encoded simply to the wire while remaining in MPI format is to prefix the bytestring with a dedicated non-zero octet.
+This specification uses 0x40 as the prefix octet.
+This is represented in this standard as `MPI(prefixed N octets of X)`, where `N` is the known bytestring length.
+
+For example, a five-octet opaque string using `MPI(prefixed 5 octets of X)` where `X` has the value `00 02 ee 19 00` would be written to the wire form as: `00 2f 40 00 02 ee 19 00`.
+
+To encode the string, we prefix it with the octet 0x40 (whose 7th bit is set), then set the MPI's two-octet bit counter to 47 (0x002f, 7 bits for the prefix octet and 40 bits for the string).
+
+To decode the string from the wire, an implementation that knows that the variable is formed in this way can:
+
+- ensure that the first three octets of the MPI (the two bit-count octets plus the prefix octet)  are `00 2f 40`, and
+- use remainder of the MPI directly off the wire.
+
+Note that this is a similar approach to that used in the EC point encodings found in {{ec-point-prefixed-native}}.
 
 ## Key Derivation Function
 
