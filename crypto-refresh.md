@@ -751,21 +751,23 @@ The body of this packet consists of:
 - A string of octets that is the encrypted session key.
   This string takes up the remainder of the packet, and its contents are dependent on the public-key algorithm used.
 
-  Algorithm Specific Fields for RSA encryption:
+### Algorithm Specific Fields for RSA encryption {#pkesk-rsa}
 
-  - Multiprecision integer (MPI) of RSA encrypted value m**e mod n.
+- Multiprecision integer (MPI) of RSA-encrypted value m**e mod n.
 
-  Algorithm Specific Fields for Elgamal encryption:
+### Algorithm Specific Fields for Elgamal encryption {#pkesk-elgamal}
 
-  - MPI of Elgamal (Diffie-Hellman) value g**k mod p.
+- MPI of Elgamal (Diffie-Hellman) value g**k mod p.
 
-  - MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
+- MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
 
-  Algorithm-Specific Fields for ECDH encryption:
+### Algorithm-Specific Fields for ECDH encryption {#pkesk-ecdh}
 
-  - MPI of an EC point representing an ephemeral public key.
+- MPI of an EC point representing an ephemeral public key.
 
-  - A one-octet size, followed by a symmetric key encoded using the method described in {{ec-dh-algorithm-ecdh}}.
+- A one-octet size, followed by a symmetric key encoded using the method described in {{ec-dh-algorithm-ecdh}}.
+
+### Notes on PKESK
 
 The value "m" in the above formulas is derived from the session key as follows.
 First, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following Symmetrically Encrypted Data Packet.
@@ -984,24 +986,26 @@ The body of a V4 or V5 Signature packet contains:
 - One or more multiprecision integers comprising the signature.
   This portion is algorithm specific:
 
-  Algorithm-Specific Fields for RSA signatures:
+#### Algorithm-Specific Fields for RSA signatures {#sig-rsa}
 
-  - Multiprecision integer (MPI) of RSA signature value m**d mod n.
+- Multiprecision integer (MPI) of RSA signature value m**d mod n.
 
-  Algorithm-Specific Fields for DSA or ECDSA signatures:
+#### Algorithm-Specific Fields for DSA or ECDSA signatures {#sig-dsa}
 
-  - MPI of DSA or ECDSA value r.
+- MPI of DSA or ECDSA value r.
 
-  - MPI of DSA or ECDSA value s.
+- MPI of DSA or ECDSA value s.
 
-  Algorithm-Specific Fields for EdDSA signatures:
+#### Algorithm-Specific Fields for EdDSA signatures: {#sig-eddsa}
 
-  - MPI of an EC point r.
+- MPI of an EC point r.
 
-  - EdDSA value s, in MPI, in the little endian representation.
+- EdDSA value s, in MPI, in the little endian representation.
 
 The format of R and S for use with EdDSA is described in {{RFC8032}}.
 A version 3 signature MUST NOT be created and MUST NOT be used with EdDSA.
+
+#### Notes on Signatures
 
 The concatenation of the data being signed and the signature data from the version number through the hashed subpacket data (inclusive) is hashed.
 The resulting hash value is what is signed.
@@ -1808,7 +1812,7 @@ The reason for this is that there are some attacks that involve undetectably mod
 The public and secret key format specifies algorithm-specific parts of a key.
 The following sections describe them in detail.
 
-### Algorithm-Specific Part for RSA Keys
+### Algorithm-Specific Part for RSA Keys {#key-rsa}
 
 The public key is this series of multiprecision integers:
 
@@ -1826,7 +1830,7 @@ The secret key is this series of multiprecision integers:
 
 - MPI of u, the multiplicative inverse of p, mod q.
 
-### Algorithm-Specific Part for DSA Keys
+### Algorithm-Specific Part for DSA Keys {#key-dsa}
 
 The public key is this series of multiprecision integers:
 
@@ -1842,7 +1846,7 @@ The secret key is this single multiprecision integer:
 
 - MPI of DSA secret exponent x.
 
-### Algorithm-Specific Part for Elgamal Keys
+### Algorithm-Specific Part for Elgamal Keys {#key-elgamal}
 
 The public key is this series of multiprecision integers:
 
@@ -1856,7 +1860,7 @@ The secret key is this single multiprecision integer:
 
 - MPI of Elgamal secret exponent x.
 
-### Algorithm-Specific Part for ECDSA Keys
+### Algorithm-Specific Part for ECDSA Keys {#key-ecdsa}
 
 The public key is this series of values:
 
@@ -1872,7 +1876,7 @@ The secret key is this single multiprecision integer:
 
 - MPI of an integer representing the secret key, which is a scalar of the public EC point.
 
-### Algorithm-Specific Part for EdDSA Keys
+### Algorithm-Specific Part for EdDSA Keys {#key-eddsa}
 
 The public key is this series of values:
 
@@ -1888,7 +1892,7 @@ The secret key is this single multiprecision integer:
 
 - MPI of an integer representing the secret key, which is a scalar of the public EC point.
 
-### Algorithm-Specific Part for ECDH Keys
+### Algorithm-Specific Part for ECDH Keys {#key-ecdh}
 
 The public key is this series of values:
 
@@ -2599,18 +2603,18 @@ See {{notes-on-algorithms}} for more discussion of the algorithms.
 ## Public-Key Algorithms {#pubkey-algos}
 
 {: title="Public-key algorithm registry"}
-ID | Algorithm
----:|--------------------------
- 1 | RSA (Encrypt or Sign) {{HAC}}
- 2 | RSA Encrypt-Only {{HAC}}
- 3 | RSA Sign-Only {{HAC}}
- 16 | Elgamal (Encrypt-Only) {{ELGAMAL}} {{HAC}}
- 17 | DSA (Digital Signature Algorithm) {{FIPS186}} {{HAC}}
- 18 | ECDH public key algorithm
- 19 | ECDSA public key algorithm {{FIPS186}}
+ID | Algorithm | Public Key Format | Secret Key Format | Signature Format | PKESK Format
+---:|--------------------------|---|---|---|---
+ 1 | RSA (Encrypt or Sign) {{HAC}} | MPI(n), MPI(e) \[{{key-rsa}}] | MPI(d), MPI(p), MPI(q), MPI(u) | MPI(m\**d mod n) \[{{sig-rsa}}] | MPI(m\**e mod n) \[{{pkesk-rsa}}]
+ 2 | RSA Encrypt-Only {{HAC}} | MPI(n), MPI(e) \[{{key-rsa}}]| MPI(d), MPI(p), MPI(q), MPI(u) | N/A | MPI(m\**e mod n) \[{{pkesk-rsa}}]
+ 3 | RSA Sign-Only {{HAC}} | MPI(n), MPI(e) \[{{key-rsa}}] | MPI(d), MPI(p), MPI(q), MPI(u) | MPI(m\**d mod n) \[{{sig-rsa}}] | N/A 
+ 16 | Elgamal (Encrypt-Only) {{ELGAMAL}} {{HAC}} | MPI(p), MPI(g), MPI(y) \[{{key-elgamal}}] | MPI(x) | N/A | MPI(g\*\*k mod p), MPI (m * y\*\*k mod p) \[{{pkesk-elgamal}}]
+ 17 | DSA (Digital Signature Algorithm) {{FIPS186}} {{HAC}} | MPI(p), MPI(q), MPI(g), MPI(y) \[{{key-dsa}}] | MPI(x) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
+ 18 | ECDH public key algorithm | OID, MPI(Point), KDFParams \[{{key-ecdh}}]| MPI(secret) | N/A | MPI(Point), size octet, encoded key \[{{pkesk-ecdh}}, {{ec-dh-algorithm-ecdh}}]
+ 19 | ECDSA public key algorithm {{FIPS186}} | OID, MPI(Point) \[{{key-ecdsa}}] | MPI(secret) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
  20 | Reserved (formerly Elgamal Encrypt or Sign)
  21 | Reserved for Diffie-Hellman (X9.42, as defined for IETF-S/MIME)
- 22 | EdDSA  {{RFC8032}}
+ 22 | EdDSA  {{RFC8032}} | OID, MPI(Point) \[{{key-eddsa}}] | MPI(secret) | MPI, MPI \[{{sig-eddsa}}] | N/A
  23 | Reserved (AEDH)
  24 | Reserved (AEDSA)
 100 to 110 | Private/Experimental algorithm
@@ -2890,6 +2894,17 @@ The registry includes the algorithm name and a reference to the defining specifi
 The initial values for this registry can be found in {{compression-algos}}.
 Adding a new compression key algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
+## Changes to existing registries
+
+This document requests IANA add the following wire format columns to the OpenPGP public-key algorithm registry:
+
+- Public Key Format
+- Secret Key Format
+- Signature Format
+- PKESK Format
+
+And populate them with the values found in {{pubkey-algos}}.
+
 # Packet Composition {#packet-composition}
 
 OpenPGP packets are assembled into sequences in order to create messages and to transfer keys.
@@ -3138,7 +3153,7 @@ Therefore, the exact size of the MPI payload is 515 bits for "Curve P-256", 771 
 Even though the zero point, also called the point at infinity, may occur as a result of arithmetic operations on points of an elliptic curve, it SHALL NOT appear in data structures defined in this document.
 
 If other conversion methods are defined in the future, a compliant application MUST NOT use a new format when in doubt that any recipient can support it.
-Consider, for example, that while both the public key and the per-recipient ECDH data structure, respectively defined in {{algorithm-specific-part-for-ecdh-keys}} and {{public-key-encrypted-session-key-packets-tag-1}}, contain an encoded point field, the format changes to the field in {{public-key-encrypted-session-key-packets-tag-1}} only affect a given recipient of a given message.
+Consider, for example, that while both the public key and the per-recipient ECDH data structure, respectively defined in {{key-ecdh}} and {{public-key-encrypted-session-key-packets-tag-1}}, contain an encoded point field, the format changes to the field in {{public-key-encrypted-session-key-packets-tag-1}} only affect a given recipient of a given message.
 
 ## EdDSA Point Format
 
