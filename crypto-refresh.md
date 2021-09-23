@@ -1003,9 +1003,9 @@ The body of a V4 or V5 Signature packet contains:
 
 #### Algorithm-Specific Fields for EdDSA signatures: {#sig-eddsa}
 
-- MPI of an EC point r.
+- MPI of an EC point R, represented as a "native" (little-endian) bytestring up to the field size (fsize) of the curve used, with leading zero-octets stripped.
 
-- EdDSA value s, in MPI, in the little endian representation.
+- EdDSA value S, in MPI, also in little endian representation with a length up to the field size (fsize) of the curve used.
 
 The format of R and S for use with EdDSA is described in {{RFC8032}}.
 A version 3 signature MUST NOT be created and MUST NOT be used with EdDSA.
@@ -1891,11 +1891,13 @@ The public key is this series of values:
 
   - the octets representing a curve OID, defined in {{ec-curves}};
 
-- a MPI of an EC point representing a public key Q as described under EdDSA Point Format below.
+- a MPI of an EC point representing a public key Q in native form (see {{ec-point-native}}).
 
 The secret key is this single multiprecision integer:
 
-- MPI of an integer representing the secret key, which is a scalar of the public EC point.
+- an MPI-encoded native bytestring representing the secret key (see {{ec-bytes}}).
+
+See {{RFC8032}} for more details about the native encodings.
 
 ### Algorithm-Specific Part for ECDH Keys {#key-ecdh}
 
@@ -2619,7 +2621,7 @@ ID | Algorithm | Public Key Format | Secret Key Format | Signature Format | PKES
  19 | ECDSA public key algorithm {{FIPS186}} | OID, MPI(Point) \[{{key-ecdsa}}] | MPI(secret) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
  20 | Reserved (formerly Elgamal Encrypt or Sign)
  21 | Reserved for Diffie-Hellman (X9.42, as defined for IETF-S/MIME)
- 22 | EdDSA  {{RFC8032}} | OID, MPI(Point) \[{{key-eddsa}}] | MPI(secret) | MPI, MPI \[{{sig-eddsa}}] | N/A
+ 22 | EdDSA  {{RFC8032}} | OID, native(Point) \[{{key-eddsa}}] | bytes\[fsize](secret) | bytes\[fsize](R), bytes\[fsize](S) \[{{sig-eddsa}}] | N/A
  23 | Reserved (AEDH)
  24 | Reserved (AEDSA)
 100 to 110 | Private/Experimental algorithm
@@ -3184,7 +3186,7 @@ For a custom compressed point the content of the MPI is:
     B = 40 || p
 
 where p is the public key of the point encoded using the rules defined for the specified curve.
-This format is used for ECDH keys based on curves expressed in Montgomery form.
+This format is used for ECDH keys based on curves expressed in Montgomery form, and for points when using EdDSA.
 
 ### Observations About Encoded EC Points
 
