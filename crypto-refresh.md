@@ -394,7 +394,7 @@ Scalar numbers are unsigned and are always stored in big-endian format.
 Using n\[k\] to refer to the kth octet being interpreted, the value of a two-octet scalar is ((n\[0\] << 8) + n\[1\]).
 The value of a four-octet scalar is ((n\[0\] << 24) + (n\[1\] << 16) + (n\[2\] << 8) + n\[3\]).
 
-## Multiprecision Integers
+## Multiprecision Integers {#mpi}
 
 Multiprecision integers (also called MPIs) are unsigned integers used to hold large integers such as the ones used in cryptographic calculations.
 
@@ -424,8 +424,8 @@ It may be ill-formed in its ciphertext.
 
 ### Using MPIs to encode other data
 
-Note that MPIs are used in some places used to encode non-integer data, such as an elliptic curve point (see {{ec-point-wire-formats}}, or a bitstring that has the leading bit set.
-The wire representation is the same: two octets of length in bits including the first non-zero bit, followed by the smallest series of octets that can represent the bitstring.
+Note that MPIs are used in some places used to encode non-integer data, such as an elliptic curve point (see {{ec-point-wire-formats}}, or a bytestring of known, fixed length (see {{ec-value-wire-formats}}).
+The wire representation is the same: two octets of length in bits counted from the first non-zero bit, followed by the smallest series of octets that can represent the value while stripping off any leading zero octets.
 
 ## Key IDs
 
@@ -2899,11 +2899,15 @@ The registry includes the algorithm name and a reference to the defining specifi
 The initial values for this registry can be found in {{compression-algos}}.
 Adding a new compression key algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
-## Elliptic Curve Point Wire Formats
+## Elliptic Curve Point and Value Wire Formats
 
 This document requests IANA add a registry of wire formats that represent elliptic curve points.
 The table's initial headings and values can be found in {{ec-point-wire-formats}}.
 Adding a new EC point wire format MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
+
+This document also requests IANA add a registry of wire formats that represent elliptic curve values.
+The table's initial headings and values can be found in {{ec-value-wire-formats}}.
+Adding a new EC value wire format MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 ## Changes to existing registries
 
@@ -3179,6 +3183,35 @@ Even though the zero point, also called the point at infinity, may occur as a re
 
 Each particular curve uses a designated wire format for the point found in its public key or ECDH data structure.
 An implementation MUST NOT use a different wire format for a point than the wire format associated with the curve.
+
+## Encoded values for Elliptic Curves {#ec-value-wire-formats}
+
+Some non-curve values in elliptic curve cryptography (e.g. secret keys and signature components) are not points on a curve, but are also encoded on the wire in OpenPGP as an MPI.
+
+Because of different patterns of deployment, some curves treat these values as opaque bit strings with the high bit set, while others are treated as actual integers, encoded in the standard OpenPGP big-endian form.
+The choice of encoding is specific to the public key algorithm in use.
+
+{: title="Elliptic Curve Value Encodings"}
+Name | Description | Reference
+-----|-------------|-----------
+MPI | An integer, big-endian encoded as a standard OpenPGP MPI | {{mpi}}
+bytes\[N] | An octet string of fixed length, expected to be N octets long when used, but may be shorter on the wire due to leading zeros | {{ec-bytes}}
+
+### Elliptic Curve Bytestring Wire Format {#ec-bytes}
+
+Some opaque strings of octets are represented on the wire as an MPI by simply stripping the leading zeros and counting the remaining bits.
+These strings are of known, fixed length.
+They are represented in this document as `bytes[N]` where `N` is the length in octets of the expected string.
+
+For example a five-octet opaque string (`bytes[5](x)`) where `x` has the value `00 02 ee 19 00` would be represented on the wire as an MPI like so: `00 1a 02 ee 19 00`.
+
+To encode `x` to the wire format, we set the MPI's two-octet bit counter to the value of the highest set bit (bit 26, or 0x001a), and do not transfer the leading all-zero octet to the wire.
+
+To reverse the process, an implementation that knows this value is a `bytes[5]` string can take the following steps:
+
+- ensure that the MPI's two-octet bitcount is less than or equal to 40 (5 octets of 8 bits)
+- allocate 5 octets, setting all to zero initially
+- copy the MPI data octets (without the two count octets) into the lower octets of the allocated space
 
 ## Key Derivation Function
 
