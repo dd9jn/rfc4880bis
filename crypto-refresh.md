@@ -422,6 +422,11 @@ Unused bits of an MPI MUST be zero.
 Also note that when an MPI is encrypted, the length refers to the plaintext MPI.
 It may be ill-formed in its ciphertext.
 
+### Using MPIs to encode other data
+
+Note that MPIs are used in some places used to encode non-integer data, such as an elliptic curve point (see {{ec-point-wire-formats}}, or a bitstring that has the leading bit set.
+The wire representation is the same: two octets of length in bits including the first non-zero bit, followed by the smallest series of octets that can represent the bitstring.
+
 ## Key IDs
 
 A Key ID is an eight-octet scalar that identifies a key.
@@ -2894,6 +2899,12 @@ The registry includes the algorithm name and a reference to the defining specifi
 The initial values for this registry can be found in {{compression-algos}}.
 Adding a new compression key algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
+## Elliptic Curve Point Wire Formats
+
+This document requests IANA add a registry of wire formats that represent elliptic curve points.
+The table's initial headings and values can be found in {{ec-point-wire-formats}}.
+Adding a new EC point wire format MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
+
 ## Changes to existing registries
 
 This document requests IANA add the following wire format columns to the OpenPGP public-key algorithm registry:
@@ -3128,10 +3139,19 @@ Further curve "Curve25519", defined in {{RFC7748}} is referenced for use with Ed
 The named curves are referenced as a sequence of bytes in this document, called throughout, curve OID.
 {{ecc-curve-oid}} describes in detail how this sequence of bytes is formed.
 
-## ECDSA and ECDH Conversion Primitives
+## EC Point Wire Formats {#ec-point-wire-formats}
 
-This document defines the uncompressed point format for ECDSA and ECDH and a custom compression format for certain curves.
-The point is encoded in the Multiprecision Integer (MPI) format.
+A point on an elliptic curve will always be represented on the wire as an MPI.
+Each curve uses a specific point format for the data within the MPI itself.
+Each format uses a designated prefix byte to ensure that the high octet has at least one bit set to make the MPI a constant size.
+
+{: title="Elliptic Curve Point Wire Formats"}
+Name | Wire Format | Reference
+------:|-----------|-------------------
+uncompressed | 0x04 \|\| x \|\| y | {{ec-point-uncompressed}}
+native | 0x40 \|\| native | {{ec-point-native}}
+
+### Uncompressed EC Point Wire Format {#ec-point-uncompressed}
 
 For an uncompressed point the content of the MPI is:
 
@@ -3141,27 +3161,24 @@ where x and y are coordinates of the point P = (x, y), and each is encoded in th
 The adjusted underlying field size is the underlying field size rounded up to the nearest 8-bit boundary.
 This encoding is compatible with the definition given in {{SEC1}}.
 
+### Native EC Point Wire Format {#ec-point-native}
+
 For a custom compressed point the content of the MPI is:
 
-    B = 40 || x
+    B = 40 || p
 
-where x is the x coordinate of the point P encoded using the rules defined for the specified curve.
+where p is the public key of the point encoded using the rules defined for the specified curve.
 This format is used for ECDH keys based on curves expressed in Montgomery form.
 
-Therefore, the exact size of the MPI payload is 515 bits for "Curve P-256", 771 for "Curve P-384", 1059 for "Curve P-521", and 263 for Curve25519.
+### Observations About Encoded EC Points
+
+Given the above definitions, the exact size of the MPI payload for an encoded point is 515 bits for "Curve P-256", 771 for "Curve P-384", 1059 for "Curve P-521", and 263 for "Curve25519" and "Ed25519".
+For example, the length of a EdDSA public key for the curve Ed25519 is 263 bits: 7 bits to represent the 0x40 prefix octet and 32 octets for the native value of the public key.
 
 Even though the zero point, also called the point at infinity, may occur as a result of arithmetic operations on points of an elliptic curve, it SHALL NOT appear in data structures defined in this document.
 
-If other conversion methods are defined in the future, a compliant application MUST NOT use a new format when in doubt that any recipient can support it.
-Consider, for example, that while both the public key and the per-recipient ECDH data structure, respectively defined in {{key-ecdh}} and {{public-key-encrypted-session-key-packets-tag-1}}, contain an encoded point field, the format changes to the field in {{public-key-encrypted-session-key-packets-tag-1}} only affect a given recipient of a given message.
-
-## EdDSA Point Format
-
-The EdDSA algorithm defines a specific point compression format.
-To indicate the use of this compression format and to make sure that the key can be represented in the Multiprecision Integer (MPI) format the octet string specifying the point is prefixed with the octet 0x40.
-This encoding is an extension of the encoding given in {{SEC1}} which uses 0x04 to indicate an uncompressed point.
-
-For example, the length of a public key for the curve Ed25519 is 263 bit: 7 bit to represent the 0x40 prefix octet and 32 octets for the native value of the public key.
+Each particular curve uses a designated wire format for the point found in its public key or ECDH data structure.
+An implementation MUST NOT use a different wire format for a point than the wire format associated with the curve.
 
 ## Key Derivation Function
 
@@ -3996,19 +4013,6 @@ AEAD encrypted data packet:
       25 74 cd 05 62 84 a8 ef  68 03 5c 62 3d 93 cc 70
       8a 43 21 1b b6 ea f2 b2  7f 7c 18 d5 71 bc d8 3b
       20 ad d3 a0 8b 73 af 15  b9 a0 98
-
-# ECC Point compression flag bytes
-
-This specification introduces the new flag byte 0x40 to indicate the point compression format.
-The value has been chosen so that the high bit is not cleared and thus to avoid accidental sign extension.
-Two other values might also be interesting for other ECC specifications:
-
-      Flag  Description
-      ----  -----------
-      0x04  Standard flag for uncompressed format
-      0x40  Native point format of the curve follows
-      0x41  Only X coordinate follows.
-      0x42  Only Y coordinate follows.
 
 # Acknowledgements
 
