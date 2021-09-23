@@ -1909,7 +1909,7 @@ The public key is this series of values:
 
   - Octets representing a curve OID, defined in {{ec-curves}};
 
-- MPI of an EC point representing a public key;
+- MPI of an EC point representing a public key, in the form associated with the curve as identified in {{ec-curves}}
 
 - A variable-length field containing KDF parameters, which is formatted as follows:
 
@@ -2642,13 +2642,13 @@ The table below specifies the exact sequence of bytes for each named curve refer
 It also specifies which public key algorithms the curve can be used with, as well as the size of expected elements in octets:
 
 {: title="ECC Curve OID and usage registry"}
-ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representation | Curve name | Usage | Field Size (fsize)
-------------------------|----|-------------------------------|-------------|-----|-----
-1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256 | ECDSA, ECDH | 32
-1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384 | ECDSA, ECDH | 48
-1.3.132.0.35            | 5  | 2B 81 04 00 23                | NIST P-521 | ECDSA, ECDH | 66
-1.3.6.1.4.1.11591.15.1  | 9  | 2B 06 01 04 01 DA 47 0F 01    | Ed25519    | EdDSA       | 32
-1.3.6.1.4.1.3029.1.5.1  | 10 | 2B 06 01 04 01 97 55 01 05 01 | Curve25519 | ECDH        | 32
+ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representation | Curve name | Usage | Field Size (fsize) | ECDH Point Format
+------------------------|----|-------------------------------|-------------|-----|-----|-----
+1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256 | ECDSA, ECDH | 32 | uncompressed
+1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384 | ECDSA, ECDH | 48 | uncompressed
+1.3.132.0.35            | 5  | 2B 81 04 00 23                | NIST P-521 | ECDSA, ECDH | 66 | uncompressed
+1.3.6.1.4.1.11591.15.1  | 9  | 2B 06 01 04 01 DA 47 0F 01    | Ed25519    | EdDSA       | 32 | N/A
+1.3.6.1.4.1.3029.1.5.1  | 10 | 2B 06 01 04 01 97 55 01 05 01 | Curve25519 | ECDH        | 32 | native
 
 The "Field Size (fsize)" column represents the approximate field size of the group, sufficient that x or y coordinates for a point on the curve, native point representations, or scalars with high enough entropy for the curve can be represented in that many octets.
 
