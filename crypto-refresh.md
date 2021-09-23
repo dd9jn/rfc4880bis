@@ -2636,16 +2636,17 @@ A compatible specification of ECDSA is given in {{RFC6090}} as "KT-I Signatures"
 ## ECC Curves for OpenPGP {#ec-curves}
 
 The parameter curve OID is an array of octets that define a named curve.
-The table below specifies the exact sequence of bytes for each named curve referenced in this document:
+The table below specifies the exact sequence of bytes for each named curve referenced in this document.
+It also specifies which public key algorithms the curve can be used with:
 
-{: title="ECC Curve OID registry"}
-ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representation | Curve name
-------------------------|----|-------------------------------|-------------
-1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256
-1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384
-1.3.132.0.35            | 5  | 2B 81 04 00 23                | NIST P-521
-1.3.6.1.4.1.11591.15.1  | 9  | 2B 06 01 04 01 DA 47 0F 01    | Ed25519
-1.3.6.1.4.1.3029.1.5.1  | 10 | 2B 06 01 04 01 97 55 01 05 01 | Curve25519
+{: title="ECC Curve OID and usage registry"}
+ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representation | Curve name | Usage
+------------------------|----|-------------------------------|-------------|-----
+1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256 | ECDSA, ECDH
+1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384 | ECDSA, ECDH
+1.3.132.0.35            | 5  | 2B 81 04 00 23                | NIST P-521 | ECDSA, ECDH
+1.3.6.1.4.1.11591.15.1  | 9  | 2B 06 01 04 01 DA 47 0F 01    | Ed25519    | EdDSA
+1.3.6.1.4.1.3029.1.5.1  | 10 | 2B 06 01 04 01 97 55 01 05 01 | Curve25519 | ECDH
 
 The sequence of octets in the third column is the result of applying the Distinguished Encoding Rules (DER) to the ASN.1 Object Identifier with subsequent truncation.
 The truncation removes the two fields of encoded Object Identifier.
