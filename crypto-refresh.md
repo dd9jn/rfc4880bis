@@ -936,11 +936,11 @@ Algorithm-Specific Fields for RSA signatures:
 
 - Multiprecision integer (MPI) of RSA signature value m\*\*d mod n.
 
-Algorithm-Specific Fields for DSA and ECDSA signatures:
+Algorithm-Specific Fields for DSA signatures:
 
-- MPI of DSA or ECDSA value r.
+- MPI of DSA value r.
 
-- MPI of DSA or ECDSA value s.
+- MPI of DSA value s.
 
 The signature calculation is based on a hash of the signed data, as described above.
 The details of the calculation are different for DSA signatures than for RSA signatures.
@@ -1029,6 +1029,8 @@ The body of a V4 or V5 Signature packet contains:
 - MPI of DSA or ECDSA value r.
 
 - MPI of DSA or ECDSA value s.
+
+A version 3 signature MUST NOT be created and MUST NOT be used with ECDSA.
 
 #### Algorithm-Specific Fields for EdDSA signatures {#sig-eddsa}
 
