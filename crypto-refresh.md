@@ -1045,6 +1045,14 @@ The two MPIs for Ed25519 use octet strings R and S as described in {{RFC8032}}.
  
 - MPI of EdDSA value S, also in (non-prefixed) native little-endian format with a length up to 32 octets.
 
+##### Algorithm-Specific Fields for Ed448 signatures
+
+For Ed448 signatures, the native signature format is used as described in {{RFC8032}}.  The two MPIs are composed as follows:
+
+- the first MPI has a body of 58 octets: a prefix 0x40 octet, followed by 57 octets of native signature.
+ 
+- The second MPI is set to 0 (this is a placeholder, and is unused).
+
 #### Notes on Signatures
 
 The concatenation of the data being signed and the signature data from the version number through the hashed subpacket data (inclusive) is hashed.
@@ -2718,7 +2726,9 @@ ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representatio
 1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384 | ECDSA, ECDH | 48
 1.3.132.0.35            | 5  | 2B 81 04 00 23                | NIST P-521 | ECDSA, ECDH | 66
 1.3.6.1.4.1.11591.15.1  | 9  | 2B 06 01 04 01 DA 47 0F 01    | Ed25519    | EdDSA       | 32
+1.3.101.113             | 3  | 2B 65 71                      | Ed448      | EdDSA       | 57
 1.3.6.1.4.1.3029.1.5.1  | 10 | 2B 06 01 04 01 97 55 01 05 01 | Curve25519 | ECDH        | 32
+1.3.101.111             | 3  | 2B 65 6F                      | X448       | ECDH        | 56
 
 The "Field Size (fsize)" column represents the field size of the group in number of octets, rounded up, such that x or y coordinates for a point on the curve, native point representations, or scalars with high enough entropy for the curve can be represented in that many octets.
 
@@ -2741,7 +2751,9 @@ NIST P-256 | integer | SEC1 | N/A | N/A | N/A
 NIST P-384 | integer | SEC1 | N/A | N/A | N/A
 NIST P-521 | integer | SEC1 | N/A | N/A | N/A
 Ed25519    | N/A | N/A | 32 octets of secret | 32 octets of R | 32 octets of S
+Ed448      | N/A | N/A | prefixed 57 octets of secret | prefixed 114 octets of signature | 0 \[this is an unused placeholder]
 Curve25519 | integer | prefixed native | N/A | N/A | N/A
+X448       | prefixed 56 octets of secret | prefixed native | N/A | N/A | N/A
 
 For the native octet-string forms of encoded EdDSA objects, see {{RFC8032}}.
 For the native octet-string forms of encoded ECDH secret scalars and points, see {{RFC7748}}.
@@ -3251,7 +3263,7 @@ A thorough introduction to ECC can be found in {{KOBLITZ}}.
 
 This document references three named prime field curves defined in {{FIPS186}} as "Curve P-256", "Curve P-384", and "Curve P-521".
 These three {{FIPS186}} curves can be used with ECDSA and ECDH public key algorithms.
-Additionally, curve "Curve25519", defined in {{RFC7748}} is referenced for use with Ed25519 (EdDSA signing) and X25519 (ECDH encryption).
+Additionally, curve "Curve25519" and "Curve448", as defined in {{RFC7748}} are referenced for use with Ed25519 and Ed448 (EdDSA signing); and X25519 and X448 (ECDH encryption).
 
 The named curves are referenced as a sequence of bytes in this document, called throughout, curve OID.
 {{ec-curves}} describes in detail how this sequence of bytes is formed.
@@ -3289,7 +3301,7 @@ This format is used for ECDH keys based on curves expressed in Montgomery form, 
 
 ### Notes on EC Point Wire Formats
 
-Given the above definitions, the exact size of the MPI payload for an encoded point is 515 bits for "Curve P-256", 771 for "Curve P-384", 1059 for "Curve P-521", and 263 for "Curve25519" and "Ed25519".
+Given the above definitions, the exact size of the MPI payload for an encoded point is 515 bits for "Curve P-256", 771 for "Curve P-384", 1059 for "Curve P-521", 263 for both "Curve25519" and "Ed25519", 463 for "Ed448", and 455 for "X448".
 For example, the length of a EdDSA public key for the curve Ed25519 is 263 bits: 7 bits to represent the 0x40 prefix octet and 32 octets for the native value of the public key.
 
 Even though the zero point, also called the point at infinity, may occur as a result of arithmetic operations on points of an elliptic curve, it SHALL NOT appear in data structures defined in this document.
@@ -3397,7 +3409,7 @@ The KDF parameters are encoded as a concatenation of the following 5 variable-le
 
 - 20 octets representing a recipient encryption subkey or a primary key fingerprint identifying the key material that is needed for decryption (for version 5 keys the 20 leftmost octets of the fingerprint are used).
 
-The size of the KDF parameters sequence, defined above, is either 54 for the NIST curve P-256, 51 for the curves P-384 and P-521, or 56 for Curve25519.
+The size of the KDF parameters sequence, defined above, is either 54 for the NIST curve P-256, 51 for the curves P-384 and P-521, 56 for Curve25519, or 49 for X448.
 
 The key wrapping method is described in {{RFC3394}}.
 The KDF produces a symmetric key that is used as a key-encryption key (KEK) as specified in {{RFC3394}}.
