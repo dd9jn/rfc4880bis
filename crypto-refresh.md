@@ -3844,9 +3844,64 @@ The entire signature packet is thus:
 
 Encryption is performed with the string `Hello, world!`, using AES-128 with AEAD-EAX encryption.
 
+### Sample Parameters
+
+S2K:
+
+      type 3
+
+Iterations:
+
+      524288 (144), SHA2-256
+
+Salt:
+
+      cd5a9f70fbe0bc65
+
+### Sample symmetric-key encrypted session key packet (v5)
+
+Packet header:
+
+      c3 3e
+
+Version, algorithms, S2K fields:
+
+      05 07 01 03 08 cd 5a 9f 70 fb e0 bc 65 90
+
+AEAD IV:
+
+      bc 66 9e 34 e5 00 dc ae dc 5b 32 aa 2d ab 02 35
+
+AEAD encrypted CEK:
+
+      9d ee 19 d0 7c 34 46 c4 31 2a 34 ae 19 67 a2 fb
+
+Authentication tag:
+
+      7e 92 8e a5 b4 fa 80 12 bd 45 6d 17 38 c6 3c 36
+
+### Starting AEAD-EAX decryption of CEK
+
+The derived key is:
+
+      b2 55 69 b9 54 32 45 66 45 27 c4 97 6e 7a 5d 6e
+
+Authenticated Data:
+
+      c3 05 07 01
+
+Nonce:
+
+      bc 66 9e 34 e5 00 dc ae dc 5b 32 aa 2d ab 02 35
+
+Decrypted CEK:
+
+      86 f1 ef b8 69 52 32 9f 24 ac d3 bf d0 e5 34 6d
+
 ### Initial Content Encryption Key
 
 This key would typically be extracted from an SKESK or PKESK.
+In this example, it is extracted from an SKESK packet, as described above.
 
 CEK:
 
@@ -3895,7 +3950,7 @@ Nonce:
 
 Decrypted chunk #0.
 
-Literal data packet with the string contents 'Hello, world!\n'.
+Literal data packet with the string contents `Hello, world!\n`.
 
       cb 14 62 00 00 00 00 00  48 65 6c 6c 6f 2c 20 77
       6f 72 6c 64 21 0a
@@ -3913,6 +3968,13 @@ Nonce:
 
 ### Complete AEAD-EAX encrypted packet sequence
 
+Symmetric-key encrypted session key packet (v5):
+
+       c3 3e 05 07 01 03 08 cd  5a 9f 70 fb e0 bc 65 90
+       bc 66 9e 34 e5 00 dc ae  dc 5b 32 aa 2d ab 02 35
+       9d ee 19 d0 7c 34 46 c4  31 2a 34 ae 19 67 a2 fb
+       7e 92 8e a5 b4 fa 80 12  bd 45 6d 17 38 c6 3c 36
+
 AEAD encrypted data packet:
 
        d4 4a 01 07 01 0e b7 32  37 9f 73 c4 92 8d e2 5f
@@ -3925,9 +3987,64 @@ AEAD encrypted data packet:
 
 Encryption is performed with the string `Hello, world!` using AES-128 with AEAD-OCB encryption.
 
+### Sample Parameters
+
+S2K:
+
+      type 3
+
+Iterations:
+
+      524288 (144), SHA2-256
+
+Salt:
+
+      9f0b7da3e5ea6477
+
+### Sample symmetric-key encrypted session key packet (v5)
+
+Packet header:
+
+      c3 3d
+
+Version, algorithms, S2K fields:
+
+      05 07 02 03 08 9f 0b 7d a3 e5 ea 64 77 90
+
+AEAD IV:
+
+      99 e3 26 e5 40 0a 90 93 6c ef b4 e8 eb a0 8c
+
+AEAD encrypted CEK:
+
+      67 73 71 6d 1f 27 14 54 0a  38 fc ac 52 99 49 da
+
+Authentication tag:
+
+      c5 29 d3 de 31 e1 5b 4a eb  72 9e 33 00 33 db ed
+
+### Starting AEAD-OCB decryption of CEK
+
+The derived key is:
+
+      eb 9d a7 8a 9d 5d f8 0e c7 02 05 96 39 9b 65 08
+
+Authenticated Data:
+
+      c3 05 07 02
+
+Nonce:
+
+      99 e3 26 e5 40 0a 90 93 6c ef b4 e8 eb a0 8c
+
+Decrypted CEK:
+
+      d1 f0 1b a3 0e 13 0a a7 d2 58 2c 16 e0 50 ae 44
+
 ### Initial Content Encryption Key
 
 This key would typically be extracted from an SKESK or PKESK.
+In this example, it is extracted from an SKESK packet, as described above.
 
 Decrypted CEK:
 
@@ -3976,7 +4093,7 @@ Nonce:
 
 Decrypted chunk #0.
 
-Literal data packet with the string contents 'Hello, world!\n'.
+Literal data packet with the string contents `Hello, world!\n`.
 
       cb 14 62 00 00 00 00 00  48 65 6c 6c 6f 2c 20 77
       6f 72 6c 64 21 0a
@@ -3993,6 +4110,13 @@ Nonce:
       5e d2 bc 1e 47 0a be 8f 1d 64 4c 7a 6c 8a 57
 
 ### Complete AEAD-OCB encrypted packet sequence
+
+Symmetric-key encrypted session key packet (v5):
+
+      c3 3d 05 07 02 03 08 9f  0b 7d a3 e5 ea 64 77 90
+      99 e3 26 e5 40 0a 90 93  6c ef b4 e8 eb a0 8c 67
+      73 71 6d 1f 27 14 54 0a  38 fc ac 52 99 49 da c5
+      29 d3 de 31 e1 5b 4a eb  72 9e 33 00 33 db ed
 
 AEAD encrypted data packet:
 
