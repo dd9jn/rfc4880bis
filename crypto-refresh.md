@@ -1595,7 +1595,7 @@ Either of these keys can verify a signature created by the other, and it may be 
 
 ## Symmetric-Key Encrypted Session Key Packets (Tag 3)
 
-The Symmetric-Key Encrypted Session Key packet holds the symmetric-key encryption of a session key used to encrypt a message.
+The Symmetric-Key Encrypted Session Key (SKESK) packet holds the symmetric-key encryption of a session key used to encrypt a message.
 Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede a Symmetrically Encrypted Data packet that holds an encrypted message.
 The message is encrypted with a session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet or the Symmetric-Key Encrypted Session Key packet.
 
@@ -1641,6 +1641,11 @@ The encrypted session key is encrypted using one of the AEAD algorithms specifie
 Note that no chunks are used and that there is only one authentication tag.
 The Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are given as additional data.
 For example, the additional data used with EAX and AES-128 consists of the octets 0xC3, 0x05, 0x07, and 0x01.
+
+### No v5 SKESK with SEIPD {#no-v5-skesk-seipd}
+
+Note that unlike the AEAD Encrypted Data Packet (AED, see {{aead}}), the Symmetrically Encrypted Integrity Protected Data Packet (SEIPD, see {{seipd}}) does not internally indicate what cipher algorithm to use to decrypt it.
+Since the v5 SKESK packet's encrypted payload only indicates the key used, not the choice of cipher algorithm used for the subsequent encrypted data, a v5 SKESK packet can only provide a session key for an AED packet, and MUST NOT be used to provide a session key for a SEIPD Packet.
 
 ## One-Pass Signature Packets (Tag 4)
 
@@ -3003,6 +3008,9 @@ Signed Message :-
 : Signature Packet, OpenPGP Message \| One-Pass Signed Message.
 
 In addition, decrypting a Symmetrically Encrypted Data packet or a Symmetrically Encrypted Integrity Protected Data packet as well as decompressing a Compressed Data packet must yield a valid OpenPGP Message.
+
+Note that some subtle combinations that are formally acceptable by this grammar are nonetheless unacceptable.
+For example, a v5 SKESK packet cannot effectively precede a SEIPD packet, since that combination does not include any information about the choice of symmetric cipher used for SEIPD (see {{no-v5-skesk-seipd}} for more details).
 
 ## Detached Signatures
 
