@@ -454,7 +454,7 @@ There are three types of S2K specifiers currently supported, and some reserved v
 {: title="S2K type registry"}
 ID | S2K Type | Generate? | Reference
 ---:|------------------|-----|-------
-  0 | Simple S2K | Only when string is high entropy | {{s2k-simple}}
+  0 | Simple S2K | Only when string is single-use, high entropy | {{s2k-simple}}
   1 | Salted S2K | Only when string is high entropy | {{s2k-salted}}
   2 | Reserved value | N
   3 | Iterated and Salted S2K | Y | {{s2k-iter-salted}}
@@ -482,7 +482,7 @@ As the data is hashed, it is given independently to each hash context.
 Since the contexts have been initialized differently, they will each produce different hash output.
 Once the passphrase is hashed, the output data from the multiple hashes is concatenated, first hash leftmost, to produce the key data, with any excess octets on the right discarded.
 
-An implementation SHOULD NOT generate this form of S2K for protecting either messages or secret keys unless the input string is known to be high-entropy (for example, if the implementation itself chooses the string using strong randomness equivalent to the entropy needed for the resultant key, as in a "recovery code").
+An implementation SHOULD NOT generate this form of S2K for protecting either messages or secret keys unless the input string is known to be high-entropy (for example, if the implementation itself chooses the string using strong randomness equivalent to the entropy needed for the resultant key, as in a "recovery code") and is only used once.
 
 #### Salted S2K {#s2k-salted}
 
