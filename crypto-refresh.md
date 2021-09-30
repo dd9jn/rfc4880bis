@@ -524,13 +524,13 @@ After the hashing is done, the data is unloaded from the hash context(s) as with
 Simple S2K and Salted S2K specifiers are not particularly secure when used with a low-entropy secret, such as those typically provided by users.
 Implementations SHOULD NOT use these methods on encryption of either keys and messages.
 
-#### Secret-Key Encryption
+#### Secret-Key Encryption {#secret-key-encryption}
 
 An S2K specifier can be stored in the secret keyring to specify how to convert the passphrase to a key that unlocks the secret data.
-Older versions of PGP just stored a cipher algorithm octet preceding the secret data or a zero to indicate that the secret data was unencrypted.
+Older versions of PGP just stored a symmetric cipher algorithm octet preceding the secret data or a zero to indicate that the secret data was unencrypted.
 The MD5 hash function was always used to convert the passphrase to a key for the specified cipher algorithm.
 
-For compatibility, when an S2K specifier is used, the special value 254 or 255 is stored in the position where the hash algorithm octet would have been in the old data structure.
+For compatibility, when an S2K specifier is used, the special value 254 or 255 is stored in the position where the cipher algorithm octet would have been in the old data structure.
 This is then followed immediately by a one-octet algorithm identifier, and then by the S2K specifier as encoded above.
 
 Therefore, preceding the secret data there will be one of these possibilities:
@@ -1746,7 +1746,7 @@ A version 5 packet contains:
 - A series of values comprising the public key material.
   This is algorithm-specific and described in {{algorithm-specific-parts-of-keys}}.
 
-### Secret-Key Packet Formats
+### Secret-Key Packet Formats {#secret-key-packet-formats}
 
 The Secret-Key and Secret-Subkey packets contain all the data of the Public-Key and Public-Subkey packets, with additional algorithm-specific secret-key data appended, usually in encrypted form.
 
@@ -1774,11 +1774,10 @@ The packet contains:
 
 - Plain or encrypted multiprecision integers comprising the secret key data.
   This is algorithm-specific and described in section {{algorithm-specific-parts-of-keys}}.
+  If the string-to-key usage octet is 254, a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion is appended to plaintext and encrypted with it.
+  If the string-to-key usage octet is 255 or another nonzero value (i.e., a symmetric-key encryption algorithm identifier), a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536) is appended to plaintext and encrypted with it. (This is deprecated and SHOULD NOT be used, see below.)
 
-- If the string-to-key usage octet is zero or 255, then a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536).
-  If the string-to-key usage octet was 254, then a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion.
-  This checksum or hash is encrypted together with the algorithm-specific fields (if string-to-key usage octet is not zero).
-  Note that for all other values, a two-octet checksum is required.
+- If the string-to-key usage octet is zero, then a two-octet checksum of the algorithm-specific portion (sum of all octets, mod 65536).
 
 Note that the version 5 packet format adds two count values to help parsing packets with unknown S2K or public key algorithms.
 
@@ -2664,6 +2663,7 @@ ID | Algorithm
  12 | Camellia with 192-bit key
  13 | Camellia with 256-bit key
 100 to 110 | Private/Experimental algorithm
+254 and 255 | Reserved to avoid collision with Secret Key Encryption (see {{secret-key-encryption}} and {{secret-key-packet-formats}})
 
 Implementations MUST implement TripleDES.
 Implementations SHOULD implement AES-128 and CAST5.
