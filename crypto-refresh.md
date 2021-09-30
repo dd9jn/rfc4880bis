@@ -207,6 +207,7 @@ normative:
   RFC7748:
   RFC8032:
   RFC8126:
+  RFC9106:
   SCHNEIER:
     title: "Applied Cryptography Second Edition: protocols, algorithms, and source code in C"
     author:
@@ -458,6 +459,7 @@ ID | S2K Type | Generate? | Reference
   1 | Salted S2K | Only when string is high entropy | {{s2k-salted}}
   2 | Reserved value | N
   3 | Iterated and Salted S2K | Y | {{s2k-iter-salted}}
+  4 | Argon2 | Y | {{s2k-argon2}}
 100 to 110 | Private/Experimental S2K | As appropriate
 
 These are described in the subsections below.
@@ -519,10 +521,37 @@ Then the salt, followed by the passphrase data, is repeatedly hashed until the n
 The one exception is that if the octet count is less than the size of the salt plus passphrase, the full salt plus passphrase will be hashed even though that is greater than the octet count.
 After the hashing is done, the data is unloaded from the hash context(s) as with the other S2K algorithms.
 
+#### Argon2 {#s2k-argon2}
+
+This S2K method hashes the passphrase using Argon2, specified in {{RFC9106}}.
+This provides memory-hardness, further protecting the passphrase against brute-force attacks.
+
+      Octet  0:        0x04
+      Octets 1-16:     16-octet salt value
+      Octet  17:       one-octet number of passes t
+      Octet  18:       one-octet degree of parallelism p
+      Octet  19:       one-octet exponent indicating the memory size m
+
+The salt SHOULD be unique for each password.
+
+The number of passes t and the degree of parallelism p MUST be non-zero.
+
+The memory size m is 2^encoded_m, where "encoded_m" is the encoded memory size in Octet 19. The encoded memory size MUST be a value from 3+ceil(log_2(p)) to 31, such that the decoded memory size m is a value from 8*p to 2^31.
+
+Argon2 is invoked with the passphrase as P, the salt as S, the values of t, p and m as described above, the required key size as the tag length T, 0x13 as the version v, and Argon2id as the type.
+
+For the recommended values of t, p and m, see Section 4 of {{RFC9106}}. If the recommended value of m for a given application is not a power of 2, it is RECOMMENDED to round up to the next power of 2 if the resulting performance would be acceptable, and round down otherwise (keeping in mind that m must be at least 8*p).
+
+As an example, with the first recommended option (t=1, p=4, m=2^21), and a salt of all zeros (note that a random salt should be used instead), the full S2K specifier would be:
+
+      04 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+      00 01 04 15
+
 ### String-to-Key Usage
 
 Simple S2K and Salted S2K specifiers can be brute-forced when used with a low-entropy string, such as those typically provided by users. In addition, the usage of Simple S2K can lead to key and IV reuse (see {{skesk}}).
 Therefore, when generating S2K specifiers, implementations MUST NOT use Simple S2K, and SHOULD NOT use Salted S2K unless the implementation knows that the string is high-entropy (e.g., it generated the string itself using a known-good source of randomness).
+It is RECOMMENDED that implementations use Argon2.
 
 #### Secret-Key Encryption
 
