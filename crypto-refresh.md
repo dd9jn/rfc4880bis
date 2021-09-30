@@ -454,7 +454,7 @@ There are three types of S2K specifiers currently supported, and some reserved v
 {: title="S2K type registry"}
 ID | S2K Type | Generate? | Reference
 ---:|------------------|-----|-------
-  0 | Simple S2K | Only when string is single-use, high entropy | {{s2k-simple}}
+  0 | Simple S2K | N | {{s2k-simple}}
   1 | Salted S2K | Only when string is high entropy | {{s2k-salted}}
   2 | Reserved value | N
   3 | Iterated and Salted S2K | Y | {{s2k-iter-salted}}
@@ -482,8 +482,6 @@ As the data is hashed, it is given independently to each hash context.
 Since the contexts have been initialized differently, they will each produce different hash output.
 Once the passphrase is hashed, the output data from the multiple hashes is concatenated, first hash leftmost, to produce the key data, with any excess octets on the right discarded.
 
-An implementation SHOULD NOT generate this form of S2K for protecting either messages or secret keys unless the input string is known to be high-entropy (for example, if the implementation itself chooses the string using strong randomness equivalent to the entropy needed for the resultant key, as in a "recovery code") and is only used once.
-
 #### Salted S2K {#s2k-salted}
 
 This includes a "salt" value in the S2K specifier --- some arbitrary data --- that gets hashed along with the passphrase string, to help prevent dictionary attacks.
@@ -493,8 +491,6 @@ This includes a "salt" value in the S2K specifier --- some arbitrary data --- th
       Octets 2-9:     8-octet salt value
 
 Salted S2K is exactly like Simple S2K, except that the input to the hash function(s) consists of the 8 octets of salt from the S2K specifier, followed by the passphrase.
-
-An implementation SHOULD NOT generate this form of S2K unless the input string is known to be high-entropy (see {{s2k-simple}} for more explanation).
 
 #### Iterated and Salted S2K {#s2k-iter-salted}
 
@@ -525,10 +521,8 @@ After the hashing is done, the data is unloaded from the hash context(s) as with
 
 ### String-to-Key Usage
 
-Simple S2K and Salted S2K specifiers can be brute-forced when used with a low-entropy string, such as those typically provided by users.
-When an implementation generates an S2K object for either secret key or message protection, it needs to choose which S2K type to use.
-Such an implementation SHOULD use Iterated and Salted S2K.
-If the implementation knows that the string is high-entropy (e.g., it generated the string itself using a known-good source of randomness), it MAY use Simple S2K or Salted S2K.
+Simple S2K and Salted S2K specifiers can be brute-forced when used with a low-entropy string, such as those typically provided by users. In addition, the usage of Simple S2K can lead to key and IV reuse (see {{skesk}}).
+Therefore, when generating S2K specifiers, implementations MUST NOT use Simple S2K, and SHOULD NOT use Salted S2K unless the implementation knows that the string is high-entropy (e.g., it generated the string itself using a known-good source of randomness).
 
 #### Secret-Key Encryption
 
@@ -1599,7 +1593,7 @@ Please note that we are intentionally leaving conflict resolution to the impleme
 Some apparent conflicts may actually make sense --- for example, suppose a keyholder has a V3 key and a V4 key that share the same RSA key material.
 Either of these keys can verify a signature created by the other, and it may be reasonable for a signature to contain an issuer subpacket for each key, as a way of explicitly tying those keys to the signature.
 
-## Symmetric-Key Encrypted Session Key Packets (Tag 3)
+## Symmetric-Key Encrypted Session Key Packets (Tag 3) {#skesk}
 
 The Symmetric-Key Encrypted Session Key packet holds the symmetric-key encryption of a session key used to encrypt a message.
 Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede a Symmetrically Encrypted Data packet that holds an encrypted message.
