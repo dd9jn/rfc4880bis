@@ -1769,9 +1769,9 @@ The packet contains:
 - \[Optional\] If string-to-key usage octet was 255, 254, or 253, a string-to-key specifier.
   The length of the string-to-key specifier is implied by its type, as described above.
 
-- \[Optional\] If secret data is encrypted (string-to-key usage octet not zero), an Initial Vector (IV) of the same length as the cipher's block size.
-  If string-to-key usage octet was 253, the IV is used as the nonce for the AEAD algorithm.
-  If the AEAD algorithm requires a shorter nonce, the high-order bits of the IV are used and the remaining bits MUST be zero.
+- \[Optional\] If string-to-key usage octet was 253 (i.e. the secret data is AEAD-encrypted), an initialization vector (IV) of size specified by the AEAD algorithm (see {{aead}}), which is used as the nonce for the AEAD algorithm.
+
+- \[Optional\] If string-to-key usage octet was 255, 254, or a cipher algorithm identifier (i.e. the secret data is CFB-encrypted), an initialization vector (IV) of the same length as the cipher's block size.
 
 - Only for a version 5 packet, a four-octet scalar octet count for the following secret key material.
   This includes the encrypted SHA-1 hash or AEAD tag if the string-to-key usage octet is 254 or 253.
