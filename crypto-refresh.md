@@ -536,13 +536,13 @@ The salt SHOULD be unique for each password.
 
 The number of passes t and the degree of parallelism p MUST be non-zero.
 
-The memory size m is 2^encoded_m, where "encoded_m" is the encoded memory size in Octet 19. The encoded memory size MUST be a value from 3+ceil(log_2(p)) to 31, such that the decoded memory size m is a value from 8*p to 2^31.
+The memory size m is 2\*\*encoded_m, where "encoded_m" is the encoded memory size in Octet 19. The encoded memory size MUST be a value from 3+ceil(log_2(p)) to 31, such that the decoded memory size m is a value from 8*p to 2**31.
 
 Argon2 is invoked with the passphrase as P, the salt as S, the values of t, p and m as described above, the required key size as the tag length T, 0x13 as the version v, and Argon2id as the type.
 
 For the recommended values of t, p and m, see Section 4 of {{RFC9106}}. If the recommended value of m for a given application is not a power of 2, it is RECOMMENDED to round up to the next power of 2 if the resulting performance would be acceptable, and round down otherwise (keeping in mind that m must be at least 8*p).
 
-As an example, with the first recommended option (t=1, p=4, m=2^21), and a salt of all zeros (note that a random salt should be used instead), the full S2K specifier would be:
+As an example, with the first recommended option (t=1, p=4, m=2**21), and a salt of all zeros (note that a random salt should be used instead), the full S2K specifier would be:
 
       04 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
       00 01 04 15
