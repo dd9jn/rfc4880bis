@@ -424,7 +424,7 @@ It may be ill-formed in its ciphertext.
 
 ### Using MPIs to encode other data
 
-Note that MPIs are used in some places used to encode non-integer data, such as an elliptic curve point (see {{ec-point-wire-formats}}, or a bytestring of known, fixed length (see {{ec-value-wire-formats}}).
+Note that MPIs are used in some places used to encode non-integer data, such as an elliptic curve point (see {{ec-point-wire-formats}}, or a bytestring of known, fixed length (see {{ec-scalar-wire-formats}}).
 The wire representation is the same: two octets of length in bits counted from the first non-zero bit, followed by the smallest series of octets that can represent the value while stripping off any leading zero octets.
 
 ## Key IDs
@@ -2912,15 +2912,15 @@ Each curve is identified on the wire by OID, and is acceptable for use in certai
 The table's initial headings and values can be found in {{ec-curves}}.
 Adding a new elliptic curve algorithm to OpenPGP MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
-## Elliptic Curve Point and Value Wire Formats
+## Elliptic Curve Point and Scalar Wire Formats
 
 This document requests IANA add a registry of wire formats that represent elliptic curve points.
 The table's initial headings and values can be found in {{ec-point-wire-formats}}.
 Adding a new EC point wire format MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
-This document also requests IANA add a registry of wire formats that represent elliptic curve values.
-The table's initial headings and values can be found in {{ec-value-wire-formats}}.
-Adding a new EC value wire format MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
+This document also requests IANA add a registry of wire formats that represent scalars for use with elliptic curve cryptography.
+The table's initial headings and values can be found in {{ec-scalar-wire-formats}}.
+Adding a new EC scalar wire format MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 ## Changes to existing registries
 
@@ -3198,18 +3198,18 @@ Even though the zero point, also called the point at infinity, may occur as a re
 Each particular curve uses a designated wire format for the point found in its public key or ECDH data structure.
 An implementation MUST NOT use a different wire format for a point than the wire format associated with the curve.
 
-## Encoded values for Elliptic Curves {#ec-value-wire-formats}
+## Encoded scalars for Elliptic Curves {#ec-scalar-wire-formats}
 
 Some non-curve values in elliptic curve cryptography (e.g. secret keys and signature components) are not points on a curve, but are also encoded on the wire in OpenPGP as an MPI.
 
 Because of different patterns of deployment, some curves treat these values as opaque bit strings with the high bit set, while others are treated as actual integers, encoded in the standard OpenPGP big-endian form.
 The choice of encoding is specific to the public key algorithm in use.
 
-{: title="Elliptic Curve Value Encodings"}
+{: title="Elliptic Curve Scalar Encodings"}
 Name | Description | Reference
 -----|-------------|-----------
-MPI | An integer, big-endian encoded as a standard OpenPGP MPI | {{mpi}}
-bytes\[N] | An octet string of fixed length, expected to be N octets long when used, but may be shorter on the wire due to leading zeros | {{ec-bytes}}
+integer | An integer, big-endian encoded as a standard OpenPGP MPI | {{mpi}}
+bytes\[N] | An octet string of fixed length, expected to be N octets long when used, but may be shorter on the wire due to stripped leading zeros | {{ec-bytes}}
 
 ### Elliptic Curve Bytestring Wire Format {#ec-bytes}
 
