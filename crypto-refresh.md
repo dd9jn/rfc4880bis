@@ -2618,7 +2618,7 @@ ID | Algorithm | Public Key Format | Secret Key Format | Signature Format | PKES
  16 | Elgamal (Encrypt-Only) {{ELGAMAL}} {{HAC}} | MPI(p), MPI(g), MPI(y) \[{{key-elgamal}}] | MPI(x) | N/A | MPI(g\*\*k mod p), MPI (m * y\*\*k mod p) \[{{pkesk-elgamal}}]
  17 | DSA (Digital Signature Algorithm) {{FIPS186}} {{HAC}} | MPI(p), MPI(q), MPI(g), MPI(y) \[{{key-dsa}}] | MPI(x) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
  18 | ECDH public key algorithm | OID, MPI(Point), KDFParams \[{{key-ecdh}}]| MPI(secret) | N/A | MPI(Point), size octet, encoded key \[{{pkesk-ecdh}}, {{ec-dh-algorithm-ecdh}}]
- 19 | ECDSA public key algorithm {{FIPS186}} | OID, uncompressed(Point) \[{{key-ecdsa}}] | MPI(secret) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
+ 19 | ECDSA public key algorithm {{FIPS186}} | OID, SEC1(Point) \[{{key-ecdsa}}] | MPI(secret) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
  20 | Reserved (formerly Elgamal Encrypt or Sign)
  21 | Reserved for Diffie-Hellman (X9.42, as defined for IETF-S/MIME)
  22 | EdDSA  {{RFC8032}} | OID, native(Point) \[{{key-eddsa}}] | bytes\[fsize](secret) | bytes\[fsize](R), bytes\[fsize](S) \[{{sig-eddsa}}] | N/A
@@ -2644,9 +2644,9 @@ It also specifies which public key algorithms the curve can be used with, as wel
 {: title="ECC Curve OID and usage registry"}
 ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representation | Curve name | Usage | Field Size (fsize) | ECDH Point Format
 ------------------------|----|-------------------------------|-------------|-----|-----|-----
-1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256 | ECDSA, ECDH | 32 | uncompressed
-1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384 | ECDSA, ECDH | 48 | uncompressed
-1.3.132.0.35            | 5  | 2B 81 04 00 23                | NIST P-521 | ECDSA, ECDH | 66 | uncompressed
+1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256 | ECDSA, ECDH | 32 | SEC1
+1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384 | ECDSA, ECDH | 48 | SEC1
+1.3.132.0.35            | 5  | 2B 81 04 00 23                | NIST P-521 | ECDSA, ECDH | 66 | SEC1
 1.3.6.1.4.1.11591.15.1  | 9  | 2B 06 01 04 01 DA 47 0F 01    | Ed25519    | EdDSA       | 32 | N/A
 1.3.6.1.4.1.3029.1.5.1  | 10 | 2B 06 01 04 01 97 55 01 05 01 | Curve25519 | ECDH        | 32 | native
 
@@ -3166,12 +3166,12 @@ Each format uses a designated prefix byte to ensure that the high octet has at l
 {: title="Elliptic Curve Point Wire Formats"}
 Name | Wire Format | Reference
 ------:|-----------|-------------------
-uncompressed | 0x04 \|\| x \|\| y | {{ec-point-uncompressed}}
+SEC1 | 0x04 \|\| x \|\| y | {{ec-point-sec1}}
 native | 0x40 \|\| native | {{ec-point-native}}
 
-### Uncompressed EC Point Wire Format {#ec-point-uncompressed}
+### SEC1 EC Point Wire Format {#ec-point-sec1}
 
-For an uncompressed point the content of the MPI is:
+For a SEC1-encoded (uncompressed) point the content of the MPI is:
 
     B = 04 || x || y
 
