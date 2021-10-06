@@ -542,10 +542,12 @@ Argon2 is invoked with the passphrase as P, the salt as S, the values of t, p an
 
 For the recommended values of t, p and m, see Section 4 of {{RFC9106}}. If the recommended value of m for a given application is not a power of 2, it is RECOMMENDED to round up to the next power of 2 if the resulting performance would be acceptable, and round down otherwise (keeping in mind that m must be at least 8*p).
 
-As an example, with the first recommended option (t=1, p=4, m=2**21), and a salt of all zeros (note that a random salt should be used instead), the full S2K specifier would be:
+As an example, with the first recommended option (t=1, p=4, m=2**21), the full S2K specifier would be:
 
-      04 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-      00 01 04 15
+      04 XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX
+      XX 01 04 15
+
+(where XX represents a random byte of salt).
 
 ### String-to-Key Usage
 
