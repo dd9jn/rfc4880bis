@@ -768,7 +768,7 @@ The body of this packet consists of:
 
 ### Algorithm-Specific Fields for ECDH encryption {#pkesk-ecdh}
 
-- MPI of an EC point representing an ephemeral public key.
+- MPI of an EC point representing an ephemeral public key, in the point format associated with the curve as specified in {{ec-curves}}.
 
 - A one-octet size, followed by a symmetric key encoded using the method described in {{ec-dh-algorithm-ecdh}}.
 
@@ -1003,9 +1003,9 @@ The body of a V4 or V5 Signature packet contains:
 
 #### Algorithm-Specific Fields for EdDSA signatures: {#sig-eddsa}
 
-- MPI of an EC point R, represented as a "native" (little-endian) bytestring up to the field size (fsize) of the curve used, with leading zero-octets stripped.
+- MPI of an EC point R, represented as a (non-prefixed) native (little-endian) bytestring up to the field size (fsize) of the curve used.
 
-- EdDSA value S, in MPI, also in little endian representation with a length up to the field size (fsize) of the curve used.
+- MPI of EdDSA value S, also in native little-endian format with a length up to the field size (fsize) of the curve used.
 
 The format of R and S for use with EdDSA is described in {{RFC8032}}.
 A version 3 signature MUST NOT be created and MUST NOT be used with EdDSA.
@@ -1891,7 +1891,7 @@ The public key is this series of values:
 
   - the octets representing a curve OID, defined in {{ec-curves}};
 
-- a MPI of an EC point representing a public key Q in native form (see {{ec-point-native}}).
+- a MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
 
 The secret key is this single multiprecision integer:
 
@@ -1909,7 +1909,7 @@ The public key is this series of values:
 
   - Octets representing a curve OID, defined in {{ec-curves}};
 
-- MPI of an EC point representing a public key, in the form associated with the curve as identified in {{ec-curves}}
+- MPI of an EC point representing a public key, in the point format associated with the curve as specified in {{ec-curves}}
 
 - A variable-length field containing KDF parameters, which is formatted as follows:
 
@@ -2617,11 +2617,11 @@ ID | Algorithm | Public Key Format | Secret Key Format | Signature Format | PKES
  3 | RSA Sign-Only {{HAC}} | MPI(n), MPI(e) \[{{key-rsa}}] | MPI(d), MPI(p), MPI(q), MPI(u) | MPI(m\**d mod n) \[{{sig-rsa}}] | N/A 
  16 | Elgamal (Encrypt-Only) {{ELGAMAL}} {{HAC}} | MPI(p), MPI(g), MPI(y) \[{{key-elgamal}}] | MPI(x) | N/A | MPI(g\*\*k mod p), MPI (m * y\*\*k mod p) \[{{pkesk-elgamal}}]
  17 | DSA (Digital Signature Algorithm) {{FIPS186}} {{HAC}} | MPI(p), MPI(q), MPI(g), MPI(y) \[{{key-dsa}}] | MPI(x) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
- 18 | ECDH public key algorithm | OID, MPI(Point), KDFParams \[{{key-ecdh}}]| MPI(secret) | N/A | MPI(Point), size octet, encoded key \[{{pkesk-ecdh}}, {{ec-dh-algorithm-ecdh}}]
- 19 | ECDSA public key algorithm {{FIPS186}} | OID, SEC1(Point) \[{{key-ecdsa}}] | MPI(secret) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
+ 18 | ECDH public key algorithm | OID, MPI(point bytes in curve-specific point format), KDFParams \[{{key-ecdh}}]| MPI(secret) | N/A | MPI(point bytes in curve-specific point format), size octet, encoded key \[{{pkesk-ecdh}}, {{ec-dh-algorithm-ecdh}}]
+ 19 | ECDSA public key algorithm {{FIPS186}} | OID, MPI(point bytes in SEC1 format) \[{{key-ecdsa}}] | MPI(secret) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
  20 | Reserved (formerly Elgamal Encrypt or Sign)
  21 | Reserved for Diffie-Hellman (X9.42, as defined for IETF-S/MIME)
- 22 | EdDSA  {{RFC8032}} | OID, native(Point) \[{{key-eddsa}}] | bytes\[fsize](secret) | bytes\[fsize](R), bytes\[fsize](S) \[{{sig-eddsa}}] | N/A
+ 22 | EdDSA  {{RFC8032}} | OID, MPI(point bytes in prefixed native format) \[{{key-eddsa}}] | MPI(fsize bytes of secret key) | MPI(fsize bytes of R), MPI(fsize bytes of S) \[{{sig-eddsa}}] | N/A
  23 | Reserved (AEDH)
  24 | Reserved (AEDSA)
 100 to 110 | Private/Experimental algorithm
@@ -2648,9 +2648,9 @@ ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representatio
 1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384 | ECDSA, ECDH | 48 | SEC1
 1.3.132.0.35            | 5  | 2B 81 04 00 23                | NIST P-521 | ECDSA, ECDH | 66 | SEC1
 1.3.6.1.4.1.11591.15.1  | 9  | 2B 06 01 04 01 DA 47 0F 01    | Ed25519    | EdDSA       | 32 | N/A
-1.3.6.1.4.1.3029.1.5.1  | 10 | 2B 06 01 04 01 97 55 01 05 01 | Curve25519 | ECDH        | 32 | native
+1.3.6.1.4.1.3029.1.5.1  | 10 | 2B 06 01 04 01 97 55 01 05 01 | Curve25519 | ECDH        | 32 | prefixed native
 
-The "Field Size (fsize)" column represents the approximate field size of the group, sufficient that x or y coordinates for a point on the curve, native point representations, or scalars with high enough entropy for the curve can be represented in that many octets.
+The "Field Size (fsize)" column represents the field size of the group in number of octets, rounded up, such that x or y coordinates for a point on the curve, native point representations, or scalars with high enough entropy for the curve can be represented in that many octets.
 
 The sequence of octets in the third column is the result of applying the Distinguished Encoding Rules (DER) to the ASN.1 Object Identifier with subsequent truncation.
 The truncation removes the two fields of encoded Object Identifier.
@@ -3167,7 +3167,7 @@ Each format uses a designated prefix byte to ensure that the high octet has at l
 Name | Wire Format | Reference
 ------:|-----------|-------------------
 SEC1 | 0x04 \|\| x \|\| y | {{ec-point-sec1}}
-native | 0x40 \|\| native | {{ec-point-native}}
+Prefixed native | 0x40 \|\| native | {{ec-point-prefixed-native}}
 
 ### SEC1 EC Point Wire Format {#ec-point-sec1}
 
@@ -3179,7 +3179,7 @@ where x and y are coordinates of the point P = (x, y), and each is encoded in th
 The adjusted underlying field size is the underlying field size rounded up to the nearest 8-bit boundary, as noted in the "fsize" column in {{ec-curves}}.
 This encoding is compatible with the definition given in {{SEC1}}.
 
-### Native EC Point Wire Format {#ec-point-native}
+### Prefixed Native EC Point Wire Format {#ec-point-prefixed-native}
 
 For a custom compressed point the content of the MPI is:
 
@@ -3188,7 +3188,7 @@ For a custom compressed point the content of the MPI is:
 where p is the public key of the point encoded using the rules defined for the specified curve.
 This format is used for ECDH keys based on curves expressed in Montgomery form, and for points when using EdDSA.
 
-### Observations About Encoded EC Points
+### Notes on EC Point Wire Formats
 
 Given the above definitions, the exact size of the MPI payload for an encoded point is 515 bits for "Curve P-256", 771 for "Curve P-384", 1059 for "Curve P-521", and 263 for "Curve25519" and "Ed25519".
 For example, the length of a EdDSA public key for the curve Ed25519 is 263 bits: 7 bits to represent the 0x40 prefix octet and 32 octets for the native value of the public key.
@@ -3198,7 +3198,7 @@ Even though the zero point, also called the point at infinity, may occur as a re
 Each particular curve uses a designated wire format for the point found in its public key or ECDH data structure.
 An implementation MUST NOT use a different wire format for a point than the wire format associated with the curve.
 
-## Encoded scalars for Elliptic Curves {#ec-scalar-wire-formats}
+## EC Scalar Wire Formats {#ec-scalar-wire-formats}
 
 Some non-curve values in elliptic curve cryptography (e.g. secret keys and signature components) are not points on a curve, but are also encoded on the wire in OpenPGP as an MPI.
 
@@ -3206,22 +3206,22 @@ Because of different patterns of deployment, some curves treat these values as o
 The choice of encoding is specific to the public key algorithm in use.
 
 {: title="Elliptic Curve Scalar Encodings"}
-Name | Description | Reference
+Type | Description | Reference
 -----|-------------|-----------
 integer | An integer, big-endian encoded as a standard OpenPGP MPI | {{mpi}}
-bytes\[N] | An octet string of fixed length, expected to be N octets long when used, but may be shorter on the wire due to stripped leading zeros | {{ec-bytes}}
+bytes | An octet string of fixed length, that may be shorter on the wire due to leading zeros being stripped by the MPI encoding, and may need to be zero-padded before usage | {{ec-octet-string}}
 
-### Elliptic Curve Bytestring Wire Format {#ec-bytes}
+### EC Bytestring Wire Format {#ec-bytes}
 
 Some opaque strings of octets are represented on the wire as an MPI by simply stripping the leading zeros and counting the remaining bits.
 These strings are of known, fixed length.
-They are represented in this document as `bytes[N]` where `N` is the length in octets of the expected string.
+They are represented in this document as `MPI(N bytes of X)` where `N` is the expected length in octets of the bytestring.
 
-For example a five-octet opaque string (`bytes[5](x)`) where `x` has the value `00 02 ee 19 00` would be represented on the wire as an MPI like so: `00 1a 02 ee 19 00`.
+For example, a five-octet opaque string (`MPI(5 bytes of X)`) where `X` has the value `00 02 ee 19 00` would be represented on the wire as an MPI like so: `00 1a 02 ee 19 00`.
 
-To encode `x` to the wire format, we set the MPI's two-octet bit counter to the value of the highest set bit (bit 26, or 0x001a), and do not transfer the leading all-zero octet to the wire.
+To encode `X` to the wire format, we set the MPI's two-octet bit counter to the value of the highest set bit (bit 26, or 0x001a), and do not transfer the leading all-zero octet to the wire.
 
-To reverse the process, an implementation that knows this value is a `bytes[5]` string can take the following steps:
+To reverse the process, an implementation that knows this value has an expected length of 5 bytes can take the following steps:
 
 - ensure that the MPI's two-octet bitcount is less than or equal to 40 (5 octets of 8 bits)
 - allocate 5 octets, setting all to zero initially
