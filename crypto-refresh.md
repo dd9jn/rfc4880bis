@@ -424,7 +424,7 @@ It may be ill-formed in its ciphertext.
 
 ### Using MPIs to encode other data
 
-Note that MPIs are used in some places used to encode non-integer data, such as an elliptic curve point (see {{ec-point-wire-formats}}, or a bytestring of known, fixed length (see {{ec-scalar-wire-formats}}).
+Note that MPIs are used in some places used to encode non-integer data, such as an elliptic curve point (see {{ec-point-wire-formats}}, or an octet string of known, fixed length (see {{ec-scalar-wire-formats}}).
 The wire representation is the same: two octets of length in bits counted from the first non-zero bit, followed by the smallest series of octets that can represent the value while stripping off any leading zero octets.
 
 ## Key IDs
@@ -1003,7 +1003,7 @@ The body of a V4 or V5 Signature packet contains:
 
 #### Algorithm-Specific Fields for EdDSA signatures: {#sig-eddsa}
 
-- MPI of an EC point R, represented as a (non-prefixed) native (little-endian) bytestring up to the field size (fsize) of the curve used.
+- MPI of an EC point R, represented as a (non-prefixed) native (little-endian) octet string up to the field size (fsize) of the curve used.
 
 - MPI of EdDSA value S, also in native little-endian format with a length up to the field size (fsize) of the curve used.
 
@@ -1895,7 +1895,7 @@ The public key is this series of values:
 
 The secret key is this single multiprecision integer:
 
-- an MPI-encoded native bytestring representing the secret key (see {{ec-bytes}}).
+- an MPI-encoded native octet string representing the secret key (see {{ec-octet-string}}).
 
 See {{RFC8032}} for more details about the native encodings.
 
@@ -2617,11 +2617,11 @@ ID | Algorithm | Public Key Format | Secret Key Format | Signature Format | PKES
  3 | RSA Sign-Only {{HAC}} | MPI(n), MPI(e) \[{{key-rsa}}] | MPI(d), MPI(p), MPI(q), MPI(u) | MPI(m\**d mod n) \[{{sig-rsa}}] | N/A 
  16 | Elgamal (Encrypt-Only) {{ELGAMAL}} {{HAC}} | MPI(p), MPI(g), MPI(y) \[{{key-elgamal}}] | MPI(x) | N/A | MPI(g\*\*k mod p), MPI (m * y\*\*k mod p) \[{{pkesk-elgamal}}]
  17 | DSA (Digital Signature Algorithm) {{FIPS186}} {{HAC}} | MPI(p), MPI(q), MPI(g), MPI(y) \[{{key-dsa}}] | MPI(x) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
- 18 | ECDH public key algorithm | OID, MPI(point bytes in curve-specific point format), KDFParams \[{{key-ecdh}}]| MPI(secret) | N/A | MPI(point bytes in curve-specific point format), size octet, encoded key \[{{pkesk-ecdh}}, {{ec-dh-algorithm-ecdh}}]
- 19 | ECDSA public key algorithm {{FIPS186}} | OID, MPI(point bytes in SEC1 format) \[{{key-ecdsa}}] | MPI(secret) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
+ 18 | ECDH public key algorithm | OID, MPI(point in curve-specific point format), KDFParams \[{{key-ecdh}}]| MPI(secret) | N/A | MPI(point in curve-specific point format), size octet, encoded key \[{{pkesk-ecdh}}, {{ec-dh-algorithm-ecdh}}]
+ 19 | ECDSA public key algorithm {{FIPS186}} | OID, MPI(point in SEC1 format) \[{{key-ecdsa}}] | MPI(secret) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
  20 | Reserved (formerly Elgamal Encrypt or Sign)
  21 | Reserved for Diffie-Hellman (X9.42, as defined for IETF-S/MIME)
- 22 | EdDSA  {{RFC8032}} | OID, MPI(point bytes in prefixed native format) \[{{key-eddsa}}] | MPI(fsize bytes of secret key) | MPI(fsize bytes of R), MPI(fsize bytes of S) \[{{sig-eddsa}}] | N/A
+ 22 | EdDSA  {{RFC8032}} | OID, MPI(point in prefixed native format) \[{{key-eddsa}}] | MPI(fsize octets of secret key) | MPI(fsize octets of R), MPI(fsize octets of S) \[{{sig-eddsa}}] | N/A
  23 | Reserved (AEDH)
  24 | Reserved (AEDSA)
 100 to 110 | Private/Experimental algorithm
@@ -3209,19 +3209,19 @@ The choice of encoding is specific to the public key algorithm in use.
 Type | Description | Reference
 -----|-------------|-----------
 integer | An integer, big-endian encoded as a standard OpenPGP MPI | {{mpi}}
-bytes | An octet string of fixed length, that may be shorter on the wire due to leading zeros being stripped by the MPI encoding, and may need to be zero-padded before usage | {{ec-octet-string}}
+octet string | An octet string of fixed length, that may be shorter on the wire due to leading zeros being stripped by the MPI encoding, and may need to be zero-padded before usage | {{ec-octet-string}}
 
-### EC Bytestring Wire Format {#ec-bytes}
+### EC Octet String Wire Format {#ec-octet-string}
 
 Some opaque strings of octets are represented on the wire as an MPI by simply stripping the leading zeros and counting the remaining bits.
 These strings are of known, fixed length.
-They are represented in this document as `MPI(N bytes of X)` where `N` is the expected length in octets of the bytestring.
+They are represented in this document as `MPI(N octets of X)` where `N` is the expected length in octets of the octet string.
 
-For example, a five-octet opaque string (`MPI(5 bytes of X)`) where `X` has the value `00 02 ee 19 00` would be represented on the wire as an MPI like so: `00 1a 02 ee 19 00`.
+For example, a five-octet opaque string (`MPI(5 octets of X)`) where `X` has the value `00 02 ee 19 00` would be represented on the wire as an MPI like so: `00 1a 02 ee 19 00`.
 
 To encode `X` to the wire format, we set the MPI's two-octet bit counter to the value of the highest set bit (bit 26, or 0x001a), and do not transfer the leading all-zero octet to the wire.
 
-To reverse the process, an implementation that knows this value has an expected length of 5 bytes can take the following steps:
+To reverse the process, an implementation that knows this value has an expected length of 5 octets can take the following steps:
 
 - ensure that the MPI's two-octet bitcount is less than or equal to 40 (5 octets of 8 bits)
 - allocate 5 octets, setting all to zero initially
