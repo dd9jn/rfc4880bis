@@ -451,17 +451,17 @@ They are used in two places, currently: to encrypt the secret part of private ke
 There are three types of S2K specifiers currently supported, and some reserved values:
 
 {: title="S2K type registry"}
-ID | S2K Type
----:|------------------
-  0 | Simple S2K
-  1 | Salted S2K
-  2 | Reserved value
-  3 | Iterated and Salted S2K
-100 to 110 | Private/Experimental S2K
+ID | S2K Type | Generate? | Reference
+---:|------------------|-----|-------
+  0 | Simple S2K | N | {{s2k-simple}}
+  1 | Salted S2K | Only when string is high entropy | {{s2k-salted}}
+  2 | Reserved value | N
+  3 | Iterated and Salted S2K | Y | {{s2k-iter-salted}}
+100 to 110 | Private/Experimental S2K | As appropriate
 
 These are described in the subsections below.
 
-#### Simple S2K
+#### Simple S2K {#s2k-simple}
 
 This directly hashes the string to produce the key data.
 See below for how this hashing is done.
@@ -481,7 +481,7 @@ As the data is hashed, it is given independently to each hash context.
 Since the contexts have been initialized differently, they will each produce different hash output.
 Once the passphrase is hashed, the output data from the multiple hashes is concatenated, first hash leftmost, to produce the key data, with any excess octets on the right discarded.
 
-#### Salted S2K
+#### Salted S2K {#s2k-salted}
 
 This includes a "salt" value in the S2K specifier --- some arbitrary data --- that gets hashed along with the passphrase string, to help prevent dictionary attacks.
 
@@ -491,7 +491,7 @@ This includes a "salt" value in the S2K specifier --- some arbitrary data --- th
 
 Salted S2K is exactly like Simple S2K, except that the input to the hash function(s) consists of the 8 octets of salt from the S2K specifier, followed by the passphrase.
 
-#### Iterated and Salted S2K
+#### Iterated and Salted S2K {#s2k-iter-salted}
 
 This includes both a salt and an octet count.
 The salt is combined with the passphrase and the resulting value is hashed repeatedly.
@@ -520,8 +520,8 @@ After the hashing is done, the data is unloaded from the hash context(s) as with
 
 ### String-to-Key Usage
 
-Simple S2K and Salted S2K specifiers are not particularly secure when used with a low-entropy secret, such as those typically provided by users.
-Implementations SHOULD NOT use these methods on encryption of either keys and messages.
+Simple S2K and Salted S2K specifiers can be brute-forced when used with a low-entropy string, such as those typically provided by users. In addition, the usage of Simple S2K can lead to key and IV reuse (see {{skesk}}).
+Therefore, when generating S2K specifiers, implementations MUST NOT use Simple S2K, and SHOULD NOT use Salted S2K unless the implementation knows that the string is high-entropy (e.g., it generated the string itself using a known-good source of randomness).
 
 #### Secret-Key Encryption {#secret-key-encryption}
 
@@ -1592,7 +1592,7 @@ Please note that we are intentionally leaving conflict resolution to the impleme
 Some apparent conflicts may actually make sense --- for example, suppose a keyholder has a V3 key and a V4 key that share the same RSA key material.
 Either of these keys can verify a signature created by the other, and it may be reasonable for a signature to contain an issuer subpacket for each key, as a way of explicitly tying those keys to the signature.
 
-## Symmetric-Key Encrypted Session Key Packets (Tag 3)
+## Symmetric-Key Encrypted Session Key Packets (Tag 3) {#skesk}
 
 The Symmetric-Key Encrypted Session Key packet holds the symmetric-key encryption of a session key used to encrypt a message.
 Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede a Symmetrically Encrypted Data packet that holds an encrypted message.
@@ -2732,6 +2732,8 @@ This specification creates a registry of S2K specifier types.
 The registry includes the S2K type, the name of the S2K, and a reference to the defining specification.
 The initial values for this registry can be found in {{s2k-types}}.
 Adding a new S2K specifier MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
+
+IANA should add a column "Generate?" to the S2K type registry, with initial values taken from {{s2k-types}}.
 
 ## New Packets
 
