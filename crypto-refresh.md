@@ -551,7 +551,7 @@ As an example, with the first recommended option (t=1, p=4, m=2**21), the full S
       04 XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX
       XX 01 04 15
 
-(where XX represents a random byte of salt).
+(where XX represents a random octet of salt).
 
 ### String-to-Key Usage
 
@@ -2703,11 +2703,12 @@ A compatible specification of ECDSA is given in {{RFC6090}} as "KT-I Signatures"
 ## ECC Curves for OpenPGP {#ec-curves}
 
 The parameter curve OID is an array of octets that define a named curve.
-The table below specifies the exact sequence of bytes for each named curve referenced in this document.
+
+The table below specifies the exact sequence of octets for each named curve referenced in this document.
 It also specifies which public key algorithms the curve can be used with, as well as the size of expected elements in octets:
 
 {: title="ECC Curve OID and usage registry"}
-ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representation | Curve name | Usage | Field Size (fsize) | ECDH Point Format
+ASN.1 Object Identifier | OID len | Curve OID octets in hexadecimal representation | Curve name | Usage | Field Size (fsize) | ECDH Point Format
 ------------------------|----|-------------------------------|-------------|-----|-----|-----
 1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256 | ECDSA, ECDH | 32 | SEC1
 1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384 | ECDSA, ECDH | 48 | SEC1
@@ -3225,14 +3226,14 @@ This document references three named prime field curves defined in {{FIPS186}} a
 These three {{FIPS186}} curves can be used with ECDSA and ECDH public key algorithms.
 Additionally, curve "Curve25519", defined in {{RFC7748}} is referenced for use with Ed25519 (EdDSA signing) and X25519 (ECDH encryption).
 
-The named curves are referenced as a sequence of bytes in this document, called throughout, curve OID.
-{{ec-curves}} describes in detail how this sequence of bytes is formed.
+The named curves are referenced as a sequence of octets in this document, called throughout, curve OID.
+{{ec-curves}} describes in detail how this sequence of octets is formed.
 
 ## EC Point Wire Formats {#ec-point-wire-formats}
 
 A point on an elliptic curve will always be represented on the wire as an MPI.
 Each curve uses a specific point format for the data within the MPI itself.
-Each format uses a designated prefix byte to ensure that the high octet has at least one bit set to make the MPI a constant size.
+Each format uses a designated prefix octet to ensure that the high octet has at least one bit set to make the MPI a constant size.
 
 {: title="Elliptic Curve Point Wire Formats"}
 Name | Wire Format | Reference
@@ -3359,14 +3360,14 @@ Refer to {{security-considerations}} for the details regarding the choice of the
 Key wrapping and unwrapping is performed with the default initial value of {{RFC3394}}.
 
 The input to the key wrapping method is the value "m" derived from the session key, as described in {{public-key-encrypted-session-key-packets-tag-1}}, "Public-Key Encrypted Session Key Packets (Tag 1)", except that the PKCS #1.5 padding step is omitted.
-The result is padded using the method described in {{PKCS5}} to an 8-byte granularity.
+The result is padded using the method described in {{PKCS5}} to an 8-octet granularity.
 For example, the following AES-256 session key, in which 32 octets are denoted from k0 to k31, is composed to form the following 40 octet sequence:
 
     09 k0 k1 ... k31 s0 s1 05 05 05 05 05
 
 The octets s0 and s1 above denote the checksum.
 This encoding allows the sender to obfuscate the size of the symmetric encryption key used to encrypt the data.
-For example, assuming that an AES algorithm is used for the session key, the sender MAY use 21, 13, and 5 bytes of padding for AES-128, AES-192, and AES-256, respectively, to provide the same number of octets, 40 total, as an input to the key wrapping method.
+For example, assuming that an AES algorithm is used for the session key, the sender MAY use 21, 13, and 5 octets of padding for AES-128, AES-192, and AES-256, respectively, to provide the same number of octets, 40 total, as an input to the key wrapping method.
 
 The output of the method consists of two fields.
 The first field is the MPI containing the ephemeral key used to establish the shared secret.
@@ -3374,7 +3375,7 @@ The second field is composed of the following two subfields:
 
 - One octet encoding the size in octets of the result of the key wrapping method; the value 255 is reserved for future extensions;
 
-- Up to 254 octets representing the result of the key wrapping method, applied to the 8-byte padded session key, as described above.
+- Up to 254 octets representing the result of the key wrapping method, applied to the 8-octet padded session key, as described above.
 
 Note that for session key sizes 128, 192, and 256 bits, the size of the result of the key wrapping method is, respectively, 32, 40, and 48 octets, unless size obfuscation is used.
 
@@ -3388,7 +3389,7 @@ For convenience, the synopsis of the encoding method is given below; however, th
 
 - m = symm_alg_ID \|\| session key \|\| checksum \|\| pkcs5_padding;
 
-- curve_OID_len = (byte)len(curve_OID);
+- curve_OID_len = (octet)len(curve_OID);
 
 - Param = curve_OID_len \|\| curve_OID \|\| public_key_alg_ID \|\| 03 \|\| 01 \|\| KDF_hash_ID \|\| KEK_alg_ID for AESKeyWrap \|\| `Anonymous Sender    ` \|\| recipient_fingerprint;
 
