@@ -1618,7 +1618,7 @@ This trailer depends on the version of the signature.
 
   - a eight-octet big-endian number that is the length of the hashed data from the Signature packet stopping right before the 0x05, 0xff octets.
 
-    The three data items hashed for document signatures need to mirror the values of the Literal Data packet.  For detached and cleartext signatures 6 zero bytes are hashed instead.
+    The three data items hashed for document signatures need to mirror the values of the Literal Data packet.  For detached and cleartext signatures 6 zero octets are hashed instead.
 
 After all this has been hashed in a single hash context, the resulting hash field is used in the signature algorithm and placed at the end of the Signature packet.
 
@@ -2320,7 +2320,7 @@ If the last chunk of plaintext is smaller than the chunk size, the ciphertext fo
 
 For each chunk, the AEAD construction is given the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), version number, cipher algorithm octet, AEAD algorithm octet, chunk size octet, and an eight-octet, big-endian chunk index as additional data.
 The index of the first chunk is zero.
-For example, the additional data of the first chunk using EAX and AES-128 with a chunk size of 64 kiByte consists of the octets 0xD4, 0x01, 0x07, 0x01, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, and 0x00.
+For example, the additional data of the first chunk using EAX and AES-128 with a chunk size of 64 kiOctets consists of the octets 0xD4, 0x01, 0x07, 0x01, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, and 0x00.
 
 After the final chunk, the AEAD algorithm is used to produce a final authentication tag encrypting the empty string.
 This AEAD instance is given the additional data specified above, plus an eight-octet, big-endian value specifying the total number of plaintext octets encrypted.
