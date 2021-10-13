@@ -3673,6 +3673,9 @@ Truncation of the resulting digest is never applied; the resulting digest value 
 For clarity: while {{RFC8032}} describes different variants of EdDSA, OpenPGP uses the "pure" variant (PureEdDSA).
 The hashing that happens with OpenPGP is done as part of the standard OpenPGP signature process, and that hash itself is fed as the input message to the PureEdDSA algorithm.
 
+As specified in {{RFC8032}}, Ed448 also expects a "context string".
+In OpenPGP, Ed448 is used with the empty string as a context string.
+
 ## Reserved Algorithm Numbers {#reserved-notes}
 
 A number of algorithm IDs have been reserved for algorithms that would be useful to use in an OpenPGP implementation, yet there are issues that prevent an implementer from actually implementing the algorithm.
