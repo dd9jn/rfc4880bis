@@ -3093,8 +3093,6 @@ A subkey always has at least one subkey binding signature after it that is issue
 These binding signatures may be in either V3 or V4 format, but SHOULD be V4.
 Subkeys that can issue signatures MUST have a V4 binding signature due to the REQUIRED embedded primary key binding signature.
 
-In the above diagram, if all binding signatures of a subkey have been revoked, the revoked key may be removed, leaving only one key.
-
 In a V4 key, the primary key MUST be a key capable of certification.
 The subkeys may be keys of any other type.
 There may be other constructions of V4 keys, too.
