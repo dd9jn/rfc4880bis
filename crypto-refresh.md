@@ -2185,7 +2185,7 @@ The body of this packet consists of:
 
 - Encrypted data, the output of the selected symmetric-key cipher operating in Cipher Feedback mode with shift amount equal to the block size of the cipher (CFB-n where n is the block size).
 
-The symmetric cipher used MUST be specified in a Public-Key or Symmetric-Key Encrypted Session Key packet that precedes the Symmetrically Encrypted Data packet.
+The symmetric cipher used MUST be specified in a Public-Key or Symmetric-Key Encrypted Session Key packet that precedes the Symmetrically Encrypted Integrity Protected Data packet.
 In either case, the cipher algorithm octet is prefixed to the session key before it is encrypted.
 
 The data is encrypted in CFB mode, with a CFB shift size equal to the cipher's block size.
