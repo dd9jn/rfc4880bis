@@ -2154,7 +2154,7 @@ It is a new feature created for OpenPGP that addresses the problem of detecting 
 It is used in combination with a Modification Detection Code packet.
 
 There is a corresponding feature in the features Signature subpacket that denotes that an implementation can properly use this packet type.
-An implementation MUST support decrypting these packets and SHOULD prefer generating them to the older Symmetrically Encrypted Data packet when possible.
+An implementation MUST support decrypting these packets and MUST prefer generating them to the older Symmetrically Encrypted Data packet when possible.
 Since this data packet protects against modification attacks, this standard encourages its proliferation.
 While blanket adoption of this data packet would create interoperability problems, rapid adoption is nevertheless important.
 An implementation SHOULD specifically denote support for this packet, but it MAY infer it from other mechanisms.
