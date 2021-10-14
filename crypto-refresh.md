@@ -3050,7 +3050,8 @@ One-Pass Signed Message :-
 Signed Message :-
 : Signature Packet, OpenPGP Message \| One-Pass Signed Message.
 
-In addition, decrypting a Symmetrically Encrypted and Integrity Protected Data packet, an AEAD Encrypted Data packet, or --- for historic data --- a Symmetrically Encrypted Data packet as well as decompressing a Compressed Data packet must yield a valid OpenPGP Message.
+In addition, decrypting a Symmetrically Encrypted and Integrity Protected Data packet, an AEAD Encrypted Data packet, or --- for historic data --- a Symmetrically Encrypted Data packet must yield a valid OpenPGP Message.
+Decompressing a Compressed Data packet must also yield a valid OpenPGP Message.
 
 Note that some subtle combinations that are formally acceptable by this grammar are nonetheless unacceptable.
 For example, a v5 SKESK packet cannot effectively precede a SEIPD packet, since that combination does not include any information about the choice of symmetric cipher used for SEIPD (see {{no-v5-skesk-seipd}} for more details).
