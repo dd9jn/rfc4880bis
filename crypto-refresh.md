@@ -768,7 +768,7 @@ Tag | Packet Type
 ## Public-Key Encrypted Session Key Packets (Tag 1)
 
 A Public-Key Encrypted Session Key packet holds the session key used to encrypt a message.
-Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede an encryption container (i.e. a Symmetrically Encrypted Integrity Protected Data packet, an AEAD Encrypted Data packet, or -for historic data- a Symmetrically Encrypted Data packet), which holds an encrypted message.
+Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede an encryption container (i.e. a Symmetrically Encrypted Integrity Protected Data packet, an AEAD Encrypted Data packet, or --- for historic data --- a Symmetrically Encrypted Data packet), which holds an encrypted message.
 The message is encrypted with the session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet(s).
 The encryption container is preceded by one Public-Key Encrypted Session Key packet for each OpenPGP key to which the message is encrypted.
 The recipient of the message finds a session key that is encrypted to their public key, decrypts the session key, and then uses the session key to decrypt the message.
@@ -1635,7 +1635,7 @@ Either of these keys can verify a signature created by the other, and it may be 
 ## Symmetric-Key Encrypted Session Key Packets (Tag 3) {#skesk}
 
 The Symmetric-Key Encrypted Session Key (SKESK) packet holds the symmetric-key encryption of a session key used to encrypt a message.
-Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede a an encryption container (i.e. a Symmetrically Encrypted Integrity Protected Data packet, an AEAD Encrypted Data packet, or -for historic data- a Symmetrically Encrypted Data packet) that holds an encrypted message.
+Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede a an encryption container (i.e. a Symmetrically Encrypted Integrity Protected Data packet, an AEAD Encrypted Data packet, or --- for historic data --- a Symmetrically Encrypted Data packet) that holds an encrypted message.
 The message is encrypted with a session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet or the Symmetric-Key Encrypted Session Key packet.
 
 If the encryption container is preceded by one or more Symmetric-Key Encrypted Session Key packets, each specifies a passphrase that may be used to decrypt the message.
@@ -3094,7 +3094,7 @@ One-Pass Signed Message :-
 Signed Message :-
 : Signature Packet, OpenPGP Message \| One-Pass Signed Message.
 
-In addition, decrypting a Symmetrically Encrypted and Integrity Protected Data packet, an AEAD Encrypted Data packet, or -for historic data- a Symmetrically Encrypted Data packet as well as decompressing a Compressed Data packet must yield a valid OpenPGP Message.
+In addition, decrypting a Symmetrically Encrypted and Integrity Protected Data packet, an AEAD Encrypted Data packet, or --- for historic data --- a Symmetrically Encrypted Data packet as well as decompressing a Compressed Data packet must yield a valid OpenPGP Message.
 
 Note that some subtle combinations that are formally acceptable by this grammar are nonetheless unacceptable.
 For example, a v5 SKESK packet cannot effectively precede a SEIPD packet, since that combination does not include any information about the choice of symmetric cipher used for SEIPD (see {{no-v5-skesk-seipd}} for more details).
