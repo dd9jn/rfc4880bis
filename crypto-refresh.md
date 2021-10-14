@@ -1589,7 +1589,7 @@ This trailer depends on the version of the signature.
 
   - a four-octet big-endian number that is the length of the hashed data from the Signature packet stopping right before the 0x04, 0xff octets.
 
-    The four-octet big-endian number is considered to be an unsigned integer modulo 2^32.
+    The four-octet big-endian number is considered to be an unsigned integer modulo 2\*\*32.
 
 - A V5 signature hashes the packet body starting from its first field, the version number, through the end of the hashed subpacket data and a final extra trailer.
   Thus, the hashed fields are:
