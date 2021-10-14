@@ -1709,7 +1709,7 @@ A version 4 packet contains:
   This is algorithm-specific and described in {{algorithm-specific-parts-of-keys}}.
 
 The version 5 format is similar to the version 4 format except for the addition of a count for the key material.
-This count helps parsing secret key packets (which are an extension of the public key packet format) in the case of an unknown algoritm.
+This count helps parsing secret key packets (which are an extension of the public key packet format) in the case of an unknown algorithm.
 In addition, fingerprints of version 5 keys are calculated differently from version 4 keys, as described in the section "Enhanced Key Formats".
 
 A version 5 packet contains:
