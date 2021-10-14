@@ -1033,7 +1033,7 @@ The body of a V4 or V5 Signature packet contains:
 
 #### Algorithm-Specific Fields for EdDSA signatures {#sig-eddsa}
 
-- two MPI-encoded objects, whose contents and formatting depend on the choice of curve used (see {{curve-specific-formats}}).
+- Two MPI-encoded values, whose contents and formatting depend on the choice of curve used (see {{curve-specific-formats}}).
 
 A version 3 signature MUST NOT be created and MUST NOT be used with EdDSA.
 
@@ -1049,9 +1049,10 @@ The two MPIs for Ed25519 use octet strings R and S as described in {{RFC8032}}.
 
 For Ed448 signatures, the native signature format is used as described in {{RFC8032}}.  The two MPIs are composed as follows:
 
-- the first MPI has a body of 58 octets: a prefix 0x40 octet, followed by 57 octets of native signature.
+- The first MPI has a body of 58 octets: a prefix 0x40 octet, followed by 57 octets of the native signature.
  
 - The second MPI is set to 0 (this is a placeholder, and is unused).
+  Note that an MPI with a value of 0 is encoded on the wire as two null octets: `0x00 0x00`.
 
 #### Notes on Signatures
 
@@ -1963,17 +1964,17 @@ The secret key is this single multiprecision integer:
 
 The public key is this series of values:
 
-- a variable-length field containing a curve OID, formatted as follows:
+- A variable-length field containing a curve OID, formatted as follows:
 
-  - a one-octet size of the following field; values 0 and 0xFF are reserved for future extensions,
+  - A one-octet size of the following field; values 0 and 0xFF are reserved for future extensions,
 
-  - the octets representing a curve OID, defined in {{ec-curves}};
+  - The octets representing a curve OID, defined in {{ec-curves}};
 
-- a MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
+- An MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
 
 The secret key is this single multiprecision integer:
 
-- an MPI-encoded octet string representing the native form of the secret key, encoded according to the curve used as described in {{curve-specific-formats}}.
+- An MPI-encoded octet string representing the native form of the secret key, in the curve-specific format described in {{curve-specific-formats}}.
 
 See {{RFC8032}} for more details about the native octet strings.
 
@@ -2003,7 +2004,7 @@ Observe that an ECDH public key is composed of the same sequence of fields that 
 
 The secret key is this single multiprecision integer:
 
-- MPI of an integer representing the secret key, which is a scalar of the public EC point, encoded according to the curve used as described in {{curve-specific-formats}}.
+- An MPI representing the secret key, in the curve-specific format described in {{curve-specific-formats}}.
 
 ## Compressed Data Packet (Tag 8)
 
@@ -2755,8 +2756,8 @@ Ed448      | N/A | N/A | prefixed 57 octets of secret | prefixed 114 octets of s
 Curve25519 | integer | prefixed native | N/A | N/A | N/A
 X448       | prefixed 56 octets of secret | prefixed native | N/A | N/A | N/A
 
-For the native octet-string forms of encoded EdDSA objects, see {{RFC8032}}.
-For the native octet-string forms of encoded ECDH secret scalars and points, see {{RFC7748}}.
+For the native octet-string forms of EdDSA values, see {{RFC8032}}.
+For the native octet-string forms of ECDH secret scalars and points, see {{RFC7748}}.
 
 ## Symmetric-Key Algorithms {#symmetric-algos}
 
@@ -3263,7 +3264,7 @@ A thorough introduction to ECC can be found in {{KOBLITZ}}.
 
 This document references three named prime field curves defined in {{FIPS186}} as "Curve P-256", "Curve P-384", and "Curve P-521".
 These three {{FIPS186}} curves can be used with ECDSA and ECDH public key algorithms.
-Additionally, curve "Curve25519" and "Curve448", as defined in {{RFC7748}} are referenced for use with Ed25519 and Ed448 (EdDSA signing); and X25519 and X448 (ECDH encryption).
+Additionally, curve "Curve25519" and "Curve448" are referenced for use with Ed25519 and Ed448 (EdDSA signing, see {{RFC8032}}); and X25519 and X448 (ECDH encryption, see {{RFC7748}}).
 
 The named curves are referenced as a sequence of bytes in this document, called throughout, curve OID.
 {{ec-curves}} describes in detail how this sequence of bytes is formed.
@@ -3352,7 +3353,7 @@ To encode the string, we prefix it with the octet 0x40 (whose 7th bit is set), t
 To decode the string from the wire, an implementation that knows that the variable is formed in this way can:
 
 - ensure that the first three octets of the MPI (the two bit-count octets plus the prefix octet)  are `00 2f 40`, and
-- use remainder of the MPI directly off the wire.
+- use the remainder of the MPI directly off the wire.
 
 Note that this is a similar approach to that used in the EC point encodings found in {{ec-point-prefixed-native}}.
 
