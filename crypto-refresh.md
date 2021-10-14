@@ -1499,7 +1499,7 @@ First octet:
 feature | definition
 ---|--------------
 0x01 | Modification Detection (packets 18 and 19)
-0x02 | Reserved (AEAD Data & v5 SKESK)
+0x02 | AEAD Encrypted Data (packet 20)
 0x04 | Reserved
 
 If an implementation implements any of the defined features, it SHOULD implement the Features subpacket, too.
