@@ -2746,15 +2746,15 @@ Each field is always formatted as an MPI, but with a curve-specific framing.
 This table summarizes those distinctions.
 
 {: title="Curve-specific wire formats"}
-Curve | ECDH Secret Key MPI | ECDH Point Format| EdDSA Secret Key MPI | EdDSA Signature first MPI | EdDSA Signature second MPI
+Curve | ECDH Point Format | ECDH Secret Key MPI | EdDSA Secret Key MPI | EdDSA Signature first MPI | EdDSA Signature second MPI
 ------|-----------------|------------------|---------------------------|---------------------------
-NIST P-256 | integer | SEC1 | N/A | N/A | N/A
-NIST P-384 | integer | SEC1 | N/A | N/A | N/A
-NIST P-521 | integer | SEC1 | N/A | N/A | N/A
+NIST P-256 | SEC1 | integer | N/A | N/A | N/A
+NIST P-384 | SEC1 | integer | N/A | N/A | N/A
+NIST P-521 | SEC1 | integer | N/A | N/A | N/A
 Ed25519    | N/A | N/A | 32 octets of secret | 32 octets of R | 32 octets of S
 Ed448      | N/A | N/A | prefixed 57 octets of secret | prefixed 114 octets of signature | 0 \[this is an unused placeholder]
-Curve25519 | integer | prefixed native | N/A | N/A | N/A
-X448       | prefixed 56 octets of secret | prefixed native | N/A | N/A | N/A
+Curve25519 | prefixed native | integer | N/A | N/A | N/A
+X448       | prefixed native | prefixed 56 octets of secret | N/A | N/A | N/A
 
 For the native octet-string forms of EdDSA values, see {{RFC8032}}.
 For the native octet-string forms of ECDH secret scalars and points, see {{RFC7748}}.
