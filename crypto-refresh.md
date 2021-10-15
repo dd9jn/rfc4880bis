@@ -3862,7 +3862,8 @@ Asymmetric key size | Hash size | Symmetric key size
   Because of this happenstance --- that modification attacks can be thwarted by decompression errors --- an implementation SHOULD treat a decompression error as a security problem, not merely a data problem.
 
   This attack can be defeated by the use of Modification Detection, provided that the implementation does not let the user naively return the data to the attacker.
-  The modification detection is prefereabble implemented by using the AEAD Encrypted Data Packet and only if the recipients don't supports this by use of the Symmmetric Encrypted and Integrity Protected Data Packet.
+  An application generating any form of encrypted message SHOULD use the AEAD Encrypted Data Packet to enable modification detection.
+  If one of the recipients does not support AEAD, then the message generator MAY use the Symmmetric Encrypted and Integrity Protected Data Packet instead.
   An implementation MUST treat an authentication or MDC failure as a security problem, not merely a data problem.
 
   In either case, the implementation SHOULD NOT allow the user access to the erroneous data, and MUST warn the user as to potential security problems should that data be returned to the sender.
