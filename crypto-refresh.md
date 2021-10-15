@@ -1052,7 +1052,7 @@ For Ed448 signatures, the native signature format is used as described in {{RFC8
 - The first MPI has a body of 58 octets: a prefix 0x40 octet, followed by 57 octets of the native signature.
  
 - The second MPI is set to 0 (this is a placeholder, and is unused).
-  Note that an MPI with a value of 0 is encoded on the wire as two null octets: `0x00 0x00`.
+  Note that an MPI with a value of 0 is encoded on the wire as a pair of zero octets: `00 00`.
 
 #### Notes on Signatures
 
