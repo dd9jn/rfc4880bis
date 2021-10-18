@@ -2015,13 +2015,30 @@ Other curves are presented on the wire differently (though still as a single MPI
 A Curve25519 secret key is stored as a standard integer in big-endian MPI form.
 Note that this form is in reverse octet order from the little-endian "native" form found in {{RFC7748}}.
 
-Note also that the integer for a Curve25519 secret key for OpenPGP MUST have the appropriate bits set: that is, the three least-significant bits MUST be set to 0, and the highest bit (representing 2\*\*254) must be set to 1.
-The length of this MPI in bits is by definition always 255, so the two leading octets of the MPI will always be `00 ff` and reversing the the following 32 octets from the wire will produce the "native" form.
+Note also that the integer for a Curve25519 secret key for OpenPGP MUST have the appropriate form: that is, it MUST be divisible by 8, MUST be at least 2\*\*254, and MUST be less than 2\*\*255.
+The length of this MPI in bits is by definition always 255, so the two leading octets of the MPI will always be `00 ff` and reversing the following 32 octets from the wire will produce the "native" form.
+
+When generating a new Curve25519 secret key from 32 fully-random octets, the following pseudocode produces the MPI wire format (note the similarity to `decodeScalar25519` from {{RFC7748}}):
+
+    def curve25519_MPI_from_random(octet_list):
+        octet_list[0] &= 248
+        octet_list[31] &= 127
+        octet_list[31] |= 64
+        mpi_header = [ 0x00, 0xff ]
+        return mpi_header || reversed(octet_list)
 
 ##### X448 ECDH Secret Key Material
 
 An X448 secret key is contained within its MPI as a prefixed octet string (see {{ec-prefix}}), which encapsulates the native secret key format found in {{RFC7748}}.
 The full wire format (as an MPI) will thus be the three octets `01 c7 40` followed by the full 56 octet native secret key.
+
+When generating a new X448 secret key from 56 fully-random octets, the following pseudocode produces the MPI wire format (note the similarity to `decodeScalar448` from {{RFC7748}}):
+
+    def X448_MPI_from_random(octet_list):
+        octet_list[0] &= 252
+        octet_list[55] |= 128
+        prefixed_header = [ 0x01, 0xc7, 0x40 ]
+        return prefixed_header || octet_list
 
 ## Compressed Data Packet (Tag 8)
 
