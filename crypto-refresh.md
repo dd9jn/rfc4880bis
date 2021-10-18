@@ -1031,14 +1031,28 @@ The body of a V4 or V5 Signature packet contains:
 
 - MPI of DSA or ECDSA value s.
 
-#### Algorithm-Specific Fields for EdDSA signatures: {#sig-eddsa}
+#### Algorithm-Specific Fields for EdDSA signatures {#sig-eddsa}
 
-- MPI of an EC point R, represented as a (non-prefixed) native (little-endian) octet string up to the field size (fsize) of the curve used.
+- Two MPI-encoded values, whose contents and formatting depend on the choice of curve used (see {{curve-specific-formats}}).
 
-- MPI of EdDSA value S, also in native little-endian format with a length up to the field size (fsize) of the curve used.
-
-The format of R and S for use with EdDSA is described in {{RFC8032}}.
 A version 3 signature MUST NOT be created and MUST NOT be used with EdDSA.
+
+##### Algorithm-Specific Fields for Ed25519 signatures
+
+The two MPIs for Ed25519 use octet strings R and S as described in {{RFC8032}}.
+
+- MPI of an EC point R, represented as a (non-prefixed) native (little-endian) octet string up to 32 octets.
+ 
+- MPI of EdDSA value S, also in (non-prefixed) native little-endian format with a length up to 32 octets.
+
+##### Algorithm-Specific Fields for Ed448 signatures
+
+For Ed448 signatures, the native signature format is used as described in {{RFC8032}}.  The two MPIs are composed as follows:
+
+- The first MPI has a body of 58 octets: a prefix 0x40 octet, followed by 57 octets of the native signature.
+ 
+- The second MPI is set to 0 (this is a placeholder, and is unused).
+  Note that an MPI with a value of 0 is encoded on the wire as a pair of zero octets: `00 00`.
 
 #### Notes on Signatures
 
@@ -1950,19 +1964,19 @@ The secret key is this single multiprecision integer:
 
 The public key is this series of values:
 
-- a variable-length field containing a curve OID, formatted as follows:
+- A variable-length field containing a curve OID, formatted as follows:
 
-  - a one-octet size of the following field; values 0 and 0xFF are reserved for future extensions,
+  - A one-octet size of the following field; values 0 and 0xFF are reserved for future extensions,
 
-  - the octets representing a curve OID, defined in {{ec-curves}};
+  - The octets representing a curve OID, defined in {{ec-curves}};
 
-- a MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
+- An MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
 
 The secret key is this single multiprecision integer:
 
-- an MPI-encoded native octet string representing the secret key (see {{ec-octet-string}}).
+- An MPI-encoded octet string representing the native form of the secret key, in the curve-specific format described in {{curve-specific-formats}}.
 
-See {{RFC8032}} for more details about the native encodings.
+See {{RFC8032}} for more details about the native octet strings.
 
 ### Algorithm-Specific Part for ECDH Keys {#key-ecdh}
 
@@ -1974,7 +1988,7 @@ The public key is this series of values:
 
   - Octets representing a curve OID, defined in {{ec-curves}};
 
-- MPI of an EC point representing a public key, in the point format associated with the curve as specified in {{ec-curves}}
+- MPI of an EC point representing a public key, in the point format associated with the curve as specified in {{curve-specific-formats}}
 
 - A variable-length field containing KDF parameters, which is formatted as follows:
 
@@ -1990,7 +2004,7 @@ Observe that an ECDH public key is composed of the same sequence of fields that 
 
 The secret key is this single multiprecision integer:
 
-- MPI of an integer representing the secret key, which is a scalar of the public EC point.
+- An MPI representing the secret key, in the curve-specific format described in {{curve-specific-formats}}.
 
 ## Compressed Data Packet (Tag 8)
 
@@ -2680,11 +2694,11 @@ ID | Algorithm | Public Key Format | Secret Key Format | Signature Format | PKES
  3 | RSA Sign-Only {{HAC}} | MPI(n), MPI(e) \[{{key-rsa}}] | MPI(d), MPI(p), MPI(q), MPI(u) | MPI(m\**d mod n) \[{{sig-rsa}}] | N/A 
  16 | Elgamal (Encrypt-Only) {{ELGAMAL}} {{HAC}} | MPI(p), MPI(g), MPI(y) \[{{key-elgamal}}] | MPI(x) | N/A | MPI(g\*\*k mod p), MPI (m * y\*\*k mod p) \[{{pkesk-elgamal}}]
  17 | DSA (Digital Signature Algorithm) {{FIPS186}} {{HAC}} | MPI(p), MPI(q), MPI(g), MPI(y) \[{{key-dsa}}] | MPI(x) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
- 18 | ECDH public key algorithm | OID, MPI(point in curve-specific point format), KDFParams \[{{key-ecdh}}]| MPI(secret) | N/A | MPI(point in curve-specific point format), size octet, encoded key \[{{pkesk-ecdh}}, {{ec-dh-algorithm-ecdh}}]
+ 18 | ECDH public key algorithm | OID, MPI(point in curve-specific point format), KDFParams \[see {{curve-specific-formats}}, {{key-ecdh}}]| MPI(secret) | N/A | MPI(point in curve-specific point format), size octet, encoded key \[{{curve-specific-formats}}, {{pkesk-ecdh}}, {{ec-dh-algorithm-ecdh}}]
  19 | ECDSA public key algorithm {{FIPS186}} | OID, MPI(point in SEC1 format) \[{{key-ecdsa}}] | MPI(secret) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
  20 | Reserved (formerly Elgamal Encrypt or Sign)
  21 | Reserved for Diffie-Hellman (X9.42, as defined for IETF-S/MIME)
- 22 | EdDSA  {{RFC8032}} | OID, MPI(point in prefixed native format) \[{{key-eddsa}}] | MPI(fsize octets of secret key) | MPI(fsize octets of R), MPI(fsize octets of S) \[{{sig-eddsa}}] | N/A
+ 22 | EdDSA  {{RFC8032}} | OID, MPI(point in prefixed native format) \[{{key-eddsa}}] | MPI(value in curve-specific format) \[see {{curve-specific-formats}}] | MPI, MPI \[see {{curve-specific-formats}}, {{sig-eddsa}}] | N/A
  23 | Reserved (AEDH)
  24 | Reserved (AEDSA)
 100 to 110 | Private/Experimental algorithm
@@ -2705,13 +2719,15 @@ The table below specifies the exact sequence of bytes for each named curve refer
 It also specifies which public key algorithms the curve can be used with, as well as the size of expected elements in octets:
 
 {: title="ECC Curve OID and usage registry"}
-ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representation | Curve name | Usage | Field Size (fsize) | ECDH Point Format
+ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representation | Curve name | Usage | Field Size (fsize)
 ------------------------|----|-------------------------------|-------------|-----|-----|-----
-1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256 | ECDSA, ECDH | 32 | SEC1
-1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384 | ECDSA, ECDH | 48 | SEC1
-1.3.132.0.35            | 5  | 2B 81 04 00 23                | NIST P-521 | ECDSA, ECDH | 66 | SEC1
-1.3.6.1.4.1.11591.15.1  | 9  | 2B 06 01 04 01 DA 47 0F 01    | Ed25519    | EdDSA       | 32 | N/A
-1.3.6.1.4.1.3029.1.5.1  | 10 | 2B 06 01 04 01 97 55 01 05 01 | Curve25519 | ECDH        | 32 | prefixed native
+1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256 | ECDSA, ECDH | 32
+1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384 | ECDSA, ECDH | 48
+1.3.132.0.35            | 5  | 2B 81 04 00 23                | NIST P-521 | ECDSA, ECDH | 66
+1.3.6.1.4.1.11591.15.1  | 9  | 2B 06 01 04 01 DA 47 0F 01    | Ed25519    | EdDSA       | 32
+1.3.101.113             | 3  | 2B 65 71                      | Ed448      | EdDSA       | 57
+1.3.6.1.4.1.3029.1.5.1  | 10 | 2B 06 01 04 01 97 55 01 05 01 | Curve25519 | ECDH        | 32
+1.3.101.111             | 3  | 2B 65 6F                      | X448       | ECDH        | 56
 
 The "Field Size (fsize)" column represents the field size of the group in number of octets, rounded up, such that x or y coordinates for a point on the curve, native point representations, or scalars with high enough entropy for the curve can be represented in that many octets.
 
@@ -2720,6 +2736,26 @@ The truncation removes the two fields of encoded Object Identifier.
 The first omitted field is one octet representing the Object Identifier tag, and the second omitted field is the length of the Object Identifier body.
 For example, the complete ASN.1 DER encoding for the NIST P-256 curve OID is "06 08 2A 86 48 CE 3D 03 01 07", from which the first entry in the table above is constructed by omitting the first two octets.
 Only the truncated sequence of octets is the valid representation of a curve OID.
+
+### Curve-Specific Wire Formats {#curve-specific-formats}
+
+Some Elliptic Curve Public Key Algorithms use different conventions for specific fields depending on the curve in use.
+Each field is always formatted as an MPI, but with a curve-specific framing.
+This table summarizes those distinctions.
+
+{: title="Curve-specific wire formats"}
+Curve | ECDH Point Format | ECDH Secret Key MPI | EdDSA Secret Key MPI | EdDSA Signature first MPI | EdDSA Signature second MPI
+------|-----------------|------------------|---------------------------|---------------------------
+NIST P-256 | SEC1 | integer | N/A | N/A | N/A
+NIST P-384 | SEC1 | integer | N/A | N/A | N/A
+NIST P-521 | SEC1 | integer | N/A | N/A | N/A
+Ed25519    | N/A | N/A | 32 octets of secret | 32 octets of R | 32 octets of S
+Ed448      | N/A | N/A | prefixed 57 octets of secret | prefixed 114 octets of signature | 0 \[this is an unused placeholder]
+Curve25519 | prefixed native | integer | N/A | N/A | N/A
+X448       | prefixed native | prefixed 56 octets of secret | N/A | N/A | N/A
+
+For the native octet-string forms of EdDSA values, see {{RFC8032}}.
+For the native octet-string forms of ECDH secret scalars and points, see {{RFC7748}}.
 
 ## Symmetric-Key Algorithms {#symmetric-algos}
 
@@ -2977,6 +3013,7 @@ This document requests IANA add a registry of elliptic curves for use in OpenPGP
 Each curve is identified on the wire by OID, and is acceptable for use in certain OpenPGP public key algorithms.
 The table's initial headings and values can be found in {{ec-curves}}.
 Adding a new elliptic curve algorithm to OpenPGP MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
+If the new curve can be used for ECDH or EdDSA, it must also be added to the "Curve-specific wire formats" table described in {{curve-specific-formats}}.
 
 ## Elliptic Curve Point and Scalar Wire Formats
 
@@ -2987,6 +3024,10 @@ Adding a new EC point wire format MUST be done through the SPECIFICATION REQUIRE
 This document also requests IANA add a registry of wire formats that represent scalars for use with elliptic curve cryptography.
 The table's initial headings and values can be found in {{ec-scalar-wire-formats}}.
 Adding a new EC scalar wire format MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
+
+This document also requests that IANA add a registry mapping curve-specific MPI octet-string encoding conventions for ECDH and EdDSA.
+The table's initial headings and values can be found in {{curve-specific-formats}}.
+Adding a new elliptic curve algorithm to OpenPGP MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}, and requires adding an entry to this table if the curve is to be used with either EdDSA or ECDH.
 
 ## Changes to existing registries
 
@@ -3220,7 +3261,7 @@ A thorough introduction to ECC can be found in {{KOBLITZ}}.
 
 This document references three named prime field curves defined in {{FIPS186}} as "Curve P-256", "Curve P-384", and "Curve P-521".
 These three {{FIPS186}} curves can be used with ECDSA and ECDH public key algorithms.
-Additionally, curve "Curve25519", defined in {{RFC7748}} is referenced for use with Ed25519 (EdDSA signing) and X25519 (ECDH encryption).
+Additionally, curve "Curve25519" and "Curve448" are referenced for use with Ed25519 and Ed448 (EdDSA signing, see {{RFC8032}}); and X25519 and X448 (ECDH encryption, see {{RFC7748}}).
 
 The named curves are referenced as a sequence of bytes in this document, called throughout, curve OID.
 {{ec-curves}} describes in detail how this sequence of bytes is formed.
@@ -3258,7 +3299,7 @@ This format is used for ECDH keys based on curves expressed in Montgomery form, 
 
 ### Notes on EC Point Wire Formats
 
-Given the above definitions, the exact size of the MPI payload for an encoded point is 515 bits for "Curve P-256", 771 for "Curve P-384", 1059 for "Curve P-521", and 263 for "Curve25519" and "Ed25519".
+Given the above definitions, the exact size of the MPI payload for an encoded point is 515 bits for "Curve P-256", 771 for "Curve P-384", 1059 for "Curve P-521", 263 for both "Curve25519" and "Ed25519", 463 for "Ed448", and 455 for "X448".
 For example, the length of a EdDSA public key for the curve Ed25519 is 263 bits: 7 bits to represent the 0x40 prefix octet and 32 octets for the native value of the public key.
 
 Even though the zero point, also called the point at infinity, may occur as a result of arithmetic operations on points of an elliptic curve, it SHALL NOT appear in data structures defined in this document.
@@ -3278,6 +3319,7 @@ Type | Description | Reference
 -----|-------------|-----------
 integer | An integer, big-endian encoded as a standard OpenPGP MPI | {{mpi}}
 octet string | An octet string of fixed length, that may be shorter on the wire due to leading zeros being stripped by the MPI encoding, and may need to be zero-padded before usage | {{ec-octet-string}}
+prefixed N octets | An octet string of fixed length N, prefixed with octet 0x40 to ensure no leading zero octet | {{ec-prefix}}
 
 ### EC Octet String Wire Format {#ec-octet-string}
 
@@ -3294,6 +3336,23 @@ To reverse the process, an implementation that knows this value has an expected 
 - ensure that the MPI's two-octet bitcount is less than or equal to 40 (5 octets of 8 bits)
 - allocate 5 octets, setting all to zero initially
 - copy the MPI data octets (without the two count octets) into the lower octets of the allocated space
+
+### Elliptic Curve Prefixed Octet String Wire Format {#ec-prefix}
+
+Another way to ensure that a fixed-length bytestring is encoded simply to the wire while remaining in MPI format is to prefix the bytestring with a dedicated non-zero octet.
+This specification uses 0x40 as the prefix octet.
+This is represented in this standard as `MPI(prefixed N octets of X)`, where `N` is the known bytestring length.
+
+For example, a five-octet opaque string using `MPI(prefixed 5 octets of X)` where `X` has the value `00 02 ee 19 00` would be written to the wire form as: `00 2f 40 00 02 ee 19 00`.
+
+To encode the string, we prefix it with the octet 0x40 (whose 7th bit is set), then set the MPI's two-octet bit counter to 47 (0x002f, 7 bits for the prefix octet and 40 bits for the string).
+
+To decode the string from the wire, an implementation that knows that the variable is formed in this way can:
+
+- ensure that the first three octets of the MPI (the two bit-count octets plus the prefix octet)  are `00 2f 40`, and
+- use the remainder of the MPI directly off the wire.
+
+Note that this is a similar approach to that used in the EC point encodings found in {{ec-point-prefixed-native}}.
 
 ## Key Derivation Function
 
@@ -3348,7 +3407,7 @@ The KDF parameters are encoded as a concatenation of the following 5 variable-le
 
 - 20 octets representing a recipient encryption subkey or a primary key fingerprint identifying the key material that is needed for decryption (for version 5 keys the 20 leftmost octets of the fingerprint are used).
 
-The size of the KDF parameters sequence, defined above, is either 54 for the NIST curve P-256, 51 for the curves P-384 and P-521, or 56 for Curve25519.
+The size of the KDF parameters sequence, defined above, is either 54 for the NIST curve P-256, 51 for the curves P-384 and P-521, 56 for Curve25519, or 49 for X448.
 
 The key wrapping method is described in {{RFC3394}}.
 The KDF produces a symmetric key that is used as a key-encryption key (KEK) as specified in {{RFC3394}}.
@@ -3611,6 +3670,9 @@ Truncation of the resulting digest is never applied; the resulting digest value 
 
 For clarity: while {{RFC8032}} describes different variants of EdDSA, OpenPGP uses the "pure" variant (PureEdDSA).
 The hashing that happens with OpenPGP is done as part of the standard OpenPGP signature process, and that hash itself is fed as the input message to the PureEdDSA algorithm.
+
+As specified in {{RFC8032}}, Ed448 also expects a "context string".
+In OpenPGP, Ed448 is used with the empty string as a context string.
 
 ## Reserved Algorithm Numbers {#reserved-notes}
 
