@@ -540,18 +540,18 @@ The salt SHOULD be unique for each password.
 
 The number of passes t and the degree of parallelism p MUST be non-zero.
 
-The memory size m is 2\*\*encoded_m, where "encoded_m" is the encoded memory size in Octet 19. The encoded memory size MUST be a value from 3+ceil(log_2(p)) to 31, such that the decoded memory size m is a value from 8*p to 2**31.
+The memory size m is 2\*\*encoded_m, where "encoded_m" is the encoded memory size in Octet 19. The encoded memory size MUST be a value from 3+ceil(log_2(p)) to 31, such that the decoded memory size m is a value from 8*p to 2\*\*31.
 
 Argon2 is invoked with the passphrase as P, the salt as S, the values of t, p and m as described above, the required key size as the tag length T, 0x13 as the version v, and Argon2id as the type.
 
 For the recommended values of t, p and m, see Section 4 of {{RFC9106}}. If the recommended value of m for a given application is not a power of 2, it is RECOMMENDED to round up to the next power of 2 if the resulting performance would be acceptable, and round down otherwise (keeping in mind that m must be at least 8*p).
 
-As an example, with the first recommended option (t=1, p=4, m=2**21), the full S2K specifier would be:
+As an example, with the first recommended option (t=1, p=4, m=2\*\*21), the full S2K specifier would be:
 
       04 XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX
       XX 01 04 15
 
-(where XX represents a random byte of salt).
+(where XX represents a random octet of salt).
 
 ### String-to-Key Usage
 
@@ -767,7 +767,6 @@ Tag | Packet Type
 
 ## Public-Key Encrypted Session Key Packets (Tag 1)
 
-A Public-Key Encrypted Session Key packet holds the session key used to encrypt a message.
 Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede an encryption container (i.e. a Symmetrically Encrypted Integrity Protected Data packet, an AEAD Encrypted Data packet, or --- for historic data --- a Symmetrically Encrypted Data packet), which holds an encrypted message.
 The message is encrypted with the session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet(s).
 The encryption container is preceded by one Public-Key Encrypted Session Key packet for each OpenPGP key to which the message is encrypted.
@@ -788,13 +787,13 @@ The body of this packet consists of:
 
 ### Algorithm Specific Fields for RSA encryption {#pkesk-rsa}
 
-- Multiprecision integer (MPI) of RSA-encrypted value m**e mod n.
+- Multiprecision integer (MPI) of RSA-encrypted value m\*\*e mod n.
 
 ### Algorithm Specific Fields for Elgamal encryption {#pkesk-elgamal}
 
-- MPI of Elgamal (Diffie-Hellman) value g**k mod p.
+- MPI of Elgamal (Diffie-Hellman) value g\*\*k mod p.
 
-- MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
+- MPI of Elgamal (Diffie-Hellman) value m * y\*\*k mod p.
 
 ### Algorithm-Specific Fields for ECDH encryption {#pkesk-ecdh}
 
@@ -935,7 +934,7 @@ The high 16 bits (first two octets) of the hash are included in the Signature pa
 
 Algorithm-Specific Fields for RSA signatures:
 
-- Multiprecision integer (MPI) of RSA signature value m**d mod n.
+- Multiprecision integer (MPI) of RSA signature value m\*\*d mod n.
 
 Algorithm-Specific Fields for DSA and ECDSA signatures:
 
@@ -1023,7 +1022,7 @@ The body of a V4 or V5 Signature packet contains:
 
 #### Algorithm-Specific Fields for RSA signatures {#sig-rsa}
 
-- Multiprecision integer (MPI) of RSA signature value m**d mod n.
+- Multiprecision integer (MPI) of RSA signature value m\*\*d mod n.
 
 #### Algorithm-Specific Fields for DSA or ECDSA signatures {#sig-dsa}
 
@@ -1632,7 +1631,7 @@ This trailer depends on the version of the signature.
 
   - a eight-octet big-endian number that is the length of the hashed data from the Signature packet stopping right before the 0x05, 0xff octets.
 
-    The three data items hashed for document signatures need to mirror the values of the Literal Data packet.  For detached and cleartext signatures 6 zero bytes are hashed instead.
+    The three data items hashed for document signatures need to mirror the values of the Literal Data packet.  For detached and cleartext signatures 6 zero octets are hashed instead.
 
 After all this has been hashed in a single hash context, the resulting hash field is used in the signature algorithm and placed at the end of the Signature packet.
 
@@ -1924,7 +1923,7 @@ The public key is this series of multiprecision integers:
 
 - MPI of DSA group generator g;
 
-- MPI of DSA public-key value y (= g**x mod p where x is secret).
+- MPI of DSA public-key value y (= g\*\*x mod p where x is secret).
 
 The secret key is this single multiprecision integer:
 
@@ -1938,7 +1937,7 @@ The public key is this series of multiprecision integers:
 
 - MPI of Elgamal group generator g;
 
-- MPI of Elgamal public key value y (= g**x mod p where x is secret).
+- MPI of Elgamal public key value y (= g\*\*x mod p where x is secret).
 
 The secret key is this single multiprecision integer:
 
@@ -2332,7 +2331,7 @@ If the last chunk of plaintext is smaller than the chunk size, the ciphertext fo
 
 For each chunk, the AEAD construction is given the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), version number, cipher algorithm octet, AEAD algorithm octet, chunk size octet, and an eight-octet, big-endian chunk index as additional data.
 The index of the first chunk is zero.
-For example, the additional data of the first chunk using EAX and AES-128 with a chunk size of 64 kiByte consists of the octets 0xD4, 0x01, 0x07, 0x01, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, and 0x00.
+For example, the additional data of the first chunk using EAX and AES-128 with a chunk size of 2\*\*16 octets consists of the octets 0xD4, 0x01, 0x07, 0x01, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, and 0x00.
 
 After the final chunk, the AEAD algorithm is used to produce a final authentication tag encrypting the empty string.
 This AEAD instance is given the additional data specified above, plus an eight-octet, big-endian value specifying the total number of plaintext octets encrypted.
@@ -2715,11 +2714,12 @@ A compatible specification of ECDSA is given in {{RFC6090}} as "KT-I Signatures"
 ## ECC Curves for OpenPGP {#ec-curves}
 
 The parameter curve OID is an array of octets that define a named curve.
-The table below specifies the exact sequence of bytes for each named curve referenced in this document.
+
+The table below specifies the exact sequence of octets for each named curve referenced in this document.
 It also specifies which public key algorithms the curve can be used with, as well as the size of expected elements in octets:
 
 {: title="ECC Curve OID and usage registry"}
-ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representation | Curve name | Usage | Field Size (fsize)
+ASN.1 Object Identifier | OID len | Curve OID octets in hexadecimal representation | Curve name | Usage | Field Size (fsize)
 ------------------------|----|-------------------------------|-------------|-----|-----|-----
 1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256 | ECDSA, ECDH | 32
 1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384 | ECDSA, ECDH | 48
@@ -3215,7 +3215,7 @@ e.2) MPI of DSA group order q (q is a prime divisor of p-1);
 
 e.3) MPI of DSA group generator g;
 
-e.4) MPI of DSA public-key value y (= g**x mod p where x is secret).
+e.4) MPI of DSA public-key value y (= g\*\*x mod p where x is secret).
 
 A V5 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9A, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
 The Key ID is the high-order 64 bits of the fingerprint.
@@ -3243,7 +3243,7 @@ f.2) MPI of DSA group order q (q is a prime divisor of p-1);
 
 f.3) MPI of DSA group generator g;
 
-f.4) MPI of DSA public-key value y (= g**x mod p where x is secret).
+f.4) MPI of DSA public-key value y (= g\*\*x mod p where x is secret).
 
 Note that it is possible for there to be collisions of Key IDs --- two different keys with the same Key ID.
 Note that there is a much smaller, but still non-zero, probability that two different keys have the same fingerprint.
@@ -3263,14 +3263,14 @@ This document references three named prime field curves defined in {{FIPS186}} a
 These three {{FIPS186}} curves can be used with ECDSA and ECDH public key algorithms.
 Additionally, curve "Curve25519" and "Curve448" are referenced for use with Ed25519 and Ed448 (EdDSA signing, see {{RFC8032}}); and X25519 and X448 (ECDH encryption, see {{RFC7748}}).
 
-The named curves are referenced as a sequence of bytes in this document, called throughout, curve OID.
-{{ec-curves}} describes in detail how this sequence of bytes is formed.
+The named curves are referenced as a sequence of octets in this document, called throughout, curve OID.
+{{ec-curves}} describes in detail how this sequence of octets is formed.
 
 ## EC Point Wire Formats {#ec-point-wire-formats}
 
 A point on an elliptic curve will always be represented on the wire as an MPI.
 Each curve uses a specific point format for the data within the MPI itself.
-Each format uses a designated prefix byte to ensure that the high octet has at least one bit set to make the MPI a constant size.
+Each format uses a designated prefix octet to ensure that the high octet has at least one bit set to make the MPI a constant size.
 
 {: title="Elliptic Curve Point Wire Formats"}
 Name | Wire Format | Reference
@@ -3415,14 +3415,14 @@ Refer to {{security-considerations}} for the details regarding the choice of the
 Key wrapping and unwrapping is performed with the default initial value of {{RFC3394}}.
 
 The input to the key wrapping method is the value "m" derived from the session key, as described in {{public-key-encrypted-session-key-packets-tag-1}}, "Public-Key Encrypted Session Key Packets (Tag 1)", except that the PKCS #1.5 padding step is omitted.
-The result is padded using the method described in {{PKCS5}} to an 8-byte granularity.
+The result is padded using the method described in {{PKCS5}} to an 8-octet granularity.
 For example, the following AES-256 session key, in which 32 octets are denoted from k0 to k31, is composed to form the following 40 octet sequence:
 
     09 k0 k1 ... k31 s0 s1 05 05 05 05 05
 
 The octets s0 and s1 above denote the checksum.
 This encoding allows the sender to obfuscate the size of the symmetric encryption key used to encrypt the data.
-For example, assuming that an AES algorithm is used for the session key, the sender MAY use 21, 13, and 5 bytes of padding for AES-128, AES-192, and AES-256, respectively, to provide the same number of octets, 40 total, as an input to the key wrapping method.
+For example, assuming that an AES algorithm is used for the session key, the sender MAY use 21, 13, and 5 octets of padding for AES-128, AES-192, and AES-256, respectively, to provide the same number of octets, 40 total, as an input to the key wrapping method.
 
 The output of the method consists of two fields.
 The first field is the MPI containing the ephemeral key used to establish the shared secret.
@@ -3430,7 +3430,7 @@ The second field is composed of the following two subfields:
 
 - One octet encoding the size in octets of the result of the key wrapping method; the value 255 is reserved for future extensions;
 
-- Up to 254 octets representing the result of the key wrapping method, applied to the 8-byte padded session key, as described above.
+- Up to 254 octets representing the result of the key wrapping method, applied to the 8-octet padded session key, as described above.
 
 Note that for session key sizes 128, 192, and 256 bits, the size of the result of the key wrapping method is, respectively, 32, 40, and 48 octets, unless size obfuscation is used.
 
@@ -3444,7 +3444,7 @@ For convenience, the synopsis of the encoding method is given below; however, th
 
 - m = symm_alg_ID \|\| session key \|\| checksum \|\| pkcs5_padding;
 
-- curve_OID_len = (byte)len(curve_OID);
+- curve_OID_len = (octet)len(curve_OID);
 
 - Param = curve_OID_len \|\| curve_OID \|\| public_key_alg_ID \|\| 03 \|\| 01 \|\| KDF_hash_ID \|\| KEK_alg_ID for AESKeyWrap \|\| `Anonymous Sender    ` \|\| recipient_fingerprint;
 
