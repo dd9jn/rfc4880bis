@@ -1,6 +1,6 @@
 ---
 title: OpenPGP Message Format
-docname: draft-ietf-openpgp-crypto-refresh-03
+docname: draft-ietf-openpgp-crypto-refresh-04
 category: std
 obsoletes: 4880, 5581, 6637
 ipr: trust200902
@@ -29,8 +29,8 @@ author:
   -
     ins: P. Wouters
     name: Paul Wouters
-    email: paul@nohats.ca
-    org: No Hats
+    email: paul.wouters@aiven.io
+    org: Aiven
     role: editor
 informative:
   BLEICHENBACHER:
