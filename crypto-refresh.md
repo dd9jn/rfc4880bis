@@ -540,13 +540,13 @@ The salt SHOULD be unique for each password.
 
 The number of passes t and the degree of parallelism p MUST be non-zero.
 
-The memory size m is 2\*\*encoded_m, where "encoded_m" is the encoded memory size in Octet 19. The encoded memory size MUST be a value from 3+ceil(log_2(p)) to 31, such that the decoded memory size m is a value from 8*p to 2**31.
+The memory size m is 2\*\*encoded_m, where "encoded_m" is the encoded memory size in Octet 19. The encoded memory size MUST be a value from 3+ceil(log_2(p)) to 31, such that the decoded memory size m is a value from 8*p to 2\*\*31.
 
 Argon2 is invoked with the passphrase as P, the salt as S, the values of t, p and m as described above, the required key size as the tag length T, 0x13 as the version v, and Argon2id as the type.
 
 For the recommended values of t, p and m, see Section 4 of {{RFC9106}}. If the recommended value of m for a given application is not a power of 2, it is RECOMMENDED to round up to the next power of 2 if the resulting performance would be acceptable, and round down otherwise (keeping in mind that m must be at least 8*p).
 
-As an example, with the first recommended option (t=1, p=4, m=2**21), the full S2K specifier would be:
+As an example, with the first recommended option (t=1, p=4, m=2\*\*21), the full S2K specifier would be:
 
       04 XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX
       XX 01 04 15
@@ -787,13 +787,13 @@ The body of this packet consists of:
 
 ### Algorithm Specific Fields for RSA encryption {#pkesk-rsa}
 
-- Multiprecision integer (MPI) of RSA-encrypted value m**e mod n.
+- Multiprecision integer (MPI) of RSA-encrypted value m\*\*e mod n.
 
 ### Algorithm Specific Fields for Elgamal encryption {#pkesk-elgamal}
 
-- MPI of Elgamal (Diffie-Hellman) value g**k mod p.
+- MPI of Elgamal (Diffie-Hellman) value g\*\*k mod p.
 
-- MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
+- MPI of Elgamal (Diffie-Hellman) value m * y\*\*k mod p.
 
 ### Algorithm-Specific Fields for ECDH encryption {#pkesk-ecdh}
 
@@ -934,7 +934,7 @@ The high 16 bits (first two octets) of the hash are included in the Signature pa
 
 Algorithm-Specific Fields for RSA signatures:
 
-- Multiprecision integer (MPI) of RSA signature value m**d mod n.
+- Multiprecision integer (MPI) of RSA signature value m\*\*d mod n.
 
 Algorithm-Specific Fields for DSA and ECDSA signatures:
 
@@ -1022,7 +1022,7 @@ The body of a V4 or V5 Signature packet contains:
 
 #### Algorithm-Specific Fields for RSA signatures {#sig-rsa}
 
-- Multiprecision integer (MPI) of RSA signature value m**d mod n.
+- Multiprecision integer (MPI) of RSA signature value m\*\*d mod n.
 
 #### Algorithm-Specific Fields for DSA or ECDSA signatures {#sig-dsa}
 
@@ -1923,7 +1923,7 @@ The public key is this series of multiprecision integers:
 
 - MPI of DSA group generator g;
 
-- MPI of DSA public-key value y (= g**x mod p where x is secret).
+- MPI of DSA public-key value y (= g\*\*x mod p where x is secret).
 
 The secret key is this single multiprecision integer:
 
@@ -1937,7 +1937,7 @@ The public key is this series of multiprecision integers:
 
 - MPI of Elgamal group generator g;
 
-- MPI of Elgamal public key value y (= g**x mod p where x is secret).
+- MPI of Elgamal public key value y (= g\*\*x mod p where x is secret).
 
 The secret key is this single multiprecision integer:
 
@@ -2331,7 +2331,7 @@ If the last chunk of plaintext is smaller than the chunk size, the ciphertext fo
 
 For each chunk, the AEAD construction is given the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), version number, cipher algorithm octet, AEAD algorithm octet, chunk size octet, and an eight-octet, big-endian chunk index as additional data.
 The index of the first chunk is zero.
-For example, the additional data of the first chunk using EAX and AES-128 with a chunk size of 2**16 octets consists of the octets 0xD4, 0x01, 0x07, 0x01, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, and 0x00.
+For example, the additional data of the first chunk using EAX and AES-128 with a chunk size of 2\*\*16 octets consists of the octets 0xD4, 0x01, 0x07, 0x01, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, and 0x00.
 
 After the final chunk, the AEAD algorithm is used to produce a final authentication tag encrypting the empty string.
 This AEAD instance is given the additional data specified above, plus an eight-octet, big-endian value specifying the total number of plaintext octets encrypted.
@@ -3215,7 +3215,7 @@ e.2) MPI of DSA group order q (q is a prime divisor of p-1);
 
 e.3) MPI of DSA group generator g;
 
-e.4) MPI of DSA public-key value y (= g**x mod p where x is secret).
+e.4) MPI of DSA public-key value y (= g\*\*x mod p where x is secret).
 
 A V5 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9A, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
 The Key ID is the high-order 64 bits of the fingerprint.
@@ -3243,7 +3243,7 @@ f.2) MPI of DSA group order q (q is a prime divisor of p-1);
 
 f.3) MPI of DSA group generator g;
 
-f.4) MPI of DSA public-key value y (= g**x mod p where x is secret).
+f.4) MPI of DSA public-key value y (= g\*\*x mod p where x is secret).
 
 Note that it is possible for there to be collisions of Key IDs --- two different keys with the same Key ID.
 Note that there is a much smaller, but still non-zero, probability that two different keys have the same fingerprint.
