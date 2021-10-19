@@ -1803,7 +1803,7 @@ A version 4 packet contains:
 
 - A one-octet number denoting the public-key algorithm of this key.
 
-- A series of multiprecision integers comprising the key material.
+- A series of values comprising the key material.
   This is algorithm-specific and described in {{algorithm-specific-parts-of-keys}}.
 
 The version 5 format is similar to the version 4 format except for the addition of a count for the key material.
