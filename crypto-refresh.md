@@ -1833,7 +1833,7 @@ The packet contains:
 
 - One octet indicating string-to-key usage conventions.
   Zero indicates that the secret-key data is not encrypted.
-  255 or 254 indicates that a string-to-key specifier is being given.
+  255, 254, or 253 indicates that a string-to-key specifier is being given.
   Any other value is a symmetric-key encryption algorithm identifier.
   A version 5 packet MUST NOT use the value 255.
 
