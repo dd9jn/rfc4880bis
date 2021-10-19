@@ -1514,15 +1514,17 @@ Defined features are as follows:
 First octet:
 
 {: title="Features registry"}
-feature | definition
----|--------------
-0x01 | Modification Detection (packets 18 and 19)
-0x02 | AEAD Encrypted Data (packet 20) version 1
+Feature | Definition | Reference
+---|--------------|--------
+0x01 | Modification Detection (packets 18 and 19) | {{seipd}}, {{mdc}}
+0x02 | AEAD Encrypted Data (packet 20) version 1 | {{aead}}
 0x04 | Reserved
 
 If an implementation implements any of the defined features, it SHOULD implement the Features subpacket, too.
 
 An implementation may freely infer features from other suitable implementation-dependent mechanisms.
+
+See {{ciphertext-malleability}} for details about how to use the Features subpacket when generating encryption data.
 
 #### Signature Target
 
@@ -2047,7 +2049,7 @@ When generating a new X448 secret key from 56 fully-random octets, the following
         prefixed_header = [ 0x01, 0xc7, 0x40 ]
         return prefixed_header || octet_list
 
-## Compressed Data Packet (Tag 8)
+## Compressed Data Packet (Tag 8) {#compressed-data}
 
 The Compressed Data packet contains compressed data.
 Typically, this packet is found as the contents of an encrypted packet, or following a Signature or One-Pass Signature packet, and contains a literal data packet.
@@ -2069,7 +2071,7 @@ ZLIB-compressed packets are compressed with {{RFC1950}} ZLIB-style blocks.
 
 BZip2-compressed packets are compressed using the BZip2 {{BZ2}} algorithm.
 
-## Symmetrically Encrypted Data Packet (Tag 9)
+## Symmetrically Encrypted Data Packet (Tag 9) {#sed}
 
 The Symmetrically Encrypted Data packet contains data encrypted with a symmetric-key algorithm.
 When it has been decrypted, it contains other packets (usually a literal data packet or compressed data packet, but in theory other Symmetrically Encrypted Data packets or sequences of packets that form whole OpenPGP messages).
@@ -2078,6 +2080,9 @@ This packet is obsolete.
 An implementation MUST NOT create this packet.
 An implementation MAY process such a packet but it MUST return a clear diagnostic that a non-integrity protected packet has been processed.
 The implementation SHOULD also return an error in this case and stop processing.
+
+This packet format is impossible to handle safely in general because the ciphertext it provides is malleable.
+See {{ciphertext-malleability}} about selecting a better OpenPGP encryption container that does not have this flaw.
 
 The body of this packet consists of:
 
@@ -2216,16 +2221,13 @@ An implementation MAY try to determine the type of an image by examination of th
 ## Sym. Encrypted Integrity Protected Data Packet (Tag 18) {#seipd}
 
 The Symmetrically Encrypted Integrity Protected Data packet is a variant of the Symmetrically Encrypted Data packet.
-It is a new feature created for OpenPGP that addresses the problem of detecting a modification to encrypted data.
-It is used in combination with a Modification Detection Code packet.
+It is a legacy OpenPGP mechanism that, in combination with the Modification Detection Code packet ({{mdc}}) offers some protections against ciphertext malleability.
+The AEAD Encrypted Data packet ({{aead}}) offers a more cryptographically rigorous defense against ciphertext malleability, but may not be as widely supported.
+See {{ciphertext-malleability}} for more details on choosing between these formats.
 
-There is a corresponding feature in the features Signature subpacket that denotes that an implementation can properly use this packet type.
 An implementation MUST support decrypting and generating these packets.
-An implementation SHOULD specifically denote support for this packet, but it MAY infer it from other mechanisms.
-
-For example, an implementation might infer from the use of a cipher such as Advanced Encryption Standard (AES) or Twofish that a user supports this feature.
-It might place in the unhashed portion of another user's key signature a Features subpacket.
-It might also present a user with an opportunity to regenerate their own self-signature with a Features subpacket.
+An implementation publishing a public key SHOULD explicitly denote support for this packet by setting the first bit of the Features subpacket ({{features-subpacket}}) to 1 in any self-signature.
+Any encrypting implementation MUST assume that the recipient supports MDC, even if the recipient's Features subpacket has the first bit set to 0.
 
 This packet contains data encrypted with a symmetric-key algorithm and protected against modification by the SHA-1 hash algorithm.
 When it has been decrypted, it will typically contain other packets (often a Literal Data packet or Compressed Data packet).
@@ -2323,7 +2325,7 @@ Any failure SHOULD be reported to the user.
 >   However, no update will be needed because the MDC will be replaced
 >   by the AEAD encryption described in this document.
 
-## Modification Detection Code Packet (Tag 19)
+## Modification Detection Code Packet (Tag 19) {#mdc}
 
 The Modification Detection Code packet contains a SHA-1 hash of plaintext data, which is used to detect message modification.
 It is only used with a Symmetrically Encrypted Integrity Protected Data packet.
@@ -3667,8 +3669,8 @@ However, it is good form to place it there explicitly.
 
 ## Plaintext
 
-Algorithm 0, "plaintext", may only be used to denote secret keys that are stored in the clear.
-Implementations MUST NOT use plaintext in Symmetrically Encrypted Data packets; they must use Literal Data packets to encode unencrypted or literal data.
+Algorithm 0, "plaintext", may only be used to denote a secret key that is stored in the clear.
+An implementation MUST NOT use plaintext in any Encrypted Data packet (SEIPD {{seipd}}, AEAD {{aead}}, or SED {{sed}}); it must use a Literal Data packet to encode unencrypted or literal data.
 
 ## RSA {#rsa-notes}
 
@@ -3733,9 +3735,10 @@ See {{BLEICHENBACHER}}.
 
 ## OpenPGP CFB Mode {#cfb-mode}
 
-OpenPGP does symmetric encryption using a variant of Cipher Feedback mode (CFB mode).
+When not using AEAD ({{aead}}), OpenPGP does symmetric encryption using a variant of Cipher Feedback mode (CFB mode).
 This section describes the procedure it uses in detail.
-This mode is what is used for Symmetrically Encrypted Data Packets; the mechanism used for encrypting secret-key material also sometimes uses CFB mode, as described in {{secret-key-encryption}}.
+This mode is what is used for Symmetrically Encrypted Integrity Protected Data Packets (and the dangerously malleable -- and deprecated -- Symmetrically Encrypted Data Packets).
+Some mechanisms for encrypting secret-key material also use CFB mode, as described in {{secret-key-encryption}}.
 
 In the description below, the value BS is the block size in octets of the cipher.
 Most ciphers have a block size of 8 octets.
@@ -3851,31 +3854,11 @@ Asymmetric key size | Hash size | Symmetric key size
   For example, although CAST5 is presently considered strong, it has been analyzed less than TripleDES.
   Other algorithms may have other controversies surrounding them.
 
-- In late summer 2002, Jallad, Katz, and Schneier published an interesting attack on the OpenPGP protocol and some of its implementations {{JKS02}}.
+- In late summer 2002, Jallad, Katz, and Schneier published an interesting attack on older versions of the OpenPGP protocol and some of its implementations {{JKS02}}.
   In this attack, the attacker modifies a message and sends it to a user who then returns the erroneously decrypted message to the attacker.
   The attacker is thus using the user as a random oracle, and can often decrypt the message.
-
-  Compressing data can ameliorate this attack.
-  The incorrectly decrypted data nearly always decompresses in ways that defeat the attack.
-  However, this is not a rigorous fix, and leaves open some small vulnerabilities.
-  For example, if an implementation does not compress a message before encryption (perhaps because it knows it was already compressed), then that message is vulnerable.
-  Because of this happenstance --- that modification attacks can be thwarted by decompression errors --- an implementation SHOULD treat a decompression error as a security problem, not merely a data problem.
-
-  This attack can be defeated by the use of Modification Detection, provided that the implementation does not let the user naively return the data to the attacker.
-  An application generating any form of encrypted message SHOULD use the AEAD Encrypted Data Packet to enable modification detection.
-  If one of the recipients does not support AEAD, then the message generator MAY use the Symmmetric Encrypted and Integrity Protected Data Packet instead.
-  An implementation MUST treat an authentication or MDC failure as a security problem, not merely a data problem.
-
-  In either case, the implementation SHOULD NOT allow the user access to the erroneous data, and MUST warn the user as to potential security problems should that data be returned to the sender.
-
-  While this attack is somewhat obscure, requiring a special set of circumstances to create it, it is nonetheless quite serious as it permits someone to trick a user to decrypt a message.
-  Consequently, it is important that:
-
-  1. Implementers treat authentication errors, MDC errors, decompression failures or no use of MDC or AEAD as security problems.
-
-  2. Implementers implement AEAD with all due speed and encourage its spread.
-
-  3. Users migrate to implementations that support AEAD encryption with all due speed.
+  This attack is a particular form of ciphertext malleability.
+  See {{ciphertext-malleability}} for information on how to defend against such an attack using more recent versions of OpenPGP.
 
 - PKCS#1 has been found to be vulnerable to attacks in which a system that reports errors in padding differently from errors in decryption becomes a random oracle that can leak the private key in mere millions of queries.
   Implementations must be aware of this attack and prevent it from happening.
@@ -3904,6 +3887,39 @@ Asymmetric key size | Hash size | Symmetric key size
   ECC scalar multiplication operations used in ECDSA and ECDH are vulnerable to side channel attacks.
   Countermeasures can often be taken at the higher protocol level, such as limiting the number of allowed failures or time-blinding of the operations associated with each network interface.
   Mitigations at the scalar multiplication level seek to eliminate any measurable distinction between the ECC point addition and doubling operations.
+
+## Avoiding Ciphertext Malleability {#ciphertext-malleability}
+
+If ciphertext can be modified by an attacker but still subsequently decrypted to some new plaintext, it is considered "malleable".
+A number of attacks can arise in any cryptosystem that uses malleable encryption, so modern OpenPGP offers mechanisms to defend against it.
+However, legacy OpenPGP data may not use these mechanisms.
+Because OpenPGP implementations deal with historic stored data, they may encounter malleable ciphertexts.
+
+When an OpenPGP implementation discovers that it is decrypting data that appears to be malleable, it MUST indicate a clear error message that the integrity of the message is suspect, SHOULD NOT release decrypted data to the user, and SHOULD halt with an error.
+
+These situations include any attempt to process the following kinds of data:
+
+- all Symmetrically Encrypted Data packets (SED, {{sed}}).
+- within any encrypted container, any Compressed Data packet ({{compressed-data}}) where there is a decompression failure.
+- any Symmetrically Encrypted Integrity Protected Data packet (SEIPD, {{seipd}}) where the internal Modification Detectiion Code packet (MDC, {{mdc}}) does not validate.
+- any AEAD Encrypted Data packet (AEAD, {{aead}}) where the authentication tag of any chunk fails, or where there is no final zero-octet chunk.
+- any Secret Key packet with encrypted secret key material ({{secret-key-encryption}}) where there is an integrity failure, based on the value of the secret key protection octet:
+  - value 255 or raw cipher algorithm: where the trailing 2-octet checksum does not match.
+  - value 254: where the SHA1 checksum is mismatched.
+  - value 253: where the AEAD authentication tag is invalid.
+
+To avoid these circumstances, an implementation that generates OpenPGP encrypted data SHOULD select the encrypted container format with the most robust protections that can be handled by the intended recipients.
+In particular:
+
+- The SED packet is deprecated, and MUST NOT be generated.
+- When encrypting to one or more public keys:
+  - all recipient keys indicate support for AEAD in their Features subpacket ({{features-subpacket}}), or are v5 keys without a Features subpacket, or the implementation can otherwise infer that all recipients support AEAD, the implementation SHOULD encrypt using AEAD.
+  - If one of the recipients does not support AEAD, then the message generator MAY use SEIPD instead.
+- Password-protected secret key material in a V5 Secret Key or V5 Secret Subkey packet SHOULD be protected with AEAD encryption unless it will be transferred to an implementation that is known to not support AEAD.
+
+Implementers should implement AEAD promptly and encourage its spread.
+
+Users should migrate to AEAD with all due speed.
 
 # Implementation Nits
 
