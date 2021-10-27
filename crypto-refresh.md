@@ -2032,11 +2032,9 @@ When generating a new Curve25519 secret key from 32 fully-random octets, the fol
 An X448 secret key is contained within its MPI as a prefixed octet string (see {{ec-prefix}}), which encapsulates the native secret key format found in {{RFC7748}}.
 The full wire format (as an MPI) will thus be the three octets `01 c7 40` followed by the full 56 octet native secret key.
 
-When generating a new X448 secret key from 56 fully-random octets, the following pseudocode produces the MPI wire format (note the similarity to `decodeScalar448` from {{RFC7748}}):
+When generating a new X448 secret key from 56 fully-random octets, the following pseudocode produces the MPI wire format:
 
     def X448_MPI_from_random(octet_list):
-        octet_list[0] &= 252
-        octet_list[55] |= 128
         prefixed_header = [ 0x01, 0xc7, 0x40 ]
         return prefixed_header || octet_list
 
