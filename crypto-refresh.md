@@ -2765,6 +2765,8 @@ The first omitted field is one octet representing the Object Identifier tag, and
 For example, the complete ASN.1 DER encoding for the NIST P-256 curve OID is "06 08 2A 86 48 CE 3D 03 01 07", from which the first entry in the table above is constructed by omitting the first two octets.
 Only the truncated sequence of octets is the valid representation of a curve OID.
 
+Implementations MUST implement Ed25519 for use with EdDSA, and Curve25519 for use with ECDH.
+
 ### Curve-Specific Wire Formats {#curve-specific-formats}
 
 Some Elliptic Curve Public Key Algorithms use different conventions for specific fields depending on the curve in use.
