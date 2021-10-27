@@ -2727,8 +2727,8 @@ ID | Algorithm | Public Key Format | Secret Key Format | Signature Format | PKES
  24 | Reserved (AEDSA)
 100 to 110 | Private/Experimental algorithm
 
-Implementations MUST implement RSA (1) and ECDSA (19) for signatures, and RSA (1) and ECDH (18) for encryption.
-Implementations SHOULD implement EdDSA (22) keys.
+Implementations MUST implement EdDSA (19) for signatures, and ECDH (18) for encryption.
+Implementations SHOULD implement RSA (1) for signatures and encryption.
 
 RSA Encrypt-Only (2) and RSA Sign-Only (3) are deprecated and SHOULD NOT be generated, but may be interpreted.
 See {{rsa-notes}}.
