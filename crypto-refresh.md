@@ -1244,8 +1244,7 @@ This is only found on a self-signature.
 Compression algorithm numbers that indicate which algorithms the key holder prefers to use.
 Like the preferred symmetric algorithms, the list is ordered.
 Algorithm numbers are in {{compression-algos}}.
-If this subpacket is not included, ZIP is preferred.
-A zero denotes that uncompressed data is preferred; the key holder's software might have no compression software in that implementation.
+A zero, or the absence of this subpacket, denotes that uncompressed data is preferred; the key holder's software might have no compression software in that implementation.
 This is only found on a self-signature.
 
 #### Signature Expiration Time
@@ -3638,18 +3637,10 @@ There are two interesting cases that other comments need to be made about, thoug
 
 ### Compression Preferences
 
-Compression has been an integral part of PGP since its first days.
-OpenPGP and all previous versions of PGP have offered compression.
-In this specification, the default is for messages to be compressed, although an implementation is not required to do so.
-Consequently, the compression preference gives a way for a keyholder to request that messages not be compressed, presumably because they are using a minimal implementation that does not include compression.
-Additionally, this gives a keyholder a way to state that it can support alternate algorithms.
-
 Like the algorithm preferences, an implementation MUST NOT use an algorithm that is not in the preference vector.
-If the preferences are not present, then they are assumed to be \[ZIP(1), Uncompressed(0)\].
+If Uncompressed (0) is not explicitly in the list, it is tacitly at the end, i.e. uncompressed messages may always be sent.
 
-Additionally, an implementation MUST implement this preference to the degree of recognizing when to send an uncompressed message.
-A robust implementation would satisfy this requirement by looking at the recipient's preference and acting accordingly.
-A minimal implementation can satisfy this requirement by never generating a compressed message, since all implementations can handle messages that have not been compressed.
+Note that earlier implementations may assume that the absence of compression preferences means that \[ZIP(1), Uncompressed(0)\] are preferred, and default to ZIP compression. Therefore, an implementation that prefers uncompressed data SHOULD explicitly state this in the preferred compression algorithms.
 
 ### Hash Algorithm Preferences
 
