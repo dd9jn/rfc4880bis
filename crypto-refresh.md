@@ -570,16 +570,16 @@ This is then followed immediately by a one-octet algorithm identifier, and other
 
 Therefore, the first octet of the secret key material describes how the secret key data is presented.
 
-In the table below, 2OC(x) means the "2-octet checksum" meaning the sum of all octets in x mod 65536.
+In the table below, `check(x)` means the "2-octet checksum" meaning the sum of all octets in x mod 65536.
 
 {: title="Secret Key protection details" #secret-key-protection-details}
 First octet | Next fields | Encryption | Generate?
 ---|--------------------------------------------------|---|---|---
-0 | - | cleartext secrets \|\| 2OC(secrets) | Y
-Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password), secrets \|\| 2OC(secrets)) | N
+0 | - | cleartext secrets \|\| check(secrets) | Y
+Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password), secrets \|\| check(secrets)) | N
 253 | cipher-algo, AEAD-mode, S2K-specifier, nonce | AEAD(S2K(password), secrets, pubkey) | Y
 254 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Y
-255 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| 2OC(secrets)) | N
+255 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| check(secrets)) | N
 
 Each row with "Generate?" marked as "N" is described for backward compatibility, and MUST NOT be generated.
 
