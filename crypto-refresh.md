@@ -3952,7 +3952,7 @@ There are multiple advantages of using an escrowed Revocation Signature over the
 - The keyholder can constrain what types of revocation the preferred revoker can issue, by only escrowing those specific signatures.
 - There is no public/visible linkage between the keyholder and the preferred revoker.
 - Third parties can verify the revocation without needing to find the key of the preferred revoker.
-- The preferred doesn't even need to have a public OpenPGP key if some other secure transport is possible between them and the keyholder.
+- The preferred revoker doesn't even need to have a public OpenPGP key if some other secure transport is possible between them and the keyholder.
 - Implementation support for enforcing a revocation from an authorized Revocation Key subpacket is uneven and unreliable.
 - If the fingerprint mechanism suffers a cryptanalytic flaw, the escrowed Revocation Signature is not affected.
 
