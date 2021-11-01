@@ -1803,12 +1803,12 @@ A version 4 packet contains:
 
 - A one-octet number denoting the public-key algorithm of this key.
 
-- A series of multiprecision integers comprising the key material.
+- A series of values comprising the key material.
   This is algorithm-specific and described in {{algorithm-specific-parts-of-keys}}.
 
 The version 5 format is similar to the version 4 format except for the addition of a count for the key material.
 This count helps parsing secret key packets (which are an extension of the public key packet format) in the case of an unknown algorithm.
-In addition, fingerprints of version 5 keys are calculated differently from version 4 keys, as described in the section "Enhanced Key Formats".
+In addition, fingerprints of version 5 keys are calculated differently from version 4 keys, as described in {{enhanced-key-formats}}.
 
 A version 5 packet contains:
 
@@ -1833,7 +1833,7 @@ The packet contains:
 
 - One octet indicating string-to-key usage conventions.
   Zero indicates that the secret-key data is not encrypted.
-  255 or 254 indicates that a string-to-key specifier is being given.
+  255, 254, or 253 indicates that a string-to-key specifier is being given.
   Any other value is a symmetric-key encryption algorithm identifier.
   A version 5 packet MUST NOT use the value 255.
 
