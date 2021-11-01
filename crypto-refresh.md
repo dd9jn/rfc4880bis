@@ -3915,7 +3915,7 @@ In particular:
 
 - The SED packet is deprecated, and MUST NOT be generated.
 - When encrypting to one or more public keys:
-  - all recipient keys indicate support for AEAD in their Features subpacket ({{features-subpacket}}), or are v5 keys without a Features subpacket, or the implementation can otherwise infer that all recipients support AEAD, the implementation SHOULD encrypt using AEAD.
+  - all recipient keys indicate support for AEAD in their Features subpacket ({{features-subpacket}}), or are v5 keys without a Features subpacket, or the implementation can otherwise infer that all recipients support AEAD, the implementation MUST encrypt using AEAD.
   - If one of the recipients does not support AEAD, then the message generator MAY use SEIPD instead.
 - Password-protected secret key material in a V5 Secret Key or V5 Secret Subkey packet SHOULD be protected with AEAD encryption unless it will be transferred to an implementation that is known to not support AEAD.
 
