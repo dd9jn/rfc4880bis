@@ -2007,7 +2007,7 @@ The secret key is this single multiprecision integer:
 
 #### ECDH Secret Key Material
 
-When a NIST curve is used in ECDH, its secret key is represented as a simple integer in standard MPI form.
+When curve P-256, P-384, or P-521 are used in ECDH, their secret keys are represented as a simple integer in standard MPI form.
 Other curves are presented on the wire differently (though still as a single MPI), as described below and in {{curve-specific-formats}}.
 
 ##### Curve25519 ECDH Secret Key Material {#curve25519-secrets}
@@ -3440,7 +3440,7 @@ The KDF parameters are encoded as a concatenation of the following 5 variable-le
 
 - 20 octets representing a recipient encryption subkey or a primary key fingerprint identifying the key material that is needed for decryption (for version 5 keys the 20 leftmost octets of the fingerprint are used).
 
-The size of the KDF parameters sequence, defined above, is either 54 for the NIST curve P-256, 51 for the curves P-384 and P-521, 56 for Curve25519, or 49 for X448.
+The size of the KDF parameters sequence, defined above, is either 54 for curve P-256, 51 for curves P-384 and P-521, 56 for Curve25519, or 49 for X448.
 
 The key wrapping method is described in {{RFC3394}}.
 The KDF produces a symmetric key that is used as a key-encryption key (KEK) as specified in {{RFC3394}}.
