@@ -2005,6 +2005,39 @@ The secret key is this single multiprecision integer:
 
 - An MPI representing the secret key, in the curve-specific format described in {{curve-specific-formats}}.
 
+#### ECDH Secret Key Material
+
+When curve P-256, P-384, or P-521 are used in ECDH, their secret keys are represented as a simple integer in standard MPI form.
+Other curves are presented on the wire differently (though still as a single MPI), as described below and in {{curve-specific-formats}}.
+
+##### Curve25519 ECDH Secret Key Material {#curve25519-secrets}
+
+A Curve25519 secret key is stored as a standard integer in big-endian MPI form.
+Note that this form is in reverse octet order from the little-endian "native" form found in {{RFC7748}}.
+
+Note also that the integer for a Curve25519 secret key for OpenPGP MUST have the appropriate form: that is, it MUST be divisible by 8, MUST be at least 2\*\*254, and MUST be less than 2\*\*255.
+The length of this MPI in bits is by definition always 255, so the two leading octets of the MPI will always be `00 ff` and reversing the following 32 octets from the wire will produce the "native" form.
+
+When generating a new Curve25519 secret key from 32 fully-random octets, the following pseudocode produces the MPI wire format (note the similarity to `decodeScalar25519` from {{RFC7748}}):
+
+    def curve25519_MPI_from_random(octet_list):
+        octet_list[0] &= 248
+        octet_list[31] &= 127
+        octet_list[31] |= 64
+        mpi_header = [ 0x00, 0xff ]
+        return mpi_header || reversed(octet_list)
+
+##### X448 ECDH Secret Key Material
+
+An X448 secret key is contained within its MPI as a prefixed octet string (see {{ec-prefix}}), which encapsulates the native secret key format found in {{RFC7748}}.
+The full wire format (as an MPI) will thus be the three octets `01 c7 40` followed by the full 56 octet native secret key.
+
+When generating a new X448 secret key from 56 fully-random octets, the following pseudocode produces the MPI wire format:
+
+    def X448_MPI_from_random(octet_list):
+        prefixed_header = [ 0x01, 0xc7, 0x40 ]
+        return prefixed_header || octet_list
+
 ## Compressed Data Packet (Tag 8)
 
 The Compressed Data packet contains compressed data.
@@ -2751,7 +2784,7 @@ NIST P-384 | SEC1 | integer | N/A | N/A | N/A
 NIST P-521 | SEC1 | integer | N/A | N/A | N/A
 Ed25519    | N/A | N/A | 32 octets of secret | 32 octets of R | 32 octets of S
 Ed448      | N/A | N/A | prefixed 57 octets of secret | prefixed 114 octets of signature | 0 \[this is an unused placeholder]
-Curve25519 | prefixed native | integer | N/A | N/A | N/A
+Curve25519 | prefixed native | integer (see {{curve25519-secrets}}) | N/A | N/A | N/A
 X448       | prefixed native | prefixed 56 octets of secret | N/A | N/A | N/A
 
 For the native octet-string forms of EdDSA values, see {{RFC8032}}.
@@ -3407,7 +3440,7 @@ The KDF parameters are encoded as a concatenation of the following 5 variable-le
 
 - 20 octets representing a recipient encryption subkey or a primary key fingerprint identifying the key material that is needed for decryption (for version 5 keys the 20 leftmost octets of the fingerprint are used).
 
-The size of the KDF parameters sequence, defined above, is either 54 for the NIST curve P-256, 51 for the curves P-384 and P-521, 56 for Curve25519, or 49 for X448.
+The size of the KDF parameters sequence, defined above, is either 54 for curve P-256, 51 for curves P-384 and P-521, 56 for Curve25519, or 49 for X448.
 
 The key wrapping method is described in {{RFC3394}}.
 The KDF produces a symmetric key that is used as a key-encryption key (KEK) as specified in {{RFC3394}}.
