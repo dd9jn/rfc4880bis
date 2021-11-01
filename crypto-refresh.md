@@ -2323,7 +2323,7 @@ Any failure SHOULD be reported to the user.
 >   would replace SHA-1 with another 160-bit hash, such as
 >   RIPE-MD/160, for example.)
 >
->   However, no update will be needed because the MDC will be replaced
+>   However, no update will be needed because the MDC has been replaced
 >   by the AEAD encryption described in this document.
 
 ## Modification Detection Code Packet (Tag 19) {#mdc}
@@ -3893,12 +3893,13 @@ Asymmetric key size | Hash size | Symmetric key size
 
 If ciphertext can be modified by an attacker but still subsequently decrypted to some new plaintext, it is considered "malleable".
 A number of attacks can arise in any cryptosystem that uses malleable encryption, so modern OpenPGP offers mechanisms to defend against it.
-However, legacy OpenPGP data may not use these mechanisms.
+However, legacy OpenPGP data may have been created before these mechanisms were available.
 Because OpenPGP implementations deal with historic stored data, they may encounter malleable ciphertexts.
 
 When an OpenPGP implementation discovers that it is decrypting data that appears to be malleable, it MUST indicate a clear error message that the integrity of the message is suspect, SHOULD NOT release decrypted data to the user, and SHOULD halt with an error.
+An implementation that encounters malleable ciphertext MAY choose to release cleartext to the user if it is known to be dealing with historic archived legacy data, and the user is aware of the risks.
 
-These situations include any attempt to process the following kinds of data:
+Any of the following OpenPGP data elements indicate that malleable ciphertext is present:
 
 - all Symmetrically Encrypted Data packets (SED, {{sed}}).
 - within any encrypted container, any Compressed Data packet ({{compressed-data}}) where there is a decompression failure.
