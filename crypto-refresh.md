@@ -2238,7 +2238,7 @@ The body of this packet consists of:
 
 - A one-octet version number.
   The only defined value is 1.
-  There won't be any future versions of this packet because the MDC system has been superseded by the AEAD Encrypted Data packet.
+  There won't be any future versions of this packet: the MDC system is deprecated because it is superseded by the AEAD Encrypted Data packet (see {{mdc}}).
 
 - Encrypted data, the output of the selected symmetric-key cipher operating in Cipher Feedback mode with shift amount equal to the block size of the cipher (CFB-n where n is the block size).
 
