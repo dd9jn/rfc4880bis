@@ -2227,7 +2227,8 @@ See {{ciphertext-malleability}} for more details on choosing between these forma
 
 An implementation MUST support decrypting and generating these packets.
 An implementation publishing a public key SHOULD explicitly denote support for this packet by setting the first bit of the Features subpacket ({{features-subpacket}}) to 1 in any self-signature.
-Any encrypting implementation MUST assume that the recipient supports MDC, even if the recipient's Features subpacket has the first bit set to 0.
+If a recipient's public key lacks a Features subpacket, any encrypting implementation MUST assume that the recipient supports MDC.
+If a recipient's public key has a Features subpacket with the first bit set to 0, an encrypting implementation SHOULD NOT encrypt using MDC: it SHOULD use AEAD ({{aead}}) unless the circumstances preclude AEAD for some other reason.
 
 This packet contains data encrypted with a symmetric-key algorithm and protected against modification by the SHA-1 hash algorithm.
 When it has been decrypted, it will typically contain other packets (often a Literal Data packet or Compressed Data packet).
