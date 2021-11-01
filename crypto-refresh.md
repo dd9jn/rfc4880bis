@@ -368,7 +368,8 @@ Thus, it may even be wise for a space-constrained implementation to implement de
 
 Furthermore, compression has the added side effect that some types of attacks can be thwarted by the fact that slightly altered, compressed data rarely uncompresses without severe errors.
 This is hardly rigorous, but it is operationally useful.
-These attacks can be rigorously prevented by implementing and using Modification Detection Codes as described in sections following.
+These attacks can be rigorously prevented by implementing and using the AEAD as described in {{aead}}.
+See {{ciphertext-malleability}} for more details.
 
 ## Conversion to Radix-64
 
