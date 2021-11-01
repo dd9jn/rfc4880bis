@@ -1065,7 +1065,7 @@ The second set of subpackets is not cryptographically protected by the signature
 
 The difference between a V4 and V5 signature is that the latter includes additional meta data.
 
-The algorithms for converting the hash function result to a signature are described in a section below.
+The algorithms for converting the hash function result to a signature are described in {{computing-signatures}}.
 
 #### Signature Subpacket Specification {#signature-subpacket}
 
@@ -1786,7 +1786,7 @@ They contain three weaknesses.
 First, it is relatively easy to construct a V3 key that has the same Key ID as any other key because the Key ID is simply the low 64 bits of the public modulus.
 Secondly, because the fingerprint of a V3 key hashes the key material, but not its length, there is an increased opportunity for fingerprint collisions.
 Third, there are weaknesses in the MD5 hash algorithm that make developers prefer other algorithms.
-See below for a fuller discussion of Key IDs and fingerprints.
+See {{key-ids-fingerprints}} for a fuller discussion of Key IDs and fingerprints.
 
 V2 keys are identical to the deprecated V3 keys except for the version number.
 An implementation MUST NOT generate them and MAY accept or reject them as it sees fit.
@@ -1854,7 +1854,7 @@ The packet contains:
   This includes the encrypted SHA-1 hash or AEAD tag if the string-to-key usage octet is 254 or 253.
 
 - Plain or encrypted multiprecision integers comprising the secret key data.
-  This is algorithm-specific and described in section {{algorithm-specific-parts-of-keys}}.
+  This is algorithm-specific and described in {{algorithm-specific-parts-of-keys}}.
   If the string-to-key usage octet is 253, then an AEAD authentication tag is part of that data.
   If the string-to-key usage octet is 254, a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion is appended to plaintext and encrypted with it.
   If the string-to-key usage octet is 255 or another nonzero value (i.e., a symmetric-key encryption algorithm identifier), a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536) is appended to plaintext and encrypted with it. (This is deprecated and SHOULD NOT be used, see below.)
@@ -2414,14 +2414,14 @@ The base64 encoding is identical to the MIME base64 content-transfer-encoding {{
 The optional checksum is a 24-bit Cyclic Redundancy Check (CRC) converted to four characters of radix-64 encoding by the same MIME base64 transformation, preceded by an equal sign (=).
 The CRC is computed by using the generator 0x864CFB and an initialization of 0xB704CE.
 The accumulation is done on the data before it is converted to radix-64, rather than on the converted data.
-A sample implementation of this algorithm is in the next section.
+A sample implementation of this algorithm is in {{sample-crc24}}.
 
 If present, the checksum with its leading equal sign MUST appear on the next line after the base64 encoded data.
 
 Rationale for CRC-24: The size of 24 bits fits evenly into printable base64.
 The nonzero initialization can detect more errors than a zero initialization.
 
-## An Implementation of the CRC-24 in "C"
+## An Implementation of the CRC-24 in "C" {#sample-crc24}
 
     #define CRC24_INIT 0xB704CEL
     #define CRC24_GENERATOR 0x864CFBL
@@ -2493,7 +2493,7 @@ Note that all these Armor Header Lines are to consist of a complete line.
 That is to say, there is always a line ending preceding the starting five dashes, and following the ending five dashes.
 The header lines, therefore, MUST start at the beginning of a line, and MUST NOT have text other than whitespace following them on the same line.
 These line endings are considered a part of the Armor Header Line for the purposes of determining the content they delimit.
-This is particularly important when computing a cleartext signature (see below).
+This is particularly important when computing a cleartext signature (see {{cleartext-signature}}).
 
 The Armor Headers are pairs of strings that can give the user or the receiving OpenPGP implementation some information about how to decode or use the message.
 The Armor Headers are a part of the armor, not a part of the message, and hence are not protected by any signatures applied to the message.
@@ -2641,7 +2641,7 @@ No such assurance is possible, however, when the number of octets transmitted wa
 
 Note that this example has extra indenting; an actual armored message would have no leading whitespace.
 
-# Cleartext Signature Framework
+# Cleartext Signature Framework {#cleartext-signature}
 
 It is desirable to be able to sign a textual octet stream without ASCII armoring the stream itself, so the signed text is still readable without special software.
 In order to bind a signature to such a cleartext, this framework is used, which follows the same basic format and restrictions as the ASCII armoring described in {{forming-ascii-armor}}.
@@ -2665,7 +2665,7 @@ If there are no such headers, MD5 is used.
 If MD5 is the only hash used, then an implementation MAY omit this header for improved V2.x compatibility.
 If more than one message digest is used in the signature, the "Hash" armor header contains a comma-delimited list of used message digests.
 
-Current message digest names are described below with the algorithm IDs.
+Current message digest names are described with the algorithm IDs in {{hash-algos}}.
 
 An implementation SHOULD add a line break after the cleartext, but MAY omit it if the cleartext ends with a line break.
 This is for visual clarity.
@@ -3217,7 +3217,7 @@ For example, there may be a single-key RSA key in V4 format, a DSA primary key w
 It is also possible to have a signature-only subkey.
 This permits a primary key that collects certifications (key signatures), but is used only for certifying subkeys that are used for encryption and signatures.
 
-## Key IDs and Fingerprints
+## Key IDs and Fingerprints {#key-ids-fingerprints}
 
 For a V3 key, the eight-octet Key ID consists of the low 64 bits of the public modulus of the RSA key.
 
@@ -3698,7 +3698,7 @@ An implementation SHOULD NOT implement Elgamal keys of size less than 1024 bits.
 ## EdDSA
 
 Although the EdDSA algorithm allows arbitrary data as input, its use with OpenPGP requires that a digest of the message is used as input (pre-hashed).
-See section {{computing-signatures}}, "Computing Signatures" for details.
+See {{computing-signatures}} for details.
 Truncation of the resulting digest is never applied; the resulting digest value is used verbatim as input to the EdDSA algorithm.
 
 For clarity: while {{RFC8032}} describes different variants of EdDSA, OpenPGP uses the "pure" variant (PureEdDSA).
@@ -3725,7 +3725,7 @@ See {{BLEICHENBACHER}}.
 
 OpenPGP does symmetric encryption using a variant of Cipher Feedback mode (CFB mode).
 This section describes the procedure it uses in detail.
-This mode is what is used for Symmetrically Encrypted Data Packets; the mechanism used for encrypting secret-key material is similar, and is described in the sections above.
+This mode is what is used for Symmetrically Encrypted Data Packets; the mechanism used for encrypting secret-key material also sometimes uses CFB mode, as described in {{secret-key-encryption}}.
 
 In the description below, the value BS is the block size in octets of the cipher.
 Most ciphers have a block size of 8 octets.
