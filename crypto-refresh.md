@@ -575,13 +575,13 @@ In the table below, `check(x)` means the "2-octet checksum" meaning the sum of a
 {: title="Secret Key protection details" #secret-key-protection-details}
 First octet | Next fields | Encryption | Generate?
 ---|--------------------------------------------------|---|---|---
-0 | - | cleartext secrets \|\| check(secrets) | Y
-Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password), secrets \|\| check(secrets)) | N
-253 | cipher-algo, AEAD-mode, S2K-specifier, nonce | AEAD(S2K(password), secrets, pubkey) | Y
-254 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Y
-255 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| check(secrets)) | N
+0 | - | cleartext secrets \|\| check(secrets) | Yes
+Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password), secrets \|\| check(secrets)) | No
+253 | cipher-algo, AEAD-mode, S2K-specifier, nonce | AEAD(S2K(password), secrets, pubkey) | Yes
+254 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Yes
+255 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| check(secrets)) | No
 
-Each row with "Generate?" marked as "N" is described for backward compatibility, and MUST NOT be generated.
+Each row with "Generate?" marked as "No" is described for backward compatibility, and MUST NOT be generated.
 
 #### Symmetric-Key Message Encryption
 
