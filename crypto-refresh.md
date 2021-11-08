@@ -2765,6 +2765,7 @@ For example, the complete ASN.1 DER encoding for the NIST P-256 curve OID is "06
 Only the truncated sequence of octets is the valid representation of a curve OID.
 
 Implementations MUST implement Ed25519 for use with EdDSA, and Curve25519 for use with ECDH.
+Implementations SHOULD implement Ed448 for use with EdDSA, and X448 for use with ECDH.
 
 ### Curve-Specific Wire Formats {#curve-specific-formats}
 
