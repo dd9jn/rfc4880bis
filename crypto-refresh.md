@@ -2853,6 +2853,7 @@ ID | Algorithm | Text Name
 100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement SHA2-256.
+Implementations SHOULD implement SHA2-384 and SHA2-512.
 Implementations MAY implement other algorithms.
 Implementations SHOULD NOT create messages which require the use of SHA-1 with the exception of computing version 4 key fingerprints and for purposes of the MDC packet.
 Implementations MUST NOT generate signatures with MD5, SHA-1, or RIPE-MD/160.
