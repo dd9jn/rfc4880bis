@@ -1709,7 +1709,7 @@ A One-Pass Signature does not interoperate with PGP 2.6.x or earlier.
 The body of this packet consists of:
 
 - A one-octet version number.
-  The current version is 3.
+  The currently defined versions are 3 and 5.
 
 - A one-octet signature type.
   Signature types are described in {{signature-types}}.
@@ -1718,7 +1718,9 @@ The body of this packet consists of:
 
 - A one-octet number describing the public-key algorithm used.
 
-- An eight-octet number holding the Key ID of the signing key.
+- Only for V3 packets, an eight-octet number holding the Key ID of the signing key.
+
+- Only for V5 packets, a thirty-two-octet field holding the fingerprint of the signing key.
 
 - A one-octet number holding a flag showing whether the signature is nested.
   A zero value indicates that the next packet is another One-Pass Signature packet that describes another signature to be applied to the same message data.
