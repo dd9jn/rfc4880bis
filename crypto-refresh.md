@@ -2649,7 +2649,6 @@ The cleartext signed message consists of:
 - The ASCII armored signature(s) including the `-----BEGIN PGP SIGNATURE-----` Armor Header and Armor Tail Lines.
 
 If the "Hash" Armor Header is given, the specified message digest algorithm(s) are used for the signature.
-If there are no such headers, MD5 is used.
 If more than one message digest is used in the signature, the "Hash" armor header contains a comma-delimited list of used message digests.
 
 Current message digest names are described with the algorithm IDs in {{hash-algos}}.
