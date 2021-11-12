@@ -2650,7 +2650,6 @@ The cleartext signed message consists of:
 
 If the "Hash" Armor Header is given, the specified message digest algorithm(s) are used for the signature.
 If there are no such headers, MD5 is used.
-If MD5 is the only hash used, then an implementation MAY omit this header for improved V2.x compatibility.
 If more than one message digest is used in the signature, the "Hash" armor header contains a comma-delimited list of used message digests.
 
 Current message digest names are described with the algorithm IDs in {{hash-algos}}.
