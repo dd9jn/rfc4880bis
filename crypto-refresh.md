@@ -3632,6 +3632,11 @@ For example, suppose that Alice, above, has software that implements all algorit
 Nonetheless, she prefers subsets for work or home.
 If she is sent a message encrypted with IDEA, which is not in her preferences, the software warns her that someone sent her an IDEA-encrypted message, but it would ideally decrypt it anyway.
 
+### Plaintext
+
+Algorithm 0, "plaintext", may only be used to denote secret keys that are stored in the clear.
+Implementations MUST NOT use plaintext in encrypted data packets; they must use Literal Data packets to encode unencrypted literal data.
+
 ## Other Algorithm Preferences
 
 Other algorithm preferences work similarly to the symmetric algorithm preference, in that they specify which algorithms the keyholder accepts.
@@ -3659,11 +3664,6 @@ This preference allows Bob to state in his key which algorithms Alice may use.
 
 Since SHA2-256 is the MUST-implement hash algorithm, if it is not explicitly in the list, it is tacitly at the end.
 However, it is good form to place it there explicitly.
-
-## Plaintext
-
-Algorithm 0, "plaintext", may only be used to denote a secret key that is stored in the clear.
-An implementation MUST NOT use plaintext in any Encrypted Data packet (SEIPD {{seipd}}, AEAD {{aead}}, or SED {{sed}}); it must use a Literal Data packet to encode unencrypted or literal data.
 
 ## RSA {#rsa-notes}
 
