@@ -3644,6 +3644,11 @@ If Uncompressed (0) is not explicitly in the list, it is tacitly at the end, i.e
 
 Note that earlier implementations may assume that the absence of compression preferences means that \[ZIP(1), Uncompressed(0)\] are preferred, and default to ZIP compression. Therefore, an implementation that prefers uncompressed data SHOULD explicitly state this in the preferred compression algorithms.
 
+#### Uncompressed
+
+Algorithm 0, "uncompressed", may only be used to denote a preference for uncompressed data.
+Implementations MUST NOT use uncompressed in Compressed Data packets; they must use Literal Data packets to encode uncompressed literal data.
+
 ### Hash Algorithm Preferences
 
 Typically, the choice of a hash algorithm is something the signer does, rather than the verifier, because a signer rarely knows who is going to be verifying the signature.
