@@ -3918,30 +3918,11 @@ Users should migrate to AEAD with all due speed.
 # Implementation Nits
 
 This section is a collection of comments to help an implementer, particularly with an eye to backward compatibility.
-Previous implementations of PGP are not OpenPGP compliant.
 Often the differences are small, but small differences are frequently more vexing than large differences.
 Thus, this is a non-comprehensive list of potential problems and gotchas for a developer who is trying to be backward-compatible.
 
-- The IDEA algorithm is patented, and yet it is required for PGP 2 interoperability.
-  It is also the de-facto preferred algorithm for a V3 key with a V3 self-signature (or no self-signature).
-
-- When exporting a private key, PGP 2 generates the header "BEGIN PGP SECRET KEY BLOCK" instead of "BEGIN PGP PRIVATE KEY BLOCK".
-  All previous versions ignore the implied data type, and look directly at the packet data type.
-
-- PGP versions 2.0 through 2.5 generated V2 Public-Key packets.
-  These are identical to the deprecated V3 keys except for the version number.
-  An implementation MUST NOT generate them and may accept or reject them as it sees fit.
-  Some older PGP versions generated V2 PKESK packets (Tag 1) as well.
-  An implementation may accept or reject V2 PKESK packets as it sees fit, and MUST NOT generate them.
-
 - There are many ways possible for two keys to have the same key material, but different fingerprints (and thus Key IDs).
-  Perhaps the most interesting is an RSA key that has been "upgraded" to V4 format, but since a V4 fingerprint is constructed by hashing the key creation time along with other things, two V4 keys created at different times, yet with the same key material will have different fingerprints.
-
-- If an implementation is using zlib to interoperate with PGP 2, then the "windowBits" parameter should be set to -13.
-
-- The 0x19 back signatures were not required for signing subkeys until relatively recently.
-  Consequently, there may be keys in the wild that do not have these back signatures.
-  Implementing software may handle these keys as it sees fit.
+  For example, since a V4 fingerprint is constructed by hashing the key creation time along with other things, two V4 keys created at different times, yet with the same key material will have different fingerprints.
 
 - OpenPGP does not put limits on the size of public keys.
   However, larger keys are not necessarily better keys.
