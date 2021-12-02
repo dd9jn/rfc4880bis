@@ -3928,7 +3928,6 @@ Thus, this is a non-comprehensive list of potential problems and gotchas for a d
   However, larger keys are not necessarily better keys.
   Larger keys take more computation time to use, and this can quickly become impractical.
   Different OpenPGP implementations may also use different upper bounds for public key sizes, and so care should be taken when choosing sizes to maintain interoperability.
-  As of 2007 most implementations have an upper bound of 4096 bits.
 
 - ASCII armor is an optional feature of OpenPGP.
   The OpenPGP working group strives for a minimal set of mandatory-to-implement features, and since there could be useful implementations that only use binary object formats, this is not a "MUST" feature for an implementation.
