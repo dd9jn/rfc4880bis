@@ -450,7 +450,7 @@ It is beyond the scope of this standard to discuss the details of keyrings or ot
 
 ## String-to-Key (S2K) Specifiers
 
-String-to-key (S2K) specifiers are used to convert passphrase strings into symmetric-key encryption/decryption keys.
+A string-to-key (S2K) specifier is used to convert a passphrase string and an optional associated data octet string (defaulting to the empty octet string) into a symmetric-key encryption/decryption key.
 They are used in two places, currently: to encrypt the secret part of private keys in the private keyring, and to convert passphrases to encryption keys for symmetrically encrypted messages.
 
 ### String-to-Key (S2K) Specifier Types {#s2k-types}
@@ -477,7 +477,7 @@ See below for how this hashing is done.
       Octet 0:        0x00
       Octet 1:        hash algorithm
 
-Simple S2K hashes the passphrase to produce the session key.
+Simple S2K hashes the associated data concatenated with the passphrase to produce the session key.
 The manner in which this is done depends on the size of the session key (which will depend on the cipher used) and the size of the hash algorithm's output.
 If the hash size is greater than the session key size, the high-order (leftmost) octets of the hash are used as the key.
 
@@ -497,7 +497,7 @@ This includes a "salt" value in the S2K specifier --- some arbitrary data --- th
       Octet 1:        hash algorithm
       Octets 2-9:     8-octet salt value
 
-Salted S2K is exactly like Simple S2K, except that the input to the hash function(s) consists of the 8 octets of salt from the S2K specifier, followed by the passphrase.
+Salted S2K is exactly like Simple S2K, except that the input to the hash function(s) consists of the 8 octets of salt from the S2K specifier, followed by the associated data, followed by the passphrase.
 
 #### Iterated and Salted S2K {#s2k-iter-salted}
 
@@ -517,13 +517,13 @@ The count is coded into a one-octet number using the following formula:
 
 The above formula is in C, where "Int32" is a type for a 32-bit integer, and the variable "c" is the coded count, Octet 10.
 
-Iterated-Salted S2K hashes the passphrase and salt data multiple times.
+Iterated-Salted S2K hashes the salt, associated data and password repeated multiple times.
 The total number of octets to be hashed is specified in the encoded count in the S2K specifier.
 Note that the resulting count value is an octet count of how many octets will be hashed, not an iteration count.
 
 Initially, one or more hash contexts are set up as with the other S2K algorithms, depending on how many octets of key data are needed.
-Then the salt, followed by the passphrase data, is repeatedly hashed until the number of octets specified by the octet count has been hashed.
-The one exception is that if the octet count is less than the size of the salt plus passphrase, the full salt plus passphrase will be hashed even though that is greater than the octet count.
+Then the salt, the associated data and the passphrase are repeatedly hashed until the number of octets specified by the octet count has been hashed.
+The one exception is that if the octet count is less than the size of the salt plus associated data plus passphrase, the full salt plus associated data plus passphrase will be hashed even though that is greater than the octet count.
 After the hashing is done, the data is unloaded from the hash context(s) as with the other S2K algorithms.
 
 #### Argon2 {#s2k-argon2}
@@ -543,7 +543,7 @@ The number of passes t and the degree of parallelism p MUST be non-zero.
 
 The memory size m is 2\*\*encoded_m, where "encoded_m" is the encoded memory size in Octet 19. The encoded memory size MUST be a value from 3+ceil(log_2(p)) to 31, such that the decoded memory size m is a value from 8*p to 2\*\*31.
 
-Argon2 is invoked with the passphrase as P, the salt as S, the values of t, p and m as described above, the required key size as the tag length T, 0x13 as the version v, and Argon2id as the type.
+Argon2 is invoked with the passphrase as P, the salt as S, the associated data as X, the values of t, p and m as described above, the required key size as the tag length T, 0x13 as the version v, and Argon2id as the type.
 
 For the recommended values of t, p and m, see Section 4 of {{RFC9106}}. If the recommended value of m for a given application is not a power of 2, it is RECOMMENDED to round up to the next power of 2 if the resulting performance would be acceptable, and round down otherwise (keeping in mind that m must be at least 8*p).
 
@@ -578,7 +578,7 @@ First octet | Next fields | Encryption | Generate?
 ---|--------------------------------------------------|---|---|---
 0 | - | cleartext secrets \|\| check(secrets) | Yes
 Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password), secrets \|\| check(secrets)) | No
-253 | cipher-algo, AEAD-mode, S2K-specifier, nonce | AEAD(S2K(password), secrets, pubkey) | Yes
+253 | cipher-algo, AEAD-mode, S2K-specifier, nonce | AEAD(S2K(password, packet tag \|\| packet version \|\| cipher-algo \|\| AEAD-mode), secrets, pubkey) | Yes
 254 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Yes
 255 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| check(secrets)) | No
 
@@ -1713,12 +1713,12 @@ A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 
 - An authentication tag for the AEAD mode.
 
-The encrypted session key is encrypted using one of the AEAD algorithms specified for the AEAD Encrypted Data Packet.
-Note that no chunks are used and that there is only one authentication tag.
-The Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are given as additional data.
-For example, the additional data used with EAX and AES-128 consists of the octets 0xC3, 0x05, 0x07, and 0x01.
+The S2K algorithm is applied to the passphrase, with as associated data the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet specified in the Symmetric-Key Encrypted Session Key packet.
+For example, the associated data used with EAX and AES-128 consists of the octets 0xC3, 0x05, 0x07, and 0x01.
 
-The decryption result consists of a one-octet symmetric-key algorithm identifier and a one-octet AEAD algorithm identifier that specify the encryption algorithm used to encrypt the following AEAD Encrypted Data Packet, followed by the session key octets themselves.
+The resulting symmetric-key encryption key is used, with one of the AEAD algorithms specified for the AEAD Encrypted Data Packet, to encrypt a one-octet symmetric-key algorithm identifier and a one-octet AEAD algorithm identifier that specify the encryption algorithm used to encrypt the following AEAD Encrypted Data Packet, followed by the session key octets themselves.
+Note that no chunks are used and that there is only one authentication tag.
+The same associated data given to the S2K mechanism above is passed as additional data to the AEAD algorithm.
 
 ### No v5 SKESK with SEIPD {#no-v5-skesk-seipd}
 
@@ -1889,6 +1889,7 @@ Note that the version 5 packet format adds two count values to help parsing pack
 
 Secret MPI values can be encrypted using a passphrase.
 If a string-to-key specifier is given, that describes the algorithm for converting the passphrase to a key, else a simple MD5 hash of the passphrase is used.
+If the string-to-key usage octet is 253, the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are passed as associated data to the S2K mechanism.
 Implementations MUST use a string-to-key specifier; the simple hash is for backward compatibility and is deprecated, though implementations MAY continue to use existing private keys in the old format.
 The cipher for encrypting the MPIs is specified in the Secret-Key packet.
 
