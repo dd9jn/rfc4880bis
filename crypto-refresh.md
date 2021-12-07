@@ -794,6 +794,7 @@ The body of this packet consists of:
 
 - A string of octets that is the encrypted session key.
   This string takes up the remainder of the packet, and its contents are dependent on the public-key algorithm used.
+  Note that the decrypted session key differs between version 3 and 5 (see {{pkesk-notes}}).
 
 ### Algorithm Specific Fields for RSA encryption {#pkesk-rsa}
 
@@ -814,7 +815,7 @@ The body of this packet consists of:
 ### Notes on PKESK {#pkesk-notes}
 
 The value "m" in the above formulas is derived from the session key as follows.
-First, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container.
+First, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container, and (only in the case of a V5 packet) a one-octet algorithm identifier that specifies the AEAD algorithm used.
 Then a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, not including the algorithm identifier, modulo 65536.
 This value is then encoded as described in PKCS#1 block encoding EME-PKCS1-v1_5 in Section 7.2.1 of {{RFC3447}} to form the "m" value used in the formulas above.
 See {{pkcs-encoding}} in this document for notes on OpenPGP's use of PKCS#1.
@@ -1717,6 +1718,8 @@ Note that no chunks are used and that there is only one authentication tag.
 The Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are given as additional data.
 For example, the additional data used with EAX and AES-128 consists of the octets 0xC3, 0x05, 0x07, and 0x01.
 
+The decryption result consists of a one-octet symmetric-key algorithm identifier and a one-octet AEAD algorithm identifier that specify the encryption algorithm used to encrypt the following AEAD Encrypted Data Packet, followed by the session key octets themselves.
+
 ### No v5 SKESK with SEIPD {#no-v5-skesk-seipd}
 
 Note that unlike the AEAD Encrypted Data Packet (AED, see {{aead}}), the Symmetrically Encrypted Integrity Protected Data Packet (SEIPD, see {{seipd}}) does not internally indicate what cipher algorithm to use to decrypt it.
@@ -2366,10 +2369,6 @@ The body of this packet starts with:
 
 When the version is 1, it is followed by the following fields:
 
-- A one-octet cipher algorithm.
-
-- A one-octet AEAD algorithm.
-
 - A one-octet chunk size.
 
 - A initialization vector of size specified by the AEAD algorithm.
@@ -2377,6 +2376,8 @@ When the version is 1, it is followed by the following fields:
 - Encrypted data, the output of the selected symmetric-key cipher operating in the given AEAD mode.
 
 - A final, summary authentication tag for the AEAD mode.
+
+The symmetric cipher and AEAD algorithm used are specified in a Public-Key or Symmetric-Key Encrypted Session Key packet that precedes the AEAD Encrypted Data Packet.
 
 An AEAD encrypted data packet consists of one or more chunks of data.
 The plaintext of each chunk is of a size specified using the chunk size octet using the method specified below.
