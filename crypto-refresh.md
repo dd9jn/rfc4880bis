@@ -233,6 +233,14 @@ normative:
       ins: B. Schneier
       name: Bruce Schneier
     date: 1996
+  SP800-38D:
+    title: "Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC"
+    author:
+      -
+        ins: M. Dworkin
+    date: November 2007
+    seriesinfo:
+      NIST Special Publication: 800-38D
   SP800-56A:
     title: Recommendation for Pair-Wise Key Establishment Schemes Using Discrete Logarithm Cryptography
     author:
@@ -2473,6 +2481,14 @@ The OCB algorithm can only use block ciphers with 16-octet blocks.
 The initialization vector is 15 octets long.
 OCB authentication tags are 16 octets long.
 
+### GCM Mode
+
+The GCM AEAD Algorithm used in this document is defined in {{SP800-38D}}.
+
+The GCM algorithm can only use block ciphers with 16-octet blocks.
+The initialization vector is 12 octets long.
+GCM authentication tags are 16 octets long.
+
 # Radix-64 Conversions
 
 As stated in the introduction, OpenPGP's underlying native representation for objects is a stream of arbitrary octets, and some systems desire these objects to be immune to damage caused by character set translation, data conversions, etc.
@@ -2955,6 +2971,7 @@ ID | Algorithm | IV length (octets) | authentication tag length (octets)
 ---:|-----------------|---|---
  1 | EAX {{EAX}} | 16 | 16
  2 | OCB {{RFC7253}} | 15 | 16
+ 3 | GCM {{SP800-38D}} | 12 | 16
 100 to 110 | Private/Experimental algorithm
 
 # IANA Considerations
@@ -4417,6 +4434,8 @@ AEAD encrypted data packet:
       25 74 cd 05 62 84 a8 ef  68 03 5c 62 3d 93 cc 70
       8a 43 21 1b b6 ea f2 b2  7f 7c 18 d5 71 bc d8 3b
       20 ad d3 a0 8b 73 af 15  b9 a0 98
+
+FIXME: add AEAD-GCM test vector
 
 # Acknowledgements
 
