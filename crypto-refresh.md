@@ -622,9 +622,7 @@ A mask for this bit is 0x80 in hexadecimal.
       Bit 7 -- Always one
       Bit 6 -- New packet format if set
 
-PGP 2.6.x only uses old format packets.
-Thus, software that interoperates with those versions of PGP must only use old format packets.
-If interoperability is not an issue, the new packet format is RECOMMENDED.
+The new packet format is RECOMMENDED.
 Note that old format packets have four bits of packet tags, and new format packets have six; some features cannot be used and still be backward-compatible.
 
 Also note that packets with a tag greater than or equal to 16 MUST use new format packets.
@@ -828,7 +826,6 @@ The most common signatures are a signature of a file or a block of text, and a s
 
 Three versions of Signature packets are defined.
 Version 3 provides basic signature information, while versions 4 and 5 provide an expandable format with subpackets that can specify more information about the signature.
-PGP 2.6.x only accepts version 3 signatures.
 
 Implementations MUST generate version 5 signatures when using a version 5 key.
 Implementations SHOULD generate V4 signatures with version 4 keys.
@@ -1712,8 +1709,6 @@ Since the v5 SKESK packet's encrypted payload only indicates the key used, not t
 The One-Pass Signature packet precedes the signed data and contains enough information to allow the receiver to begin calculating any hashes needed to verify the signature.
 It allows the Signature packet to be placed at the end of the message, so that the signer can compute the entire signed message in one pass.
 
-A One-Pass Signature does not interoperate with PGP 2.6.x or earlier.
-
 The body of this packet consists of:
 
 - A one-octet version number.
@@ -1752,10 +1747,6 @@ A Public-Key packet starts a series of packets that forms an OpenPGP key (someti
 A Public-Subkey packet (tag 14) has exactly the same format as a Public-Key packet, but denotes a subkey.
 One or more subkeys may be associated with a top-level key.
 By convention, the top-level key provides signature services, and the subkeys provide encryption services.
-
-Note: in PGP version 2.6, tag 14 was intended to indicate a comment packet.
-This tag was selected for reuse because no previous version of PGP ever emitted comment packets but they did properly ignore them.
-Public-Subkey packets are ignored by PGP version 2.6 and do not cause it to fail, providing a limited degree of backward compatibility.
 
 #### Secret-Key Packet (Tag 5)
 
@@ -2065,8 +2056,6 @@ A Compressed Data Packet's body contains an block that compresses some set of pa
 See {{packet-composition}} for details on how messages are formed.
 
 ZIP-compressed packets are compressed with raw {{RFC1951}} DEFLATE blocks.
-Note that PGP V2.6 uses 13 bits of compression.
-If an implementation uses more bits of compression, PGP V2.6 cannot decompress it.
 
 ZLIB-compressed packets are compressed with {{RFC1950}} ZLIB-style blocks.
 
@@ -2117,7 +2106,6 @@ The body of this packet consists of:
 - The three octets 0x50, 0x47, 0x50 (which spell "PGP" in UTF-8).
 
 Such a packet MUST be ignored when received.
-It may be placed at the beginning of a message that uses features not available in PGP version 2.6 in order to cause that version to report that newer software is necessary to process the message.
 
 ## Literal Data Packet (Tag 11)
 
@@ -2667,8 +2655,6 @@ The cleartext signed message consists of:
 - The ASCII armored signature(s) including the `-----BEGIN PGP SIGNATURE-----` Armor Header and Armor Tail Lines.
 
 If the "Hash" Armor Header is given, the specified message digest algorithm(s) are used for the signature.
-If there are no such headers, MD5 is used.
-If MD5 is the only hash used, then an implementation MAY omit this header for improved V2.x compatibility.
 If more than one message digest is used in the signature, the "Hash" armor header contains a comma-delimited list of used message digests.
 
 Current message digest names are described with the algorithm IDs in {{hash-algos}}.
@@ -2820,7 +2806,6 @@ ID | Algorithm
 
 Implementations MUST implement TripleDES.
 Implementations SHOULD implement AES-128 and CAST5.
-Implementations that interoperate with PGP 2.6 or earlier need to support IDEA, as that is the only symmetric cipher those versions use.
 Implementations MAY implement any other algorithm.
 
 ## Compression Algorithms {#compression-algos}
@@ -3937,8 +3922,6 @@ Thus, this is a non-comprehensive list of potential problems and gotchas for a d
   An implementation MUST NOT generate them and may accept or reject them as it sees fit.
   Some older PGP versions generated V2 PKESK packets (Tag 1) as well.
   An implementation may accept or reject V2 PKESK packets as it sees fit, and MUST NOT generate them.
-
-- PGP version 2.6 will not accept key-material packets with versions greater than 3.
 
 - There are many ways possible for two keys to have the same key material, but different fingerprints (and thus Key IDs).
   Perhaps the most interesting is an RSA key that has been "upgraded" to V4 format, but since a V4 fingerprint is constructed by hashing the key creation time along with other things, two V4 keys created at different times, yet with the same key material will have different fingerprints.
