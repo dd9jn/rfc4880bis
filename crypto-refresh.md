@@ -4266,6 +4266,25 @@ PKCS#1 has been found to be vulnerable to attacks in which a system that reports
 Implementations must be aware of this attack and prevent it from happening.
 The simplest solution is to report a single error code for all variants of decryption errors so as not to leak information to an attacker.
 
+## Fingerprint Usability {#fingerprint-usability}
+
+This specification uses fingerprints in several places on the wire (e.g., {{revocation-key}}, {{issuer-fingerprint-subpacket}}, and {{intended-recipient-fingerprint}}), and in processing (e.g., in ECDH KDF {{ecdh}}).
+An implementation may also use the fingerprint internally, for example as an index to a keystore.
+
+Additionally, some OpenPGP users have historically used manual fingerprint comparison to verify the public key of a peer.
+For a version 4 fingerprint, this has typically been done with the fingerprint represented as 40 hexadecimal digits, often broken into groups of four digits with whitespace between each group.
+
+When a human is actively involved, the result of such a verification is dubious.
+We have little evidence that most humans are good at precise comparison of high-entropy data, particularly when that data is represented in compact textual form like a hexadecimal fingerprint.
+
+The version 5 fingerprint makes the challenge for a human verifier even worse.
+At 256 bits (compared to v4's 160 bit fingerprint), a v5 fingerprint is even harder for a human to successfully compare.
+
+An OpenPGP implementation should prioritize mechanical fingerprint transfer and comparison where possible, and SHOULD NOT promote manual transfer or comparison of full fingerprints by a human unless there is no other way to achieve the desired result.
+
+While this subsection acknowledges existing practice for human-representable v4 fingerprints, this document does not attempt to standardize any specific human-readable form of v5 fingerprint for this discouraged use case.
+More usability studies are needed to make human-in-the-loop fingerprint verification plausible for wide adoption.
+
 ## Avoiding Ciphertext Malleability {#ciphertext-malleability}
 
 If ciphertext can be modified by an attacker but still subsequently decrypted to some new plaintext, it is considered "malleable".
