@@ -1237,7 +1237,7 @@ The subpacket body is an ordered list of octets with the most preferred listed f
 It is assumed that only algorithms listed are supported by the recipient's software.
 Algorithm numbers are in {{aead-algorithms}}.
 This is only found on a self-signature.
-Note that support for the AEAD Encrypted Data packet in the general is indicated by a Feature Flag.
+Note that support for version 1 of the AEAD Encrypted Data packet in general is indicated by a Feature Flag.
 
 #### Preferred Hash Algorithms
 
