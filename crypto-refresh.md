@@ -770,7 +770,7 @@ Tag | Packet Type
 
 # Packet Types {#packet-types}
 
-## Public-Key Encrypted Session Key Packets (Tag 1)
+## Public-Key Encrypted Session Key Packets (Tag 1) {#pkesk}
 
 Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede an encryption container (i.e. a Symmetrically Encrypted Integrity Protected Data packet, an AEAD Encrypted Data packet, or --- for historic data --- a Symmetrically Encrypted Data packet), which holds an encrypted message.
 The message is encrypted with the session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet(s).
@@ -792,19 +792,36 @@ The body of this packet consists of:
 
 - A one-octet number giving the public-key algorithm used.
 
-- A string of octets that is the encrypted session key.
-  This string takes up the remainder of the packet, and its contents are dependent on the public-key algorithm used.
-  Note that the decrypted session key differs between version 3 and 5 (see {{pkesk-notes}}).
+- A series of values comprising the encrypted session key.
+  This is algorithm-specific and described below.
+
+For V3 packets, before encrypting, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container.
+Then a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, not including the algorithm identifier, modulo 65536.
+
+V3 Public-Key Encrypted Session Key packets MUST NOT be used to encrypt or decrypt AEAD Encrypted Data packets.
+
+For V5 packets, before encrypting, the session key is prefixed with the Packet Tag of the following AEAD Encrypted Data packet in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), its packet version number, a one-octet algorithm identifier that specifies the symmetric encryption algorithm used in the following AEAD Encrypted Data packet, and a one-octet algorithm identifier that specifies the AEAD algorithm used.
+Then a two-octet checksum is appended, which is equal to the sum of all preceding octets, including the packet tag and version and algorithm identifiers, modulo 65536.
+
+V5 Public-Key Encrypted Session Key packets MUST NOT be used to encrypt or decrypt Symmetrically Encrypted Data packets or Symmetrically Encrypted Integrity Protected Data packets.
+
+When using a V5 Public-Key Encrypted Session Key packet to decrypt an AEAD Encrypted Data packet, the implementation MUST check that the decrypted packet tag and packet version match the packet tag and packet version of the AEAD Encrypted Data packet.
 
 ### Algorithm Specific Fields for RSA encryption {#pkesk-rsa}
 
 - Multiprecision integer (MPI) of RSA-encrypted value m\*\*e mod n.
+
+The value "m" in the above formula is the plaintext value described above, encoded in the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC3447}} (see also {{pkcs-encoding}}).
+Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
 
 ### Algorithm Specific Fields for Elgamal encryption {#pkesk-elgamal}
 
 - MPI of Elgamal (Diffie-Hellman) value g\*\*k mod p.
 
 - MPI of Elgamal (Diffie-Hellman) value m * y\*\*k mod p.
+
+The value "m" in the above formula is the plaintext value described above, encoded in the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC3447}} (see also {{pkcs-encoding}}).
+Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
 
 ### Algorithm-Specific Fields for ECDH encryption {#pkesk-ecdh}
 
@@ -813,14 +830,6 @@ The body of this packet consists of:
 - A one-octet size, followed by a symmetric key encoded using the method described in {{ec-dh-algorithm-ecdh}}.
 
 ### Notes on PKESK {#pkesk-notes}
-
-The value "m" in the above formulas is derived from the session key as follows.
-First, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container, and (only in the case of a V5 packet) a one-octet algorithm identifier that specifies the AEAD algorithm used.
-Then a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, not including the algorithm identifier, modulo 65536.
-This value is then encoded as described in PKCS#1 block encoding EME-PKCS1-v1_5 in Section 7.2.1 of {{RFC3447}} to form the "m" value used in the formulas above.
-See {{pkcs-encoding}} in this document for notes on OpenPGP's use of PKCS#1.
-
-Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
 
 An implementation MAY accept or use a Key ID of all zeros, or a key version of zero and no key fingerprint, to hide the intended decryption key.
 In this case, the receiving implementation would try all available private keys, checking for a valid decrypted session key.
@@ -1697,6 +1706,8 @@ The decryption result consists of a one-octet algorithm identifier that specifie
 Note: because an all-zero IV is used for this decryption, the S2K specifier MUST use a salt value, either a Salted S2K or an Iterated-Salted S2K.
 The salt value will ensure that the decryption key is not repeated even if the passphrase is reused.
 
+V4 Symmetric-Key Encrypted Session Key packets MUST NOT be used to encrypt or decrypt AEAD Encrypted Data packets.
+
 A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 
 - A one-octet version number with value 5.
@@ -1716,14 +1727,13 @@ A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 The S2K algorithm is applied to the passphrase, with as associated data the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet specified in the Symmetric-Key Encrypted Session Key packet.
 For example, the associated data used with EAX and AES-128 consists of the octets 0xC3, 0x05, 0x07, and 0x01.
 
-The resulting symmetric-key encryption key is used, with one of the AEAD algorithms specified for the AEAD Encrypted Data Packet, to encrypt a one-octet symmetric-key algorithm identifier and a one-octet AEAD algorithm identifier that specify the encryption algorithm used to encrypt the following AEAD Encrypted Data Packet, followed by the session key octets themselves.
+The resulting symmetric-key encryption key is used, with one of the AEAD algorithms specified for the AEAD Encrypted Data Packet, to encrypt the Packet Tag of the following AEAD Encrypted Data packet in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), its packet version number, a one-octet symmetric-key algorithm identifier and a one-octet AEAD algorithm identifier that specify the encryption algorithm used to encrypt the following AEAD Encrypted Data Packet, followed by the session key octets themselves.
 Note that no chunks are used and that there is only one authentication tag.
 The same associated data given to the S2K mechanism above is passed as additional data to the AEAD algorithm.
 
-### No v5 SKESK with SEIPD {#no-v5-skesk-seipd}
+V5 Symmetric-Key Encrypted Session Key packets MUST NOT be used to encrypt or decrypt Symmetrically Encrypted Data packets or Symmetrically Encrypted Integrity Protected Data packets.
 
-Note that unlike the AEAD Encrypted Data Packet (AED, see {{aead}}), the Symmetrically Encrypted Integrity Protected Data Packet (SEIPD, see {{seipd}}) does not internally indicate what cipher algorithm to use to decrypt it.
-Since the v5 SKESK packet's encrypted payload only indicates the key used, not the choice of cipher algorithm used for the subsequent encrypted data, a v5 SKESK packet can only provide a session key for an AED packet, and MUST NOT be used to provide a session key for a SEIPD Packet.
+When using a V5 Symmetric-Key Encrypted Session Key packet to decrypt an AEAD Encrypted Data packet, the implementation MUST check that the decrypted packet tag and packet version match the packet tag and packet version of the AEAD Encrypted Data packet.
 
 ## One-Pass Signature Packets (Tag 4)
 
@@ -3204,7 +3214,7 @@ In addition, decrypting a Symmetrically Encrypted and Integrity Protected Data p
 Decompressing a Compressed Data packet must also yield a valid OpenPGP Message.
 
 Note that some subtle combinations that are formally acceptable by this grammar are nonetheless unacceptable.
-For example, a v5 SKESK packet cannot effectively precede a SEIPD packet, since that combination does not include any information about the choice of symmetric cipher used for SEIPD (see {{no-v5-skesk-seipd}} for more details).
+For example, a v3 PKESK or v4 SKESK packet cannot effectively precede a AEAD Encrypted Data packet, since that combination does not include any information about the choice of AEAD algorithm; and similarly a v5 PKESK or v5 SKESK packet may not be used with SED or SEIPD packet (see {{pkesk}} and {{skesk}} for more details).
 
 ## Detached Signatures
 
@@ -3488,15 +3498,22 @@ The KDF produces a symmetric key that is used as a key-encryption key (KEK) as s
 Refer to {{security-considerations}} for the details regarding the choice of the KEK algorithm, which SHOULD be one of three AES algorithms.
 Key wrapping and unwrapping is performed with the default initial value of {{RFC3394}}.
 
-The input to the key wrapping method is the value "m" derived from the session key, as described in {{public-key-encrypted-session-key-packets-tag-1}}, "Public-Key Encrypted Session Key Packets (Tag 1)", except that the PKCS #1.5 padding step is omitted.
-The result is padded using the method described in {{PKCS5}} to an 8-octet granularity.
-For example, the following AES-256 session key, in which 32 octets are denoted from k0 to k31, is composed to form the following 40 octet sequence:
+The input to the key wrapping method is the plaintext described in {{pkesk}}, "Public-Key Encrypted Session Key Packets (Tag 1)", padded using the method described in {{PKCS5}} to an 8-octet granularity.
+
+For example, in a V4 Public-Key Encrypted Session Key packet, the following AES-256 session key, in which 32 octets are denoted from k0 to k31, is composed to form the following 40 octet sequence:
 
     09 k0 k1 ... k31 s0 s1 05 05 05 05 05
 
-The octets s0 and s1 above denote the checksum.
+The octets s0 and s1 above denote the checksum of the session key octets.
 This encoding allows the sender to obfuscate the size of the symmetric encryption key used to encrypt the data.
 For example, assuming that an AES algorithm is used for the session key, the sender MAY use 21, 13, and 5 octets of padding for AES-128, AES-192, and AES-256, respectively, to provide the same number of octets, 40 total, as an input to the key wrapping method.
+
+In a V5 Public-Key Encrypted Session Key packet, the AEAD Encrypted Data packet tag, version, and AEAD algorithm are also included, as described in {{pkesk}}. For example, an AES-256 session key for an OCB-encrypted data packet would be composed as follows:
+
+    D4 01 09 02 k0 k1 ... k31 s0 s1 02 02
+
+The octets k0 to k31 above again denote the session key, and the octets s0 and s1 denote the checksum of all preceding octets.
+In this case, assuming that an AES algorithm is used for the session key, the sender MAY use 18, 10, and 2 octets of padding for AES-128, AES-192, and AES-256, respectively, to provide the same number of octets, 40 total, as an input to the key wrapping method.
 
 The output of the method consists of two fields.
 The first field is the MPI containing the ephemeral key used to establish the shared secret.
