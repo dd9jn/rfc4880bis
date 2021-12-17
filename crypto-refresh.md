@@ -455,7 +455,7 @@ They are used in two places, currently: to encrypt the secret part of private ke
 
 ### String-to-Key (S2K) Specifier Types {#s2k-types}
 
-There are three types of S2K specifiers currently supported, and some reserved values:
+There are four types of S2K specifiers currently supported, and some reserved values:
 
 {: title="S2K type registry"}
 ID | S2K Type | Generate? | Reference
@@ -1703,7 +1703,7 @@ If the encrypted session key is not present (which can be detected on the basis 
 If the encrypted session key is present, the result of applying the S2K algorithm to the passphrase is used to decrypt just that encrypted session key field, using CFB mode with an IV of all zeros.
 The decryption result consists of a one-octet algorithm identifier that specifies the symmetric-key encryption algorithm used to encrypt the following encryption container, followed by the session key octets themselves.
 
-Note: because an all-zero IV is used for this decryption, the S2K specifier MUST use a salt value, either a Salted S2K or an Iterated-Salted S2K.
+Note: because an all-zero IV is used for this decryption, the S2K specifier MUST use a salt value, either a Salted S2K, an Iterated-Salted S2K, or Argon2.
 The salt value will ensure that the decryption key is not repeated even if the passphrase is reused.
 
 V4 Symmetric-Key Encrypted Session Key packets MUST NOT be used to encrypt or decrypt AEAD Encrypted Data packets.
