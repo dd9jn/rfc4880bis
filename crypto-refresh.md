@@ -839,10 +839,11 @@ This format helps reduce traffic analysis of messages.
 A Signature packet describes a binding between some public key and some data.
 The most common signatures are a signature of a file or a block of text, and a signature that is a certification of a User ID.
 
-Two versions of Signature packets are defined.
-Version 3 provides basic signature information, while version 4 provides an expandable format with subpackets that can specify more information about the signature.
+Three versions of Signature packets are defined.
+Version 3 provides basic signature information, while versions 4 and 5 provide an expandable format with subpackets that can specify more information about the signature.
 
-Implementations MUST generate version 4 signatures with version 4 or version 5 keys.
+Implementations MUST generate version 5 signatures when using a version 5 key.
+Implementations SHOULD generate V4 signatures with version 4 keys.
 Implementations MUST NOT create version 3 signatures; they MAY accept version 3 signatures.
 
 ### Signature Types {#signature-types}
@@ -1009,12 +1010,12 @@ DSA signatures MUST use hashes that are equal in size to the number of bits of q
 If the output size of the chosen hash is larger than the number of bits of q, the hash result is truncated to fit by taking the number of leftmost bits equal to the number of bits of q.
 This (possibly truncated) hash function result is treated as a number and used directly in the DSA signature algorithm.
 
-### Version 4 Signature Packet Format
+### Version 4 and 5 Signature Packet Formats
 
-The body of a V4 Signature packet contains:
+The body of a V4 or V5 Signature packet contains:
 
 - One-octet version number.
-  This is 4 for V4 signatures.
+  This is 4 for V4 signatures and 5 for V5 signatures.
 
 - One-octet signature type.
 
@@ -1022,12 +1023,16 @@ The body of a V4 Signature packet contains:
 
 - One-octet hash algorithm.
 
-- Two-octet scalar octet count for following hashed subpacket data.
+- A scalar octet count for following hashed subpacket data.
+  For a V4 signature, this is a two-octet field.
+  For a V5 signature, this is a four-octet field.
   Note that this is the length in octets of all of the hashed subpackets; a pointer incremented by this number will skip over the hashed subpackets.
 
 - Hashed subpacket data set (zero or more subpackets).
 
-- Two-octet scalar octet count for the following unhashed subpacket data.
+- A scalar octet count for the following unhashed subpacket data.
+  For a V4 signature, this is a two-octet field.
+  For a V5 signature, this is a four-octet field.
   Note that this is the length in octets of all of the unhashed subpackets; a pointer incremented by this number will skip over the unhashed subpackets.
 
 - Unhashed subpacket data set (zero or more subpackets).
@@ -1081,6 +1086,8 @@ The high 16 bits (first two octets) of the hash are included in the Signature pa
 There are two fields consisting of Signature subpackets.
 The first field is hashed with the rest of the signature data, while the second is unhashed.
 The second set of subpackets is not cryptographically protected by the signature and should include only advisory information.
+
+The differences between a V4 and V5 signature are very small: a V5 signature merely increases the width of the size indicators for the signed data, making it more capable when signing large keys or messages.
 
 The algorithms for converting the hash function result to a signature are described in {{computing-signatures}}.
 
@@ -1595,13 +1602,15 @@ For binary document signatures (type 0x00), the document data is hashed directly
 For text document signatures (type 0x01), the document is canonicalized by converting line endings to \<CR>\<LF>, and the resulting data is hashed.
 
 When a V4 signature is made over a key, the hash data starts with the octet 0x99, followed by a two-octet length of the key, and then body of the key packet.
-A subkey binding signature (type 0x18) or primary key binding signature (type 0x19) then hashes the subkey using the same format as the main key (also using 0x99 as the first octet).
+When a V5 signature is made over a key, the hash data starts with the octet 0x9a, followed by a four-octet length of the key, and then body of the key packet.
+
+A subkey binding signature (type 0x18) or primary key binding signature (type 0x19) then hashes the subkey using the same format as the main key (also using 0x99 or 0x9a as the first octet).
 Primary key revocation signatures (type 0x20) hash only the key being revoked.
 Subkey revocation signature (type 0x28) hash first the primary key and then the subkey being revoked.
 
 A certification signature (type 0x10 through 0x13) hashes the User ID being bound to the key into the hash context after the above data.
 A V3 certification hashes the contents of the User ID or attribute packet packet, without any header.
-A V4 certification hashes the constant 0xB4 for User ID certifications or the constant 0xD1 for User Attribute certifications, followed by a four-octet number giving the length of the User ID or User Attribute data, and then the User ID or User Attribute data.
+A V4 or V5 certification hashes the constant 0xB4 for User ID certifications or the constant 0xD1 for User Attribute certifications, followed by a four-octet number giving the length of the User ID or User Attribute data, and then the User ID or User Attribute data.
 
 When a signature is made over a Signature packet (type 0x50, "Third-Party Confirmation signature"), the hash data starts with the octet 0x88, followed by the four-octet length of the signature, and then the body of the Signature packet.
 (Note that this is an old-style packet header for a Signature packet with the length-of-length field set to zero.) The unhashed subpacket data of the Signature packet being hashed is not included in the hash, and the unhashed subpacket data length value is set to zero.
@@ -1612,10 +1621,10 @@ This trailer depends on the version of the signature.
 - A V3 signature hashes five octets of the packet body, starting from the signature type field.
   This data is the signature type, followed by the four-octet signature time.
 
-- A V4 signature hashes the packet body starting from its first field, the version number, through the end of the hashed subpacket data and a final extra trailer.
+- A V4 or V5 signature hashes the packet body starting from its first field, the version number, through the end of the hashed subpacket data and a final extra trailer.
   Thus, the hashed fields are:
 
-  - the signature version (0x04),
+  - An octet indicating the signature version (0x04 for V4, 0x05 for V5),
 
   - the signature type,
 
@@ -1627,11 +1636,14 @@ This trailer depends on the version of the signature.
 
   - the hashed subpacket body,
 
-  - the two octets 0x04 and 0xFF,
+  - A second version octet (0x04 for V4, 0x05 for V5)
+  
+  - A single octet 0xFF,
 
-  - a four-octet big-endian number that is the length of the hashed data from the Signature packet stopping right before the 0x04, 0xff octets.
+  - A number representing the length of the hashed data from the Signature packet stopping right before the second version octet.
+    For a V4 signature, this is a four-octet big-endian number, considered to be an unsigned integer modulo 2\*\*32.
+    For a V5 signature, this is an eight-octet big-endian number, considered to be an unsigned integer modulo 2\*\*64.
 
-    The four-octet big-endian number is considered to be an unsigned integer modulo 2\*\*32.
 
 After all this has been hashed in a single hash context, the resulting hash field is used in the signature algorithm and placed at the end of the Signature packet.
 
