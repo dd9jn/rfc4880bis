@@ -805,7 +805,7 @@ Then a two-octet checksum is appended, which is equal to the sum of all precedin
 
 V5 Public-Key Encrypted Session Key packets MUST NOT be used to encrypt or decrypt Symmetrically Encrypted Data packets or Symmetrically Encrypted Integrity Protected Data packets.
 
-When using a V5 Public-Key Encrypted Session Key packet to decrypt an AEAD Encrypted Data packet, the implementation MUST check that the decrypted packet tag and packet version match the packet tag and packet version of the AEAD Encrypted Data packet.
+When using a V5 Public-Key Encrypted Session Key packet to decrypt an AEAD Encrypted Data packet, the implementation MUST check that the decrypted packet tag and packet version match the packet tag and packet version of the AEAD Encrypted Data packet, and MUST NOT use the V5 Public-Key Encrypted Session Key packet to decrypt the AEAD Encrypted Data packet if they do not match.
 
 ### Algorithm Specific Fields for RSA encryption {#pkesk-rsa}
 
@@ -1733,7 +1733,7 @@ The same associated data given to the S2K mechanism above is passed as additiona
 
 V5 Symmetric-Key Encrypted Session Key packets MUST NOT be used to encrypt or decrypt Symmetrically Encrypted Data packets or Symmetrically Encrypted Integrity Protected Data packets.
 
-When using a V5 Symmetric-Key Encrypted Session Key packet to decrypt an AEAD Encrypted Data packet, the implementation MUST check that the decrypted packet tag and packet version match the packet tag and packet version of the AEAD Encrypted Data packet.
+When using a V5 Symmetric-Key Encrypted Session Key packet to decrypt an AEAD Encrypted Data packet, the implementation MUST check that the decrypted packet tag and packet version match the packet tag and packet version of the AEAD Encrypted Data packet, and MUST NOT use the V5 Symmetric-Key Encrypted Session Key packet to decrypt the AEAD Encrypted Data packet if they do not match.
 
 ## One-Pass Signature Packets (Tag 4)
 
