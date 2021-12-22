@@ -70,6 +70,15 @@ informative:
       -
         name: Robert Zuccherato
     target: http://eprint.iacr.org/2005/033
+  PAX:
+    title: "IEEE Standard for Information Technology--Portable Operating System Interface (POSIX(R)) Base Specifications, Issue 7: pax - portable archive interchange"
+    author: 
+      org: The Open Group
+    seriesinfo:
+      IEEE Standard: 1003.1-2017
+      DOI: 10.1109/IEEESTD.2018.8277153
+    target: https://pubs.opengroup.org/onlinepubs/9699919799/utilities/pax.html
+    date: 2018
   REGEX:
     title: Mastering Regular Expressions
     author:
@@ -2131,6 +2140,14 @@ The body of this packet consists of:
   These should be converted to native line endings by the receiving software.
 
 Note that OpenPGP signatures do not include the formatting octet, the file name, and the date field of the literal packet in a signature hash and thus those fields are not protected against tampering in a signed document.
+A receiving implementation MUST NOT treat those fields as though they were cryptographically secured by the surrounding signature either when representing them to the user or acting on them.
+
+Due to their inherent malleability, an implementation that generates a literal data packet SHOULD avoid storing any significant data in these fields.
+If the producing implementation will follow the literal data packet with a signature packet of type 0x01 (see {{signature-types}}), it SHOULD set the format octet to `u`.
+Otherwise, it SHOULD set the format octet to `b`.
+It SHOULD set the filename to a single zero octet, and the timestamp to four octets of all-zeros.
+
+An application that wishes to include such filesystem metadata within a signature is advised to sign an encapsulated archive (e.g. {{PAX}}).
 
 An implementation that generates a Literal Data packet MUST use the new format for packet framing (see {{new-packet-format}}).
 It MUST NOT generate a Literal Data packet with old format ({{old-packet-format}})
