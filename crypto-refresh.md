@@ -4107,15 +4107,6 @@ Decrypted content encryption key:
 
       86 f1 ef b8 69 52 32 9f 24 ac d3 bf d0 e5 34 6d
 
-### Initial Content Encryption Key
-
-This key would typically be extracted from an SKESK or PKESK.
-In this example, it is extracted from an SKESK packet, as described above.
-
-Content Encryption Key:
-
-      86 f1 ef b8 69 52 32 9f 24 ac d3 bf d0 e5 34 6d
-
 ### Sample AEAD encrypted data packet
 
 Packet header:
@@ -4247,15 +4238,6 @@ Nonce:
       99 e3 26 e5 40 0a 90 93 6c ef b4 e8 eb a0 8c
 
 Decrypted content encryption key:
-
-      d1 f0 1b a3 0e 13 0a a7 d2 58 2c 16 e0 50 ae 44
-
-### Initial Content Encryption Key
-
-This key would typically be extracted from an SKESK or PKESK.
-In this example, it is extracted from an SKESK packet, as described above.
-
-Content Encryption Key:
 
       d1 f0 1b a3 0e 13 0a a7 d2 58 2c 16 e0 50 ae 44
 
