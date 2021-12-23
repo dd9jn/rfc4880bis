@@ -2154,7 +2154,7 @@ A receiving implementation MUST NOT treat those fields as though they were crypt
 Due to their inherent malleability, an implementation that generates a literal data packet SHOULD avoid storing any significant data in these fields.
 If the producing implementation will follow the literal data packet with a signature packet of type 0x01 (see {{signature-types}}), it SHOULD set the format octet to `u`.
 Otherwise, it SHOULD set the format octet to `b`.
-It SHOULD set the filename to a single zero octet, and the timestamp to four octets of all-zeros.
+It SHOULD set the filename to the empty string (encoded as a single zero octet), and the timestamp to zero (encoded as four zero octets).
 
 An application that wishes to include such filesystem metadata within a signature is advised to sign an encapsulated archive (e.g. {{PAX}}).
 
