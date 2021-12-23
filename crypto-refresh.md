@@ -2128,8 +2128,12 @@ The body of this packet consists of:
 - A one-octet field that describes how the data is formatted.
 
   If it is a `b` (0x62), then the Literal packet contains binary data.
-  If it is a `t` (0x74), then it contains text data, and thus may need line ends converted to local form, or other text-mode changes.
-  The tag `u` (0x75) means the same as `t`, but also indicates that implementation believes that the literal data contains UTF-8 text.
+  If it is a `u` (0x75), then the Literal packet contains UTF-8-encoded text data, and thus may need line ends converted to local form, or other text mode changes.
+
+  Older versions of OpenPGP used `t` (0x74) to indicate textual data, but did not specify the character encoding.
+  Implementations SHOULD NOT emit this value.
+  An implementation that receives a literal data packet with this value in the format field SHOULD interpret the packet data as UTF-8 encoded text, unless reliable (not attacker-controlled) context indicates a specific alternate text encoding.
+  This mode is deprecated due to its ambiguity.
 
   Early versions of PGP also defined a value of `l` as a 'local' mode for machine-local conversions.
   {{RFC1991}} incorrectly stated this local mode flag as `1` (ASCII numeral one).
@@ -2152,7 +2156,7 @@ Note that OpenPGP signatures do not include the formatting octet, the file name,
 A receiving implementation MUST NOT treat those fields as though they were cryptographically secured by the surrounding signature either when representing them to the user or acting on them.
 
 Due to their inherent malleability, an implementation that generates a literal data packet SHOULD avoid storing any significant data in these fields.
-If the producing implementation will follow the literal data packet with a signature packet of type 0x01 (see {{signature-types}}), it SHOULD set the format octet to `u`.
+If the implementation is certain that the data is textual and is encoded with UTF-8 (for example, if it will follow this literal data packet with a signature packet of type 0x01 (see {{signature-types}}), it MAY set the format octet to `u`.
 Otherwise, it SHOULD set the format octet to `b`.
 It SHOULD set the filename to the empty string (encoded as a single zero octet), and the timestamp to zero (encoded as four zero octets).
 
