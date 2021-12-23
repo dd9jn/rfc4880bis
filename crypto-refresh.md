@@ -4002,7 +4002,7 @@ The entire signature packet is thus:
 
 ## Sample AEAD-EAX encryption and decryption
 
-Encryption is performed with the string `Hello, world!` and password `password`, using AES-128 with AEAD-EAX encryption.
+This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-EAX encryption.
 
 ### Sample Parameters
 
@@ -4145,7 +4145,7 @@ AEAD encrypted data packet:
 
 ## Sample AEAD-OCB encryption and decryption
 
-Encryption is performed with the string `Hello, world!` and password `password`, using AES-128 with AEAD-OCB encryption.
+This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-OCB encryption.
 
 ### Sample Parameters
 
