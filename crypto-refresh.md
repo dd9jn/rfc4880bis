@@ -779,10 +779,15 @@ The recipient of the message finds a session key that is encrypted to their publ
 The body of this packet consists of:
 
 - A one-octet number giving the version number of the packet type.
-  The currently defined value for packet version is 3.
+  The currently defined versions are 3 and 5.
 
-- An eight-octet number that gives the Key ID of the public key to which the session key is encrypted.
+- Only for V3 packets, an eight-octet number that gives the Key ID of the public key to which the session key is encrypted.
   If the session key is encrypted to a subkey, then the Key ID of this subkey is used here instead of the Key ID of the primary key.
+  The Key ID may also be all zeros, for an "anonymous recipient" (see {{pkesk-notes}}).
+
+- Only for V5 packets, a one octet key version number and N octets of the fingerprint of the public key or subkey to which the session key is encrypted.
+  Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 5 key N is 32.
+  The key version number may also be zero, and the fingerprint omitted (i.e. the length N is zero in this case), for an "anonymous recipient" (see {{pkesk-notes}}).
 
 - A one-octet number giving the public-key algorithm used.
 
@@ -805,7 +810,7 @@ The body of this packet consists of:
 
 - A one-octet size, followed by a symmetric key encoded using the method described in {{ec-dh-algorithm-ecdh}}.
 
-### Notes on PKESK
+### Notes on PKESK {#pkesk-notes}
 
 The value "m" in the above formulas is derived from the session key as follows.
 First, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container.
@@ -815,7 +820,7 @@ See {{pkcs-encoding}} in this document for notes on OpenPGP's use of PKCS#1.
 
 Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
 
-An implementation MAY accept or use a Key ID of zero as a "wild card" or "speculative" Key ID.
+An implementation MAY accept or use a Key ID of all zeros, or a key version of zero and no key fingerprint, to hide the intended decryption key.
 In this case, the receiving implementation would try all available private keys, checking for a valid decrypted session key.
 This format helps reduce traffic analysis of messages.
 
