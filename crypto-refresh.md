@@ -4064,7 +4064,7 @@ Salt:
 
 Packet header:
 
-      c3 3e
+      c3 42
 
 Version, algorithms, S2K fields:
 
@@ -4076,11 +4076,12 @@ AEAD IV:
 
 AEAD encrypted content encryption key:
 
-      9d ee 19 d0 7c 34 46 c4 31 2a 34 ae 19 67 a2 fb
+      f4 0c 3e 44 57 da 7d d6 59 32 bc f9 f5 d1 74 74
+      32 1a ae 65
 
 Authentication tag:
 
-      7e 92 8e a5 b4 fa 80 12 bd 45 6d 17 38 c6 3c 36
+      d0 88 de 31 4e 1e 1e 54 21 ae f1 33 00 2d 83 5f
 
 ### Starting AEAD-EAX decryption of the content encryption key
 
@@ -4096,14 +4097,17 @@ Nonce:
 
       bc 66 9e 34 e5 00 dc ae dc 5b 32 aa 2d ab 02 35
 
-Decrypted content encryption key:
+Decrypted AEAD packet tag and version, symmetric and AEAD algorithm, and content encryption key:
 
-      86 f1 ef b8 69 52 32 9f 24 ac d3 bf d0 e5 34 6d
+      d4 01 07 01 86 f1 ef b8 69 52 32 9f 24 ac d3 bf
+      d0 e5 34 6d
 
-### Initial Content Encryption Key
+### Algorithm Identifiers and Content Encryption Key
 
 This key would typically be extracted from an SKESK or PKESK.
-In this example, it is extracted from an SKESK packet, as described above.
+In this example, it is extracted from the SKESK packet above.
+The decrypted SKESK or PKESK also contains the symmetric algorithm and AEAD algorithm to use, in this case AES-128 (7) and EAX (1).
+Note that the packet tag and version must also be checked against the AEAD packet, i.e. this session key may not be used with other (non-AEAD) encrypted data packets or AEAD packets with a version other than 1.
 
 Content Encryption Key:
 
@@ -4113,11 +4117,11 @@ Content Encryption Key:
 
 Packet header:
 
-      d4 4a
+      d4 48
 
-Version, AES-128, EAX, Chunk bits (14):
+Version, Chunk bits (14):
 
-      01 07 01 0e
+      01 0e
 
 IV:
 
@@ -4172,18 +4176,19 @@ Nonce:
 
 Symmetric-key encrypted session key packet (v5):
 
-       c3 3e 05 07 01 03 08 cd  5a 9f 70 fb e0 bc 65 90
-       bc 66 9e 34 e5 00 dc ae  dc 5b 32 aa 2d ab 02 35
-       9d ee 19 d0 7c 34 46 c4  31 2a 34 ae 19 67 a2 fb
-       7e 92 8e a5 b4 fa 80 12  bd 45 6d 17 38 c6 3c 36
+      c3 42 05 07 01 03 08 cd  5a 9f 70 fb e0 bc 65 90
+      bc 66 9e 34 e5 00 dc ae  dc 5b 32 aa 2d ab 02 35
+      f4 0c 3e 44 57 da 7d d6  59 32 bc f9 f5 d1 74 74
+      32 1a ae 65 d0 88 de 31  4e 1e 1e 54 21 ae f1 33
+      00 2d 83 5f
 
 AEAD encrypted data packet:
 
-       d4 4a 01 07 01 0e b7 32  37 9f 73 c4 92 8d e2 5f
-       ac fe 65 17 ec 10 5d c1  1a 81 dc 0c b8 a2 f6 f3
-       d9 00 16 38 4a 56 fc 82  1a e1 1a e8 db cb 49 86
-       26 55 de a8 8d 06 a8 14  86 80 1b 0f f3 87 bd 2e
-       ab 01 3d e1 25 95 86 90  6e ab 24 76
+      d4 48 01 0e b7 32 37 9f  73 c4 92 8d e2 5f ac fe
+      65 17 ec 10 5d c1 1a 81  dc 0c b8 a2 f6 f3 d9 00
+      16 38 4a 56 fc 82 1a e1  1a e8 db cb 49 86 26 55
+      de a8 8d 06 a8 14 86 80  1b 0f f3 87 bd 2e ab 01
+      3d e1 25 95 86 90 6e ab  24 76
 
 ## Sample AEAD-OCB encryption and decryption
 
@@ -4207,7 +4212,7 @@ Salt:
 
 Packet header:
 
-      c3 3d
+      c3 41
 
 Version, algorithms, S2K fields:
 
@@ -4219,11 +4224,12 @@ AEAD IV:
 
 AEAD encrypted content encryption key:
 
-      67 73 71 6d 1f 27 14 54 0a  38 fc ac 52 99 49 da
+      d1 cc e0 66 99 96 a5 29 31 f6 41 77 f5 65 3a 13
+      62 d7 a1 42
 
 Authentication tag:
 
-      c5 29 d3 de 31 e1 5b 4a eb  72 9e 33 00 33 db ed
+      90 5d 3d 24 2a fc 07 94 86 3e d4 1e 6f 2d 28 f1
 
 ### Starting AEAD-OCB decryption of the content encryption key
 
@@ -4239,14 +4245,17 @@ Nonce:
 
       99 e3 26 e5 40 0a 90 93 6c ef b4 e8 eb a0 8c
 
-Decrypted content encryption key:
+Decrypted AEAD packet tag and version, symmetric and AEAD algorithm, and content encryption key:
 
-      d1 f0 1b a3 0e 13 0a a7 d2 58 2c 16 e0 50 ae 44
+      d4 01 07 02 d1 f0 1b a3 0e 13 0a a7 d2 58 2c 16
+      e0 50 ae 44
 
-### Initial Content Encryption Key
+### Algorithm Identifiers and Content Encryption Key
 
 This key would typically be extracted from an SKESK or PKESK.
-In this example, it is extracted from an SKESK packet, as described above.
+In this example, it is extracted from the SKESK packet above.
+The decrypted SKESK or PKESK also contains the symmetric algorithm and AEAD algorithm to use, in this case AES-128 (7) and OCB (2).
+Note that the packet tag and version must also be checked against the AEAD packet, i.e. this session key may not be used with other (non-AEAD) encrypted data packets or AEAD packets with a version other than 1.
 
 Content Encryption Key:
 
@@ -4256,11 +4265,11 @@ Content Encryption Key:
 
 Packet header:
 
-      d4 49
+      d4 47
 
-Version, AES-128, OCB, Chunk bits (14):
+Version, Chunk bits (14):
 
-      01 07 02 0e
+      01 0e
 
 IV:
 
@@ -4315,18 +4324,19 @@ Nonce:
 
 Symmetric-key encrypted session key packet (v5):
 
-      c3 3d 05 07 02 03 08 9f  0b 7d a3 e5 ea 64 77 90
-      99 e3 26 e5 40 0a 90 93  6c ef b4 e8 eb a0 8c 67
-      73 71 6d 1f 27 14 54 0a  38 fc ac 52 99 49 da c5
-      29 d3 de 31 e1 5b 4a eb  72 9e 33 00 33 db ed
+      c3 41 05 07 02 03 08 9f  0b 7d a3 e5 ea 64 77 90
+      99 e3 26 e5 40 0a 90 93  6c ef b4 e8 eb a0 8c d1
+      cc e0 66 99 96 a5 29 31  f6 41 77 f5 65 3a 13 62
+      d7 a1 42 90 5d 3d 24 2a  fc 07 94 86 3e d4 1e 6f
+      2d 28 f1
 
 AEAD encrypted data packet:
 
-      d4 49 01 07 02 0e 5e d2  bc 1e 47 0a be 8f 1d 64
-      4c 7a 6c 8a 56 7b 0f 77  01 19 66 11 a1 54 ba 9c
-      25 74 cd 05 62 84 a8 ef  68 03 5c 62 3d 93 cc 70
-      8a 43 21 1b b6 ea f2 b2  7f 7c 18 d5 71 bc d8 3b
-      20 ad d3 a0 8b 73 af 15  b9 a0 98
+      d4 47 01 0e 5e d2 bc 1e  47 0a be 8f 1d 64 4c 7a
+      6c 8a 56 7b 0f 77 01 19  66 11 a1 54 ba 9c 25 74
+      cd 05 62 84 a8 ef 68 03  5c 62 3d 93 cc 70 8a 43
+      21 1b b6 ea f2 b2 7f 7c  18 d5 71 bc d8 3b 20 ad
+      d3 a0 8b 73 af 15 b9 a0  98
 
 # Acknowledgements
 
