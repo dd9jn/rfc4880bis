@@ -4309,6 +4309,51 @@ AEAD encrypted data packet:
       8a 43 21 1b b6 ea f2 b2  7f 7c 18 d5 71 bc d8 3b
       20 ad d3 a0 8b 73 af 15  b9 a0 98
 
+## Sample message encrypted using Argon2
+
+These messages are the literal data "encrypted message\n" encrypted
+using Argon2 and the passphrase "password", using different session
+key sizes.  In all cases, the Argon2 parameters are t = 1, p = 4, and
+m = 21.
+
+AES-128:
+
+      -----BEGIN PGP MESSAGE-----
+      Comment: Encrypted using AES with 128-bit key
+      Comment: Session key: 6A31044C4E027F3A9B551BF191B1457A
+
+      wycEBwQQyZrCdifmIcpJ9+q6npR5AQQVeEeX2qWJhwAtZR+0T19haubSQwGQjAsb
+      L/FBKmSsV/JGKJ7PmqufH2OH9nXDwYnHIyqvCoe9pKEfgYjlmeKk0EAfI2wYrqsh
+      M+yMV6ny9wvKbTLw3ZA=
+      =+VaU
+      -----END PGP MESSAGE-----
+
+AES-192:
+
+      -----BEGIN PGP MESSAGE-----
+      Comment: Encrypted using AES with 192-bit key
+      Comment: Session key: D8B779DB1CFE7C1DDE0A857F8FDEA87E7EE1EAE26B74935B
+
+      wy8ECAQgiQ+RLsKiGbA1q6WG9BAPAQQVTcDYeLL3JmsGuQC6YK+nEt3iF2GKw5Pa
+      ndJDAdR7L58t8Zw1yR6GKle1JJDzgtLhHkZAi3+gZverIUq+FM5WuqqSR196proo
+      uiqZFDIuN+yBp+ewRVWUPedtXpprHQ==
+      =AcmU
+      -----END PGP MESSAGE-----
+
+AES-256:
+
+      -----BEGIN PGP MESSAGE-----
+      Comment: Encrypted using AES with 256-bit key
+      Comment: Session key: 1E9F8D372A27111B42289B7C61B1EFD9F1B8E20E0CC5FFDAE0469D775A74DD33
+
+      wzcECQTa/yN2yGoAcJ34nXCrYFu2AQQVFlEYfgxLS4lpvBg1k0TyJA3Q9zKGsgPX
+      pCDRghQl/6u60kMBVY4+R3MOnDpCe7TmgOJ68TWFal3w+3T/fSVRGFp36AFn//mB
+      luKQleBJqZUXrGFiVf/sGbLz3SB/SImNjtImlR9x
+      =wOBk
+      -----END PGP MESSAGE-----
+
+
+
 # Acknowledgements
 
 This memo also draws on much previous work from a number of other authors, including: Derek Atkins, Charles Breed, Dave Del Torto, Marc Dyksterhouse, Gail Haspert, Gene Hoffman, Paul Hoffman, Ben Laurie, Raph Levien, Colin Plumb, Will Price, David Shaw, William Stallings, Mark Weaver, and Philip R. Zimmermann.
