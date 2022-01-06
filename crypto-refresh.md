@@ -1263,8 +1263,7 @@ This is only found on a self-signature.
 Compression algorithm numbers that indicate which algorithms the key holder prefers to use.
 Like the preferred symmetric algorithms, the list is ordered.
 Algorithm numbers are in {{compression-algos}}.
-If this subpacket is not included, ZIP is preferred.
-A zero denotes that uncompressed data is preferred; the key holder's software might have no compression software in that implementation.
+A zero, or the absence of this subpacket, denotes that uncompressed data is preferred; the key holder's software might have no compression software in that implementation.
 This is only found on a self-signature.
 
 #### Signature Expiration Time
@@ -2756,12 +2755,15 @@ ID | Algorithm | Public Key Format | Secret Key Format | Signature Format | PKES
  24 | Reserved (AEDSA)
 100 to 110 | Private/Experimental algorithm
 
-Implementations MUST implement DSA for signatures, and Elgamal for encryption.
-Implementations SHOULD implement RSA keys (1).
+Implementations MUST implement EdDSA (19) for signatures, and ECDH (18) for encryption.
+Implementations SHOULD implement RSA (1) for signatures and encryption.
+
 RSA Encrypt-Only (2) and RSA Sign-Only (3) are deprecated and SHOULD NOT be generated, but may be interpreted.
 See {{rsa-notes}}.
 See {{reserved-notes}} for notes on Elgamal Encrypt or Sign (20), and X9.42 (21).
 Implementations MAY implement any other algorithm.
+
+Note that an implementation conforming to the previous version of this standard ({{RFC4880}}) have only DSA (17) and Elgamal (16) as its MUST-implement algorithms.
 
 A compatible specification of ECDSA is given in {{RFC6090}} as "KT-I Signatures" and in {{SEC1}}; ECDH is defined in {{ec-dh-algorithm-ecdh}} of this document.
 
@@ -2790,6 +2792,9 @@ The truncation removes the two fields of encoded Object Identifier.
 The first omitted field is one octet representing the Object Identifier tag, and the second omitted field is the length of the Object Identifier body.
 For example, the complete ASN.1 DER encoding for the NIST P-256 curve OID is "06 08 2A 86 48 CE 3D 03 01 07", from which the first entry in the table above is constructed by omitting the first two octets.
 Only the truncated sequence of octets is the valid representation of a curve OID.
+
+Implementations MUST implement Ed25519 for use with EdDSA, and Curve25519 for use with ECDH.
+Implementations SHOULD implement Ed448 for use with EdDSA, and X448 for use with ECDH.
 
 ### Curve-Specific Wire Formats {#curve-specific-formats}
 
@@ -2833,8 +2838,10 @@ ID | Algorithm
 100 to 110 | Private/Experimental algorithm
 253, 254 and 255 | Reserved to avoid collision with Secret Key Encryption (see {{secret-key-encryption}} and {{secret-key-packet-formats}})
 
-Implementations MUST implement TripleDES.
-Implementations SHOULD implement AES-128 and CAST5.
+Implementations MUST implement AES-128.
+Implementations SHOULD implement AES-256.
+Implementations MUST NOT encrypt data with IDEA, TripleDES, or CAST5.
+Implementations MAY decrypt data that uses IDEA, TripleDES, or CAST5 for the sake of reading older messages or new messages from legacy clients.
 Implementations MAY implement any other algorithm.
 
 ## Compression Algorithms {#compression-algos}
@@ -2849,7 +2856,8 @@ ID | Algorithm
 100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement uncompressed data.
-Implementations SHOULD implement ZIP.
+Implementations SHOULD implement ZLIB.
+For interoperability reasons implementations SHOULD be able to decompress using ZIP.
 Implementations MAY implement any other algorithm.
 
 ## Hash Algorithms {#hash-algos}
@@ -2873,9 +2881,14 @@ ID | Algorithm | Text Name
  14 | SHA3-512 {{FIPS202}} | "SHA3-512"
 100 to 110 | Private/Experimental algorithm
 
-Implementations MUST implement SHA-1.
+Implementations MUST implement SHA2-256.
+Implementations SHOULD implement SHA2-384 and SHA2-512.
 Implementations MAY implement other algorithms.
-MD5 is deprecated.
+Implementations SHOULD NOT create messages which require the use of SHA-1 with the exception of computing version 4 key fingerprints and for purposes of the MDC packet.
+Implementations MUST NOT generate signatures with MD5, SHA-1, or RIPE-MD/160.
+Implementations MUST NOT use MD5, SHA-1, or RIPE-MD/160 as a hash function in an ECDH KDF.
+Implementations MUST NOT validate any recent signature that depends on MD5, SHA-1, or RIPE-MD/160.
+Implementations SHOULD NOT validate any old signature that depends on MD5, SHA-1, or RIPE-MD/160 unless the signature's creation date predates known weakness of the algorithm used, and the implementation is confident that the message has been in the secure custody of the user the whole time.
 
 ## AEAD Algorithms
 
@@ -3636,19 +3649,25 @@ Since it is found on a self-signature, it is possible that a keyholder may have 
 For example, Alice may have AES-128 only specified for "alice@work.com" but Camellia-256, Twofish, and AES-128 specified for "alice@home.org".
 Note that it is also possible for preferences to be in a subkey's binding signature.
 
-Since TripleDES is the MUST-implement algorithm, if it is not explicitly in the list, it is tacitly at the end.
+Since AES-128 is the MUST-implement algorithm, if it is not explicitly in the list, it is tacitly at the end.
 However, it is good form to place it there explicitly.
-Note also that if an implementation does not implement the preference, then it is implicitly a TripleDES-only implementation.
+Note also that if an implementation does not implement the preference, then it is implicitly an AES-128-only implementation.
+Note further that implementations conforming to previous versions of this standard {{RFC4880}} have TripleDES as its only MUST-implement algorithm.
 
 An implementation MUST NOT use a symmetric algorithm that is not in the recipient's preference list.
 When encrypting to more than one recipient, the implementation finds a suitable algorithm by taking the intersection of the preferences of the recipients.
-Note that the MUST-implement algorithm, TripleDES, ensures that the intersection is not null.
+Note that the MUST-implement algorithm, AES-128, ensures that the intersection is not null.
 The implementation may use any mechanism to pick an algorithm in the intersection.
 
 If an implementation can decrypt a message that a keyholder doesn't have in their preferences, the implementation SHOULD decrypt the message anyway, but MUST warn the keyholder that the protocol has been violated.
 For example, suppose that Alice, above, has software that implements all algorithms in this specification.
 Nonetheless, she prefers subsets for work or home.
 If she is sent a message encrypted with IDEA, which is not in her preferences, the software warns her that someone sent her an IDEA-encrypted message, but it would ideally decrypt it anyway.
+
+### Plaintext
+
+Algorithm 0, "plaintext", may only be used to denote secret keys that are stored in the clear.
+Implementations MUST NOT use plaintext in encrypted data packets; they must use Literal Data packets to encode unencrypted literal data.
 
 ## Other Algorithm Preferences
 
@@ -3657,18 +3676,15 @@ There are two interesting cases that other comments need to be made about, thoug
 
 ### Compression Preferences
 
-Compression has been an integral part of PGP since its first days.
-OpenPGP and all previous versions of PGP have offered compression.
-In this specification, the default is for messages to be compressed, although an implementation is not required to do so.
-Consequently, the compression preference gives a way for a keyholder to request that messages not be compressed, presumably because they are using a minimal implementation that does not include compression.
-Additionally, this gives a keyholder a way to state that it can support alternate algorithms.
-
 Like the algorithm preferences, an implementation MUST NOT use an algorithm that is not in the preference vector.
-If the preferences are not present, then they are assumed to be \[ZIP(1), Uncompressed(0)\].
+If Uncompressed (0) is not explicitly in the list, it is tacitly at the end, i.e. uncompressed messages may always be sent.
 
-Additionally, an implementation MUST implement this preference to the degree of recognizing when to send an uncompressed message.
-A robust implementation would satisfy this requirement by looking at the recipient's preference and acting accordingly.
-A minimal implementation can satisfy this requirement by never generating a compressed message, since all implementations can handle messages that have not been compressed.
+Note that earlier implementations may assume that the absence of compression preferences means that \[ZIP(1), Uncompressed(0)\] are preferred, and default to ZIP compression. Therefore, an implementation that prefers uncompressed data SHOULD explicitly state this in the preferred compression algorithms.
+
+#### Uncompressed
+
+Algorithm 0, "uncompressed", may only be used to denote a preference for uncompressed data.
+Implementations MUST NOT use uncompressed in Compressed Data packets; they must use Literal Data packets to encode uncompressed literal data.
 
 ### Hash Algorithm Preferences
 
@@ -3678,13 +3694,8 @@ This preference, though, allows a protocol based upon digital signatures ease in
 Thus, if Alice is authenticating herself to Bob with a signature, it makes sense for her to use a hash algorithm that Bob's software uses.
 This preference allows Bob to state in his key which algorithms Alice may use.
 
-Since SHA1 is the MUST-implement hash algorithm, if it is not explicitly in the list, it is tacitly at the end.
+Since SHA2-256 is the MUST-implement hash algorithm, if it is not explicitly in the list, it is tacitly at the end.
 However, it is good form to place it there explicitly.
-
-## Plaintext
-
-Algorithm 0, "plaintext", may only be used to denote a secret key that is stored in the clear.
-An implementation MUST NOT use plaintext in any Encrypted Data packet (SEIPD {{seipd}}, AEAD {{aead}}, or SED {{sed}}); it must use a Literal Data packet to encode unencrypted or literal data.
 
 ## RSA {#rsa-notes}
 
