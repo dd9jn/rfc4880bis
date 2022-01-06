@@ -4002,7 +4002,7 @@ The entire signature packet is thus:
 
 ## Sample AEAD-EAX encryption and decryption
 
-Encryption is performed with the string `Hello, world!`, using AES-128 with AEAD-EAX encryption.
+This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-EAX encryption.
 
 ### Sample Parameters
 
@@ -4032,7 +4032,7 @@ AEAD IV:
 
       bc 66 9e 34 e5 00 dc ae dc 5b 32 aa 2d ab 02 35
 
-AEAD encrypted CEK:
+AEAD encrypted content encryption key:
 
       9d ee 19 d0 7c 34 46 c4 31 2a 34 ae 19 67 a2 fb
 
@@ -4040,7 +4040,7 @@ Authentication tag:
 
       7e 92 8e a5 b4 fa 80 12 bd 45 6d 17 38 c6 3c 36
 
-### Starting AEAD-EAX decryption of CEK
+### Starting AEAD-EAX decryption of the content encryption key
 
 The derived key is:
 
@@ -4054,7 +4054,7 @@ Nonce:
 
       bc 66 9e 34 e5 00 dc ae dc 5b 32 aa 2d ab 02 35
 
-Decrypted CEK:
+Decrypted content encryption key:
 
       86 f1 ef b8 69 52 32 9f 24 ac d3 bf d0 e5 34 6d
 
@@ -4063,7 +4063,7 @@ Decrypted CEK:
 This key would typically be extracted from an SKESK or PKESK.
 In this example, it is extracted from an SKESK packet, as described above.
 
-CEK:
+Content Encryption Key:
 
       86 f1 ef b8 69 52 32 9f 24 ac d3 bf d0 e5 34 6d
 
@@ -4096,7 +4096,7 @@ Final (zero-size chunk #1) authentication tag:
 
 ### Decryption of data
 
-Starting AEAD-EAX decryption of data, using the CEK.
+Starting AEAD-EAX decryption of data, using the content encryption key.
 
 Chunk #0:
 
@@ -4145,7 +4145,7 @@ AEAD encrypted data packet:
 
 ## Sample AEAD-OCB encryption and decryption
 
-Encryption is performed with the string `Hello, world!` using AES-128 with AEAD-OCB encryption.
+This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-OCB encryption.
 
 ### Sample Parameters
 
@@ -4175,7 +4175,7 @@ AEAD IV:
 
       99 e3 26 e5 40 0a 90 93 6c ef b4 e8 eb a0 8c
 
-AEAD encrypted CEK:
+AEAD encrypted content encryption key:
 
       67 73 71 6d 1f 27 14 54 0a  38 fc ac 52 99 49 da
 
@@ -4183,7 +4183,7 @@ Authentication tag:
 
       c5 29 d3 de 31 e1 5b 4a eb  72 9e 33 00 33 db ed
 
-### Starting AEAD-OCB decryption of CEK
+### Starting AEAD-OCB decryption of the content encryption key
 
 The derived key is:
 
@@ -4197,7 +4197,7 @@ Nonce:
 
       99 e3 26 e5 40 0a 90 93 6c ef b4 e8 eb a0 8c
 
-Decrypted CEK:
+Decrypted content encryption key:
 
       d1 f0 1b a3 0e 13 0a a7 d2 58 2c 16 e0 50 ae 44
 
@@ -4206,7 +4206,7 @@ Decrypted CEK:
 This key would typically be extracted from an SKESK or PKESK.
 In this example, it is extracted from an SKESK packet, as described above.
 
-Decrypted CEK:
+Content Encryption Key:
 
       d1 f0 1b a3 0e 13 0a a7 d2 58 2c 16 e0 50 ae 44
 
@@ -4239,7 +4239,7 @@ Final (zero-size chunk #1) authentication tag:
 
 ### Decryption of data
 
-Starting AEAD-OCB decryption of data, using the CEK.
+Starting AEAD-OCB decryption of data, using the content encryption key.
 
 Chunk #0:
 
