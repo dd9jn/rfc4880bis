@@ -3448,9 +3448,12 @@ The KDF parameters are encoded as a concatenation of the following 5 variable-le
 
 - 20 octets representing the UTF-8 encoding of the string `Anonymous Sender    `, which is the octet sequence 41 6E 6F 6E 79 6D 6F 75 73 20 53 65 6E 64 65 72 20 20 20 20;
 
-- 20 octets representing a recipient encryption subkey or a primary key fingerprint identifying the key material that is needed for decryption (for version 5 keys the 20 leftmost octets of the fingerprint are used).
+- A variable-length field containing the fingerprint of the recipient encryption subkey or a primary key fingerprint identifying the key material that is needed for decryption.
+  For version 4 keys, this field is 20 octets.
+  For version 5 keys, this field is 32 octets.
 
-The size of the KDF parameters sequence, defined above, is either 54 for curve P-256, 51 for curves P-384 and P-521, 56 for Curve25519, or 49 for X448.
+The size in octets of the KDF parameters sequence, defined above, for encrypting to a v4 key is either 54 for curve P-256, 51 for curves P-384 and P-521, 56 for Curve25519, or 49 for X448.
+For encrypting to a v5 key, the size of the sequence is either 66 for curve P-256, 63 for curves P-384 and P-521, 68 for Curve25519, or 61 for X448.
 
 The key wrapping method is described in {{RFC3394}}.
 The KDF produces a symmetric key that is used as a key-encryption key (KEK) as specified in {{RFC3394}}.
