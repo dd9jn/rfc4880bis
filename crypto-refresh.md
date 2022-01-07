@@ -1215,6 +1215,8 @@ If the version of that key is greater than 4, this subpacket MUST NOT be include
 
 The validity period of the key.
 This is the number of seconds after the key creation time that the key expires.
+For a direct signature, the key creation time is that of the primary key.
+For a subkey binding signature, the key creation time is that of the subkey.
 If this is not present or has a value of zero, the key never expires.
 This is found only on a self-signature.
 
