@@ -1172,10 +1172,13 @@ Note that a key may have more than one User ID, and thus may have more than one 
 A subpacket may be found either in the hashed or unhashed subpacket sections of a signature.
 If a subpacket is not hashed, then the information in it cannot be considered definitive because it is not part of the signature proper.
 
-#### Notes on Self-Signatures
+#### Notes on Self-Signatures {#self-sigs}
 
 A self-signature is a binding signature made by the key to which the signature refers.
 There are three types of self-signatures, the certification signatures (types 0x10-0x13), the direct-key signature (type 0x1F), and the subkey binding signature (type 0x18).
+A cryptographically-valid self-signature should be accepted from any primary key, regardless of what Key Flags ({{key-flags}}) apply to the primary key.
+In particular, a primary key does not need to have 0x01 set in the first octet of Key Flags order to make a valid self-signature.
+
 For certification self-signatures, each User ID may have a self-signature, and thus different subpackets in those self-signatures.
 For subkey binding signatures, each subkey in fact has a self-signature.
 Subpackets that appear in a certification self-signature apply to the user name, and subpackets that appear in the subkey self-signature apply to the subkey.
@@ -1442,7 +1445,7 @@ First octet:
 {: title="Key flags registry (first octet)"}
 flag | definition
 ---|-------------
-0x01 | This key may be used to certify other keys.
+0x01 | This key may be used to make User ID certifications (signature types 0x10-0x13) over other keys.
 0x02 | This key may be used to sign data.
 0x04 | This key may be used to encrypt communications.
 0x08 | This key may be used to encrypt storage.
@@ -3242,10 +3245,9 @@ A subkey always has at least one subkey binding signature after it that is issue
 These binding signatures may be in either V3 or V4 format, but SHOULD be V4.
 Subkeys that can issue signatures MUST have a V4 binding signature due to the REQUIRED embedded primary key binding signature.
 
-In a V4 key, the primary key MUST be a key capable of certification.
-The subkeys may be keys of any other type.
-There may be other constructions of V4 keys, too.
-For example, there may be a single-key RSA key in V4 format, a DSA primary key with an RSA encryption key, or RSA primary key with an Elgamal subkey, etc.
+In order to create self-signatures (see {{self-sigs}}), the primary key MUST be an algorithm capable of making signatures (that is, not an encryption-only algorithm).
+The subkeys may be keys of any type.
+For example, there may be a single-key RSA key, an EdDSA primary key with an RSA encryption key, or an EdDSA primary key with an ECDH subkey, etc.
 
 It is also possible to have a signature-only subkey.
 This permits a primary key that collects certifications (key signatures), but is used only for certifying subkeys that are used for encryption and signatures.
