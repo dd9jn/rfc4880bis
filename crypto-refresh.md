@@ -3274,7 +3274,7 @@ Note that there is a much smaller, but still non-zero, probability that two diff
 
 Also note that if V3, V4, and V5 format keys share the same RSA key material, they will have different Key IDs as well as different fingerprints.
 
-Finally, the Key ID and fingerprint of a subkey are calculated in the same way as for a primary key, including the 0x99 (V3 and V4 key) or 0x9A (V5 key) as the first octet (even though this is not a valid packet ID for a public subkey).
+Finally, the Key ID and fingerprint of a subkey are calculated in the same way as for a primary key, including the 0x99 (V4 key) or 0x9A (V5 key) as the first octet (even though this is not a valid packet ID for a public subkey).
 
 # Elliptic Curve Cryptography
 
