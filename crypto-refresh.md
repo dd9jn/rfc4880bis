@@ -2497,7 +2497,6 @@ BEGIN PGP MESSAGE, PART X
 
 BEGIN PGP SIGNATURE
 : Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures.
-  Note that PGP 2 uses BEGIN PGP MESSAGE for detached signatures.
 
 Note that all these Armor Header Lines are to consist of a complete line.
 That is to say, there is always a line ending preceding the starting five dashes, and following the ending five dashes.
