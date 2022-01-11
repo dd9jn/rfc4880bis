@@ -583,7 +583,8 @@ This is used to allow S2K specifiers to be used for the passphrase conversion or
 This allows a message to be decrypted either with a passphrase or a public-key pair.
 
 PGP 2 always used IDEA with Simple string-to-key conversion when encrypting a message with a symmetric algorithm.
-This is deprecated, but MAY be used for backward-compatibility.
+See {{sed}}.
+This MUST NOT be generated, but MAY be consumed for backward-compatibility.
 
 # Packet Syntax
 
