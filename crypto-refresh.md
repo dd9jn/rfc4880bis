@@ -2118,10 +2118,7 @@ The last block-size octets of ciphertext are passed through the cipher and the b
 The repetition of 16 bits in the random data prefixed to the message allows the receiver to immediately check whether the session key is incorrect.
 See {{security-considerations}} for hints on the proper use of this "quick check".
 
-## Marker Packet (Obsolete Literal Packet) (Tag 10)
-
-An experimental version of PGP used this packet as the Literal packet, but no released version of PGP generated Literal packets with this tag.
-With PGP 5, this packet has been reassigned and is reserved for use as the Marker packet.
+## Marker Packet (Tag 10)
 
 The body of this packet consists of:
 
