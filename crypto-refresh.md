@@ -327,7 +327,6 @@ The sequence is as follows:
    These "encrypted session keys" start the message.
 
 4. The sending OpenPGP encrypts the message using the session key, which forms the remainder of the message.
-   Note that the message is also usually compressed.
 
 5. The receiving OpenPGP decrypts the session key using the recipient's private key.
 
@@ -361,15 +360,8 @@ The sequence is as follows:
 
 ## Compression
 
-OpenPGP implementations SHOULD compress the message after applying the signature but before encryption.
-
 If an implementation does not implement compression, its authors should be aware that most OpenPGP messages in the world are compressed.
 Thus, it may even be wise for a space-constrained implementation to implement decompression, but not compression.
-
-Furthermore, compression has the added side effect that some types of attacks can be thwarted by the fact that slightly altered, compressed data rarely uncompresses without severe errors.
-This is hardly rigorous, but it is operationally useful.
-These attacks can be rigorously prevented by implementing and using the AEAD as described in {{aead}}.
-See {{ciphertext-malleability}} for more details.
 
 ## Conversion to Radix-64
 
