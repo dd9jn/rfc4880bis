@@ -888,22 +888,22 @@ These meanings are as follows:
 
 0x1F: Signature directly on a key.
 : This signature is calculated directly on a key.
-  It binds the information in the Signature subpackets to the key, and is appropriate to be used for subpackets that provide information about the key, such as the Revocation Key subpacket.
+  It binds the information in the Signature subpackets to the key, and is appropriate to be used for subpackets that provide information about the key, such as the Key Flags subpacket or (deprecated) Revocation Key.
   It is also appropriate for statements that non-self certifiers want to make about the key itself, rather than the binding between a key and a name.
 
 0x20: Key revocation signature.
 : The signature is calculated directly on the key being revoked.
   A revoked key is not to be used.
-  Only revocation signatures by the key being revoked, or by an authorized revocation key, should be considered valid revocation signatures.
+  Only revocation signatures by the key being revoked, or by a (deprecated) Revocation Key, should be considered valid revocation signatures.
 
 0x28: Subkey revocation signature.
 : The signature is calculated directly on the subkey being revoked.
   A revoked subkey is not to be used.
-  Only revocation signatures by the top-level signature key that is bound to this subkey, or by an authorized revocation key, should be considered valid revocation signatures.
+  Only revocation signatures by the top-level signature key that is bound to this subkey, or by a (deprecated) Revocation Key, should be considered valid revocation signatures.
 
 0x30: Certification revocation signature.
 : This signature revokes an earlier User ID certification signature (signature class 0x10 through 0x13) or direct-key signature (0x1F).
-  It should be issued by the same key that issued the revoked signature or an authorized revocation key.
+  It should be issued by the same key that issued the revoked signature or by a (deprecated) Revocation Key.
   The signature is computed over the same data as the certificate that it revokes, and should have a later creation date than that certificate.
 
 0x40: Timestamp signature.
@@ -1129,7 +1129,7 @@ Type | Description
   9 | Key Expiration Time
  10 | Placeholder for backward compatibility
  11 | Preferred Symmetric Algorithms
- 12 | Revocation Key
+ 12 | Revocation Key (deprecated)
 13 to 15 | Reserved
  16 | Issuer
 17 to 19 | Reserved
@@ -1333,13 +1333,19 @@ Only signatures by the target key on User IDs that match the regular expression 
 The regular expression uses the same syntax as the Henry Spencer's "almost public domain" regular expression {{REGEX}} package.
 A description of the syntax is found in {{regular-expressions}}.
 
-#### Revocation Key
+#### Revocation Key {#revocation-key}
 
-(1 octet of class, 1 octet of public-key algorithm ID, 20 or 32 octets of fingerprint)
+(1 octet of class, 1 octet of public-key algorithm ID, 20 octets of V4 fingerprint)
 
-V4 keys use the full 20 octet fingerprint; V5 keys use the full 32 octet fingerprint
+This mechanism is deprecated.
+Applications MUST NOT generate such a subpacket.
 
-Authorizes the specified key to issue revocation signatures for this key.
+An application that wants the functionality of delegating revocation SHOULD instead use an escrowed Revocation Signature.
+See {{escrowed-revocations}} for more details.
+
+The remainder of this section describes how some implementations attempt to interpret this deprecated subpacket.
+
+This packet was intended to authorize the specified key to issue revocation signatures for this key.
 Class octet must have bit 0x80 set.
 If the bit 0x40 is set, then this means that the revocation information is sensitive.
 Other bits are for future expansion to other kinds of authorizations.
@@ -3956,6 +3962,24 @@ In particular:
 Implementers should implement AEAD promptly and encourage its spread.
 
 Users should migrate to AEAD with all due speed.
+
+## Escrowed Revocation Signatures {#escrowed-revocations}
+
+A keyholder Alice may wish to designate a third party to be able to revoke Alice's own key.
+
+The preferred way for her to do this is produce a specific Revocation Signature (signature types 0x20, 0x28, or 0x30) and distribute it securely to her preferred revoker who can hold it in escrow.
+The preferred revoker can then publish the escrowed Revocation Signature at whatever time is deemed appropriate, rather than generating a revocation signature themselves.
+
+There are multiple advantages of using an escrowed Revocation Signature over the deprecated Revocation Key subpacket ({{revocation-key}}):
+
+- The keyholder can constrain what types of revocation the preferred revoker can issue, by only escrowing those specific signatures.
+- There is no public/visible linkage between the keyholder and the preferred revoker.
+- Third parties can verify the revocation without needing to find the key of the preferred revoker.
+- The preferred revoker doesn't even need to have a public OpenPGP key if some other secure transport is possible between them and the keyholder.
+- Implementation support for enforcing a revocation from an authorized Revocation Key subpacket is uneven and unreliable.
+- If the fingerprint mechanism suffers a cryptanalytic flaw, the escrowed Revocation Signature is not affected.
+
+A Revocation Signature may also be split up into shares and distributed among multiple parties, requiring some subset of those parties to collaborate before the escrowed Revocation Signature is recreated.
 
 # Implementation Nits
 
