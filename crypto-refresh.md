@@ -1445,7 +1445,7 @@ First octet:
 {: title="Key flags registry (first octet)"}
 flag | definition
 ---|-------------
-0x01 | This key may be used to make User ID certifications (signature types 0x10-0x13) over other keys.
+0x01 | This key may be used to make User ID certifications (signature types 0x10-0x13) or direct key signatures (signature type 0x1F) over other keys.
 0x02 | This key may be used to sign data.
 0x04 | This key may be used to encrypt communications.
 0x08 | This key may be used to encrypt storage.
