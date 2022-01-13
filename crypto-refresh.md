@@ -3203,6 +3203,8 @@ The essential elements of a transferable public key are as follows:
 
 - After each Subkey packet, one Signature packet, plus optionally a revocation
 
+- An optional Padding packet
+
 The Public-Key packet occurs first.
 Each of the following User ID packets provides the identity of the owner of this public key.
 If there are multiple User ID packets, this corresponds to multiple means of identifying the same unique individual user; for example, a user may have more than one email address, and construct a User ID for each one.
@@ -3228,6 +3230,10 @@ For subkeys that can issue signatures, the subkey binding signature MUST contain
 
 Subkey and Key packets may each be followed by a revocation Signature packet to indicate that the key is revoked.
 Revocation signatures are only accepted if they are issued by the key itself, or by a key that is authorized to issue revocations via a Revocation Key subpacket in a self-signature by the top-level key.
+
+The optional trailing Padding packet is a mechanism to defend against traffic analysis (see {{traffic-analysis}}).
+For maximum interoperability, if the Public-Key packet is a V4 key, the optional Padding packet SHOULD NOT be present unless the recipient has indicated that they are capable of ignoring it successfully.
+An implementation that is capable of receiving a transferable public key with a V5 Public-Key primary key MUST be able to accept (and ignore) the trailing optional Padding packet.
 
 Transferable public-key packet sequences may be concatenated to allow transferring multiple public keys in one operation.
 
