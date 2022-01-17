@@ -2361,7 +2361,7 @@ While this is a bit restrictive, it reduces complexity.
 ## AEAD Encrypted Data Packet (Tag 20) {#aead}
 
 This packet contains data encrypted with an authenticated encryption and additional data (AEAD) construction.
-When it has been decrypted, it will typically contain other packets (often a Literal Data packet or Compressed Data packet).
+When it has been decrypted, it will contain other packets forming an OpenPGP Message (see {{openpgp-messages}}).
 
 The body of this packet starts with:
 
