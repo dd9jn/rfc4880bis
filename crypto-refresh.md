@@ -1547,8 +1547,9 @@ First octet:
 Feature | Definition | Reference
 ---|--------------|--------
 0x01 | Modification Detection (packets 18 and 19) | {{seipd}}, {{mdc}}
-0x02 | AEAD Encrypted Data (packet 20) version 1 | {{aead}}
+0x02 | Reserved
 0x04 | Reserved
+0x08 | AEAD Encrypted Data (packet 20) version 2 | {{aead}}
 
 If an implementation implements any of the defined features, it SHOULD implement the Features subpacket, too.
 
@@ -2375,9 +2376,9 @@ When it has been decrypted, it will typically contain other packets (often a Lit
 The body of this packet starts with:
 
 - A one-octet version number.
-  The only currently defined value is 1.
+  The only currently defined value is 2.
 
-When the version is 1, it is followed by the following fields:
+When the version is 2, it is followed by the following fields:
 
 - A one-octet chunk size.
 
@@ -2387,7 +2388,7 @@ When the version is 1, it is followed by the following fields:
 
 - A final, summary authentication tag for the AEAD mode.
 
-The symmetric cipher and AEAD algorithm used are specified in a Public-Key or Symmetric-Key Encrypted Session Key packet that precedes the AEAD Encrypted Data Packet.
+The symmetric cipher, AEAD algorithm, and session key are specified in a Public-Key or Symmetric-Key Encrypted Session Key packet that precedes the AEAD Encrypted Data Packet.
 
 An AEAD encrypted data packet consists of one or more chunks of data.
 The plaintext of each chunk is of a size specified using the chunk size octet using the method specified below.
@@ -4059,6 +4060,8 @@ The entire signature packet is thus:
 
 ## Sample AEAD-EAX encryption and decryption
 
+FIXME: update test vectors to indicate AEAD version 2
+
 This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-EAX encryption.
 
 ### Sample Parameters
@@ -4206,6 +4209,8 @@ AEAD encrypted data packet:
       3d e1 25 95 86 90 6e ab  24 76
 
 ## Sample AEAD-OCB encryption and decryption
+
+FIXME: update test vectors to indicate AEAD version 2
 
 This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-OCB encryption.
 
