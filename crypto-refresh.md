@@ -81,6 +81,7 @@ informative:
   RFC1991:
   RFC2440:
   RFC4880:
+  RFC5869:
   RFC6090:
   SEC1:
     title: "SEC 1: Elliptic Curve Cryptography"
@@ -2376,11 +2377,17 @@ When the version is 2, it is followed by the following fields:
 
 - A one-octet chunk size.
 
-- A initialization vector of size specified by the AEAD algorithm.
+- Thirty-two octets of salt.
 
 - Encrypted data, the output of the selected symmetric-key cipher operating in the given AEAD mode.
 
 - A final, summary authentication tag for the AEAD mode.
+
+The decrypted session key and the salt in the AEAD packet are used to derive the message key.
+A unique message key of the required length is derived using HKDF (see {{RFC5869}}), with SHA256 as hash algorithm, the session key used as Initial Keying Material (IKM), the salt as salt, and the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), version number, cipher algorithm octet, AEAD algorithm octet, and chunk size octet as info parameter.
+
+The KDF mechanism provides key separation between cipher and AEAD algorithms.
+Furthermore, an implementation can securely reply to a message even if a recipients certificate is unknown by reusing the encrypted session key packets and replying with a different salt yielding a new, unique message key.
 
 An AEAD encrypted data packet consists of one or more chunks of data.
 The plaintext of each chunk is of a size specified using the chunk size octet using the method specified below.
@@ -2404,8 +2411,7 @@ The chunk size octet specifies the size of chunks using the following formula (i
 An implementation MUST accept chunk size octets with values from 0 to 16.
 An implementation MUST NOT create data with a chunk size octet value larger than 16 (4 MiB chunks).
 
-A unique, random, unpredictable initialization vector MUST be used for each message.
-Failure to do so for each message can lead to a catastrophic failure depending on the choice of AEAD mode and symmetric key reuse.
+The chunk index formatted as big-endian value of the required size is used as initialization vector for each chunk.
 
 ### EAX Mode
 
@@ -2415,8 +2421,6 @@ The EAX algorithm can only use block ciphers with 16-octet blocks.
 The initialization vector is 16 octets long.
 EAX authentication tags are 16 octets long.
 
-The nonce for EAX mode is computed by treating the initialization vector as a 16-octet, big-endian value and exclusive-oring the low eight octets of it with the chunk index.
-
 ### OCB Mode
 
 The OCB AEAD Algorithm used in this document is defined in {{RFC7253}}.
@@ -2424,8 +2428,6 @@ The OCB AEAD Algorithm used in this document is defined in {{RFC7253}}.
 The OCB algorithm can only use block ciphers with 16-octet blocks.
 The initialization vector is 15 octets long.
 OCB authentication tags are 16 octets long.
-
-The nonce for OCB mode is computed by the exclusive-oring of the initialization vector as a 15-octet, big endian value, against the chunk index.
 
 # Radix-64 Conversions
 
@@ -4111,6 +4113,8 @@ Decrypted content encryption key:
       86 f1 ef b8 69 52 32 9f 24 ac d3 bf d0 e5 34 6d
 
 ### Sample AEAD encrypted data packet
+
+XXX Update example data.
 
 Packet header:
 
