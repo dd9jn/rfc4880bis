@@ -2597,7 +2597,7 @@ Currently defined Armor Header Keys are as follows:
   This is used only in cleartext signed messages.
 
 - "SaltedHash", a salt and hash algorithm used in this message.
-  This is used only in cleartext signed messages.
+  This is used only in cleartext signed messages that are followed by a v5 Signature.
 
 - "Charset", a description of the character set that the plaintext is in.
   Please note that OpenPGP defines text to be in UTF-8.
@@ -2733,8 +2733,9 @@ The cleartext signed message consists of:
 If the "Hash" Armor Header is given, the specified message digest algorithm(s) are used for the signature.
 If more than one message digest is used in the signature, the "Hash" armor header contains a comma-delimited list of used message digests.
 
-If the "SaltedHash" Armor Header is given, the specified message digest algorithm and salt are used for the signature.
+If the "SaltedHash" Armor Header is given, the specified message digest algorithm and salt are used for a signature.
 The message digest name is followed by a colon (`:`) followed by 22 characters of Radix-64 encoded salt without padding.
+Note: The "SaltedHash" Armor Header contains digest algorithm and salt for a single signature; a second signature requires a second "SaltedHash" Armor Header.
 
 Current message digest names are described with the algorithm IDs in {{hash-algos}}.
 
