@@ -422,7 +422,7 @@ The wire representation is the same: two octets of length in bits counted from t
 
 ## Key IDs
 
-A Key ID is an eight-octet scalar that identifies a key.
+A Key ID is a scalar that identifies a key.
 Implementations SHOULD NOT assume that Key IDs are unique.
 {{enhanced-key-formats}} describes how Key IDs are formed.
 
