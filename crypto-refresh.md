@@ -1884,9 +1884,6 @@ The packet contains:
 
 - \[Optional\] If string-to-key usage octet was 255, 254, or a cipher algorithm identifier (i.e. the secret data is CFB-encrypted), an initialization vector (IV) of the same length as the cipher's block size.
 
-- Only for a version 5 packet, a four-octet scalar octet count for the following secret key material.
-  This includes the encrypted SHA-1 hash or AEAD tag if the string-to-key usage octet is 254 or 253.
-
 - Plain or encrypted multiprecision integers comprising the secret key data.
   This is algorithm-specific and described in {{algorithm-specific-parts-of-keys}}.
   If the string-to-key usage octet is 253, then an AEAD authentication tag is part of that data.
