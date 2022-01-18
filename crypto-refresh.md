@@ -3293,7 +3293,7 @@ e.3) MPI of DSA group generator g;
 e.4) MPI of DSA public-key value y (= g\*\*x mod p where x is secret).
 
 A V5 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9A, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
-The Key ID is the high-order 64 bits of the fingerprint.
+The Key ID is the high-order 96 bits of the fingerprint.
 Here are the fields of the hash material, with the example of a DSA key:
 
 a.1) 0x9A (1 octet)
