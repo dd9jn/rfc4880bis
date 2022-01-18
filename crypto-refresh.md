@@ -1863,7 +1863,7 @@ The Secret-Key and Secret-Subkey packets contain all the data of the Public-Key 
 
 The packet contains:
 
-- A Public-Key or Public-Subkey packet, as described above.
+- The fields of a Public-Key or Public-Subkey packet, as described above.
 
 - One octet indicating string-to-key usage conventions.
   Zero indicates that the secret-key data is not encrypted.
