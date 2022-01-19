@@ -442,12 +442,12 @@ It is beyond the scope of this standard to discuss the details of keyrings or ot
 
 ## String-to-Key (S2K) Specifiers
 
-String-to-key (S2K) specifiers are used to convert passphrase strings into symmetric-key encryption/decryption keys.
+A string-to-key (S2K) specifier is used to convert a passphrase string into a symmetric-key encryption/decryption key.
 They are used in two places, currently: to encrypt the secret part of private keys in the private keyring, and to convert passphrases to encryption keys for symmetrically encrypted messages.
 
 ### String-to-Key (S2K) Specifier Types {#s2k-types}
 
-There are three types of S2K specifiers currently supported, and some reserved values:
+There are four types of S2K specifiers currently supported, and some reserved values:
 
 {: title="S2K type registry"}
 ID | S2K Type | Generate? | Reference
@@ -763,7 +763,7 @@ Tag | Packet Type
 
 # Packet Types {#packet-types}
 
-## Public-Key Encrypted Session Key Packets (Tag 1)
+## Public-Key Encrypted Session Key Packets (Tag 1) {#pkesk}
 
 Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede an encryption container (i.e. a Symmetrically Encrypted Integrity Protected Data packet, an AEAD Encrypted Data packet, or --- for historic data --- a Symmetrically Encrypted Data packet), which holds an encrypted message.
 The message is encrypted with the session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet(s).
@@ -785,18 +785,27 @@ The body of this packet consists of:
 
 - A one-octet number giving the public-key algorithm used.
 
-- A string of octets that is the encrypted session key.
-  This string takes up the remainder of the packet, and its contents are dependent on the public-key algorithm used.
+- A series of values comprising the encrypted session key.
+  This is algorithm-specific and described below.
+
+Before encrypting, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container.
+Then a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, not including the algorithm identifier, modulo 65536.
 
 ### Algorithm Specific Fields for RSA encryption {#pkesk-rsa}
 
 - Multiprecision integer (MPI) of RSA-encrypted value m\*\*e mod n.
+
+The value "m" in the above formula is the plaintext value described above, encoded in the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC3447}} (see also {{pkcs-encoding}}).
+Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
 
 ### Algorithm Specific Fields for Elgamal encryption {#pkesk-elgamal}
 
 - MPI of Elgamal (Diffie-Hellman) value g\*\*k mod p.
 
 - MPI of Elgamal (Diffie-Hellman) value m * y\*\*k mod p.
+
+The value "m" in the above formula is the plaintext value described above, encoded in the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC3447}} (see also {{pkcs-encoding}}).
+Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
 
 ### Algorithm-Specific Fields for ECDH encryption {#pkesk-ecdh}
 
@@ -805,14 +814,6 @@ The body of this packet consists of:
 - A one-octet size, followed by a symmetric key encoded using the method described in {{ec-dh-algorithm-ecdh}}.
 
 ### Notes on PKESK {#pkesk-notes}
-
-The value "m" in the above formulas is derived from the session key as follows.
-First, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container.
-Then a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, not including the algorithm identifier, modulo 65536.
-This value is then encoded as described in PKCS#1 block encoding EME-PKCS1-v1_5 in Section 7.2.1 of {{RFC3447}} to form the "m" value used in the formulas above.
-See {{pkcs-encoding}} in this document for notes on OpenPGP's use of PKCS#1.
-
-Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
 
 An implementation MAY accept or use a Key ID of all zeros, or a key version of zero and no key fingerprint, to hide the intended decryption key.
 In this case, the receiving implementation would try all available private keys, checking for a valid decrypted session key.
@@ -1696,7 +1697,7 @@ If the encrypted session key is not present (which can be detected on the basis 
 If the encrypted session key is present, the result of applying the S2K algorithm to the passphrase is used to decrypt just that encrypted session key field, using CFB mode with an IV of all zeros.
 The decryption result consists of a one-octet algorithm identifier that specifies the symmetric-key encryption algorithm used to encrypt the following encryption container, followed by the session key octets themselves.
 
-Note: because an all-zero IV is used for this decryption, the S2K specifier MUST use a salt value, either a Salted S2K or an Iterated-Salted S2K.
+Note: because an all-zero IV is used for this decryption, the S2K specifier MUST use a salt value, either a Salted S2K, an Iterated-Salted S2K, or Argon2.
 The salt value will ensure that the decryption key is not repeated even if the passphrase is reused.
 
 A version 5 Symmetric-Key Encrypted Session Key packet consists of:
@@ -3483,13 +3484,13 @@ The KDF produces a symmetric key that is used as a key-encryption key (KEK) as s
 Refer to {{security-considerations}} for the details regarding the choice of the KEK algorithm, which SHOULD be one of three AES algorithms.
 Key wrapping and unwrapping is performed with the default initial value of {{RFC3394}}.
 
-The input to the key wrapping method is the value "m" derived from the session key, as described in {{public-key-encrypted-session-key-packets-tag-1}}, "Public-Key Encrypted Session Key Packets (Tag 1)", except that the PKCS #1.5 padding step is omitted.
-The result is padded using the method described in {{PKCS5}} to an 8-octet granularity.
+The input to the key wrapping method is the plaintext described in {{pkesk}}, "Public-Key Encrypted Session Key Packets (Tag 1)", padded using the method described in {{PKCS5}} to an 8-octet granularity.
+
 For example, the following AES-256 session key, in which 32 octets are denoted from k0 to k31, is composed to form the following 40 octet sequence:
 
     09 k0 k1 ... k31 s0 s1 05 05 05 05 05
 
-The octets s0 and s1 above denote the checksum.
+The octets s0 and s1 above denote the checksum of the session key octets.
 This encoding allows the sender to obfuscate the size of the symmetric encryption key used to encrypt the data.
 For example, assuming that an AES algorithm is used for the session key, the sender MAY use 21, 13, and 5 octets of padding for AES-128, AES-192, and AES-256, respectively, to provide the same number of octets, 40 total, as an input to the key wrapping method.
 
