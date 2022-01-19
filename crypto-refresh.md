@@ -4179,18 +4179,18 @@ Nonce:
 
 Symmetric-key encrypted session key packet (v5):
 
-       c3 3e 05 07 01 03 08 cd  5a 9f 70 fb e0 bc 65 90
-       bc 66 9e 34 e5 00 dc ae  dc 5b 32 aa 2d ab 02 35
-       9d ee 19 d0 7c 34 46 c4  31 2a 34 ae 19 67 a2 fb
-       7e 92 8e a5 b4 fa 80 12  bd 45 6d 17 38 c6 3c 36
+      c3 3e 05 07 01 03 08 cd  5a 9f 70 fb e0 bc 65 90
+      bc 66 9e 34 e5 00 dc ae  dc 5b 32 aa 2d ab 02 35
+      9d ee 19 d0 7c 34 46 c4  31 2a 34 ae 19 67 a2 fb
+      7e 92 8e a5 b4 fa 80 12  bd 45 6d 17 38 c6 3c 36
 
 AEAD encrypted data packet:
 
-       d4 4a 01 07 01 0e b7 32  37 9f 73 c4 92 8d e2 5f
-       ac fe 65 17 ec 10 5d c1  1a 81 dc 0c b8 a2 f6 f3
-       d9 00 16 38 4a 56 fc 82  1a e1 1a e8 db cb 49 86
-       26 55 de a8 8d 06 a8 14  86 80 1b 0f f3 87 bd 2e
-       ab 01 3d e1 25 95 86 90  6e ab 24 76
+      d4 4a 01 07 01 0e b7 32  37 9f 73 c4 92 8d e2 5f
+      ac fe 65 17 ec 10 5d c1  1a 81 dc 0c b8 a2 f6 f3
+      d9 00 16 38 4a 56 fc 82  1a e1 1a e8 db cb 49 86
+      26 55 de a8 8d 06 a8 14  86 80 1b 0f f3 87 bd 2e
+      ab 01 3d e1 25 95 86 90  6e ab 24 76
 
 ## Sample AEAD-OCB encryption and decryption
 
@@ -4226,11 +4226,11 @@ AEAD IV:
 
 AEAD encrypted content encryption key:
 
-      67 73 71 6d 1f 27 14 54 0a  38 fc ac 52 99 49 da
+      67 73 71 6d 1f 27 14 54 0a 38 fc ac 52 99 49 da
 
 Authentication tag:
 
-      c5 29 d3 de 31 e1 5b 4a eb  72 9e 33 00 33 db ed
+      c5 29 d3 de 31 e1 5b 4a eb 72 9e 33 00 33 db ed
 
 ### Starting AEAD-OCB decryption of the content encryption key
 
