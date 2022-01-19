@@ -1935,6 +1935,10 @@ However, this checksum is deprecated; an implementation SHOULD NOT use it, but s
 The reason for this is that there are some attacks that involve undetectably modifying the secret key.
 If the string-to-key usage octet is 253 no checksum or SHA-1 hash is used but the authentication tag of the AEAD algorithm follows.
 
+When decrypting the secret key material using any of these schemes (that is, where the usage octet is non-zero), the resulting cleartext octet stream MUST be well-formed.
+In particular, an implementation MUST NOT interpret octets beyond the unwrapped cleartext octet stream as part of any of the unwrapped MPI objects.
+Furthermore, an implementation MUST reject as unusable any secret key material whose cleartext length does not align with the lengths of the unwrapped MPI objects.
+
 ## Algorithm-specific Parts of Keys
 
 The public and secret key format specifies algorithm-specific parts of a key.
@@ -3217,8 +3221,20 @@ One-Pass Signed Message :-
 Signed Message :-
 : Signature Packet, OpenPGP Message \| One-Pass Signed Message.
 
-In addition, decrypting a Symmetrically Encrypted and Integrity Protected Data packet, an AEAD Encrypted Data packet, or --- for historic data --- a Symmetrically Encrypted Data packet must yield a valid OpenPGP Message.
-Decompressing a Compressed Data packet must also yield a valid OpenPGP Message.
+### Unwrapping Encrypted and Compressed Messages {#unwrapping}
+
+In addition to the above grammar, certain messages can be "unwrapped" to yield new messages.
+In particular:
+
+- Decrypting a Symmetrically Encrypted and Integrity Protected Data packet, an AEAD Encrypted Data packet, or --- for historic data --- a Symmetrically Encrypted Data packet must yield a valid OpenPGP Message.
+- Decompressing a Compressed Data packet must also yield a valid OpenPGP Message.
+
+When either such unwrapping is performed, the resulting stream of octets is parsed into a series OpenPGP packets like any other stream of octets.
+The packet boundaries found in the series of octets are expected to align with the length of the unwrapped octet stream.
+An implementation MUST NOT interpret octets beyond the boundaries of the unwrapped octet stream as part of any OpenPGP packet.
+If an implementation encounters a packet whose header length indicates that it would extend beyond the boundaries of the unwrapped octet stream, the implementation MUST reject that packet as malformed and unusable.
+
+### Additional Constraints on Packet Sequences
 
 Note that some subtle combinations that are formally acceptable by this grammar are nonetheless unacceptable.
 For example, a v3 PKESK or v4 SKESK packet cannot effectively precede a AEAD Encrypted Data packet, since that combination does not include any information about the choice of AEAD algorithm; and similarly a v5 PKESK or v5 SKESK packet may not be used with SED or SEIPD packet (see {{pkesk}} and {{skesk}} for more details).
