@@ -605,7 +605,7 @@ An implementation handling a packet stream that wants to find the next packet MU
 
 Additionally, some packets contain internal length indicators (e.g., for a subfield within the packet).
 In the event that a subfield length indicator within a packet implies inclusion of octets outside the range indicated in the packet header, a parser MUST truncate the subfield at the octet boundary indicated in the packet header.
-In some cases, such a truncation will render the packet malformed and unusable.
+Such a truncation renders the packet malformed and unusable.
 An implementation MUST NOT interpret octets outside the range indicated in the packet header as part of the contents of the packet.
 
 ## Packet Headers
