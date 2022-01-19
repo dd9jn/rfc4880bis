@@ -788,8 +788,11 @@ The body of this packet consists of:
 - A series of values comprising the encrypted session key.
   This is algorithm-specific and described below.
 
-Before encrypting, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container.
+For V3 packets, before encrypting, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container.
 Then a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, not including the algorithm identifier, modulo 65536.
+
+For V5 packets, the symmetric encryption algorithm identifier is not included.
+Before encrypting, a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, modulo 65536.
 
 ### Algorithm Specific Fields for RSA encryption {#pkesk-rsa}
 
@@ -3486,13 +3489,20 @@ Key wrapping and unwrapping is performed with the default initial value of {{RFC
 
 The input to the key wrapping method is the plaintext described in {{pkesk}}, "Public-Key Encrypted Session Key Packets (Tag 1)", padded using the method described in {{PKCS5}} to an 8-octet granularity.
 
-For example, the following AES-256 session key, in which 32 octets are denoted from k0 to k31, is composed to form the following 40 octet sequence:
+For example, in a V4 Public-Key Encrypted Session Key packet, the following AES-256 session key, in which 32 octets are denoted from k0 to k31, is composed to form the following 40 octet sequence:
 
     09 k0 k1 ... k31 s0 s1 05 05 05 05 05
 
 The octets s0 and s1 above denote the checksum of the session key octets.
 This encoding allows the sender to obfuscate the size of the symmetric encryption key used to encrypt the data.
 For example, assuming that an AES algorithm is used for the session key, the sender MAY use 21, 13, and 5 octets of padding for AES-128, AES-192, and AES-256, respectively, to provide the same number of octets, 40 total, as an input to the key wrapping method.
+
+In a V5 Public-Key Encrypted Session Key packet, the symmetric algorithm is not included, as described in {{pkesk}}. For example, an AES-256 session key would be composed as follows:
+
+    k0 k1 ... k31 s0 s1 06 06 06 06 06 06
+
+The octets k0 to k31 above again denote the session key, and the octets s0 and s1 denote the checksum.
+In this case, assuming that an AES algorithm is used for the session key, the sender MAY use 22, 14, and 6 octets of padding for AES-128, AES-192, and AES-256, respectively, to provide the same number of octets, 40 total, as an input to the key wrapping method.
 
 The output of the method consists of two fields.
 The first field is the MPI containing the ephemeral key used to establish the shared secret.
