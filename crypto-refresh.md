@@ -4062,15 +4062,15 @@ This example encrypts the cleartext string `Hello, world!` with the password `pa
 
 S2K:
 
-      type 3
+      Iterated and Salted S2K
 
 Iterations:
 
-      524288 (144), SHA2-256
+      65011712 (255), SHA2-256
 
 Salt:
 
-      cd5a9f70fbe0bc65
+      7146b985a859c665
 
 ### Sample symmetric-key encrypted session key packet (v5)
 
@@ -4080,25 +4080,25 @@ Packet header:
 
 Version, algorithms, S2K fields:
 
-      05 07 01 03 08 cd 5a 9f 70 fb e0 bc 65 90
+      05 07 01 03 08 71 46 b9 85 a8 59 c6 65 ff
 
 AEAD IV:
 
-      bc 66 9e 34 e5 00 dc ae dc 5b 32 aa 2d ab 02 35
+      82 09 29 5f af 4a f0 6c dd 36 e0 d3 40 80 7c 84
 
 AEAD encrypted content encryption key:
 
-      9d ee 19 d0 7c 34 46 c4 31 2a 34 ae 19 67 a2 fb
+      e2 62 8b 29 92 56 4a 26 14 3c 2d 62 4a 56 43 3e
 
 Authentication tag:
 
-      7e 92 8e a5 b4 fa 80 12 bd 45 6d 17 38 c6 3c 36
+      46 f0 3b 96 46 b5 20 2c a0 35 ad f5 3d f8 f2 cc
 
-### Starting AEAD-EAX decryption of the content encryption key
+### Starting AEAD-EAX decryption of the session key
 
 The derived key is:
 
-      b2 55 69 b9 54 32 45 66 45 27 c4 97 6e 7a 5d 6e
+      69 92 A2 CF F4 3A 33 B6 4B 2D B3 92 F9 36 BC 75
 
 Authenticated Data:
 
@@ -4106,32 +4106,31 @@ Authenticated Data:
 
 Nonce:
 
-      bc 66 9e 34 e5 00 dc ae dc 5b 32 aa 2d ab 02 35
+      82 09 29 5f af 4a f0 6c dd 36 e0 d3 40 80 7c 84
 
-Decrypted content encryption key:
+Decrypted session key:
 
-      86 f1 ef b8 69 52 32 9f 24 ac d3 bf d0 e5 34 6d
+      75 e7 a0 a7 8a 50 70 74 53 43 36 02 92 fa 33 df
 
 ### Sample AEAD encrypted data packet
 
-XXX Update example data.
-
 Packet header:
 
-      d4 4a
+      d4 59
 
 Version, AES-128, EAX, Chunk bits (14):
 
-      01 07 01 0e
+      02 07 01 06
 
-IV:
+Salt:
 
-      b7 32 37 9f 73 c4 92 8d e2 5f ac fe 65 17 ec 10
+      7e 7b 9c 95 3d 72 f0 29 32 cb 32 8e b0 1a a8 15
+      aa 7d 59 ad e7 3e b2 8b 42 db 3a bd ad ac 31 3d
 
 AEAD-EAX Encrypted data chunk #0:
 
-      5d c1 1a 81 dc 0c b8 a2 f6 f3 d9 00 16 38 4a 56
-      fc 82 1a e1 1a e8
+      0c 95 7b 12 dd 47 d0 73 36 38 34 2b 09 de 98 03
+      10 ab 45 0e 99
 
 Chunk #0 authentication tag:
 
@@ -4153,14 +4152,14 @@ Authenticated data:
 
 Nonce:
 
-      b7 32 37 9f 73 c4 92 8d e2 5f ac fe 65 17 ec 10
+      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 
 Decrypted chunk #0.
 
-Literal data packet with the string contents `Hello, world!\n`.
+Literal data packet with the string contents `Hello, world!`.
 
-      cb 14 62 00 00 00 00 00  48 65 6c 6c 6f 2c 20 77
-      6f 72 6c 64 21 0a
+      cb 13 62 00 00 00 00 00  48 65 6c 6c 6f 2c 20 77
+      6f 72 6c 64 21
 
 Authenticating final tag:
 
@@ -4171,24 +4170,18 @@ Authenticated data:
 
 Nonce:
 
-      b7 32 37 9f 73 c4 92 8d e2 5f ac fe 65 17 ec 11
+      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01
 
 ### Complete AEAD-EAX encrypted packet sequence
 
-Symmetric-key encrypted session key packet (v5):
+      -----BEGIN PGP MESSAGE-----
 
-      c3 3e 05 07 01 03 08 cd  5a 9f 70 fb e0 bc 65 90
-      bc 66 9e 34 e5 00 dc ae  dc 5b 32 aa 2d ab 02 35
-      9d ee 19 d0 7c 34 46 c4  31 2a 34 ae 19 67 a2 fb
-      7e 92 8e a5 b4 fa 80 12  bd 45 6d 17 38 c6 3c 36
-
-AEAD encrypted data packet:
-
-      d4 4a 01 07 01 0e b7 32  37 9f 73 c4 92 8d e2 5f
-      ac fe 65 17 ec 10 5d c1  1a 81 dc 0c b8 a2 f6 f3
-      d9 00 16 38 4a 56 fc 82  1a e1 1a e8 db cb 49 86
-      26 55 de a8 8d 06 a8 14  86 80 1b 0f f3 87 bd 2e
-      ab 01 3d e1 25 95 86 90  6e ab 24 76
+      wz4FBwEDCHFGuYWoWcZl/4IJKV+vSvBs3Tbg00CAfITiYospklZKJhQ8LWJKVkM+
+      RvA7lka1ICygNa31PfjyzNRZAgcBBn57nJU9cvApMssyjrAaqBWqfVmt5z6yi0Lb
+      Or2trDE9DJV7Et1H0HM2ODQrCd6YAxCrRQ6ZMcEbyjtCIL9agMwZvUysfr36uTPj
+      BqV1wCwAAFBYpgU=
+      =vC8O
+      -----END PGP MESSAGE-----
 
 ## Sample AEAD-OCB encryption and decryption
 
