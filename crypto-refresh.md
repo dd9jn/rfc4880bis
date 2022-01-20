@@ -442,7 +442,7 @@ It is beyond the scope of this standard to discuss the details of keyrings or ot
 
 ## String-to-Key (S2K) Specifiers
 
-A string-to-key (S2K) specifier is used to convert a passphrase string and an optional associated data octet string (defaulting to the empty octet string) into a symmetric-key encryption/decryption key.
+A string-to-key (S2K) specifier is used to convert a passphrase string into a symmetric-key encryption/decryption key.
 They are used in two places, currently: to encrypt the secret part of private keys in the private keyring, and to convert passphrases to encryption keys for symmetrically encrypted messages.
 
 ### String-to-Key (S2K) Specifier Types {#s2k-types}
@@ -469,7 +469,7 @@ See below for how this hashing is done.
       Octet 0:        0x00
       Octet 1:        hash algorithm
 
-Simple S2K hashes the associated data concatenated with the passphrase to produce the session key.
+Simple S2K hashes the passphrase to produce the session key.
 The manner in which this is done depends on the size of the session key (which will depend on the cipher used) and the size of the hash algorithm's output.
 If the hash size is greater than the session key size, the high-order (leftmost) octets of the hash are used as the key.
 
@@ -489,7 +489,7 @@ This includes a "salt" value in the S2K specifier --- some arbitrary data --- th
       Octet 1:        hash algorithm
       Octets 2-9:     8-octet salt value
 
-Salted S2K is exactly like Simple S2K, except that the input to the hash function(s) consists of the 8 octets of salt from the S2K specifier, followed by the associated data, followed by the passphrase.
+Salted S2K is exactly like Simple S2K, except that the input to the hash function(s) consists of the 8 octets of salt from the S2K specifier, followed by the passphrase.
 
 #### Iterated and Salted S2K {#s2k-iter-salted}
 
@@ -509,13 +509,13 @@ The count is coded into a one-octet number using the following formula:
 
 The above formula is in C, where "Int32" is a type for a 32-bit integer, and the variable "c" is the coded count, Octet 10.
 
-Iterated-Salted S2K hashes the salt, associated data and password repeated multiple times.
+Iterated-Salted S2K hashes the passphrase and salt data multiple times.
 The total number of octets to be hashed is specified in the encoded count in the S2K specifier.
 Note that the resulting count value is an octet count of how many octets will be hashed, not an iteration count.
 
 Initially, one or more hash contexts are set up as with the other S2K algorithms, depending on how many octets of key data are needed.
-Then the salt, the associated data and the passphrase are repeatedly hashed until the number of octets specified by the octet count has been hashed.
-The one exception is that if the octet count is less than the size of the salt plus associated data plus passphrase, the full salt plus associated data plus passphrase will be hashed even though that is greater than the octet count.
+Then the salt, followed by the passphrase data, is repeatedly hashed until the number of octets specified by the octet count has been hashed.
+The one exception is that if the octet count is less than the size of the salt plus passphrase, the full salt plus passphrase will be hashed even though that is greater than the octet count.
 After the hashing is done, the data is unloaded from the hash context(s) as with the other S2K algorithms.
 
 #### Argon2 {#s2k-argon2}
@@ -535,7 +535,7 @@ The number of passes t and the degree of parallelism p MUST be non-zero.
 
 The memory size m is 2\*\*encoded_m, where "encoded_m" is the encoded memory size in Octet 19. The encoded memory size MUST be a value from 3+ceil(log_2(p)) to 31, such that the decoded memory size m is a value from 8*p to 2\*\*31.
 
-Argon2 is invoked with the passphrase as P, the salt as S, the associated data as X, the values of t, p and m as described above, the required key size as the tag length T, 0x13 as the version v, and Argon2id as the type.
+Argon2 is invoked with the passphrase as P, the salt as S, the values of t, p and m as described above, the required key size as the tag length T, 0x13 as the version v, and Argon2id as the type.
 
 For the recommended values of t, p and m, see Section 4 of {{RFC9106}}. If the recommended value of m for a given application is not a power of 2, it is RECOMMENDED to round up to the next power of 2 if the resulting performance would be acceptable, and round down otherwise (keeping in mind that m must be at least 8*p).
 
@@ -570,7 +570,7 @@ First octet | Next fields | Encryption | Generate?
 ---|--------------------------------------------------|---|---|---
 0 | - | cleartext secrets \|\| check(secrets) | Yes
 Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password), secrets \|\| check(secrets)) | No
-253 | cipher-algo, AEAD-mode, S2K-specifier, nonce | AEAD(S2K(password, packet tag \|\| packet version \|\| cipher-algo \|\| AEAD-mode), secrets, pubkey) | Yes
+253 | cipher-algo, AEAD-mode, S2K-specifier, nonce | AEAD(S2K(password), secrets, pubkey) | Yes
 254 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Yes
 255 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| check(secrets)) | No
 
@@ -791,14 +791,8 @@ The body of this packet consists of:
 For V3 packets, before encrypting, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container.
 Then a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, not including the algorithm identifier, modulo 65536.
 
-V3 Public-Key Encrypted Session Key packets MUST NOT be used to encrypt or decrypt AEAD Encrypted Data packets.
-
-For V5 packets, before encrypting, the session key is prefixed with the Packet Tag of the following AEAD Encrypted Data packet in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), its packet version number, a one-octet algorithm identifier that specifies the symmetric encryption algorithm used in the following AEAD Encrypted Data packet, and a one-octet algorithm identifier that specifies the AEAD algorithm used.
-Then a two-octet checksum is appended, which is equal to the sum of all preceding octets, including the packet tag and version and algorithm identifiers, modulo 65536.
-
-V5 Public-Key Encrypted Session Key packets MUST NOT be used to encrypt or decrypt Symmetrically Encrypted Data packets or Symmetrically Encrypted Integrity Protected Data packets.
-
-When using a V5 Public-Key Encrypted Session Key packet to decrypt an AEAD Encrypted Data packet, the implementation MUST check that the decrypted packet tag and packet version match the packet tag and packet version of the AEAD Encrypted Data packet, and MUST NOT use the V5 Public-Key Encrypted Session Key packet to decrypt the AEAD Encrypted Data packet if they do not match.
+For V5 packets, the symmetric encryption algorithm identifier is not included.
+Before encrypting, a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, modulo 65536.
 
 ### Algorithm Specific Fields for RSA encryption {#pkesk-rsa}
 
@@ -1710,8 +1704,6 @@ The decryption result consists of a one-octet algorithm identifier that specifie
 Note: because an all-zero IV is used for this decryption, the S2K specifier MUST use a salt value, either a Salted S2K, an Iterated-Salted S2K, or Argon2.
 The salt value will ensure that the decryption key is not repeated even if the passphrase is reused.
 
-V4 Symmetric-Key Encrypted Session Key packets MUST NOT be used to encrypt or decrypt AEAD Encrypted Data packets.
-
 A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 
 - A one-octet version number with value 5.
@@ -1728,16 +1720,15 @@ A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 
 - An authentication tag for the AEAD mode.
 
-The S2K algorithm is applied to the passphrase, with as associated data the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet specified in the Symmetric-Key Encrypted Session Key packet.
-For example, the associated data used with EAX and AES-128 consists of the octets 0xC3, 0x05, 0x07, and 0x01.
-
-The resulting symmetric-key encryption key is used, with one of the AEAD algorithms specified for the AEAD Encrypted Data Packet, to encrypt the Packet Tag of the following AEAD Encrypted Data packet in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), its packet version number, a one-octet symmetric-key algorithm identifier and a one-octet AEAD algorithm identifier that specify the encryption algorithm used to encrypt the following AEAD Encrypted Data Packet, followed by the session key octets themselves.
+The encrypted session key is encrypted using one of the AEAD algorithms specified for the AEAD Encrypted Data Packet.
 Note that no chunks are used and that there is only one authentication tag.
-The same associated data given to the S2K mechanism above is passed as additional data to the AEAD algorithm.
+The Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are given as additional data.
+For example, the additional data used with EAX and AES-128 consists of the octets 0xC3, 0x05, 0x07, and 0x01.
 
-V5 Symmetric-Key Encrypted Session Key packets MUST NOT be used to encrypt or decrypt Symmetrically Encrypted Data packets or Symmetrically Encrypted Integrity Protected Data packets.
+### No v5 SKESK with SEIPD {#no-v5-skesk-seipd}
 
-When using a V5 Symmetric-Key Encrypted Session Key packet to decrypt an AEAD Encrypted Data packet, the implementation MUST check that the decrypted packet tag and packet version match the packet tag and packet version of the AEAD Encrypted Data packet, and MUST NOT use the V5 Symmetric-Key Encrypted Session Key packet to decrypt the AEAD Encrypted Data packet if they do not match.
+Note that unlike the AEAD Encrypted Data Packet (AED, see {{aead}}), the Symmetrically Encrypted Integrity Protected Data Packet (SEIPD, see {{seipd}}) does not internally indicate what cipher algorithm to use to decrypt it.
+Since the v5 SKESK packet's encrypted payload only indicates the key used, not the choice of cipher algorithm used for the subsequent encrypted data, a v5 SKESK packet can only provide a session key for an AED packet, and MUST NOT be used to provide a session key for a SEIPD Packet.
 
 ## One-Pass Signature Packets (Tag 4)
 
@@ -1902,7 +1893,6 @@ Note that the version 5 packet format adds two count values to help parsing pack
 
 Secret MPI values can be encrypted using a passphrase.
 If a string-to-key specifier is given, that describes the algorithm for converting the passphrase to a key, else a simple MD5 hash of the passphrase is used.
-If the string-to-key usage octet is 253, the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are passed as associated data to the S2K mechanism.
 Implementations MUST use a string-to-key specifier; the simple hash is for backward compatibility and is deprecated, though implementations MAY continue to use existing private keys in the old format.
 The cipher for encrypting the MPIs is specified in the Secret-Key packet.
 
@@ -2380,6 +2370,10 @@ The body of this packet starts with:
 
 When the version is 2, it is followed by the following fields:
 
+- A one-octet cipher algorithm.
+
+- A one-octet AEAD algorithm.
+
 - A one-octet chunk size.
 
 - A initialization vector of size specified by the AEAD algorithm.
@@ -2387,8 +2381,6 @@ When the version is 2, it is followed by the following fields:
 - Encrypted data, the output of the selected symmetric-key cipher operating in the given AEAD mode.
 
 - A final, summary authentication tag for the AEAD mode.
-
-The symmetric cipher, AEAD algorithm, and session key are specified in a Public-Key or Symmetric-Key Encrypted Session Key packet that precedes the AEAD Encrypted Data Packet.
 
 An AEAD encrypted data packet consists of one or more chunks of data.
 The plaintext of each chunk is of a size specified using the chunk size octet using the method specified below.
@@ -3214,7 +3206,7 @@ In addition, decrypting a Symmetrically Encrypted and Integrity Protected Data p
 Decompressing a Compressed Data packet must also yield a valid OpenPGP Message.
 
 Note that some subtle combinations that are formally acceptable by this grammar are nonetheless unacceptable.
-For example, a v3 PKESK or v4 SKESK packet cannot effectively precede a AEAD Encrypted Data packet, since that combination does not include any information about the choice of AEAD algorithm; and similarly a v5 PKESK or v5 SKESK packet may not be used with SED or SEIPD packet (see {{pkesk}} and {{skesk}} for more details).
+For example, a v5 SKESK packet cannot effectively precede a SEIPD packet, since that combination does not include any information about the choice of symmetric cipher used for SEIPD (see {{no-v5-skesk-seipd}} for more details).
 
 ## Detached Signatures
 
@@ -3506,12 +3498,12 @@ The octets s0 and s1 above denote the checksum of the session key octets.
 This encoding allows the sender to obfuscate the size of the symmetric encryption key used to encrypt the data.
 For example, assuming that an AES algorithm is used for the session key, the sender MAY use 21, 13, and 5 octets of padding for AES-128, AES-192, and AES-256, respectively, to provide the same number of octets, 40 total, as an input to the key wrapping method.
 
-In a V5 Public-Key Encrypted Session Key packet, the AEAD Encrypted Data packet tag, version, and AEAD algorithm are also included, as described in {{pkesk}}. For example, an AES-256 session key for an OCB-encrypted data packet would be composed as follows:
+In a V5 Public-Key Encrypted Session Key packet, the symmetric algorithm is not included, as described in {{pkesk}}. For example, an AES-256 session key would be composed as follows:
 
-    D4 01 09 02 k0 k1 ... k31 s0 s1 02 02
+    k0 k1 ... k31 s0 s1 06 06 06 06 06 06
 
-The octets k0 to k31 above again denote the session key, and the octets s0 and s1 denote the checksum of all preceding octets.
-In this case, assuming that an AES algorithm is used for the session key, the sender MAY use 18, 10, and 2 octets of padding for AES-128, AES-192, and AES-256, respectively, to provide the same number of octets, 40 total, as an input to the key wrapping method.
+The octets k0 to k31 above again denote the session key, and the octets s0 and s1 denote the checksum.
+In this case, assuming that an AES algorithm is used for the session key, the sender MAY use 22, 14, and 6 octets of padding for AES-128, AES-192, and AES-256, respectively, to provide the same number of octets, 40 total, as an input to the key wrapping method.
 
 The output of the method consists of two fields.
 The first field is the MPI containing the ephemeral key used to establish the shared secret.
@@ -4082,7 +4074,7 @@ Salt:
 
 Packet header:
 
-      c3 42
+      c3 3e
 
 Version, algorithms, S2K fields:
 
@@ -4094,12 +4086,11 @@ AEAD IV:
 
 AEAD encrypted content encryption key:
 
-      f4 0c 3e 44 57 da 7d d6 59 32 bc f9 f5 d1 74 74
-      32 1a ae 65
+      9d ee 19 d0 7c 34 46 c4 31 2a 34 ae 19 67 a2 fb
 
 Authentication tag:
 
-      d0 88 de 31 4e 1e 1e 54 21 ae f1 33 00 2d 83 5f
+      7e 92 8e a5 b4 fa 80 12 bd 45 6d 17 38 c6 3c 36
 
 ### Starting AEAD-EAX decryption of the content encryption key
 
@@ -4115,19 +4106,7 @@ Nonce:
 
       bc 66 9e 34 e5 00 dc ae dc 5b 32 aa 2d ab 02 35
 
-Decrypted AEAD packet tag and version, symmetric and AEAD algorithm, and content encryption key:
-
-      d4 01 07 01 86 f1 ef b8 69 52 32 9f 24 ac d3 bf
-      d0 e5 34 6d
-
-### Algorithm Identifiers and Content Encryption Key
-
-This key would typically be extracted from an SKESK or PKESK.
-In this example, it is extracted from the SKESK packet above.
-The decrypted SKESK or PKESK also contains the symmetric algorithm and AEAD algorithm to use, in this case AES-128 (7) and EAX (1).
-Note that the packet tag and version must also be checked against the AEAD packet, i.e. this session key may not be used with other (non-AEAD) encrypted data packets or AEAD packets with a version other than 1.
-
-Content Encryption Key:
+Decrypted content encryption key:
 
       86 f1 ef b8 69 52 32 9f 24 ac d3 bf d0 e5 34 6d
 
@@ -4135,11 +4114,11 @@ Content Encryption Key:
 
 Packet header:
 
-      d4 48
+      d4 4a
 
-Version, Chunk bits (14):
+Version, AES-128, EAX, Chunk bits (14):
 
-      01 0e
+      01 07 01 0e
 
 IV:
 
@@ -4194,19 +4173,18 @@ Nonce:
 
 Symmetric-key encrypted session key packet (v5):
 
-      c3 42 05 07 01 03 08 cd  5a 9f 70 fb e0 bc 65 90
+      c3 3e 05 07 01 03 08 cd  5a 9f 70 fb e0 bc 65 90
       bc 66 9e 34 e5 00 dc ae  dc 5b 32 aa 2d ab 02 35
-      f4 0c 3e 44 57 da 7d d6  59 32 bc f9 f5 d1 74 74
-      32 1a ae 65 d0 88 de 31  4e 1e 1e 54 21 ae f1 33
-      00 2d 83 5f
+      9d ee 19 d0 7c 34 46 c4  31 2a 34 ae 19 67 a2 fb
+      7e 92 8e a5 b4 fa 80 12  bd 45 6d 17 38 c6 3c 36
 
 AEAD encrypted data packet:
 
-      d4 48 01 0e b7 32 37 9f  73 c4 92 8d e2 5f ac fe
-      65 17 ec 10 5d c1 1a 81  dc 0c b8 a2 f6 f3 d9 00
-      16 38 4a 56 fc 82 1a e1  1a e8 db cb 49 86 26 55
-      de a8 8d 06 a8 14 86 80  1b 0f f3 87 bd 2e ab 01
-      3d e1 25 95 86 90 6e ab  24 76
+      d4 4a 01 07 01 0e b7 32  37 9f 73 c4 92 8d e2 5f
+      ac fe 65 17 ec 10 5d c1  1a 81 dc 0c b8 a2 f6 f3
+      d9 00 16 38 4a 56 fc 82  1a e1 1a e8 db cb 49 86
+      26 55 de a8 8d 06 a8 14  86 80 1b 0f f3 87 bd 2e
+      ab 01 3d e1 25 95 86 90  6e ab 24 76
 
 ## Sample AEAD-OCB encryption and decryption
 
@@ -4232,7 +4210,7 @@ Salt:
 
 Packet header:
 
-      c3 41
+      c3 3d
 
 Version, algorithms, S2K fields:
 
@@ -4244,12 +4222,11 @@ AEAD IV:
 
 AEAD encrypted content encryption key:
 
-      d1 cc e0 66 99 96 a5 29 31 f6 41 77 f5 65 3a 13
-      62 d7 a1 42
+      67 73 71 6d 1f 27 14 54 0a 38 fc ac 52 99 49 da
 
 Authentication tag:
 
-      90 5d 3d 24 2a fc 07 94 86 3e d4 1e 6f 2d 28 f1
+      c5 29 d3 de 31 e1 5b 4a eb 72 9e 33 00 33 db ed
 
 ### Starting AEAD-OCB decryption of the content encryption key
 
@@ -4265,19 +4242,7 @@ Nonce:
 
       99 e3 26 e5 40 0a 90 93 6c ef b4 e8 eb a0 8c
 
-Decrypted AEAD packet tag and version, symmetric and AEAD algorithm, and content encryption key:
-
-      d4 01 07 02 d1 f0 1b a3 0e 13 0a a7 d2 58 2c 16
-      e0 50 ae 44
-
-### Algorithm Identifiers and Content Encryption Key
-
-This key would typically be extracted from an SKESK or PKESK.
-In this example, it is extracted from the SKESK packet above.
-The decrypted SKESK or PKESK also contains the symmetric algorithm and AEAD algorithm to use, in this case AES-128 (7) and OCB (2).
-Note that the packet tag and version must also be checked against the AEAD packet, i.e. this session key may not be used with other (non-AEAD) encrypted data packets or AEAD packets with a version other than 1.
-
-Content Encryption Key:
+Decrypted content encryption key:
 
       d1 f0 1b a3 0e 13 0a a7 d2 58 2c 16 e0 50 ae 44
 
@@ -4285,11 +4250,11 @@ Content Encryption Key:
 
 Packet header:
 
-      d4 47
+      d4 49
 
-Version, Chunk bits (14):
+Version, AES-128, OCB, Chunk bits (14):
 
-      01 0e
+      01 07 02 0e
 
 IV:
 
@@ -4344,19 +4309,18 @@ Nonce:
 
 Symmetric-key encrypted session key packet (v5):
 
-      c3 41 05 07 02 03 08 9f  0b 7d a3 e5 ea 64 77 90
-      99 e3 26 e5 40 0a 90 93  6c ef b4 e8 eb a0 8c d1
-      cc e0 66 99 96 a5 29 31  f6 41 77 f5 65 3a 13 62
-      d7 a1 42 90 5d 3d 24 2a  fc 07 94 86 3e d4 1e 6f
-      2d 28 f1
+      c3 3d 05 07 02 03 08 9f  0b 7d a3 e5 ea 64 77 90
+      99 e3 26 e5 40 0a 90 93  6c ef b4 e8 eb a0 8c 67
+      73 71 6d 1f 27 14 54 0a  38 fc ac 52 99 49 da c5
+      29 d3 de 31 e1 5b 4a eb  72 9e 33 00 33 db ed
 
 AEAD encrypted data packet:
 
-      d4 47 01 0e 5e d2 bc 1e  47 0a be 8f 1d 64 4c 7a
-      6c 8a 56 7b 0f 77 01 19  66 11 a1 54 ba 9c 25 74
-      cd 05 62 84 a8 ef 68 03  5c 62 3d 93 cc 70 8a 43
-      21 1b b6 ea f2 b2 7f 7c  18 d5 71 bc d8 3b 20 ad
-      d3 a0 8b 73 af 15 b9 a0  98
+      d4 49 01 07 02 0e 5e d2  bc 1e 47 0a be 8f 1d 64
+      4c 7a 6c 8a 56 7b 0f 77  01 19 66 11 a1 54 ba 9c
+      25 74 cd 05 62 84 a8 ef  68 03 5c 62 3d 93 cc 70
+      8a 43 21 1b b6 ea f2 b2  7f 7c 18 d5 71 bc d8 3b
+      20 ad d3 a0 8b 73 af 15  b9 a0 98
 
 # Acknowledgements
 
