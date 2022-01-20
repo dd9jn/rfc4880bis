@@ -2378,6 +2378,7 @@ When the version is 2, it is followed by the following fields:
 - A one-octet chunk size.
 
 - Thirty-two octets of salt.
+  The salt is used to derive the message key and must be unique.
 
 - Encrypted data, the output of the selected symmetric-key cipher operating in the given AEAD mode.
 
