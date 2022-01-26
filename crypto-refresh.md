@@ -433,7 +433,7 @@ The wire representation is the same: two octets of length in bits counted from t
 
 A Key ID is a scalar that identifies a key.
 Implementations SHOULD NOT assume that Key IDs are unique.
-{{enhanced-key-formats}} describes how Key IDs are formed.
+{{key-ids-fingerprints}} describes how Key IDs are formed.
 
 ## Text
 
@@ -3297,7 +3297,7 @@ Note that both V3 keys and MD5 are deprecated.
 
 A V4 fingerprint is the 160-bit SHA-1 hash of the octet 0x99, followed by the two-octet packet length, followed by the entire Public-Key packet starting with the version field.
 The Key ID is the low-order 64 bits of the fingerprint.
-Here are the fields of the hash material, with the example of a DSA key:
+Here are the fields of the hash material, with the example of an EdDSA key:
 
 a.1) 0x99 (1 octet)
 
@@ -3307,23 +3307,21 @@ b) version number = 4 (1 octet);
 
 c) timestamp of key creation (4 octets);
 
-d) algorithm (1 octet): 17 = DSA (example);
+d) algorithm (1 octet): 22 = EdDSA (example);
 
 e) Algorithm-specific fields.
 
-Algorithm-Specific Fields for DSA keys (example):
+Algorithm-Specific Fields for EdDSA keys (example):
 
-e.1) MPI of DSA prime p;
+e.1) A one-octet size of the following field;
 
-e.2) MPI of DSA group order q (q is a prime divisor of p-1);
+e.2) The octets representing a curve OID, defined in {{ec-curves}};
 
-e.3) MPI of DSA group generator g;
-
-e.4) MPI of DSA public-key value y (= g\*\*x mod p where x is secret).
+e.3) An MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
 
 A V5 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9A, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
 The Key ID is the high-order 96 bits of the fingerprint.
-Here are the fields of the hash material, with the example of a DSA key:
+Here are the fields of the hash material, with the example of an EdDSA key:
 
 a.1) 0x9A (1 octet)
 
@@ -3333,21 +3331,19 @@ b) version number = 5 (1 octet);
 
 c) timestamp of key creation (4 octets);
 
-d) algorithm (1 octet): 17 = DSA (example);
+d) algorithm (1 octet): 22 = EdDSA (example);
 
 e) four-octet scalar octet count for the following key material;
 
 f) algorithm-specific fields.
 
-Algorithm-Specific Fields for DSA keys (example):
+Algorithm-Specific Fields for EdDSA keys (example):
 
-f.1) MPI of DSA prime p;
+f.1) A one-octet size of the following field;
 
-f.2) MPI of DSA group order q (q is a prime divisor of p-1);
+f.2) The octets representing a curve OID, defined in {{ec-curves}};
 
-f.3) MPI of DSA group generator g;
-
-f.4) MPI of DSA public-key value y (= g\*\*x mod p where x is secret).
+f.3) An MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
 
 Note that it is possible for there to be collisions of Key IDs --- two different keys with the same Key ID.
 Note that there is a much smaller, but still non-zero, probability that two different keys have the same fingerprint.
