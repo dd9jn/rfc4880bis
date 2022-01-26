@@ -4285,6 +4285,8 @@ An OpenPGP implementation should prioritize mechanical fingerprint transfer and 
 While this subsection acknowledges existing practice for human-representable v4 fingerprints, this document does not attempt to standardize any specific human-readable form of v5 fingerprint for this discouraged use case.
 More usability studies are needed to make human-in-the-loop fingerprint verification plausible for wide adoption.
 
+NOTE: the topic of interoperable human-in-the-loop key verification needs more work, probably in a separate document.
+
 ## Avoiding Ciphertext Malleability {#ciphertext-malleability}
 
 If ciphertext can be modified by an attacker but still subsequently decrypted to some new plaintext, it is considered "malleable".
