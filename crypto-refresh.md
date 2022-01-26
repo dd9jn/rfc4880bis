@@ -70,6 +70,15 @@ informative:
       -
         name: Robert Zuccherato
     target: http://eprint.iacr.org/2005/033
+  PAX:
+    title: "IEEE Standard for Information Technology--Portable Operating System Interface (POSIX(R)) Base Specifications, Issue 7: pax - portable archive interchange"
+    author: 
+      org: The Open Group
+    seriesinfo:
+      IEEE Standard: 1003.1-2017
+      DOI: 10.1109/IEEESTD.2018.8277153
+    target: https://pubs.opengroup.org/onlinepubs/9699919799/utilities/pax.html
+    date: 2018
   REGEX:
     title: Mastering Regular Expressions
     author:
@@ -1025,12 +1034,16 @@ The body of a V4 or V5 Signature packet contains:
 
 - One-octet hash algorithm.
 
-- Two-octet scalar octet count for following hashed subpacket data.
+- A scalar octet count for following hashed subpacket data.
+  For a V4 signature, this is a two-octet field.
+  For a V5 signature, this is a four-octet field.
   Note that this is the length in octets of all of the hashed subpackets; a pointer incremented by this number will skip over the hashed subpackets.
 
 - Hashed subpacket data set (zero or more subpackets).
 
-- Two-octet scalar octet count for the following unhashed subpacket data.
+- A scalar octet count for the following unhashed subpacket data.
+  For a V4 signature, this is a two-octet field.
+  For a V5 signature, this is a four-octet field.
   Note that this is the length in octets of all of the unhashed subpackets; a pointer incremented by this number will skip over the unhashed subpackets.
 
 - Unhashed subpacket data set (zero or more subpackets).
@@ -1085,7 +1098,7 @@ There are two fields consisting of Signature subpackets.
 The first field is hashed with the rest of the signature data, while the second is unhashed.
 The second set of subpackets is not cryptographically protected by the signature and should include only advisory information.
 
-The difference between a V4 and V5 signature is that the latter includes additional meta data.
+The differences between a V4 and V5 signature are very small: a V5 signature merely increases the width of the size indicators for the signed data, making it more capable when signing large keys or messages.
 
 The algorithms for converting the hash function result to a signature are described in {{computing-signatures}}.
 
@@ -1610,7 +1623,9 @@ All signatures are formed by producing a hash over the signature data, and then 
 For binary document signatures (type 0x00), the document data is hashed directly.
 For text document signatures (type 0x01), the document is canonicalized by converting line endings to \<CR>\<LF>, and the resulting data is hashed.
 
-When a V4 signature is made over a key, the hash data starts with the octet 0x99, followed by a two-octet length of the key, and then body of the key packet; when a V5 signature is made over a key, the hash data starts with the octet 0x9a, followed by a four-octet length of the key, and then body of the key packet.
+When a V4 signature is made over a key, the hash data starts with the octet 0x99, followed by a two-octet length of the key, and then body of the key packet.
+When a V5 signature is made over a key, the hash data starts with the octet 0x9a, followed by a four-octet length of the key, and then body of the key packet.
+
 A subkey binding signature (type 0x18) or primary key binding signature (type 0x19) then hashes the subkey using the same format as the main key (also using 0x99 or 0x9a as the first octet).
 Primary key revocation signatures (type 0x20) hash only the key being revoked.
 Subkey revocation signature (type 0x28) hash first the primary key and then the subkey being revoked.
@@ -1628,10 +1643,10 @@ This trailer depends on the version of the signature.
 - A V3 signature hashes five octets of the packet body, starting from the signature type field.
   This data is the signature type, followed by the four-octet signature time.
 
-- A V4 signature hashes the packet body starting from its first field, the version number, through the end of the hashed subpacket data and a final extra trailer.
+- A V4 or V5 signature hashes the packet body starting from its first field, the version number, through the end of the hashed subpacket data and a final extra trailer.
   Thus, the hashed fields are:
 
-  - the signature version (0x04),
+  - An octet indicating the signature version (0x04 for V4, 0x05 for V5),
 
   - the signature type,
 
@@ -1643,40 +1658,14 @@ This trailer depends on the version of the signature.
 
   - the hashed subpacket body,
 
-  - the two octets 0x04 and 0xFF,
+  - A second version octet (0x04 for V4, 0x05 for V5)
+  
+  - A single octet 0xFF,
 
-  - a four-octet big-endian number that is the length of the hashed data from the Signature packet stopping right before the 0x04, 0xff octets.
+  - A number representing the length of the hashed data from the Signature packet stopping right before the second version octet.
+    For a V4 signature, this is a four-octet big-endian number, considered to be an unsigned integer modulo 2\*\*32.
+    For a V5 signature, this is an eight-octet big-endian number, considered to be an unsigned integer modulo 2\*\*64.
 
-    The four-octet big-endian number is considered to be an unsigned integer modulo 2\*\*32.
-
-- A V5 signature hashes the packet body starting from its first field, the version number, through the end of the hashed subpacket data and a final extra trailer.
-  Thus, the hashed fields are:
-
-  - the signature version (0x05),
-
-  - the signature type,
-
-  - the public-key algorithm,
-
-  - the hash algorithm,
-
-  - the hashed subpacket length,
-
-  - the hashed subpacket body,
-
-  - Only for document signatures (type 0x00 or 0x01) the following three data items are hashed here:
-
-    - the one-octet content format,
-
-    - the file name as a string (one octet length, followed by the file name),
-
-    - a four-octet number that indicates a date,
-
-  - the two octets 0x05 and 0xFF,
-
-  - a eight-octet big-endian number that is the length of the hashed data from the Signature packet stopping right before the 0x05, 0xff octets.
-
-    The three data items hashed for document signatures need to mirror the values of the Literal Data packet.  For detached and cleartext signatures 6 zero octets are hashed instead.
 
 After all this has been hashed in a single hash context, the resulting hash field is used in the signature algorithm and placed at the end of the Signature packet.
 
@@ -2161,8 +2150,12 @@ The body of this packet consists of:
 - A one-octet field that describes how the data is formatted.
 
   If it is a `b` (0x62), then the Literal packet contains binary data.
-  If it is a `t` (0x74), then it contains text data, and thus may need line ends converted to local form, or other text-mode changes.
-  The tag `u` (0x75) means the same as `t`, but also indicates that implementation believes that the literal data contains UTF-8 text.
+  If it is a `u` (0x75), then the Literal packet contains UTF-8-encoded text data, and thus may need line ends converted to local form, or other text mode changes.
+
+  Older versions of OpenPGP used `t` (0x74) to indicate textual data, but did not specify the character encoding.
+  Implementations SHOULD NOT emit this value.
+  An implementation that receives a literal data packet with this value in the format field SHOULD interpret the packet data as UTF-8 encoded text, unless reliable (not attacker-controlled) context indicates a specific alternate text encoding.
+  This mode is deprecated due to its ambiguity.
 
   Early versions of PGP also defined a value of `l` as a 'local' mode for machine-local conversions.
   {{RFC1991}} incorrectly stated this local mode flag as `1` (ASCII numeral one).
@@ -2173,9 +2166,6 @@ The body of this packet consists of:
   Commonly, if the source of the encrypted data is a file, this will be the name of the encrypted file.
   An implementation MAY consider the file name in the Literal packet to be a more authoritative name than the actual file name.
 
-  If the special name `_CONSOLE` is used, the message is considered to be "for your eyes only".
-  This advises that the message data is unusually sensitive, and the receiving program should process it more carefully, perhaps avoiding storing the received data to disk, for example.
-
 - A four-octet number that indicates a date associated with the literal data.
   Commonly, the date might be the modification date of a file, or the time the packet was created, or a zero that indicates no specific time.
 
@@ -2184,13 +2174,31 @@ The body of this packet consists of:
   Text data is stored with \<CR>\<LF> text endings (i.e., network-normal line endings).
   These should be converted to native line endings by the receiving software.
 
-Note that V3 and V4 signatures do not include the formatting octet, the file name, and the date field of the literal packet in a signature hash and thus are not protected against tampering in a signed document.
-In contrast V5 signatures include them.
+Note that OpenPGP signatures do not include the formatting octet, the file name, and the date field of the literal packet in a signature hash and thus those fields are not protected against tampering in a signed document.
+A receiving implementation MUST NOT treat those fields as though they were cryptographically secured by the surrounding signature either when representing them to the user or acting on them.
+
+Due to their inherent malleability, an implementation that generates a literal data packet SHOULD avoid storing any significant data in these fields.
+If the implementation is certain that the data is textual and is encoded with UTF-8 (for example, if it will follow this literal data packet with a signature packet of type 0x01 (see {{signature-types}}), it MAY set the format octet to `u`.
+Otherwise, it SHOULD set the format octet to `b`.
+It SHOULD set the filename to the empty string (encoded as a single zero octet), and the timestamp to zero (encoded as four zero octets).
+
+An application that wishes to include such filesystem metadata within a signature is advised to sign an encapsulated archive (e.g. {{PAX}}).
 
 An implementation that generates a Literal Data packet MUST use the new format for packet framing (see {{new-packet-format}}).
 It MUST NOT generate a Literal Data packet with old format ({{old-packet-format}})
 
 An implementation that deals with either historic data or data generated by legacy implementations MAY interpret Literal Data packets that use the old format for packet framing.
+
+### Special Filename _CONSOLE (Deprecated)
+
+The Literal Data packet's filename field has a historical special case for the special name `_CONSOLE`.
+When the filename field is `_CONSOLE`, the message is considered to be "for your eyes only".
+This advises that the message data is unusually sensitive, and the receiving program should process it more carefully, perhaps avoiding storing the received data to disk, for example.
+
+An OpenPGP deployment that generates literal data packets MUST NOT depend on this indicator being honored in any particular way.
+It cannot be enforced, and the field itself is not covered by any cryptographic signature.
+
+It is NOT RECOMMENDED to use this special filename in a newly-generated literal data packet.
 
 ## Trust Packet (Tag 12)
 
