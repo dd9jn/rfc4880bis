@@ -2720,9 +2720,9 @@ The cleartext signed message consists of:
 
 - The cleartext header `-----BEGIN PGP SIGNED MESSAGE-----` on a single line,
 
-- Only for v3 and v4 Signature packets, one or more "Hash" Armor Headers,
+- If the message is signed using v3 or v4 Signatures, one or more "Hash" Armor Headers,
 
-- Only for v5 Signature packets, one or more "SaltedHash" Armor Headers,
+- If the message is signed using v5 Signatures, one or more "SaltedHash" Armor Headers,
 
 - Exactly one empty line not included into the message digest,
 
