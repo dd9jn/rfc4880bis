@@ -857,8 +857,8 @@ The most common signatures are a signature of a file or a block of text, and a s
 Three versions of Signature packets are defined.
 Version 3 provides basic signature information, while versions 4 and 5 provide an expandable format with subpackets that can specify more information about the signature.
 
-Implementations MUST generate version 5 signatures when using a version 5 key.
-Implementations SHOULD generate V4 signatures with version 4 keys.
+An implementation MUST generate a version 5 signature when signing with a version 5 key.
+An implementation MUST generate a version 4 signature when signing with a version 4 key.
 Implementations MUST NOT create version 3 signatures; they MAY accept version 3 signatures.
 
 ### Signature Types {#signature-types}
@@ -1763,10 +1763,18 @@ The body of this packet consists of:
 
 - Only for V3 packets, an eight-octet number holding the Key ID of the signing key.
 
-- Only for V5 packets, a thirty-two-octet field holding the fingerprint of the signing key.
+- Only for V5 packets, a thirty-two-octet field holding the fingerprint of the v5 signing key.
 
 - A one-octet number holding a flag showing whether the signature is nested.
   A zero value indicates that the next packet is another One-Pass Signature packet that describes another signature to be applied to the same message data.
+
+When generating a one-pass signature, the OPS packet version MUST correspond to the version of the associated signature packet, except for the historical accident that v4 keys use a v3 one-pass signature packet (there is no v4 OPS):
+
+{: title="Versions of packets used in a one-pass signature"}
+Signing key version | OPS packet version | Signature packet version
+---|--------------|--------
+4 | 3 | 4 
+5 | 5 | 5
 
 Note that if a message contains more than one one-pass signature, then the Signature packets bracket the message; that is, the first Signature packet after the message corresponds to the last one-pass packet and the final Signature packet corresponds to the first one-pass packet.
 
