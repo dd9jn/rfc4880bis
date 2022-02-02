@@ -595,7 +595,8 @@ Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password
 
 Each row with "Generate?" marked as "No" is described for backward compatibility, and MUST NOT be generated.
 
-An implementation MUST reject as malformed a secret key packet where the first octet is 255 and the S2K-specifier is 4 (Argon2).
+Argon2 is only used with AEAD-protected secret key material.
+An implementation MUST reject as malformed a secret key packet where the the S2K-specifier is 4 (Argon2) and the first octet is anything but 253.
 
 #### Symmetric-Key Message Encryption
 
