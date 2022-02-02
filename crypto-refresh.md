@@ -96,6 +96,15 @@ informative:
     author:
       org: Standards for Efficient Cryptography Group
     date: September 2000
+  SHAMBLES:
+    target: https://sha-mbles.github.io/
+    title: "Sha-1 is a shambles: First chosen-prefix collision on sha-1 and application to the PGP web of trust"
+    author:
+      -
+        name: Gaëtan Leurent
+      -
+        name: Thomas Peyrin
+    date: 2020
   SP800-57:
     target: "http://csrc.nist.gov/publications/nistpubs/800-57/SP800-57-Part{1,2}.pdf"
     title: Recommendation on Key Management
@@ -1050,6 +1059,8 @@ The body of a V4 or V5 Signature packet contains:
 
 - Two-octet field holding the left 16 bits of the signed hash value.
 
+- Only for V5 signatures, a 16 octet field containing random values used as salt.
+
 - One or more multiprecision integers comprising the signature.
   This portion is algorithm specific:
 
@@ -1098,7 +1109,7 @@ There are two fields consisting of Signature subpackets.
 The first field is hashed with the rest of the signature data, while the second is unhashed.
 The second set of subpackets is not cryptographically protected by the signature and should include only advisory information.
 
-The differences between a V4 and V5 signature are very small: a V5 signature merely increases the width of the size indicators for the signed data, making it more capable when signing large keys or messages.
+The differences between a V4 and V5 signature are two-fold: first, a V5 signature increases the width of the size indicators for the signed data, making it more capable when signing large keys or messages.  Second, the hash is salted with 128 bit of random data.
 
 The algorithms for converting the hash function result to a signature are described in {{computing-signatures}}.
 
@@ -1620,6 +1631,8 @@ Note that the length N of the fingerprint for a version 4 key is 20 octets; for 
 
 All signatures are formed by producing a hash over the signature data, and then using the resulting hash in the signature algorithm.
 
+When a V5 signature is made, the salt is hashed first.
+
 For binary document signatures (type 0x00), the document data is hashed directly.
 For text document signatures (type 0x01), the document is canonicalized by converting line endings to \<CR>\<LF>, and the resulting data is hashed.
 
@@ -1751,6 +1764,9 @@ The body of this packet consists of:
 - A one-octet number describing the hash algorithm used.
 
 - A one-octet number describing the public-key algorithm used.
+
+- Only for V5 packets, a 16 octet field containing random values used as salt.
+  The value must match the salt field of the corresponding Signature packet.
 
 - Only for V3 packets, an eight-octet number holding the Key ID of the signing key.
 
@@ -2580,6 +2596,9 @@ Currently defined Armor Header Keys are as follows:
 - "Hash", a comma-separated list of hash algorithms used in this message.
   This is used only in cleartext signed messages.
 
+- "SaltedHash", a salt and hash algorithm used in this message.
+  This is used only in cleartext signed messages that are followed by a v5 Signature.
+
 - "Charset", a description of the character set that the plaintext is in.
   Please note that OpenPGP defines text to be in UTF-8.
   An implementation will get best results by translating into and out of UTF-8.
@@ -2701,7 +2720,9 @@ The cleartext signed message consists of:
 
 - The cleartext header `-----BEGIN PGP SIGNED MESSAGE-----` on a single line,
 
-- One or more "Hash" Armor Headers,
+- If the message is signed using v3 or v4 Signatures, one or more "Hash" Armor Headers,
+
+- If the message is signed using v5 Signatures, one or more "SaltedHash" Armor Headers,
 
 - Exactly one empty line not included into the message digest,
 
@@ -2711,6 +2732,10 @@ The cleartext signed message consists of:
 
 If the "Hash" Armor Header is given, the specified message digest algorithm(s) are used for the signature.
 If more than one message digest is used in the signature, the "Hash" armor header contains a comma-delimited list of used message digests.
+
+If the "SaltedHash" Armor Header is given, the specified message digest algorithm and salt are used for a signature.
+The message digest name is followed by a colon (`:`) followed by 22 characters of Radix-64 encoded salt without padding.
+Note: The "SaltedHash" Armor Header contains digest algorithm and salt for a single signature; a second signature requires a second "SaltedHash" Armor Header.
 
 Current message digest names are described with the algorithm IDs in {{hash-algos}}.
 
@@ -3950,6 +3975,11 @@ Asymmetric key size | Hash size | Symmetric key size
   ECC scalar multiplication operations used in ECDSA and ECDH are vulnerable to side channel attacks.
   Countermeasures can often be taken at the higher protocol level, such as limiting the number of allowed failures or time-blinding of the operations associated with each network interface.
   Mitigations at the scalar multiplication level seek to eliminate any measurable distinction between the ECC point addition and doubling operations.
+
+- V5 signatures include a 128 bit salt that is hashed first.
+  This makes OpenPGP signatures non-deterministic and protects against a broad class of attacks that depend on creating a signature over a predictable message.
+  Hashing the salt first means that there is no attacker controlled hashed prefix.
+  An example of this kind of attack is described in the paper SHA-1 Is A Shambles (see {{SHAMBLES}}), which leverages a chosen prefix collision attack against SHA-1.
 
 ## Avoiding Ciphertext Malleability {#ciphertext-malleability}
 
