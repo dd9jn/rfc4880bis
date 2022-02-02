@@ -3872,9 +3872,6 @@ If the proposal contains neither an extension to the Features system nor an expl
 - This specification uses Public-Key Cryptography technologies.
   It is assumed that the private key portion of a public-private key pair is controlled and secured by the proper party or parties.
 
-- Certain operations in this specification involve the use of random numbers.
-  An appropriate entropy source should be used to generate these numbers (see {{RFC4086}}).
-
 - The MD5 hash algorithm has been found to have weaknesses, with collisions found in a number of cases.
   MD5 is deprecated for use in OpenPGP.
   Implementations MUST NOT generate new signatures using MD5 as a hash function.
@@ -4005,6 +4002,27 @@ There are multiple advantages of using an escrowed Revocation Signature over the
 - If the fingerprint mechanism suffers a cryptanalytic flaw, the escrowed Revocation Signature is not affected.
 
 A Revocation Signature may also be split up into shares and distributed among multiple parties, requiring some subset of those parties to collaborate before the escrowed Revocation Signature is recreated.
+
+## Random Number Generation and Seeding
+
+OpenPGP requires a cryptographically secure pseudorandom number generator (CSPRNG).
+In most cases, the operating system provides an appropriate facility such as a `getrandom()` syscall, which should be used absent other (e.g., performance) concerns.
+It is RECOMMENDED to use an existing CSPRNG implementation in preference to crafting a new one.
+Many adequate cryptographic libraries are already available under favorable license terms.
+Should those prove unsatisfactory, {{RFC4086}} provides guidance on the generation of random values.
+
+OpenPGP uses random data with three different levels of visibility:
+
+- in publicly-visible fields such as nonces, IVs, public padding material, or salts,
+
+- in shared-secret values, such as session keys for encrypted data or padding material within an encrypted packet, and
+
+- in entirely private data, such as asymmetric key generation.
+
+With a properly functioning CSPRNG, this does not present a security problem, as it is not feasible to determine the CSPRNG state from its output.
+However, with a broken CSPRNG, it may be possible for an attacker to use visible output to determine the CSPRNG internal state and thereby predict less-visible data like keying material, as documented in {{?CHECKOWAY=DOI.10.1145/2976749.2978395}}.
+
+An implementation can provide extra security against this form of attack by using separate CSPRNGs to generate random data with different levels of visibility.
 
 # Implementation Nits
 
