@@ -469,13 +469,13 @@ They are used in two places, currently: to encrypt the secret part of private ke
 There are four types of S2K specifiers currently supported, and some reserved values:
 
 {: title="S2K type registry"}
-ID | S2K Type | Generate? | Reference
----:|------------------|-----|-------
-  0 | Simple S2K | N | {{s2k-simple}}
-  1 | Salted S2K | Only when string is high entropy | {{s2k-salted}}
+ID | S2K Type | Generate? | S2K field size (octets) | Reference
+---:|------------------|-----|-------|--
+  0 | Simple S2K | N | 2 | {{s2k-simple}}
+  1 | Salted S2K | Only when string is high entropy | 10 | {{s2k-salted}}
   2 | Reserved value | N
-  3 | Iterated and Salted S2K | Y | {{s2k-iter-salted}}
-  4 | Argon2 | Y | {{s2k-argon2}}
+  3 | Iterated and Salted S2K | Y | 11 | {{s2k-iter-salted}}
+  4 | Argon2 | Y | 20 | {{s2k-argon2}}
 100 to 110 | Private/Experimental S2K | As appropriate
 
 These are described in the subsections below.
@@ -1703,7 +1703,7 @@ A version 4 Symmetric-Key Encrypted Session Key packet consists of:
 
 - A one-octet number describing the symmetric algorithm used.
 
-- A string-to-key (S2K) specifier, length as defined above.
+- A string-to-key (S2K) specifier, length as defined in {{s2k-types}}.
 
 - Optionally, the encrypted session key itself, which is decrypted with the string-to-key object.
 
@@ -1723,7 +1723,7 @@ A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 
 - A one-octet AEAD algorithm.
 
-- A string-to-key (S2K) specifier, length as defined above.
+- A string-to-key (S2K) specifier, length as defined in {{s2k-types}}.
 
 - A starting initialization vector of size specified by the AEAD algorithm.
 
