@@ -90,6 +90,7 @@ informative:
   RFC1991:
   RFC2440:
   RFC4880:
+  RFC5869:
   RFC6090:
   SEC1:
     title: "SEC 1: Elliptic Curve Cryptography"
@@ -1573,8 +1574,9 @@ First octet:
 Feature | Definition | Reference
 ---|--------------|--------
 0x01 | Modification Detection (packets 18 and 19) | {{seipd}}, {{mdc}}
-0x02 | AEAD Encrypted Data (packet 20) version 1 | {{aead}}
+0x02 | Reserved
 0x04 | Reserved
+0x08 | AEAD Encrypted Data (packet 20) version 2 | {{aead}}
 
 If an implementation implements any of the defined features, it SHOULD implement the Features subpacket, too.
 
@@ -2393,14 +2395,14 @@ While this is a bit restrictive, it reduces complexity.
 ## AEAD Encrypted Data Packet (Tag 20) {#aead}
 
 This packet contains data encrypted with an authenticated encryption and additional data (AEAD) construction.
-When it has been decrypted, it will typically contain other packets (often a Literal Data packet or Compressed Data packet).
+When it has been decrypted, it will contain other packets forming an OpenPGP Message (see {{openpgp-messages}}).
 
 The body of this packet starts with:
 
 - A one-octet version number.
-  The only currently defined value is 1.
+  The only currently defined value is 2.
 
-When the version is 1, it is followed by the following fields:
+When the version is 2, it is followed by the following fields:
 
 - A one-octet cipher algorithm.
 
@@ -2408,11 +2410,20 @@ When the version is 1, it is followed by the following fields:
 
 - A one-octet chunk size.
 
-- A initialization vector of size specified by the AEAD algorithm.
+- Thirty-two octets of salt.
+  The salt is used to derive the message key and must be unique.
 
 - Encrypted data, the output of the selected symmetric-key cipher operating in the given AEAD mode.
 
 - A final, summary authentication tag for the AEAD mode.
+
+The decrypted session key and the salt in the AEAD packet are used to derive an M-bit message key and an N-bit initialization vector, where M is the key size of the symmetric algorithm and N is the nonce size of the AEAD algorithm.
+M + N bits are derived using HKDF (see {{RFC5869}}).
+The left-most M bits are used as symmetric algorithm key, the remaining N bits are used as initialization vector.
+HKDF is used with SHA256 as hash algorithm, the session key as Initial Keying Material (IKM), the salt as salt, and the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), version number, cipher algorithm octet, AEAD algorithm octet, and chunk size octet as info parameter.
+
+The KDF mechanism provides key separation between cipher and AEAD algorithms.
+Furthermore, an implementation can securely reply to a message even if a recipients certificate is unknown by reusing the encrypted session key packets and replying with a different salt yielding a new, unique message key.
 
 An AEAD encrypted data packet consists of one or more chunks of data.
 The plaintext of each chunk is of a size specified using the chunk size octet using the method specified below.
@@ -2436,8 +2447,7 @@ The chunk size octet specifies the size of chunks using the following formula (i
 An implementation MUST accept chunk size octets with values from 0 to 16.
 An implementation MUST NOT create data with a chunk size octet value larger than 16 (4 MiB chunks).
 
-A unique, random, unpredictable initialization vector MUST be used for each message.
-Failure to do so for each message can lead to a catastrophic failure depending on the choice of AEAD mode and symmetric key reuse.
+The nonce for AEAD mode is computed by exclusive-oring the right-most bits of the initialization vector with the chunk index as big-endian value.
 
 ### EAX Mode
 
@@ -2447,8 +2457,6 @@ The EAX algorithm can only use block ciphers with 16-octet blocks.
 The initialization vector is 16 octets long.
 EAX authentication tags are 16 octets long.
 
-The nonce for EAX mode is computed by treating the initialization vector as a 16-octet, big-endian value and exclusive-oring the low eight octets of it with the chunk index.
-
 ### OCB Mode
 
 The OCB AEAD Algorithm used in this document is defined in {{RFC7253}}.
@@ -2456,8 +2464,6 @@ The OCB AEAD Algorithm used in this document is defined in {{RFC7253}}.
 The OCB algorithm can only use block ciphers with 16-octet blocks.
 The initialization vector is 15 octets long.
 OCB authentication tags are 16 octets long.
-
-The nonce for OCB mode is computed by the exclusive-oring of the initialization vector as a 15-octet, big endian value, against the chunk index.
 
 # Radix-64 Conversions
 
@@ -4130,15 +4136,15 @@ This example encrypts the cleartext string `Hello, world!` with the password `pa
 
 S2K:
 
-      type 3
+      Iterated and Salted S2K
 
 Iterations:
 
-      524288 (144), SHA2-256
+      65011712 (255), SHA2-256
 
 Salt:
 
-      cd5a9f70fbe0bc65
+      b3 63 d1 5e 6e c2 aa ce
 
 ### Sample symmetric-key encrypted session key packet (v5)
 
@@ -4148,25 +4154,25 @@ Packet header:
 
 Version, algorithms, S2K fields:
 
-      05 07 01 03 08 cd 5a 9f 70 fb e0 bc 65 90
+      05 07 01 03 08 b3 63 d1 5e 6e c2 aa ce ff
 
 AEAD IV:
 
-      bc 66 9e 34 e5 00 dc ae dc 5b 32 aa 2d ab 02 35
+      8d cb a6 c4 8f a9 b3 4b 40 50 e2 c6 8e 58 6d 72
 
-AEAD encrypted content encryption key:
+AEAD encrypted session key:
 
-      9d ee 19 d0 7c 34 46 c4 31 2a 34 ae 19 67 a2 fb
+      c6 fe 12 5c 1e 64 62 bd 96 01 84 75 19 76 df c0
 
 Authentication tag:
 
-      7e 92 8e a5 b4 fa 80 12 bd 45 6d 17 38 c6 3c 36
+      fb ba 67 de aa 8a 65 f1 f1 1b f2 cb f0 ef 16 0d
 
-### Starting AEAD-EAX decryption of the content encryption key
+### Starting AEAD-EAX decryption of the session key
 
 The derived key is:
 
-      b2 55 69 b9 54 32 45 66 45 27 c4 97 6e 7a 5d 6e
+      7e 55 1d d2 23 0f 55 53 72 72 09 de 05 65 6e 6c
 
 Authenticated Data:
 
@@ -4174,89 +4180,103 @@ Authenticated Data:
 
 Nonce:
 
-      bc 66 9e 34 e5 00 dc ae dc 5b 32 aa 2d ab 02 35
+      82 09 29 5f af 4a f0 6c dd 36 e0 d3 40 80 7c 84
 
-Decrypted content encryption key:
+Decrypted session key:
 
-      86 f1 ef b8 69 52 32 9f 24 ac d3 bf d0 e5 34 6d
+      35 5d c9 1d 0d f9 24 68 bb b5 b7 a2 65 c0 dc 28
 
 ### Sample AEAD encrypted data packet
 
 Packet header:
 
-      d4 4a
+      d4 59
 
 Version, AES-128, EAX, Chunk bits (14):
 
-      01 07 01 0e
+      02 07 01 06
 
-IV:
+Salt:
 
-      b7 32 37 9f 73 c4 92 8d e2 5f ac fe 65 17 ec 10
+      ce e7 1a e0 64 92 da 2e ab 05 aa 7c d8 89 86 a1
+      7b 51 d9 0c 75 89 06 21 af 0a 74 cc 67 57 c6 85
 
 AEAD-EAX Encrypted data chunk #0:
 
-      5d c1 1a 81 dc 0c b8 a2 f6 f3 d9 00 16 38 4a 56
-      fc 82 1a e1 1a e8
+      83 3a d5 ff 81 d3 33 2c 85 be c7 7d 93 b7 45 74
+      d6 e7 ff 11 e4
 
 Chunk #0 authentication tag:
 
-      db cb 49 86 26 55 de a8 8d 06 a8 14 86 80 1b 0f
+      d3 f2 56 47 5f bf f6 4c d5 12 59 6e b4 d4 b9 46
 
 Final (zero-size chunk #1) authentication tag:
 
-      f3 87 bd 2e ab 01 3d e1 25 95 86 90 6e ab 24 76
+      96 7c ba 8a 8e bf 92 18 33 2b 2d b1 6f 5b 19 9f
 
 ### Decryption of data
 
-Starting AEAD-EAX decryption of data, using the content encryption key.
+Starting AEAD-EAX decryption of data, using the session key.
+
+HKDF info:
+
+      d4 01 07 01 06
+
+HKDF output:
+
+      62 37 ee bc ce 43 6a 7e 91 46 75 f1 c1 43 43 28
+      4e db e0 13 83 b7 0d 94 90 cc 62 24 86 3d ec 79
+
+Symmetric key:
+
+      62 37 ee bc ce 43 6a 7e 91 46 75 f1 c1 43 43 28
+
+Initialization vector:
+
+      4e db e0 13 83 b7 0d 94 90 cc 62 24 86 3d ec 79
 
 Chunk #0:
 
 Authenticated data:
 
-      d4 01 07 01 0e 00 00 00 00 00 00 00 00
+      d4 01 07 01 06 00 00 00 00 00 00 00 00
 
 Nonce:
 
-      b7 32 37 9f 73 c4 92 8d e2 5f ac fe 65 17 ec 10
+      4e db e0 13 83 b7 0d 94 90 cc 62 24 86 3d ec 79
 
 Decrypted chunk #0.
 
-Literal data packet with the string contents `Hello, world!\n`.
+Literal data packet with the string contents `Hello, world!`.
 
-      cb 14 62 00 00 00 00 00  48 65 6c 6c 6f 2c 20 77
-      6f 72 6c 64 21 0a
+      cb 13 62 00 00 00 00 00  48 65 6c 6c 6f 2c 20 77
+      6f 72 6c 64 21
 
 Authenticating final tag:
 
 Authenticated data:
 
-      d4 01 07 01 0e 00 00 00  00 00 00 00 01 00 00 00
-      00 00 00 00 16
+      d4 01 07 01 06 00 00 00 00 00 00 00 01 00 00 00
+      00 00 00 00 15
 
 Nonce:
 
-      b7 32 37 9f 73 c4 92 8d e2 5f ac fe 65 17 ec 11
+      4e db e0 13 83 b7 0d 94 90 cc 62 24 86 3d ec 78
 
 ### Complete AEAD-EAX encrypted packet sequence
 
-Symmetric-key encrypted session key packet (v5):
+      -----BEGIN PGP MESSAGE-----
 
-      c3 3e 05 07 01 03 08 cd  5a 9f 70 fb e0 bc 65 90
-      bc 66 9e 34 e5 00 dc ae  dc 5b 32 aa 2d ab 02 35
-      9d ee 19 d0 7c 34 46 c4  31 2a 34 ae 19 67 a2 fb
-      7e 92 8e a5 b4 fa 80 12  bd 45 6d 17 38 c6 3c 36
-
-AEAD encrypted data packet:
-
-      d4 4a 01 07 01 0e b7 32  37 9f 73 c4 92 8d e2 5f
-      ac fe 65 17 ec 10 5d c1  1a 81 dc 0c b8 a2 f6 f3
-      d9 00 16 38 4a 56 fc 82  1a e1 1a e8 db cb 49 86
-      26 55 de a8 8d 06 a8 14  86 80 1b 0f f3 87 bd 2e
-      ab 01 3d e1 25 95 86 90  6e ab 24 76
+      wz4FBwEDCLNj0V5uwqrO/43LpsSPqbNLQFDixo5YbXLG/hJcHmRivZYBhHUZdt/A
+      +7pn3qqKZfHxG/LL8O8WDdRZAgcBBs7nGuBkktouqwWqfNiJhqF7UdkMdYkGIa8K
+      dMxnV8aFgzrV/4HTMyyFvsd9k7dFdNbn/xHk0/JWR1+/9kzVEllutNS5RpZ8uoqO
+      v5IYMystsW9bGZ8=
+      =kYt3
+      -----END PGP MESSAGE-----
 
 ## Sample AEAD-OCB encryption and decryption
+
+FIXME: update test vectors to indicate AEAD version 2
 
 This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-OCB encryption.
 
