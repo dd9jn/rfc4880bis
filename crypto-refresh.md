@@ -794,7 +794,7 @@ Tag | Packet Type
  14 | Public-Subkey Packet
  17 | User Attribute Packet
  18 | Sym. Encrypted and Integrity Protected Data Packet
- 19 | Modification Detection Code Packet
+ 19 | Reserved (formerly Modification Detection Code Packet)
  20 | AEAD Encrypted Data Packet
 60 to 63 | Private or Experimental Values
 
@@ -1583,7 +1583,7 @@ First octet:
 {: title="Features registry"}
 Feature | Definition | Reference
 ---|--------------|--------
-0x01 | Modification Detection (packets 18 and 19) | {{seipd}}, {{mdc}}
+0x01 | Symmetrically Encrypted Integrity Protected Data packet version 1 | {{seipd}}
 0x02 | Reserved
 0x04 | Reserved
 0x08 | AEAD Encrypted Data (packet 20) version 2 | {{aead}}
@@ -2297,19 +2297,18 @@ An implementation MAY try to determine the type of an image by examination of th
 ## Sym. Encrypted Integrity Protected Data Packet (Tag 18) {#seipd}
 
 The Symmetrically Encrypted Integrity Protected Data packet is a variant of the Symmetrically Encrypted Data packet.
-It is a legacy OpenPGP mechanism that, in combination with the Modification Detection Code packet ({{mdc}}) offers some protections against ciphertext malleability.
+It is a legacy OpenPGP mechanism that offers some protections against ciphertext malleability.
 The AEAD Encrypted Data packet ({{aead}}) offers a more cryptographically rigorous defense against ciphertext malleability, but may not be as widely supported.
 See {{ciphertext-malleability}} for more details on choosing between these formats.
 
 This packet contains data encrypted with a symmetric-key algorithm and protected against modification by the SHA-1 hash algorithm.
 When it has been decrypted, it will typically contain other packets (often a Literal Data packet or Compressed Data packet).
-The last decrypted packet in this packet's payload MUST be a Modification Detection Code packet.
 
 The body of this packet consists of:
 
 - A one-octet version number.
   The only defined value is 1.
-  There won't be any future versions of this packet: the MDC system is deprecated because it is superseded by the AEAD Encrypted Data packet (see {{mdc}}).
+  There won't be any future versions of this packet: the MDC system is deprecated because it is superseded by the AEAD Encrypted Data packet.
 
 - Encrypted data, the output of the selected symmetric-key cipher operating in Cipher Feedback mode with shift amount equal to the block size of the cipher (CFB-n where n is the block size).
 
@@ -2327,25 +2326,22 @@ See {{cfb-mode}} for more details.
 
 The repetition of 16 bits in the random data prefixed to the message allows the receiver to immediately check whether the session key is incorrect.
 
-The plaintext of the data to be encrypted is passed through the SHA-1 hash function, and the result of the hash is appended to the plaintext in a Modification Detection Code packet.
-The input to the hash function includes the prefix data described above; it includes all of the plaintext, and then also includes two octets of values 0xD3, 0x14.
-These represent the encoding of a Modification Detection Code packet tag and length field of 20 octets.
+Two constant octets with the values 0xD3 and 0x14 are appended to the plaintext.
+Then, the plaintext of the data to be encrypted is passed through the SHA-1 hash function.
+The input to the hash function includes the prefix data described above; it includes all of the plaintext, including the trailing constant octets 0xD3, 0x14.
+The 20 octets of the SHA-1 hash are then appended to the plaintext (after the constant octets 0xD3, 0x14) and encrypted along with the plaintext using the same CFB context.
+This trailing checksum is known as the Modification Detection Code (MDC).
 
-The resulting hash value is stored in a Modification Detection Code (MDC) packet, which MUST use the two octet encoding just given to represent its tag and length field.
-The body of the MDC packet is the 20-octet output of the SHA-1 hash.
-
-The Modification Detection Code packet is appended to the plaintext and encrypted along with the plaintext using the same CFB context.
-
-During decryption, the plaintext data should be hashed with SHA-1, including the prefix data as well as the packet tag and length field of the Modification Detection Code packet.
-The body of the MDC packet, upon decryption, is compared with the result of the SHA-1 hash.
-
-Any failure of the MDC indicates that the message has been modified and MUST be treated as a security problem.
-Failures include a difference in the hash values, but also the absence of an MDC packet, or an MDC packet in any position other than the end of the plaintext.
+During decryption, the plaintext data should be hashed with SHA-1, including the prefix data as well as the trailing constant octets 0xD3, 0x14, but excluding the last 20 octets containing the SHA-1 hash.
+The computed SHA-1 hash is then compared with the last 20 octets of plaintext.
+A mismatch of the hash indicates that the message has been modified and MUST be treated as a security problem.
 Any failure SHOULD be reported to the user.
 
 >   NON-NORMATIVE EXPLANATION
 >
->   The MDC system, as packets 18 and 19 are called, were created to
+>   The Modification Detection Code (MDC) system, as the integrity
+>   protection mechanism of version 1 of the Symmetrically Encrypted
+>   Integrity Protected Data packet is called, was created to
 >   provide an integrity mechanism that is less strong than a
 >   signature, yet stronger than bare CFB encryption.
 >
@@ -2396,22 +2392,6 @@ Any failure SHOULD be reported to the user.
 >
 >   However, no update will be needed because the MDC has been replaced
 >   by the AEAD encryption described in this document.
-
-## Modification Detection Code Packet (Tag 19) {#mdc}
-
-The Modification Detection Code packet contains a SHA-1 hash of plaintext data, which is used to detect message modification.
-It is only used with a Symmetrically Encrypted Integrity Protected Data packet.
-The Modification Detection Code packet MUST be the last packet in the plaintext data that is encrypted in the Symmetrically Encrypted Integrity Protected Data packet, and MUST appear in no other place.
-
-A Modification Detection Code packet MUST have a length of 20 octets.
-
-The body of this packet consists of:
-
-- A 20-octet SHA-1 hash of the preceding plaintext data of the Symmetrically Encrypted Integrity Protected Data packet, including prefix data, the tag octet, and length octet of the Modification Detection Code packet.
-
-Note that the Modification Detection Code packet MUST always use a new format encoding of the packet tag, and a one-octet encoding of the packet length.
-The reason for this is that the hashing rules for modification detection include a one-octet tag and one-octet length in the data hash.
-While this is a bit restrictive, it reduces complexity.
 
 ## AEAD Encrypted Data Packet (Tag 20) {#aead}
 
@@ -2963,7 +2943,7 @@ ID | Algorithm | Text Name
 Implementations MUST implement SHA2-256.
 Implementations SHOULD implement SHA2-384 and SHA2-512.
 Implementations MAY implement other algorithms.
-Implementations SHOULD NOT create messages which require the use of SHA-1 with the exception of computing version 4 key fingerprints and for purposes of the MDC packet.
+Implementations SHOULD NOT create messages which require the use of SHA-1 with the exception of computing version 4 key fingerprints and for purposes of the Modification Detection Code (MDC) in version 1 Symmetrically Encrypted Integrity Protected Data packets.
 Implementations MUST NOT generate signatures with MD5, SHA-1, or RIPE-MD/160.
 Implementations MUST NOT use MD5, SHA-1, or RIPE-MD/160 as a hash function in an ECDH KDF.
 Implementations MUST NOT validate any recent signature that depends on MD5, SHA-1, or RIPE-MD/160.
@@ -4023,7 +4003,7 @@ Any of the following OpenPGP data elements indicate that malleable ciphertext is
 
 - all Symmetrically Encrypted Data packets (SED, {{sed}}).
 - within any encrypted container, any Compressed Data packet ({{compressed-data}}) where there is a decompression failure.
-- any Symmetrically Encrypted Integrity Protected Data packet (SEIPD, {{seipd}}) where the internal Modification Detectiion Code packet (MDC, {{mdc}}) does not validate.
+- any Symmetrically Encrypted Integrity Protected Data packet (SEIPD, {{seipd}}) where the internal Modification Detection Code does not validate.
 - any AEAD Encrypted Data packet (AEAD, {{aead}}) where the authentication tag of any chunk fails, or where there is no final zero-octet chunk.
 - any Secret Key packet with encrypted secret key material ({{secret-key-encryption}}) where there is an integrity failure, based on the value of the secret key protection octet:
   - value 255 or raw cipher algorithm: where the trailing 2-octet checksum does not match.
