@@ -1773,7 +1773,8 @@ The body of this packet consists of:
 
 - Only for V3 packets, an eight-octet number holding the Key ID of the signing key.
 
-- Only for V5 packets, a thirty-two-octet field holding the fingerprint of the v5 signing key.
+- Only for V5 packets, a one octet key version number and N octets of the fingerprint of the signing key.
+  Note that the length N of the fingerprint for a version 5 key is 32.
 
 - A one-octet number holding a flag showing whether the signature is nested.
   A zero value indicates that the next packet is another One-Pass Signature packet that describes another signature to be applied to the same message data.
