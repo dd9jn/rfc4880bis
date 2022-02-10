@@ -2429,14 +2429,12 @@ The plaintext of each chunk is of a size specified using the chunk size octet us
 The encrypted data consists of the encryption of each chunk of plaintext, followed immediately by the relevant authentication tag.
 If the last chunk of plaintext is smaller than the chunk size, the ciphertext for that data may be shorter; it is nevertheless followed by a full authentication tag.
 
-For each chunk, the AEAD construction is given the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), version number, cipher algorithm octet, AEAD algorithm octet, chunk size octet, and an eight-octet, big-endian chunk index as additional data.
-The index of the first chunk is zero.
-For example, the additional data of the first chunk using EAX and AES-128 with a chunk size of 2\*\*16 octets consists of the octets 0xD4, 0x01, 0x07, 0x01, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, and 0x00.
+For each chunk, the AEAD construction is given the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), version number, cipher algorithm octet, AEAD algorithm octet, and chunk size octet as additional data.
+For example, the additional data of the first chunk using EAX and AES-128 with a chunk size of 2\*\*16 octets consists of the octets 0xD4, 0x02, 0x07, 0x01, and 0x10.
 
 After the final chunk, the AEAD algorithm is used to produce a final authentication tag encrypting the empty string.
 This AEAD instance is given the additional data specified above, plus an eight-octet, big-endian value specifying the total number of plaintext octets encrypted.
 This allows detection of a truncated ciphertext.
-Please note that the big-endian number representing the chunk index in the additional data is increased accordingly, although it's not really a chunk.
 
 The chunk size octet specifies the size of chunks using the following formula (in C), where c is the chunk size octet:
 
@@ -2449,6 +2447,7 @@ The nonce for AEAD mode consists of two parts.
 Let N be the size of the nonce.
 The left-most N - 64 bits are the initialization vector derived using HKDF.
 The right-most 64 bits are the chunk index as big-endian value.
+The index of the first chunk is zero.
 
 ### EAX Mode
 
