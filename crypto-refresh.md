@@ -2415,9 +2415,9 @@ A version 2 Symmetrically Encrypted Integrity Protected Data packet consists of:
 
 - A final, summary authentication tag for the AEAD mode.
 
-The decrypted session key and the salt are used to derive an M-bit message key and an N-bit initialization vector, where M is the key size of the symmetric algorithm and N is the nonce size of the AEAD algorithm.
-M + N bits are derived using HKDF (see {{RFC5869}}).
-The left-most M bits are used as symmetric algorithm key, the remaining N bits are used as initialization vector.
+The decrypted session key and the salt are used to derive an M-bit message key and N-64 bits used as initialization vector, where M is the key size of the symmetric algorithm and N is the nonce size of the AEAD algorithm.
+M + N - 64 bits are derived using HKDF (see {{RFC5869}}).
+The left-most M bits are used as symmetric algorithm key, the remaining N - 64 bits are used as initialization vector.
 HKDF is used with SHA256 as hash algorithm, the session key as Initial Keying Material (IKM), the salt as salt, and the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), version number, cipher algorithm octet, AEAD algorithm octet, and chunk size octet as info parameter.
 
 The KDF mechanism provides key separation between cipher and AEAD algorithms.
@@ -2445,14 +2445,17 @@ The chunk size octet specifies the size of chunks using the following formula (i
 An implementation MUST accept chunk size octets with values from 0 to 16.
 An implementation MUST NOT create data with a chunk size octet value larger than 16 (4 MiB chunks).
 
-The nonce for AEAD mode is computed by exclusive-oring the right-most bits of the initialization vector with the chunk index as big-endian value.
+The nonce for AEAD mode consists of two parts.
+Let N be the size of the nonce.
+The left-most N - 64 bits are the initialization vector derived using HKDF.
+The right-most 64 bits are the chunk index as big-endian value.
 
 ### EAX Mode
 
 The EAX AEAD Algorithm used in this document is defined in {{EAX}}.
 
 The EAX algorithm can only use block ciphers with 16-octet blocks.
-The initialization vector is 16 octets long.
+The nonce is 16 octets long.
 EAX authentication tags are 16 octets long.
 
 ### OCB Mode
@@ -2460,7 +2463,7 @@ EAX authentication tags are 16 octets long.
 The OCB AEAD Algorithm used in this document is defined in {{RFC7253}}.
 
 The OCB algorithm can only use block ciphers with 16-octet blocks.
-The initialization vector is 15 octets long.
+The nonce is 15 octets long.
 OCB authentication tags are 16 octets long.
 
 ### GCM Mode
@@ -2468,7 +2471,7 @@ OCB authentication tags are 16 octets long.
 The GCM AEAD Algorithm used in this document is defined in {{SP800-38D}}.
 
 The GCM algorithm can only use block ciphers with 16-octet blocks.
-The initialization vector is 12 octets long.
+The nonce is 12 octets long.
 GCM authentication tags are 16 octets long.
 
 # Radix-64 Conversions
