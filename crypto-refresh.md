@@ -4284,23 +4284,21 @@ Final additional authenticated data:
 
 ## Sample AEAD-OCB encryption and decryption
 
-FIXME: update test vectors to indicate SEIPD version 2
-
 This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-OCB encryption.
 
 ### Sample Parameters
 
 S2K:
 
-      type 3
+      Iterated and Salted S2K
 
 Iterations:
 
-      524288 (144), SHA2-256
+      65011712 (255), SHA2-256
 
 Salt:
 
-      9f0b7da3e5ea6477
+      97 c1 7e 9d fb d5 e9 25
 
 ### Sample symmetric-key encrypted session key packet (v5)
 
@@ -4310,25 +4308,25 @@ Packet header:
 
 Version, algorithms, S2K fields:
 
-      05 07 02 03 08 9f 0b 7d a3 e5 ea 64 77 90
+      05 07 02 03 08 97 c1 7e 9d fb d5 e9 25
 
-AEAD IV:
+Nonce:
 
-      99 e3 26 e5 40 0a 90 93 6c ef b4 e8 eb a0 8c
+      f2 d3 e3 f1 bc ae ca 8b d8 fd 6d 3d 56 de 49
 
-AEAD encrypted content encryption key:
+AEAD encrypted session key:
 
-      67 73 71 6d 1f 27 14 54 0a 38 fc ac 52 99 49 da
+      84 ce 97 12 41 5b c3 c1 d8 40 85 25 dc 98 a8 f2
 
 Authentication tag:
 
-      c5 29 d3 de 31 e1 5b 4a eb 72 9e 33 00 33 db ed
+      ae e4 cb 81 81 c8 a9 57 d0 24 1d a7 46 74 3c e3
 
-### Starting AEAD-OCB decryption of the content encryption key
+### Starting AEAD-OCB decryption of the session key
 
 The derived key is:
 
-      eb 9d a7 8a 9d 5d f8 0e c7 02 05 96 39 9b 65 08
+      a5 1e 39 43 64 86 34 43 09 2d e1 10 d1 2d f6 79
 
 Authenticated Data:
 
@@ -4336,87 +4334,98 @@ Authenticated Data:
 
 Nonce:
 
-      99 e3 26 e5 40 0a 90 93 6c ef b4 e8 eb a0 8c
+      f2 d3 e3 f1 bc ae ca 8b d8 fd 6d 3d 56 de 49
 
-Decrypted content encryption key:
+Decrypted session key:
 
-      d1 f0 1b a3 0e 13 0a a7 d2 58 2c 16 e0 50 ae 44
+      3e 8b a9 50 9b f4 39 e8 d4 9f c2 93 8b 73 d1 20
 
 ### Sample v2 SEIPD packet packet
 
 Packet header:
 
-      d4 49
+      d4 59
 
-Version, AES-128, OCB, Chunk bits (14):
+Version, AES-128, OCB, Chunk size octet (06):
 
-      01 07 02 0e
+      02 07 02 06
 
-IV:
+Salt:
 
-      5e d2 bc 1e 47 0a be 8f 1d 64 4c 7a 6c 8a 56
+      4e 07 f5 df 66 39 f9 8d 8d 6c ad 10 2c 57 5d 2e
+      e0 8d 8a 12 db 17 1b df e0 89 2e 0e 83 3a 3c 61
 
 AEAD-OCB Encrypted data chunk #0:
 
-      7b 0f 77 01 19 66 11 a1  54 ba 9c 25 74 cd 05 62
-      84 a8 ef 68 03 5c
+      70 55 aa 4a 95 2f 6b db f5 7d 10 6d 82 76 c7 7b
+      cb 4c e8 38 9a
 
 Chunk #0 authentication tag:
 
-      62 3d 93 cc 70 8a 43 21 1b b6 ea f2 b2 7f 7c 18
+      4f cf a0 ea 40 3a 69 ef 53 b6 62 3b e4 d8 d1 d0
 
-Final (zero-size chunk #1) authentication tag:
+Final (zero-sized chunk #1) authentication tag:
 
-      d5 71 bc d8 3b 20 ad d3 a0 8b 73 af 15 b9 a0 98
+      48 96 02 6d cc dc 70 3d 53 62 23 4c 77 e8 dc 37
 
 ### Decryption of data
 
-Starting AEAD-OCB decryption of data, using the content encryption key.
+Starting AEAD-OCB decryption of data, using the session key.
+
+HKDF info:
+
+      d2 02 07 02 06
+
+HKDF output:
+
+      90 2e 0b ca d1 c4 86 f7 d6 52 66 80 f1 95 10 29
+      4b 1f e6 ee 5d 79 33
+
+Message key:
+
+      90 2e 0b ca d1 c4 86 f7 d6 52 66 80 f1 95 10 29
+
+Initialization vector:
+
+      4b 1f e6 ee 5d 79 33
 
 Chunk #0:
 
-Authenticated data:
-
-      d4 01 07 02 0e 00 00 00 00 00 00 00 00
-
 Nonce:
 
-      5e d2 bc 1e 47 0a be 8f 1d 64 4c 7a 6c 8a 56
+      4b 1f e6 ee 5d 79 33 00 00 00 00 00 00 00 00
+
+Additional authenticated data:
+
+      d2 02 07 02 06
 
 Decrypted chunk #0.
 
-Literal data packet with the string contents `Hello, world!\n`.
+Literal data packet with the string contents `Hello, world!`.
 
-      cb 14 62 00 00 00 00 00  48 65 6c 6c 6f 2c 20 77
-      6f 72 6c 64 21 0a
+      cb 13 62 00 00 00 00 00  48 65 6c 6c 6f 2c 20 77
+      6f 72 6c 64 21
 
 Authenticating final tag:
 
-Authenticated data:
+Final nonce:
 
-      d4 01 07 02 0e 00 00 00 00 00 00 00 01 00 00 00
-      00 00 00 00 16
+      4b 1f e6 ee 5d 79 33 00 00 00 00 00 00 00 01
 
-Nonce:
+Final additional authenticated data:
 
-      5e d2 bc 1e 47 0a be 8f 1d 64 4c 7a 6c 8a 57
+      d2 02 07 02 06 00 00 00 00 00 00 00 15
 
 ### Complete AEAD-OCB encrypted packet sequence
 
-Symmetric-Key Encrypted Session Key packet (v5):
+      -----BEGIN PGP MESSAGE-----
 
-      c3 3d 05 07 02 03 08 9f  0b 7d a3 e5 ea 64 77 90
-      99 e3 26 e5 40 0a 90 93  6c ef b4 e8 eb a0 8c 67
-      73 71 6d 1f 27 14 54 0a  38 fc ac 52 99 49 da c5
-      29 d3 de 31 e1 5b 4a eb  72 9e 33 00 33 db ed
-
-Symmetrically Encrypted Integrity Protected Data packet (v2):
-
-      d4 49 01 07 02 0e 5e d2  bc 1e 47 0a be 8f 1d 64
-      4c 7a 6c 8a 56 7b 0f 77  01 19 66 11 a1 54 ba 9c
-      25 74 cd 05 62 84 a8 ef  68 03 5c 62 3d 93 cc 70
-      8a 43 21 1b b6 ea f2 b2  7f 7c 18 d5 71 bc d8 3b
-      20 ad d3 a0 8b 73 af 15  b9 a0 98
+      wz0FBwIDCJfBfp371ekl//LT4/G8rsqL2P1tPVbeSYTOlxJBW8PB2ECFJdyYqPKu
+      5MuBgcipV9AkHadGdDzj0lkCBwIGTgf132Y5+Y2NbK0QLFddLuCNihLbFxvf4Iku
+      DoM6PGFwVapKlS9r2/V9EG2Cdsd7y0zoOJpPz6DqQDpp71O2Yjvk2NHQSJYCbczc
+      cD1TYiNMd+jcNw==
+      =bDfb
+      -----END PGP MESSAGE-----
 
 FIXME: add AEAD-GCM test vector
 
