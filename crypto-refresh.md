@@ -4427,7 +4427,150 @@ Final additional authenticated data:
       =bDfb
       -----END PGP MESSAGE-----
 
-FIXME: add AEAD-GCM test vector
+## Sample AEAD-GCM encryption and decryption
+
+This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-GCM encryption.
+
+### Sample Parameters
+
+S2K:
+
+      Iterated and Salted S2K
+
+Iterations:
+
+      65011712 (255), SHA2-256
+
+Salt:
+
+      89 59 07 40 90 4d 87 36
+
+### Sample symmetric-key encrypted session key packet (v5)
+
+Packet header:
+
+      c3 3d
+
+Version, algorithms, S2K fields:
+
+      05 07 02 03 08 89 59 07 40 90 4d 87 36
+
+Nonce:
+
+      2c 76 eb af 34 ff d7 69 97 c0 40 b2
+
+AEAD encrypted session key:
+
+      3a 6b 9f 80 a1 8d b1 1d e3 3f b1 a2 cf f9 63 97
+
+Authentication tag:
+
+      e6 2b b0 2a 0d d9 9b 64 a4 e5 df a1 a7 bc de 8c
+
+### Starting AEAD-GCM decryption of the session key
+
+The derived key is:
+
+      d8 9e 46 fb af fd 32 85 8c 47 c1 33 c6 32 3d 1f
+
+Authenticated Data:
+
+      c3 05 07 03
+
+Nonce:
+
+      2c 76 eb af 34 ff d7 69 97 c0 40 b2
+
+Decrypted session key:
+
+      63 8a 32 80 ad 39 cd a9 3c 13 54 63 a5 63 74 b7
+
+### Sample v2 SEIPD packet packet
+
+Packet header:
+
+      d4 59
+
+Version, AES-128, GCM, Chunk size octet (06):
+
+      02 07 03 06
+
+Salt:
+
+      4e 07 f5 df 66 39 f9 8d 8d 6c ad 10 2c 57 5d 2e
+      e0 8d 8a 12 db 17 1b df e0 89 2e 0e 83 3a 3c 61
+
+AEAD-GCM Encrypted data chunk #0:
+
+      e6 c3 b2 b8 eb 78 43 93 6b 44 b2 b8 a7 2d 86 40
+      96 b5 dc 0c c0 aa 4a 10 8a 64 26 1d 5d 6e a5 ba
+
+Chunk #0 authentication tag:
+
+      e8 9d 60 77 c4 1c b8 16 f1 7b 44 89 53 08 f9 9f
+
+Final (zero-sized chunk #1) authentication tag:
+
+      96 5b 1b 17 d5 84 62 17 b9 e2 57 88 3b c5 78 ab
+
+### Decryption of data
+
+Starting AEAD-GCM decryption of data, using the session key.
+
+HKDF info:
+
+      d2 02 07 03 06
+
+HKDF output:
+
+      ce c4 93 84 26 1c e3 88 5a 24 da ef 42 7c fa 21
+      24 04 fb 4a
+
+Message key:
+
+      ce c4 93 84 26 1c e3 88 5a 24 da ef 42 7c fa 21
+
+Initialization vector:
+
+      24 04 fb 4a
+
+Chunk #0:
+
+Nonce:
+
+      24 04 fb 4a 00 00 00 00 00 00 00 00
+
+Additional authenticated data:
+
+      d2 02 07 03 06
+
+Decrypted chunk #0.
+
+Literal data packet with the string contents `Hello, world!`.
+
+      cb 13 62 00 00 00 00 00  48 65 6c 6c 6f 2c 20 77
+      6f 72 6c 64 21
+
+Authenticating final tag:
+
+Final nonce:
+
+      24 04 fb 4a 00 00 00 00 00 00 00 01
+
+Final additional authenticated data:
+
+      d2 02 07 03 06 00 00 00 00 00 00 00 15
+
+### Complete AEAD-GCM encrypted packet sequence
+
+      -----BEGIN PGP MESSAGE-----
+
+      wzoFBwMDCIlZB0CQTYc2/yx26680/9dpl8BAsjprn4ChjbEd4z+xos/5Y5fmK7Aq
+      DdmbZKTl36GnvN6M0lkCBwMG5sOyuOt4Q5NrRLK4py2GQJa13AzAqkoQimQmHV1u
+      pbrNE+KknwPjzTVaA9/OUxtlqOYJEFvonWB3xBy4FvF7RIlTCPmfllsbF9WEYhe5
+      4leIO8V4qw==
+      =klPb
+      -----END PGP MESSAGE-----
 
 # Acknowledgements
 
