@@ -794,15 +794,15 @@ Tag | Packet Type
  14 | Public-Subkey Packet
  17 | User Attribute Packet
  18 | Sym. Encrypted and Integrity Protected Data Packet
- 19 | Modification Detection Code Packet
- 20 | AEAD Encrypted Data Packet
+ 19 | Reserved (formerly Modification Detection Code Packet)
+ 20 | Reserved (formerly AEAD Encrypted Data Packet)
 60 to 63 | Private or Experimental Values
 
 # Packet Types {#packet-types}
 
 ## Public-Key Encrypted Session Key Packets (Tag 1) {#pkesk}
 
-Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede an encryption container (i.e. a Symmetrically Encrypted Integrity Protected Data packet, an AEAD Encrypted Data packet, or --- for historic data --- a Symmetrically Encrypted Data packet), which holds an encrypted message.
+Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede an encryption container (i.e. a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet), which holds an encrypted message.
 The message is encrypted with the session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet(s).
 The encryption container is preceded by one Public-Key Encrypted Session Key packet for each OpenPGP key to which the message is encrypted.
 The recipient of the message finds a session key that is encrypted to their public key, decrypts the session key, and then uses the session key to decrypt the message.
@@ -1290,7 +1290,7 @@ The subpacket body is an ordered list of octets with the most preferred listed f
 It is assumed that only algorithms listed are supported by the recipient's software.
 Algorithm numbers are in {{aead-algorithms}}.
 This is only found on a self-signature.
-Note that support for version 1 of the AEAD Encrypted Data packet in general is indicated by a Feature Flag.
+Note that support for version 2 of the Symmetrically Encrypted Integrity Protected Data packet in general is indicated by a Feature Flag.
 
 #### Preferred Hash Algorithms
 
@@ -1583,10 +1583,10 @@ First octet:
 {: title="Features registry"}
 Feature | Definition | Reference
 ---|--------------|--------
-0x01 | Modification Detection (packets 18 and 19) | {{seipd}}, {{mdc}}
+0x01 | Symmetrically Encrypted Integrity Protected Data packet version 1 | {{version-one-seipd}}
 0x02 | Reserved
 0x04 | Reserved
-0x08 | AEAD Encrypted Data (packet 20) version 2 | {{aead}}
+0x08 | Symmetrically Encrypted Integrity Protected Data packet version 2 | {{version-two-seipd}}
 
 If an implementation implements any of the defined features, it SHOULD implement the Features subpacket, too.
 
@@ -1701,7 +1701,7 @@ Either of these keys can verify a signature created by the other, and it may be 
 ## Symmetric-Key Encrypted Session Key Packets (Tag 3) {#skesk}
 
 The Symmetric-Key Encrypted Session Key (SKESK) packet holds the symmetric-key encryption of a session key used to encrypt a message.
-Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede a an encryption container (i.e. a Symmetrically Encrypted Integrity Protected Data packet, an AEAD Encrypted Data packet, or --- for historic data --- a Symmetrically Encrypted Data packet) that holds an encrypted message.
+Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede a an encryption container (i.e. a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet) that holds an encrypted message.
 The message is encrypted with a session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet or the Symmetric-Key Encrypted Session Key packet.
 
 If the encryption container is preceded by one or more Symmetric-Key Encrypted Session Key packets, each specifies a passphrase that may be used to decrypt the message.
@@ -1741,15 +1741,15 @@ A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 
 - An authentication tag for the AEAD mode.
 
-The encrypted session key is encrypted using one of the AEAD algorithms specified for the AEAD Encrypted Data Packet.
+The encrypted session key is encrypted using one of the AEAD algorithms specified for version 2 of the Symmetrically Encrypted Integrity Protected Data packet.
 Note that no chunks are used and that there is only one authentication tag.
 The Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are given as additional data.
 For example, the additional data used with EAX and AES-128 consists of the octets 0xC3, 0x05, 0x07, and 0x01.
 
 ### No v5 SKESK with SEIPD {#no-v5-skesk-seipd}
 
-Note that unlike the AEAD Encrypted Data Packet (AED, see {{aead}}), the Symmetrically Encrypted Integrity Protected Data Packet (SEIPD, see {{seipd}}) does not internally indicate what cipher algorithm to use to decrypt it.
-Since the v5 SKESK packet's encrypted payload only indicates the key used, not the choice of cipher algorithm used for the subsequent encrypted data, a v5 SKESK packet can only provide a session key for an AED packet, and MUST NOT be used to provide a session key for a SEIPD Packet.
+Note that version 1 of the Symmetrically Encrypted Integrity Protected Data Packet ({{version-one-seipd}}) does not internally indicate what cipher algorithm to use to decrypt it, unlike version 2 ({{version-two-seipd}}).
+Since the v5 SKESK packet's encrypted payload only indicates the key used, not the choice of cipher algorithm used for the subsequent encrypted data, a v5 SKESK packet can only provide a session key for a v2 SEIPD packet, and MUST NOT be used to provide a session key for a v1 SEIPD Packet.
 
 ## One-Pass Signature Packets (Tag 4)
 
@@ -1905,7 +1905,7 @@ The packet contains:
 - \[Optional\] If string-to-key usage octet was 255, 254, or 253, a string-to-key specifier.
   The length of the string-to-key specifier is implied by its type, as described above.
 
-- \[Optional\] If string-to-key usage octet was 253 (i.e. the secret data is AEAD-encrypted), an initialization vector (IV) of size specified by the AEAD algorithm (see {{aead}}), which is used as the nonce for the AEAD algorithm.
+- \[Optional\] If string-to-key usage octet was 253 (i.e. the secret data is AEAD-encrypted), an initialization vector (IV) of size specified by the AEAD algorithm (see {{version-two-seipd}}), which is used as the nonce for the AEAD algorithm.
 
 - \[Optional\] If string-to-key usage octet was 255, 254, or a cipher algorithm identifier (i.e. the secret data is CFB-encrypted), an initialization vector (IV) of the same length as the cipher's block size.
 
@@ -1937,7 +1937,7 @@ All secret MPI values are encrypted, including the MPI bitcount prefix.
 
 If the string-to-key usage octet is 253, the key encryption key is derived using HKDF (see {{RFC5869}}) to provide key separation.
 HKDF is used with SHA256 as hash algorithm, the key derived from S2K as Initial Keying Material (IKM), no salt, and the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version, and the cipher-algo and AEAD-mode used to encrypt the key material, are used as info parameter.
-Then, the encrypted MPI values are encrypted as one combined plaintext using one of the AEAD algorithms specified for the AEAD Encrypted Data Packet.
+Then, the encrypted MPI values are encrypted as one combined plaintext using one of the AEAD algorithms specified for version 2 of the Symmetrically Encrypted Integrity Protected Data packet.
 Note that no chunks are used and that there is only one authentication tag.
 As additional data, the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), followed by the public key packet fields, starting with the packet version number, are passed to the AEAD algorithm.
 For example, the additional data used with a Secret-Key Packet of version 4 consists of the octets 0xC5, 0x04, followed by four octets of creation time, one octet denoting the public-key algorithm, and the algorithm-specific public-key parameters. For a Secret-Subkey Packet, the first octet would be 0xC7. For a version 5 key packet, the second octet would be 0x05, and the four-octet octet count of the public key material would be included as well (see {{public-key-packet-formats}}).
@@ -2296,20 +2296,22 @@ An implementation MAY try to determine the type of an image by examination of th
 
 ## Sym. Encrypted Integrity Protected Data Packet (Tag 18) {#seipd}
 
-The Symmetrically Encrypted Integrity Protected Data packet is a variant of the Symmetrically Encrypted Data packet.
-It is a legacy OpenPGP mechanism that, in combination with the Modification Detection Code packet ({{mdc}}) offers some protections against ciphertext malleability.
-The AEAD Encrypted Data packet ({{aead}}) offers a more cryptographically rigorous defense against ciphertext malleability, but may not be as widely supported.
+This packet contains integrity protected and encrypted data.
+When it has been decrypted, it will contain other packets forming an OpenPGP Message (see {{openpgp-messages}}).
+
+The first octet of this packet is always used to indicate the version number, but different versions contain differently-structured ciphertext.
+Version 1 of this packet contains data encrypted with a symmetric-key algorithm and protected against modification by the SHA-1 hash algorithm.
+This is a legacy OpenPGP mechanism that offers some protections against ciphertext malleability.
+
+Version 2 of this packet contains data encrypted with an authenticated encryption and additional data (AEAD) construction.
+This offers a more cryptographically rigorous defense against ciphertext malleability, but may not be as widely supported yet.
 See {{ciphertext-malleability}} for more details on choosing between these formats.
 
-This packet contains data encrypted with a symmetric-key algorithm and protected against modification by the SHA-1 hash algorithm.
-When it has been decrypted, it will typically contain other packets (often a Literal Data packet or Compressed Data packet).
-The last decrypted packet in this packet's payload MUST be a Modification Detection Code packet.
+### Version 1 Sym. Encrypted Integrity Protected Data Packet Format {#version-one-seipd}
 
-The body of this packet consists of:
+A version 1 Symmetrically Encrypted Integrity Protected Data packet consists of:
 
-- A one-octet version number.
-  The only defined value is 1.
-  There won't be any future versions of this packet: the MDC system is deprecated because it is superseded by the AEAD Encrypted Data packet (see {{mdc}}).
+- A one-octet version number with value 1.
 
 - Encrypted data, the output of the selected symmetric-key cipher operating in Cipher Feedback mode with shift amount equal to the block size of the cipher (CFB-n where n is the block size).
 
@@ -2327,25 +2329,22 @@ See {{cfb-mode}} for more details.
 
 The repetition of 16 bits in the random data prefixed to the message allows the receiver to immediately check whether the session key is incorrect.
 
-The plaintext of the data to be encrypted is passed through the SHA-1 hash function, and the result of the hash is appended to the plaintext in a Modification Detection Code packet.
-The input to the hash function includes the prefix data described above; it includes all of the plaintext, and then also includes two octets of values 0xD3, 0x14.
-These represent the encoding of a Modification Detection Code packet tag and length field of 20 octets.
+Two constant octets with the values 0xD3 and 0x14 are appended to the plaintext.
+Then, the plaintext of the data to be encrypted is passed through the SHA-1 hash function.
+The input to the hash function includes the prefix data described above; it includes all of the plaintext, including the trailing constant octets 0xD3, 0x14.
+The 20 octets of the SHA-1 hash are then appended to the plaintext (after the constant octets 0xD3, 0x14) and encrypted along with the plaintext using the same CFB context.
+This trailing checksum is known as the Modification Detection Code (MDC).
 
-The resulting hash value is stored in a Modification Detection Code (MDC) packet, which MUST use the two octet encoding just given to represent its tag and length field.
-The body of the MDC packet is the 20-octet output of the SHA-1 hash.
-
-The Modification Detection Code packet is appended to the plaintext and encrypted along with the plaintext using the same CFB context.
-
-During decryption, the plaintext data should be hashed with SHA-1, including the prefix data as well as the packet tag and length field of the Modification Detection Code packet.
-The body of the MDC packet, upon decryption, is compared with the result of the SHA-1 hash.
-
-Any failure of the MDC indicates that the message has been modified and MUST be treated as a security problem.
-Failures include a difference in the hash values, but also the absence of an MDC packet, or an MDC packet in any position other than the end of the plaintext.
+During decryption, the plaintext data should be hashed with SHA-1, including the prefix data as well as the trailing constant octets 0xD3, 0x14, but excluding the last 20 octets containing the SHA-1 hash.
+The computed SHA-1 hash is then compared with the last 20 octets of plaintext.
+A mismatch of the hash indicates that the message has been modified and MUST be treated as a security problem.
 Any failure SHOULD be reported to the user.
 
 >   NON-NORMATIVE EXPLANATION
 >
->   The MDC system, as packets 18 and 19 are called, were created to
+>   The Modification Detection Code (MDC) system, as the integrity
+>   protection mechanism of version 1 of the Symmetrically Encrypted
+>   Integrity Protected Data packet is called, was created to
 >   provide an integrity mechanism that is less strong than a
 >   signature, yet stronger than bare CFB encryption.
 >
@@ -2397,33 +2396,11 @@ Any failure SHOULD be reported to the user.
 >   However, no update will be needed because the MDC has been replaced
 >   by the AEAD encryption described in this document.
 
-## Modification Detection Code Packet (Tag 19) {#mdc}
+### Version 2 Sym. Encrypted Integrity Protected Data Packet Format {#version-two-seipd}
 
-The Modification Detection Code packet contains a SHA-1 hash of plaintext data, which is used to detect message modification.
-It is only used with a Symmetrically Encrypted Integrity Protected Data packet.
-The Modification Detection Code packet MUST be the last packet in the plaintext data that is encrypted in the Symmetrically Encrypted Integrity Protected Data packet, and MUST appear in no other place.
+A version 2 Symmetrically Encrypted Integrity Protected Data packet consists of:
 
-A Modification Detection Code packet MUST have a length of 20 octets.
-
-The body of this packet consists of:
-
-- A 20-octet SHA-1 hash of the preceding plaintext data of the Symmetrically Encrypted Integrity Protected Data packet, including prefix data, the tag octet, and length octet of the Modification Detection Code packet.
-
-Note that the Modification Detection Code packet MUST always use a new format encoding of the packet tag, and a one-octet encoding of the packet length.
-The reason for this is that the hashing rules for modification detection include a one-octet tag and one-octet length in the data hash.
-While this is a bit restrictive, it reduces complexity.
-
-## AEAD Encrypted Data Packet (Tag 20) {#aead}
-
-This packet contains data encrypted with an authenticated encryption and additional data (AEAD) construction.
-When it has been decrypted, it will contain other packets forming an OpenPGP Message (see {{openpgp-messages}}).
-
-The body of this packet starts with:
-
-- A one-octet version number.
-  The only currently defined value is 2.
-
-When the version is 2, it is followed by the following fields:
+- A one-octet version number with value 2.
 
 - A one-octet cipher algorithm.
 
@@ -2438,7 +2415,7 @@ When the version is 2, it is followed by the following fields:
 
 - A final, summary authentication tag for the AEAD mode.
 
-The decrypted session key and the salt in the AEAD packet are used to derive an M-bit message key and an N-bit initialization vector, where M is the key size of the symmetric algorithm and N is the nonce size of the AEAD algorithm.
+The decrypted session key and the salt are used to derive an M-bit message key and an N-bit initialization vector, where M is the key size of the symmetric algorithm and N is the nonce size of the AEAD algorithm.
 M + N bits are derived using HKDF (see {{RFC5869}}).
 The left-most M bits are used as symmetric algorithm key, the remaining N bits are used as initialization vector.
 HKDF is used with SHA256 as hash algorithm, the session key as Initial Keying Material (IKM), the salt as salt, and the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), version number, cipher algorithm octet, AEAD algorithm octet, and chunk size octet as info parameter.
@@ -2446,7 +2423,7 @@ HKDF is used with SHA256 as hash algorithm, the session key as Initial Keying Ma
 The KDF mechanism provides key separation between cipher and AEAD algorithms.
 Furthermore, an implementation can securely reply to a message even if a recipients certificate is unknown by reusing the encrypted session key packets and replying with a different salt yielding a new, unique message key.
 
-An AEAD encrypted data packet consists of one or more chunks of data.
+A v2 SEIPD packet consists of one or more chunks of data.
 The plaintext of each chunk is of a size specified using the chunk size octet using the method specified below.
 
 The encrypted data consists of the encryption of each chunk of plaintext, followed immediately by the relevant authentication tag.
@@ -2963,7 +2940,7 @@ ID | Algorithm | Text Name
 Implementations MUST implement SHA2-256.
 Implementations SHOULD implement SHA2-384 and SHA2-512.
 Implementations MAY implement other algorithms.
-Implementations SHOULD NOT create messages which require the use of SHA-1 with the exception of computing version 4 key fingerprints and for purposes of the MDC packet.
+Implementations SHOULD NOT create messages which require the use of SHA-1 with the exception of computing version 4 key fingerprints and for purposes of the Modification Detection Code (MDC) in version 1 Symmetrically Encrypted Integrity Protected Data packets.
 Implementations MUST NOT generate signatures with MD5, SHA-1, or RIPE-MD/160.
 Implementations MUST NOT use MD5, SHA-1, or RIPE-MD/160 as a hash function in an ECDH KDF.
 Implementations MUST NOT validate any recent signature that depends on MD5, SHA-1, or RIPE-MD/160.
@@ -3268,7 +3245,7 @@ ESK Sequence :-
 : ESK \| ESK Sequence, ESK.
 
 Encrypted Data :-
-: Symmetrically Encrypted Data Packet \| Symmetrically Encrypted Integrity Protected Data Packet \| AEAD Encrypted Data Packet
+: Symmetrically Encrypted Data Packet \| Symmetrically Encrypted Integrity Protected Data Packet
 
 Encrypted Message :-
 : Encrypted Data \| ESK Sequence, Encrypted Data.
@@ -3284,7 +3261,7 @@ Signed Message :-
 In addition to the above grammar, certain messages can be "unwrapped" to yield new messages.
 In particular:
 
-- Decrypting a Symmetrically Encrypted and Integrity Protected Data packet, an AEAD Encrypted Data packet, or --- for historic data --- a Symmetrically Encrypted Data packet must yield a valid OpenPGP Message.
+- Decrypting a Symmetrically Encrypted and Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet must yield a valid OpenPGP Message.
 - Decompressing a Compressed Data packet must also yield a valid OpenPGP Message.
 
 When either such unwrapping is performed, the resulting stream of octets is parsed into a series OpenPGP packets like any other stream of octets.
@@ -3629,7 +3606,7 @@ Note that the recipient obtains the shared secret by calculating
 
     S = rV = rvG, where (r,R) is the recipient's key pair.
 
-Consistent with {{aead}} and {{seipd}}, AEAD encryption or a Modification Detection Code (MDC) MUST be used anytime the symmetric key is protected by ECDH.
+Consistent with {{seipd}}, AEAD encryption or a Modification Detection Code (MDC) MUST be used anytime the symmetric key is protected by ECDH.
 
 # Notes on Algorithms {#notes-on-algorithms}
 
@@ -3854,7 +3831,7 @@ See {{BLEICHENBACHER}}.
 
 ## OpenPGP CFB Mode {#cfb-mode}
 
-When not using AEAD ({{aead}}), OpenPGP does symmetric encryption using a variant of Cipher Feedback mode (CFB mode).
+When using a version 1 Symmetrically Encrypted Integrity Protected Data packet ({{version-one-seipd}}) or --- for historic data --- a Symmetrically Encrypted Data packet ({{sed}}), OpenPGP does symmetric encryption using a variant of Cipher Feedback mode (CFB mode).
 This section describes the procedure it uses in detail.
 This mode is what is used for Symmetrically Encrypted Integrity Protected Data Packets (and the dangerously malleable -- and deprecated -- Symmetrically Encrypted Data Packets).
 Some mechanisms for encrypting secret-key material also use CFB mode, as described in {{secret-key-encryption}}.
@@ -4021,10 +3998,10 @@ An implementation that encounters malleable ciphertext MAY choose to release cle
 
 Any of the following OpenPGP data elements indicate that malleable ciphertext is present:
 
-- all Symmetrically Encrypted Data packets (SED, {{sed}}).
+- all Symmetrically Encrypted Data packets ({{sed}}).
 - within any encrypted container, any Compressed Data packet ({{compressed-data}}) where there is a decompression failure.
-- any Symmetrically Encrypted Integrity Protected Data packet (SEIPD, {{seipd}}) where the internal Modification Detectiion Code packet (MDC, {{mdc}}) does not validate.
-- any AEAD Encrypted Data packet (AEAD, {{aead}}) where the authentication tag of any chunk fails, or where there is no final zero-octet chunk.
+- any version 1 Symmetrically Encrypted Integrity Protected Data packet ({{version-one-seipd}}) where the internal Modification Detection Code does not validate.
+- any version 2 Symmetrically Encrypted Integrity Protected Data packet ({{version-two-seipd}}) where the authentication tag of any chunk fails, or where there is no final zero-octet chunk.
 - any Secret Key packet with encrypted secret key material ({{secret-key-encryption}}) where there is an integrity failure, based on the value of the secret key protection octet:
   - value 255 or raw cipher algorithm: where the trailing 2-octet checksum does not match.
   - value 254: where the SHA1 checksum is mismatched.
@@ -4035,11 +4012,11 @@ In particular:
 
 - The SED packet is deprecated, and MUST NOT be generated.
 - When encrypting to one or more public keys:
-  - all recipient keys indicate support for AEAD in their Features subpacket ({{features-subpacket}}), or are v5 keys without a Features subpacket, or the implementation can otherwise infer that all recipients support AEAD, the implementation MUST encrypt using AEAD.
-  - If one of the recipients does not support AEAD, then the message generator MAY use SEIPD instead.
-- Password-protected secret key material in a V5 Secret Key or V5 Secret Subkey packet SHOULD be protected with AEAD encryption unless it will be transferred to an implementation that is known to not support AEAD.
+  - all recipient keys indicate support for version 2 of the Symmetrically Encrypted Integrity Protected Data packet in their Features subpacket ({{features-subpacket}}), or are v5 keys without a Features subpacket, or the implementation can otherwise infer that all recipients support v2 SEIPD packets, the implementation MUST encrypt using a v2 SEIPD packet.
+  - If one of the recipients does not support v2 SEIPD packets, then the message generator MAY use a v1 SEIPD packet instead.
+- Password-protected secret key material in a V5 Secret Key or V5 Secret Subkey packet SHOULD be protected with AEAD encryption (S2K usage octet 253) unless it will be transferred to an implementation that is known to not support AEAD.
 
-Implementers should implement AEAD promptly and encourage its spread.
+Implementers should implement AEAD (v2 SEIPD and S2K usage octet 253) promptly and encourage its spread.
 
 Users should migrate to AEAD with all due speed.
 
@@ -4216,7 +4193,7 @@ Decrypted session key:
 
       35 5d c9 1d 0d f9 24 68 bb b5 b7 a2 65 c0 dc 28
 
-### Sample AEAD encrypted data packet
+### Sample v2 SEIPD packet
 
 Packet header:
 
@@ -4306,7 +4283,7 @@ Nonce:
 
 ## Sample AEAD-OCB encryption and decryption
 
-FIXME: update test vectors to indicate AEAD version 2
+FIXME: update test vectors to indicate SEIPD version 2
 
 This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-OCB encryption.
 
@@ -4364,7 +4341,7 @@ Decrypted content encryption key:
 
       d1 f0 1b a3 0e 13 0a a7 d2 58 2c 16 e0 50 ae 44
 
-### Sample AEAD encrypted data packet
+### Sample v2 SEIPD packet packet
 
 Packet header:
 
@@ -4425,14 +4402,14 @@ Nonce:
 
 ### Complete AEAD-OCB encrypted packet sequence
 
-Symmetric-key encrypted session key packet (v5):
+Symmetric-Key Encrypted Session Key packet (v5):
 
       c3 3d 05 07 02 03 08 9f  0b 7d a3 e5 ea 64 77 90
       99 e3 26 e5 40 0a 90 93  6c ef b4 e8 eb a0 8c 67
       73 71 6d 1f 27 14 54 0a  38 fc ac 52 99 49 da c5
       29 d3 de 31 e1 5b 4a eb  72 9e 33 00 33 db ed
 
-AEAD encrypted data packet:
+Symmetrically Encrypted Integrity Protected Data packet (v2):
 
       d4 49 01 07 02 0e 5e d2  bc 1e 47 0a be 8f 1d 64
       4c 7a 6c 8a 56 7b 0f 77  01 19 66 11 a1 54 ba 9c
