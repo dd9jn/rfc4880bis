@@ -1742,11 +1742,12 @@ A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 
 - A starting initialization vector of size specified by the AEAD algorithm.
 
-- The encrypted session key itself, which is decrypted with the string-to-key object using the given cipher and AEAD mode.
+- The encrypted session key itself.
 
 - An authentication tag for the AEAD mode.
 
-The encrypted session key is encrypted using one of the AEAD algorithms specified for version 2 of the Symmetrically Encrypted Integrity Protected Data packet.
+HKDF is used with SHA256 as hash algorithm, the key derived from S2K as Initial Keying Material (IKM), no salt, and the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version, and the cipher-algo and AEAD-mode used to encrypt the key material, are used as info parameter.
+Then, the session key is encrypted using the resulting key, with one of the AEAD algorithms specified for version 2 of the Symmetrically Encrypted Integrity Protected Data packet.
 Note that no chunks are used and that there is only one authentication tag.
 The Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are given as additional data.
 For example, the additional data used with EAX and AES-128 consists of the octets 0xC3, 0x05, 0x07, and 0x01.
