@@ -3189,8 +3189,11 @@ Adding a new elliptic curve algorithm to OpenPGP MUST be done through the SPECIF
 This document requests IANA add the following wire format columns to the OpenPGP public-key algorithm registry:
 
 - Public Key Format
+
 - Secret Key Format
+
 - Signature Format
+
 - PKESK Format
 
 And populate them with the values found in {{pubkey-algos}}.
@@ -3509,7 +3512,9 @@ To encode `X` to the wire format, we set the MPI's two-octet bit counter to the 
 To reverse the process, an implementation that knows this value has an expected length of 5 octets can take the following steps:
 
 - ensure that the MPI's two-octet bitcount is less than or equal to 40 (5 octets of 8 bits)
+
 - allocate 5 octets, setting all to zero initially
+
 - copy the MPI data octets (without the two count octets) into the lower octets of the allocated space
 
 ### Elliptic Curve Prefixed Octet String Wire Format {#ec-prefix}
@@ -3525,6 +3530,7 @@ To encode the string, we prefix it with the octet 0x40 (whose 7th bit is set), t
 To decode the string from the wire, an implementation that knows that the variable is formed in this way can:
 
 - ensure that the first three octets of the MPI (the two bit-count octets plus the prefix octet)  are `00 2f 40`, and
+
 - use the remainder of the MPI directly off the wire.
 
 Note that this is a similar approach to that used in the EC point encodings found in {{ec-point-prefixed-native}}.
@@ -4043,21 +4049,32 @@ An implementation that encounters malleable ciphertext MAY choose to release cle
 Any of the following OpenPGP data elements indicate that malleable ciphertext is present:
 
 - all Symmetrically Encrypted Data packets ({{sed}}).
+
 - within any encrypted container, any Compressed Data packet ({{compressed-data}}) where there is a decompression failure.
+
 - any version 1 Symmetrically Encrypted Integrity Protected Data packet ({{version-one-seipd}}) where the internal Modification Detection Code does not validate.
+
 - any version 2 Symmetrically Encrypted Integrity Protected Data packet ({{version-two-seipd}}) where the authentication tag of any chunk fails, or where there is no final zero-octet chunk.
+
 - any Secret Key packet with encrypted secret key material ({{secret-key-encryption}}) where there is an integrity failure, based on the value of the secret key protection octet:
+
   - value 255 or raw cipher algorithm: where the trailing 2-octet checksum does not match.
+
   - value 254: where the SHA1 checksum is mismatched.
+
   - value 253: where the AEAD authentication tag is invalid.
 
 To avoid these circumstances, an implementation that generates OpenPGP encrypted data SHOULD select the encrypted container format with the most robust protections that can be handled by the intended recipients.
 In particular:
 
 - The SED packet is deprecated, and MUST NOT be generated.
+
 - When encrypting to one or more public keys:
+
   - all recipient keys indicate support for version 2 of the Symmetrically Encrypted Integrity Protected Data packet in their Features subpacket ({{features-subpacket}}), or are v5 keys without a Features subpacket, or the implementation can otherwise infer that all recipients support v2 SEIPD packets, the implementation MUST encrypt using a v2 SEIPD packet.
+
   - If one of the recipients does not support v2 SEIPD packets, then the message generator MAY use a v1 SEIPD packet instead.
+
 - Password-protected secret key material in a V5 Secret Key or V5 Secret Subkey packet SHOULD be protected with AEAD encryption (S2K usage octet 253) unless it will be transferred to an implementation that is known to not support AEAD.
 
 Implementers should implement AEAD (v2 SEIPD and S2K usage octet 253) promptly and encourage its spread.
@@ -4074,10 +4091,15 @@ The preferred revoker can then publish the escrowed Revocation Signature at what
 There are multiple advantages of using an escrowed Revocation Signature over the deprecated Revocation Key subpacket ({{revocation-key}}):
 
 - The keyholder can constrain what types of revocation the preferred revoker can issue, by only escrowing those specific signatures.
+
 - There is no public/visible linkage between the keyholder and the preferred revoker.
+
 - Third parties can verify the revocation without needing to find the key of the preferred revoker.
+
 - The preferred revoker doesn't even need to have a public OpenPGP key if some other secure transport is possible between them and the keyholder.
+
 - Implementation support for enforcing a revocation from an authorized Revocation Key subpacket is uneven and unreliable.
+
 - If the fingerprint mechanism suffers a cryptanalytic flaw, the escrowed Revocation Signature is not affected.
 
 A Revocation Signature may also be split up into shares and distributed among multiple parties, requiring some subset of those parties to collaborate before the escrowed Revocation Signature is recreated.
