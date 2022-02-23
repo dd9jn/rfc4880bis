@@ -560,11 +560,13 @@ The salt SHOULD be unique for each password.
 
 The number of passes t and the degree of parallelism p MUST be non-zero.
 
-The memory size m is 2\*\*encoded_m, where "encoded_m" is the encoded memory size in Octet 19. The encoded memory size MUST be a value from 3+ceil(log_2(p)) to 31, such that the decoded memory size m is a value from 8*p to 2\*\*31.
+The memory size m is 2\*\*encoded_m, where "encoded_m" is the encoded memory size in Octet 19.
+The encoded memory size MUST be a value from 3+ceil(log_2(p)) to 31, such that the decoded memory size m is a value from 8*p to 2\*\*31.
 
 Argon2 is invoked with the passphrase as P, the salt as S, the values of t, p and m as described above, the required key size as the tag length T, 0x13 as the version v, and Argon2id as the type.
 
-For the recommended values of t, p and m, see Section 4 of {{RFC9106}}. If the recommended value of m for a given application is not a power of 2, it is RECOMMENDED to round up to the next power of 2 if the resulting performance would be acceptable, and round down otherwise (keeping in mind that m must be at least 8*p).
+For the recommended values of t, p and m, see Section 4 of {{RFC9106}}.
+If the recommended value of m for a given application is not a power of 2, it is RECOMMENDED to round up to the next power of 2 if the resulting performance would be acceptable, and round down otherwise (keeping in mind that m must be at least 8*p).
 
 As an example, with the first recommended option (t=1, p=4, m=2\*\*21), the full S2K specifier would be:
 
@@ -575,7 +577,8 @@ As an example, with the first recommended option (t=1, p=4, m=2\*\*21), the full
 
 ### String-to-Key Usage
 
-Simple S2K and Salted S2K specifiers can be brute-forced when used with a low-entropy string, such as those typically provided by users. In addition, the usage of Simple S2K can lead to key and IV reuse (see {{skesk}}).
+Simple S2K and Salted S2K specifiers can be brute-forced when used with a low-entropy string, such as those typically provided by users.
+In addition, the usage of Simple S2K can lead to key and IV reuse (see {{skesk}}).
 Therefore, when generating S2K specifiers, implementations MUST NOT use Simple S2K, and SHOULD NOT use Salted S2K unless the implementation knows that the string is high-entropy (e.g., it generated the string itself using a known-good source of randomness).
 It is RECOMMENDED that implementations use Argon2.
 
@@ -1093,15 +1096,16 @@ A version 3 signature MUST NOT be created and MUST NOT be used with EdDSA.
 The two MPIs for Ed25519 use octet strings R and S as described in {{RFC8032}}.
 
 - MPI of an EC point R, represented as a (non-prefixed) native (little-endian) octet string up to 32 octets.
- 
+
 - MPI of EdDSA value S, also in (non-prefixed) native little-endian format with a length up to 32 octets.
 
 ##### Algorithm-Specific Fields for Ed448 signatures
 
-For Ed448 signatures, the native signature format is used as described in {{RFC8032}}.  The two MPIs are composed as follows:
+For Ed448 signatures, the native signature format is used as described in {{RFC8032}}.
+The two MPIs are composed as follows:
 
 - The first MPI has a body of 58 octets: a prefix 0x40 octet, followed by 57 octets of the native signature.
- 
+
 - The second MPI is set to 0 (this is a placeholder, and is unused).
   Note that an MPI with a value of 0 is encoded on the wire as a pair of zero octets: `00 00`.
 
@@ -1115,7 +1119,8 @@ There are two fields consisting of Signature subpackets.
 The first field is hashed with the rest of the signature data, while the second is unhashed.
 The second set of subpackets is not cryptographically protected by the signature and should include only advisory information.
 
-The differences between a V4 and V5 signature are two-fold: first, a V5 signature increases the width of the size indicators for the signed data, making it more capable when signing large keys or messages.  Second, the hash is salted with 128 bit of random data.
+The differences between a V4 and V5 signature are two-fold: first, a V5 signature increases the width of the size indicators for the signed data, making it more capable when signing large keys or messages.
+Second, the hash is salted with 128 bit of random data.
 
 The algorithms for converting the hash function result to a signature are described in {{computing-signatures}}.
 
@@ -1679,13 +1684,12 @@ This trailer depends on the version of the signature.
   - the hashed subpacket body,
 
   - A second version octet (0x04 for V4, 0x05 for V5)
-  
+
   - A single octet 0xFF,
 
   - A number representing the length of the hashed data from the Signature packet stopping right before the second version octet.
     For a V4 signature, this is a four-octet big-endian number, considered to be an unsigned integer modulo 2\*\*32.
     For a V5 signature, this is an eight-octet big-endian number, considered to be an unsigned integer modulo 2\*\*64.
-
 
 After all this has been hashed in a single hash context, the resulting hash field is used in the signature algorithm and placed at the end of the Signature packet.
 
@@ -1914,7 +1918,8 @@ The packet contains:
   This is algorithm-specific and described in {{algorithm-specific-parts-of-keys}}.
   If the string-to-key usage octet is 253, then an AEAD authentication tag is part of that data.
   If the string-to-key usage octet is 254, a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion is appended to plaintext and encrypted with it.
-  If the string-to-key usage octet is 255 or another nonzero value (i.e., a symmetric-key encryption algorithm identifier), a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536) is appended to plaintext and encrypted with it. (This is deprecated and SHOULD NOT be used, see below.)
+  If the string-to-key usage octet is 255 or another nonzero value (i.e., a symmetric-key encryption algorithm identifier), a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536) is appended to plaintext and encrypted with it.
+  (This is deprecated and SHOULD NOT be used, see below.)
 
 - If the string-to-key usage octet is zero, then a two-octet checksum of the algorithm-specific portion (sum of all octets, mod 65536).
 
@@ -1927,7 +1932,8 @@ If a string-to-key specifier is given, that describes the algorithm for converti
 Implementations MUST use a string-to-key specifier; the simple hash is for backward compatibility and is deprecated, though implementations MAY continue to use existing private keys in the old format.
 The cipher for encrypting the MPIs is specified in the Secret-Key packet.
 
-Encryption/decryption of the secret data is done using the key created from the passphrase and the initialization vector from the packet. If the string-to-key usage octet is not 253, CFB mode is used.
+Encryption/decryption of the secret data is done using the key created from the passphrase and the initialization vector from the packet.
+If the string-to-key usage octet is not 253, CFB mode is used.
 A different mode is used with V3 keys (which are only RSA) than with other key formats.
 With V3 keys, the MPI bit count prefix (i.e., the first two octets) is not encrypted.
 Only the MPI non-prefix data is encrypted.
@@ -1941,7 +1947,9 @@ HKDF is used with SHA256 as hash algorithm, the key derived from S2K as Initial 
 Then, the encrypted MPI values are encrypted as one combined plaintext using one of the AEAD algorithms specified for version 2 of the Symmetrically Encrypted Integrity Protected Data packet.
 Note that no chunks are used and that there is only one authentication tag.
 As additional data, the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), followed by the public key packet fields, starting with the packet version number, are passed to the AEAD algorithm.
-For example, the additional data used with a Secret-Key Packet of version 4 consists of the octets 0xC5, 0x04, followed by four octets of creation time, one octet denoting the public-key algorithm, and the algorithm-specific public-key parameters. For a Secret-Subkey Packet, the first octet would be 0xC7. For a version 5 key packet, the second octet would be 0x05, and the four-octet octet count of the public key material would be included as well (see {{public-key-packet-formats}}).
+For example, the additional data used with a Secret-Key Packet of version 4 consists of the octets 0xC5, 0x04, followed by four octets of creation time, one octet denoting the public-key algorithm, and the algorithm-specific public-key parameters.
+For a Secret-Subkey Packet, the first octet would be 0xC7.
+For a version 5 key packet, the second octet would be 0x05, and the four-octet octet count of the public key material would be included as well (see {{public-key-packet-formats}}).
 
 The two-octet checksum that follows the algorithm-specific portion is the algebraic sum, mod 65536, of the plaintext of all the algorithm-specific octets (including MPI prefix and data).
 With V3 keys, the checksum is stored in the clear.
@@ -2484,7 +2492,8 @@ Its contents SHOULD be random octets to make the length obfuscation it provides 
 
 An implementation adding padding to an OpenPGP stream SHOULD place such a packet:
 
-- At the end of a v5 Transferable Public Key that is transferred over an encrypted channel (see {{transferable-public-keys}})
+- At the end of a v5 Transferable Public Key that is transferred over an encrypted channel (see {{transferable-public-keys}}).
+
 - As the last packet of an Optionally Padded Message within an AEAD Encrypted Data Packet (see {{openpgp-messages}}).
 
 An implementation MUST be able to process padding packets anywhere else in an OpenPGP stream, so that future revisions of this document may specify further locations for padding.
@@ -3593,7 +3602,8 @@ The octets s0 and s1 above denote the checksum of the session key octets.
 This encoding allows the sender to obfuscate the size of the symmetric encryption key used to encrypt the data.
 For example, assuming that an AES algorithm is used for the session key, the sender MAY use 21, 13, and 5 octets of padding for AES-128, AES-192, and AES-256, respectively, to provide the same number of octets, 40 total, as an input to the key wrapping method.
 
-In a V5 Public-Key Encrypted Session Key packet, the symmetric algorithm is not included, as described in {{pkesk}}. For example, an AES-256 session key would be composed as follows:
+In a V5 Public-Key Encrypted Session Key packet, the symmetric algorithm is not included, as described in {{pkesk}}.
+For example, an AES-256 session key would be composed as follows:
 
     k0 k1 ... k31 s0 s1 06 06 06 06 06 06
 
@@ -3783,7 +3793,8 @@ There are two interesting cases that other comments need to be made about, thoug
 Like the algorithm preferences, an implementation MUST NOT use an algorithm that is not in the preference vector.
 If Uncompressed (0) is not explicitly in the list, it is tacitly at the end, i.e. uncompressed messages may always be sent.
 
-Note that earlier implementations may assume that the absence of compression preferences means that \[ZIP(1), Uncompressed(0)\] are preferred, and default to ZIP compression. Therefore, an implementation that prefers uncompressed data SHOULD explicitly state this in the preferred compression algorithms.
+Note that earlier implementations may assume that the absence of compression preferences means that \[ZIP(1), Uncompressed(0)\] are preferred, and default to ZIP compression.
+Therefore, an implementation that prefers uncompressed data SHOULD explicitly state this in the preferred compression algorithms.
 
 #### Uncompressed
 
