@@ -2476,7 +2476,7 @@ GCM authentication tags are 16 octets long.
 
 ## Padding Packet (Tag 21) {#padding-packet}
 
-The Padding packet contains random data, and can be used to defend against traffic analysis (see {{traffic-analysis}}) on AEAD messages (see {{aead}}) and Transferable Public Keys (see {{transferable-public-keys}}).
+The Padding packet contains random data, and can be used to defend against traffic analysis (see {{traffic-analysis}}) on version 2 SEIPD messages (see {{version-two-seipd}}) and Transferable Public Keys (see {{transferable-public-keys}}).
 
 Such a packet MUST be ignored when received.
 
