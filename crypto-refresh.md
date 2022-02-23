@@ -2482,12 +2482,12 @@ Such a packet MUST be ignored when received.
 
 Its contents SHOULD be random octets to make the length obfuscation it provides more robust even when compressed.
 
-While this packet may appear anywhere in an OpenPGP stream, an implementation adding padding to a stream SHOULD place such a packet only in one of two places to avoid interoperability problems:
+An implementation adding padding to an OpenPGP stream SHOULD place such a packet:
 
 - At the end of a v5 Transferable Public Key that is transferred over an encrypted channel (see {{transferable-public-keys}})
 - As the last packet of an Optionally Padded Message within an AEAD Encrypted Data Packet (see {{openpgp-messages}}).
 
-An implementation MAY place such a packet anywhere else in a stream of OpenPGP packets if it has external knowledge that the intended recipient is capable of safely discarding the packet.
+An implementation MUST be able to process padding packets anywhere else in an OpenPGP stream, so that future revisions of this document may specify further locations for padding.
 
 Policy about how large to make such a packet to defend against traffic analysis is beyond the scope of this document.
 
