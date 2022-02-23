@@ -796,6 +796,7 @@ Tag | Packet Type
  18 | Sym. Encrypted and Integrity Protected Data Packet
  19 | Reserved (formerly Modification Detection Code Packet)
  20 | Reserved (formerly AEAD Encrypted Data Packet)
+ 21 | Padding Packet
 60 to 63 | Private or Experimental Values
 
 # Packet Types {#packet-types}
@@ -2472,6 +2473,16 @@ The GCM AEAD Algorithm used in this document is defined in {{SP800-38D}}.
 The GCM algorithm can only use block ciphers with 16-octet blocks.
 The nonce is 12 octets long.
 GCM authentication tags are 16 octets long.
+
+## Padding Packet (Tag 21) {#padding-packet}
+
+The Padding packet contains random data, and can be used to defend against traffic analysis (see {{traffic-analysis}}).
+
+Such a packet MUST be ignored when received.
+
+Its contents SHOULD be random octets to make the padding robust against compression.
+
+Policy about how large to make such a packet to defend against traffic analysis is beyond the scope of this document.
 
 # Radix-64 Conversions
 
