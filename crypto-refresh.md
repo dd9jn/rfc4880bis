@@ -4574,48 +4574,44 @@ Final additional authenticated data:
 
 ## Sample message encrypted using Argon2
 
-These messages are the literal data "encrypted message\n" encrypted
-using Argon2 and the passphrase "password", using different session
-key sizes.  In all cases, the Argon2 parameters are t = 1, p = 4, and
-m = 21.
+These messages are the literal data "Hello, world!" encrypted using Argon2 and the passphrase "password", using different session key sizes.
+In all cases, the Argon2 parameters are t = 1, p = 4, and m = 21.
 
 AES-128:
 
       -----BEGIN PGP MESSAGE-----
       Comment: Encrypted using AES with 128-bit key
-      Comment: Session key: 6A31044C4E027F3A9B551BF191B1457A
+      Comment: Session key: 01FE16BBACFD1E7B78EF3B865187374F
 
-      wycEBwQQyZrCdifmIcpJ9+q6npR5AQQVeEeX2qWJhwAtZR+0T19haubSQwGQjAsb
-      L/FBKmSsV/JGKJ7PmqufH2OH9nXDwYnHIyqvCoe9pKEfgYjlmeKk0EAfI2wYrqsh
-      M+yMV6ny9wvKbTLw3ZA=
-      =+VaU
+      wycEBwScUvg8J/leUNU1RA7N/zE2AQQVnlL8rSLPP5VlQsunlO+ECxHSPgGYGKY+
+      YJz4u6F+DDlDBOr5NRQXt/KJIf4m4mOlKyC/uqLbpnLJZMnTq3o79GxBTdIdOzhH
+      XfA3pqV4mTzF
+      =uIks
       -----END PGP MESSAGE-----
 
 AES-192:
 
       -----BEGIN PGP MESSAGE-----
       Comment: Encrypted using AES with 192-bit key
-      Comment: Session key: D8B779DB1CFE7C1DDE0A857F8FDEA87E7EE1EAE26B74935B
+      Comment: Session key: 27006DAE68E509022CE45A14E569E91001C2955AF8DFE194
 
-      wy8ECAQgiQ+RLsKiGbA1q6WG9BAPAQQVTcDYeLL3JmsGuQC6YK+nEt3iF2GKw5Pa
-      ndJDAdR7L58t8Zw1yR6GKle1JJDzgtLhHkZAi3+gZverIUq+FM5WuqqSR196proo
-      uiqZFDIuN+yBp+ewRVWUPedtXpprHQ==
-      =AcmU
+      wy8ECAThTKxHFTRZGKli3KNH4UP4AQQVhzLJ2va3FG8/pmpIPd/H/mdoVS5VBLLw
+      F9I+AdJ1Sw56PRYiKZjCvHg+2bnq02s33AJJoyBexBI4QKATFRkyez2gldJldRys
+      LVg77Mwwfgl2n/d572WciAM=
+      =n8Ma
       -----END PGP MESSAGE-----
 
 AES-256:
 
       -----BEGIN PGP MESSAGE-----
       Comment: Encrypted using AES with 256-bit key
-      Comment: Session key: 1E9F8D372A27111B42289B7C61B1EFD9F1B8E20E0CC5FFDAE0469D775A74DD33
+      Comment: Session key: BBEDA55B9AAE63DAC45D4F49D89DACF4AF37FEFC13BAB2F1F8E18FB74580D8B0
 
-      wzcECQTa/yN2yGoAcJ34nXCrYFu2AQQVFlEYfgxLS4lpvBg1k0TyJA3Q9zKGsgPX
-      pCDRghQl/6u60kMBVY4+R3MOnDpCe7TmgOJ68TWFal3w+3T/fSVRGFp36AFn//mB
-      luKQleBJqZUXrGFiVf/sGbLz3SB/SImNjtImlR9x
-      =wOBk
+      wzcECQS4eJUgIG/3mcaILEJFpmJ8AQQVnZ9l7KtagdClm9UaQ/Z6M/5roklSGpGu
+      623YmaXezGj80j4B+Ku1sgTdJo87X1Wrup7l0wJypZls21Uwd67m9koF60eefH/K
+      95D1usliXOEm8ayQJQmZrjf6K6v9PWwqMQ==
+      =1fB/
       -----END PGP MESSAGE-----
-
-
 
 # Acknowledgements
 
