@@ -3275,12 +3275,16 @@ One-Pass Signed Message :-
 Signed Message :-
 : Signature Packet, OpenPGP Message \| One-Pass Signed Message.
 
+Optionally Padded Message :-
+: OpenPGP Message \| OpenPGP Message, Padding Packet.
+
 ### Unwrapping Encrypted and Compressed Messages {#unwrapping}
 
 In addition to the above grammar, certain messages can be "unwrapped" to yield new messages.
 In particular:
 
 - Decrypting a Symmetrically Encrypted and Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet must yield a valid OpenPGP Message.
+
 - Decompressing a Compressed Data packet must also yield a valid OpenPGP Message.
 
 When either such unwrapping is performed, the resulting stream of octets is parsed into a series OpenPGP packets like any other stream of octets.
