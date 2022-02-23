@@ -51,12 +51,6 @@ from typing import List
 def is_table(para:str) -> bool:
     return para.startswith('{: title="')
 
-def is_verbatim(para:str) -> bool:
-    for line in para.split('\n'):
-        if not line.startswith('    '):
-            return False
-    return True
-
 def is_yaml_metadata(para:str) -> bool:
     return para.startswith('---\n')
 
@@ -73,11 +67,28 @@ def is_header(para:str) -> bool:
 
 class DraftState:
     def __init__(self) -> None:
-        pass
+        self.verbatim = False
+
+    def is_verbatim(self, para:str) -> bool:
+        if para.startswith('~~~\n'):
+            self.verbatim = True
+
+        if para.endswith('~~~\n'):
+            out = self.verbatim
+            self.verbatim = False
+            return out
+
+        if self.verbatim:
+            return True
+
+        for line in para.split('\n'):
+            if not line.startswith('    '):
+                return False
+        return True
 
     def reflow(self, para:str) -> str:
         # don't reflow tables, verbatim blocks, YAML metadata, or quoted text:
-        if is_table(para) or is_verbatim(para) or is_yaml_metadata(para) or is_quoted_text(para):
+        if is_table(para) or self.is_verbatim(para) or is_yaml_metadata(para) or is_quoted_text(para):
             return para
 
         if is_header(para):
