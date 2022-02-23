@@ -2733,12 +2733,14 @@ No such assurance is possible, however, when the number of octets transmitted wa
 
 ## Example of an ASCII Armored Message
 
-    -----BEGIN PGP MESSAGE-----
+~~~
+-----BEGIN PGP MESSAGE-----
 
-    yDgBO22WxBHv7O8X7O/jygAEzol56iUKiXmV+XmpCtmpqQUKiQrFqclFqUDBovzS
-    vBSFjNSiVHsuAA==
-    =njUN
-    -----END PGP MESSAGE-----
+yDgBO22WxBHv7O8X7O/jygAEzol56iUKiXmV+XmpCtmpqQUKiQrFqclFqUDBovzS
+vBSFjNSiVHsuAA==
+=njUN
+-----END PGP MESSAGE-----
+~~~
 
 Note that this example has extra indenting; an actual armored message would have no leading whitespace.
 
@@ -4350,14 +4352,16 @@ Final additional authenticated data:
 
 ### Complete AEAD-EAX encrypted packet sequence
 
-      -----BEGIN PGP MESSAGE-----
+~~~
+-----BEGIN PGP MESSAGE-----
 
-      wz4FBwEDCKlPyDpECwf7/5NuWLRho7/p2F9BHTgs4XsIfDo70LCwFKxeVXX960Wm
-      ReGEFjwgO9GNCWXCzBtiwtJZAgcBBmXT3RDykxGNFEpxfw0RkyIY9tUXIgElL0mq
-      RdLLGxXkTBH80nEaJqX+4Fp4KzNSL2m3YyesnnEzobIpN/fQ9NlEZDJUScMcg94F
-      ifzDRLB1bRQJu4E=
-      =9Ck9
-      -----END PGP MESSAGE-----
+wz4FBwEDCKlPyDpECwf7/5NuWLRho7/p2F9BHTgs4XsIfDo70LCwFKxeVXX960Wm
+ReGEFjwgO9GNCWXCzBtiwtJZAgcBBmXT3RDykxGNFEpxfw0RkyIY9tUXIgElL0mq
+RdLLGxXkTBH80nEaJqX+4Fp4KzNSL2m3YyesnnEzobIpN/fQ9NlEZDJUScMcg94F
+ifzDRLB1bRQJu4E=
+=9Ck9
+-----END PGP MESSAGE-----
+~~~
 
 ## Sample AEAD-OCB encryption and decryption
 
@@ -4495,14 +4499,16 @@ Final additional authenticated data:
 
 ### Complete AEAD-OCB encrypted packet sequence
 
-      -----BEGIN PGP MESSAGE-----
+~~~
+-----BEGIN PGP MESSAGE-----
 
-      wz0FBwIDCJfBfp371ekl//LT4/G8rsqL2P1tPVbeSYTOlxJBW8PB2ECFJdyYqPKu
-      5MuBgcipV9AkHadGdDzj0lkCBwIGTgf132Y5+Y2NbK0QLFddLuCNihLbFxvf4Iku
-      DoM6PGFwVapKlS9r2/V9EG2Cdsd7y0zoOJpPz6DqQDpp71O2Yjvk2NHQSJYCbczc
-      cD1TYiNMd+jcNw==
-      =bDfb
-      -----END PGP MESSAGE-----
+wz0FBwIDCJfBfp371ekl//LT4/G8rsqL2P1tPVbeSYTOlxJBW8PB2ECFJdyYqPKu
+5MuBgcipV9AkHadGdDzj0lkCBwIGTgf132Y5+Y2NbK0QLFddLuCNihLbFxvf4Iku
+DoM6PGFwVapKlS9r2/V9EG2Cdsd7y0zoOJpPz6DqQDpp71O2Yjvk2NHQSJYCbczc
+cD1TYiNMd+jcNw==
+=bDfb
+-----END PGP MESSAGE-----
+~~~
 
 ## Sample AEAD-GCM encryption and decryption
 
@@ -4640,14 +4646,16 @@ Final additional authenticated data:
 
 ### Complete AEAD-GCM encrypted packet sequence
 
-      -----BEGIN PGP MESSAGE-----
+~~~
+-----BEGIN PGP MESSAGE-----
 
-      wzoFBwMDCIlZB0CQTYc2/yx26680/9dpl8BAsjprn4ChjbEd4z+xos/5Y5fmK7Aq
-      DdmbZKTl36GnvN6M0lkCBwMG5sOyuOt4Q5NrRLK4py2GQJa13AzAqkoQimQmHV1u
-      pbrNE+KknwPjzTVaA9/OUxtlqOYJEFvonWB3xBy4FvF7RIlTCPmfllsbF9WEYhe5
-      4leIO8V4qw==
-      =klPb
-      -----END PGP MESSAGE-----
+wzoFBwMDCIlZB0CQTYc2/yx26680/9dpl8BAsjprn4ChjbEd4z+xos/5Y5fmK7Aq
+DdmbZKTl36GnvN6M0lkCBwMG5sOyuOt4Q5NrRLK4py2GQJa13AzAqkoQimQmHV1u
+pbrNE+KknwPjzTVaA9/OUxtlqOYJEFvonWB3xBy4FvF7RIlTCPmfllsbF9WEYhe5
+4leIO8V4qw==
+=klPb
+-----END PGP MESSAGE-----
+~~~
 
 ## Sample message encrypted using Argon2
 
@@ -4656,39 +4664,45 @@ In all cases, the Argon2 parameters are t = 1, p = 4, and m = 21.
 
 AES-128:
 
-      -----BEGIN PGP MESSAGE-----
-      Comment: Encrypted using AES with 128-bit key
-      Comment: Session key: 01FE16BBACFD1E7B78EF3B865187374F
+~~~
+-----BEGIN PGP MESSAGE-----
+Comment: Encrypted using AES with 128-bit key
+Comment: Session key: 01FE16BBACFD1E7B78EF3B865187374F
 
-      wycEBwScUvg8J/leUNU1RA7N/zE2AQQVnlL8rSLPP5VlQsunlO+ECxHSPgGYGKY+
-      YJz4u6F+DDlDBOr5NRQXt/KJIf4m4mOlKyC/uqLbpnLJZMnTq3o79GxBTdIdOzhH
-      XfA3pqV4mTzF
-      =uIks
-      -----END PGP MESSAGE-----
+wycEBwScUvg8J/leUNU1RA7N/zE2AQQVnlL8rSLPP5VlQsunlO+ECxHSPgGYGKY+
+YJz4u6F+DDlDBOr5NRQXt/KJIf4m4mOlKyC/uqLbpnLJZMnTq3o79GxBTdIdOzhH
+XfA3pqV4mTzF
+=uIks
+-----END PGP MESSAGE-----
+~~~
 
 AES-192:
 
-      -----BEGIN PGP MESSAGE-----
-      Comment: Encrypted using AES with 192-bit key
-      Comment: Session key: 27006DAE68E509022CE45A14E569E91001C2955AF8DFE194
+~~~
+-----BEGIN PGP MESSAGE-----
+Comment: Encrypted using AES with 192-bit key
+Comment: Session key: 27006DAE68E509022CE45A14E569E91001C2955AF8DFE194
 
-      wy8ECAThTKxHFTRZGKli3KNH4UP4AQQVhzLJ2va3FG8/pmpIPd/H/mdoVS5VBLLw
-      F9I+AdJ1Sw56PRYiKZjCvHg+2bnq02s33AJJoyBexBI4QKATFRkyez2gldJldRys
-      LVg77Mwwfgl2n/d572WciAM=
-      =n8Ma
-      -----END PGP MESSAGE-----
+wy8ECAThTKxHFTRZGKli3KNH4UP4AQQVhzLJ2va3FG8/pmpIPd/H/mdoVS5VBLLw
+F9I+AdJ1Sw56PRYiKZjCvHg+2bnq02s33AJJoyBexBI4QKATFRkyez2gldJldRys
+LVg77Mwwfgl2n/d572WciAM=
+=n8Ma
+-----END PGP MESSAGE-----
+~~~
 
 AES-256:
 
-      -----BEGIN PGP MESSAGE-----
-      Comment: Encrypted using AES with 256-bit key
-      Comment: Session key: BBEDA55B9AAE63DAC45D4F49D89DACF4AF37FEFC13BAB2F1F8E18FB74580D8B0
+~~~
+-----BEGIN PGP MESSAGE-----
+Comment: Encrypted using AES with 256-bit key
+Comment: Session key: BBEDA55B9AAE63DAC45D4F49D89DACF4AF37FEFC13BAB2F1F8E18FB74580D8B0
 
-      wzcECQS4eJUgIG/3mcaILEJFpmJ8AQQVnZ9l7KtagdClm9UaQ/Z6M/5roklSGpGu
-      623YmaXezGj80j4B+Ku1sgTdJo87X1Wrup7l0wJypZls21Uwd67m9koF60eefH/K
-      95D1usliXOEm8ayQJQmZrjf6K6v9PWwqMQ==
-      =1fB/
-      -----END PGP MESSAGE-----
+wzcECQS4eJUgIG/3mcaILEJFpmJ8AQQVnZ9l7KtagdClm9UaQ/Z6M/5roklSGpGu
+623YmaXezGj80j4B+Ku1sgTdJo87X1Wrup7l0wJypZls21Uwd67m9koF60eefH/K
+95D1usliXOEm8ayQJQmZrjf6K6v9PWwqMQ==
+=1fB/
+-----END PGP MESSAGE-----
+~~~
 
 # Acknowledgements
 
