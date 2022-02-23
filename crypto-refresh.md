@@ -4061,6 +4061,18 @@ However, with a broken CSPRNG, it may be possible for an attacker to use visible
 
 An implementation can provide extra security against this form of attack by using separate CSPRNGs to generate random data with different levels of visibility.
 
+## Traffic Analysis {#traffic-analysis}
+
+When sending OpenPGP data through the network, the size of the data may leak information to an attacker.
+There are circumstances where such a leak could be unacceptable from a security perspective.
+
+For example, if possible cleartext messages for a given protocol are known to be either `yes` (three octets) and `no` (two octets) and the messages are sent within a Symmetrically-Encrypted Integrity Protected Data packet, the length of the encrypted message will reveal the contents of the cleartext.
+
+In another example, sending an OpenPGP Transferable Public Key over an encrypted network connection might reveal the length of the certificate.
+Since the length of an OpenPGP certificate varies based on the content, an external observer interested in metadata (who is trying to contact who) may be able to guess the identity of the certificate sent, if its length is unique.
+
+In both cases, an implementation can adjust the size of the compound structure by including a Padding packet (see {{padding-packet}}).
+
 # Implementation Nits
 
 This section is a collection of comments to help an implementer, particularly with an eye to backward compatibility.
