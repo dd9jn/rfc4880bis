@@ -2480,7 +2480,7 @@ The Padding packet contains random data, and can be used to defend against traff
 
 Such a packet MUST be ignored when received.
 
-Its contents SHOULD be random octets to make the padding robust against compression.
+Its contents SHOULD be random octets to make the length obfuscation it provides more robust even when compressed.
 
 Policy about how large to make such a packet to defend against traffic analysis is beyond the scope of this document.
 
