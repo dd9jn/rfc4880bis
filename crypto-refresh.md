@@ -579,7 +579,7 @@ As an example, with the first recommended option (t=1, p=4, m=2\*\*21), the full
 
 Simple S2K and Salted S2K specifiers can be brute-forced when used with a low-entropy string, such as those typically provided by users.
 In addition, the usage of Simple S2K can lead to key and IV reuse (see {{skesk}}).
-Therefore, when generating S2K specifiers, implementations MUST NOT use Simple S2K, and SHOULD NOT use Salted S2K unless the implementation knows that the string is high-entropy (e.g., it generated the string itself using a known-good source of randomness).
+Therefore, when generating S2K specifiers, implementations MUST NOT use Simple S2K, and SHOULD NOT use Salted S2K unless the implementation knows that the string is high-entropy (for example, it generated the string itself using a known-good source of randomness).
 It is RECOMMENDED that implementations use Argon2.
 
 #### Secret-Key Encryption {#secret-key-encryption}
@@ -635,7 +635,7 @@ The packet header is of variable length.
 When handling a stream of packets, the length information in each packet header is the canonical source of packet boundaries.
 An implementation handling a packet stream that wants to find the next packet MUST look for it at the precise offset indicated in the previous packet header.
 
-Additionally, some packets contain internal length indicators (e.g., for a subfield within the packet).
+Additionally, some packets contain internal length indicators (for example, a subfield within the packet).
 In the event that a subfield length indicator within a packet implies inclusion of octets outside the range indicated in the packet header, a parser MUST truncate the subfield at the octet boundary indicated in the packet header.
 Such a truncation renders the packet malformed and unusable.
 An implementation MUST NOT interpret octets outside the range indicated in the packet header as part of the contents of the packet.
@@ -806,7 +806,7 @@ Tag | Packet Type
 
 ## Public-Key Encrypted Session Key Packets (Tag 1) {#pkesk}
 
-Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede an encryption container (i.e. a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet), which holds an encrypted message.
+Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede an encryption container (that is, a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet), which holds an encrypted message.
 The message is encrypted with the session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet(s).
 The encryption container is preceded by one Public-Key Encrypted Session Key packet for each OpenPGP key to which the message is encrypted.
 The recipient of the message finds a session key that is encrypted to their public key, decrypts the session key, and then uses the session key to decrypt the message.
@@ -822,7 +822,7 @@ The body of this packet consists of:
 
 - Only for V5 packets, a one octet key version number and N octets of the fingerprint of the public key or subkey to which the session key is encrypted.
   Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 5 key N is 32.
-  The key version number may also be zero, and the fingerprint omitted (i.e. the length N is zero in this case), for an "anonymous recipient" (see {{pkesk-notes}}).
+  The key version number may also be zero, and the fingerprint omitted (that is, the length N is zero in this case), for an "anonymous recipient" (see {{pkesk-notes}}).
 
 - A one-octet number giving the public-key algorithm used.
 
@@ -1362,7 +1362,7 @@ If this packet is not present, the signature is revocable.
 Signer asserts that the key is not only valid but also trustworthy at the specified level.
 Level 0 has the same meaning as an ordinary validity signature.
 Level 1 means that the signed key is asserted to be a valid trusted introducer, with the 2nd octet of the body specifying the degree of trust.
-Level 2 means that the signed key is asserted to be trusted to issue level 1 trust signatures, i.e., that it is a "meta introducer".
+Level 2 means that the signed key is asserted to be trusted to issue level 1 trust signatures; that is, the signed key is a "meta introducer".
 Generally, a level n trust signature asserts that a key is trusted to issue level n-1 trust signatures.
 The trust amount is in a range from 0-255, interpreted such that values less than 120 indicate partial trust and values of 120 or greater indicate complete trust.
 Implementations SHOULD emit values of 60 for partial trust and 120 for complete trust.
@@ -1556,7 +1556,7 @@ Code | Reason
 100-110 | Private Use
 
 Following the revocation code is a string of octets that gives information about the Reason for Revocation in human-readable form (UTF-8).
-The string may be null, that is, of zero length.
+The string may be null (of zero length).
 The length of the subpacket is the length of the reason string plus one.
 An implementation SHOULD implement this subpacket, include it in all revocation signatures, and interpret revocations appropriately.
 There are important semantic differences between the reasons, and there are thus important reasons for revoking signatures.
@@ -1706,7 +1706,7 @@ Either of these keys can verify a signature created by the other, and it may be 
 ## Symmetric-Key Encrypted Session Key Packets (Tag 3) {#skesk}
 
 The Symmetric-Key Encrypted Session Key (SKESK) packet holds the symmetric-key encryption of a session key used to encrypt a message.
-Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede a an encryption container (i.e. a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet) that holds an encrypted message.
+Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede a an encryption container (that is, a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet) that holds an encrypted message.
 The message is encrypted with a session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet or the Symmetric-Key Encrypted Session Key packet.
 
 If the encryption container is preceded by one or more Symmetric-Key Encrypted Session Key packets, each specifies a passphrase that may be used to decrypt the message.
@@ -1910,15 +1910,15 @@ The packet contains:
 - \[Optional\] If string-to-key usage octet was 255, 254, or 253, a string-to-key specifier.
   The length of the string-to-key specifier is implied by its type, as described above.
 
-- \[Optional\] If string-to-key usage octet was 253 (i.e. the secret data is AEAD-encrypted), an initialization vector (IV) of size specified by the AEAD algorithm (see {{version-two-seipd}}), which is used as the nonce for the AEAD algorithm.
+- \[Optional\] If string-to-key usage octet was 253 (that is, the secret data is AEAD-encrypted), an initialization vector (IV) of size specified by the AEAD algorithm (see {{version-two-seipd}}), which is used as the nonce for the AEAD algorithm.
 
-- \[Optional\] If string-to-key usage octet was 255, 254, or a cipher algorithm identifier (i.e. the secret data is CFB-encrypted), an initialization vector (IV) of the same length as the cipher's block size.
+- \[Optional\] If string-to-key usage octet was 255, 254, or a cipher algorithm identifier (that is, the secret data is CFB-encrypted), an initialization vector (IV) of the same length as the cipher's block size.
 
 - Plain or encrypted multiprecision integers comprising the secret key data.
   This is algorithm-specific and described in {{algorithm-specific-parts-of-keys}}.
   If the string-to-key usage octet is 253, then an AEAD authentication tag is part of that data.
   If the string-to-key usage octet is 254, a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion is appended to plaintext and encrypted with it.
-  If the string-to-key usage octet is 255 or another nonzero value (i.e., a symmetric-key encryption algorithm identifier), a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536) is appended to plaintext and encrypted with it.
+  If the string-to-key usage octet is 255 or another nonzero value (that is, a symmetric-key encryption algorithm identifier), a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536) is appended to plaintext and encrypted with it.
   (This is deprecated and SHOULD NOT be used, see below.)
 
 - If the string-to-key usage octet is zero, then a two-octet checksum of the algorithm-specific portion (sum of all octets, mod 65536).
@@ -1935,7 +1935,7 @@ The cipher for encrypting the MPIs is specified in the Secret-Key packet.
 Encryption/decryption of the secret data is done using the key created from the passphrase and the initialization vector from the packet.
 If the string-to-key usage octet is not 253, CFB mode is used.
 A different mode is used with V3 keys (which are only RSA) than with other key formats.
-With V3 keys, the MPI bit count prefix (i.e., the first two octets) is not encrypted.
+With V3 keys, the MPI bit count prefix (that is, the first two octets) is not encrypted.
 Only the MPI non-prefix data is encrypted.
 Furthermore, the CFB state is resynchronized at the beginning of each new MPI value, so that the CFB block boundary is aligned with the start of the MPI data.
 
@@ -2209,7 +2209,7 @@ The body of this packet consists of:
 
 - The remainder of the packet is literal data.
 
-  Text data is stored with \<CR>\<LF> text endings (i.e., network-normal line endings).
+  Text data is stored with \<CR>\<LF> text endings (that is, network-normal line endings).
   These should be converted to native line endings by the receiving software.
 
 Note that OpenPGP signatures do not include the formatting octet, the file name, and the date field of the literal packet in a signature hash and thus those fields are not protected against tampering in a signed document.
@@ -2220,7 +2220,7 @@ If the implementation is certain that the data is textual and is encoded with UT
 Otherwise, it SHOULD set the format octet to `b`.
 It SHOULD set the filename to the empty string (encoded as a single zero octet), and the timestamp to zero (encoded as four zero octets).
 
-An application that wishes to include such filesystem metadata within a signature is advised to sign an encapsulated archive (e.g. {{PAX}}).
+An application that wishes to include such filesystem metadata within a signature is advised to sign an encapsulated archive (for example, {{PAX}}).
 
 An implementation that generates a Literal Data packet MUST use the new format for packet framing (see {{new-packet-format}}).
 It MUST NOT generate a Literal Data packet with old format ({{old-packet-format}})
@@ -2785,7 +2785,7 @@ An implementation MAY dash-escape any line, SHOULD dash-escape lines commencing 
 The message digest is computed using the cleartext itself, not the dash-escaped form.
 
 As with binary signatures on text documents, a cleartext signature is calculated on the text using canonical \<CR>\<LF> line endings.
-The line ending (i.e., the \<CR>\<LF>) before the `-----BEGIN PGP SIGNATURE-----` line that terminates the signed text is not considered part of the signed text.
+The line ending (that is, the \<CR>\<LF>) before the `-----BEGIN PGP SIGNATURE-----` line that terminates the signed text is not considered part of the signed text.
 
 When reversing dash-escaping, an implementation MUST strip the string `- ` if it occurs at the beginning of a line, and SHOULD warn on `-` and any character other than a space at the beginning of a line.
 
@@ -2809,7 +2809,7 @@ An atom is a regular expression in parentheses (matching a match for the regular
 A range is a sequence of characters enclosed in `[]`.
 It normally matches any single character from the sequence.
 If the sequence begins with `^`, it matches any single character not from the rest of the sequence.
-If two characters in the sequence are separated by `-`, this is shorthand for the full list of ASCII characters between them (e.g., `[0-9]` matches any decimal digit).
+If two characters in the sequence are separated by `-`, this is shorthand for the full list of ASCII characters between them (for example, `[0-9]` matches any decimal digit).
 To include a literal `]` in the sequence, make it the first character (following a possible `^`).
 To include a literal `-`, make it the first or last character.
 
@@ -3487,7 +3487,7 @@ An implementation MUST NOT use a different wire format for a point than the wire
 
 ## EC Scalar Wire Formats {#ec-scalar-wire-formats}
 
-Some non-curve values in elliptic curve cryptography (e.g. secret keys and signature components) are not points on a curve, but are also encoded on the wire in OpenPGP as an MPI.
+Some non-curve values in elliptic curve cryptography (for example, secret keys and signature components) are not points on a curve, but are also encoded on the wire in OpenPGP as an MPI.
 
 Because of different patterns of deployment, some curves treat these values as opaque bit strings with the high bit set, while others are treated as actual integers, encoded in the standard OpenPGP big-endian form.
 The choice of encoding is specific to the public key algorithm in use.
@@ -3797,7 +3797,8 @@ There are two interesting cases that other comments need to be made about, thoug
 ### Compression Preferences
 
 Like the algorithm preferences, an implementation MUST NOT use an algorithm that is not in the preference vector.
-If Uncompressed (0) is not explicitly in the list, it is tacitly at the end, i.e. uncompressed messages may always be sent.
+If Uncompressed (0) is not explicitly in the list, it is tacitly at the end.
+That is, uncompressed messages may always be sent.
 
 Note that earlier implementations may assume that the absence of compression preferences means that \[ZIP(1), Uncompressed(0)\] are preferred, and default to ZIP compression.
 Therefore, an implementation that prefers uncompressed data SHOULD explicitly state this in the preferred compression algorithms.
@@ -4107,7 +4108,7 @@ A Revocation Signature may also be split up into shares and distributed among mu
 ## Random Number Generation and Seeding
 
 OpenPGP requires a cryptographically secure pseudorandom number generator (CSPRNG).
-In most cases, the operating system provides an appropriate facility such as a `getrandom()` syscall, which should be used absent other (e.g., performance) concerns.
+In most cases, the operating system provides an appropriate facility such as a `getrandom()` syscall, which should be used absent other (for example, performance) concerns.
 It is RECOMMENDED to use an existing CSPRNG implementation in preference to crafting a new one.
 Many adequate cryptographic libraries are already available under favorable license terms.
 Should those prove unsatisfactory, {{RFC4086}} provides guidance on the generation of random values.
