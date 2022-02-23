@@ -2976,6 +2976,9 @@ ID | Algorithm | IV length (octets) | authentication tag length (octets)
  3 | GCM {{SP800-38D}} | 12 | 16
 100 to 110 | Private/Experimental algorithm
 
+Implementations MUST implement OCB.
+Implementations MAY implement EAX, GCM and other algorithms.
+
 # IANA Considerations
 
 Because this document obsoletes {{RFC4880}}, IANA is requested to update all registration information that references {{RFC4880}} to instead reference this RFC.
