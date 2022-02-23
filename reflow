@@ -71,58 +71,62 @@ def is_header(para:str) -> bool:
         return True
     return False
 
-def reflow(para:str) -> str:
-    # don't reflow tables, verbatim blocks, YAML metadata, or quoted text:
-    if is_table(para) or is_verbatim(para) or is_yaml_metadata(para) or is_quoted_text(para):
-        return para
+class DraftState:
+    def __init__(self) -> None:
+        pass
 
-    if is_header(para):
-        return para
+    def reflow(self, para:str) -> str:
+        # don't reflow tables, verbatim blocks, YAML metadata, or quoted text:
+        if is_table(para) or is_verbatim(para) or is_yaml_metadata(para) or is_quoted_text(para):
+            return para
 
-    intro:str = ''
-    lines:List[str] = para.split('\n')
+        if is_header(para):
+            return para
 
-    while lines[0].startswith('{:'):
-        intro += lines[0] + '\n'
-        lines = lines[1:]
+        intro:str = ''
+        lines:List[str] = para.split('\n')
 
-    indent:str = ''
+        while lines[0].startswith('{:'):
+            intro += lines[0] + '\n'
+            lines = lines[1:]
 
-    # handle definition lists
-    if len(lines) > 1 and lines[1].startswith(': '):
-        intro += lines[0] + '\n'
-        lines = lines[1:]
-        indent = '  '
- 
-    if len(lines) > 1:
-        match = re.compile('^ +').match(lines[1])
-        if match:
-            indent = match.group()
+        indent:str = ''
 
-    # if a paragraph starts with some leading space, we shouldn't strip that
-    leading_space = re.compile('^ +').match(lines[0])
-    if leading_space:
-        intro += leading_space.group()
+        # handle definition lists
+        if len(lines) > 1 and lines[1].startswith(': '):
+            intro += lines[0] + '\n'
+            lines = lines[1:]
+            indent = '  '
 
-    x = ' '.join(map(str.strip, lines))
-    # assume all sentences split with a period (.), and not ! or ?
-    # also, accept accidental breaks on abbreviations like John Q. Public
-    sentences:List[str] = x.split('. ')
-    # manually avoid a specific problematic split:
-    i:int
-    for i in range(0,len(sentences)-1):
-        if sentences[i].strip().endswith('Philip R') and sentences[i+1].strip().startswith('Zimmermann'):
-            sentences = sentences[:i] + [sentences[i] + '. ' + sentences[i+1]] + sentences[i+2:]
-            break
+        if len(lines) > 1:
+            match = re.compile('^ +').match(lines[1])
+            if match:
+                indent = match.group()
 
-    # avoid splitting on a numbered list:
-    list_number = re.compile('^[0-9]+$').match(sentences[0])
-    if list_number:
-        sentences = [sentences[0] + '. ' + sentences[1]] + sentences[2:]
-        if indent == '':
-            indent = ' '*(2 + len(list_number.group()))
+        # if a paragraph starts with some leading space, we shouldn't strip that
+        leading_space = re.compile('^ +').match(lines[0])
+        if leading_space:
+            intro += leading_space.group()
 
-    return intro + ('.\n' + indent).join(map(str.strip, sentences))
+        x = ' '.join(map(str.strip, lines))
+        # assume all sentences split with a period (.), and not ! or ?
+        # also, accept accidental breaks on abbreviations like John Q. Public
+        sentences:List[str] = x.split('. ')
+        # manually avoid a specific problematic split:
+        i:int
+        for i in range(0,len(sentences)-1):
+            if sentences[i].strip().endswith('Philip R') and sentences[i+1].strip().startswith('Zimmermann'):
+                sentences = sentences[:i] + [sentences[i] + '. ' + sentences[i+1]] + sentences[i+2:]
+                break
+
+        # avoid splitting on a numbered list:
+        list_number = re.compile('^[0-9]+$').match(sentences[0])
+        if list_number:
+            sentences = [sentences[0] + '. ' + sentences[1]] + sentences[2:]
+            if indent == '':
+                indent = ' '*(2 + len(list_number.group()))
+
+        return intro + ('.\n' + indent).join(map(str.strip, sentences))
 
 incoming = sys.stdin.read()
 
@@ -130,7 +134,8 @@ paras = incoming.strip().split('\n\n')
 
 out = []
 
+draft_state = DraftState()
 for para in paras:
-    out += [reflow(para)]
+    out += [draft_state.reflow(para)]
 
 print('\n\n'.join(out))
