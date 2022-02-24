@@ -895,7 +895,7 @@ These meanings are as follows:
 0x02: Standalone signature.
 : This signature is a signature of only its own subpacket contents.
   It is calculated identically to a signature over a zero-length binary document.
-  Note that it doesn't make sense to have a V3 standalone signature.
+  V3 standalone signatures MUST NOT be generated and MUST be ignored.
 
 0x10: Generic certification of a User ID and Public-Key packet.
 : The issuer of this certification does not make any particular assertion as to how well the certifier has checked that the owner of the key is in fact the person described by the User ID.
