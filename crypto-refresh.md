@@ -218,12 +218,12 @@ normative:
   RFC2822:
   RFC3156:
   RFC3394:
-  RFC3447:
   RFC3629:
   RFC3713:
   RFC4086:
   RFC7253:
   RFC7748:
+  RFC8017:
   RFC8032:
   RFC8126:
   RFC9106:
@@ -839,7 +839,7 @@ Before encrypting, a two-octet checksum is appended, which is equal to the sum o
 
 - Multiprecision integer (MPI) of RSA-encrypted value m\*\*e mod n.
 
-The value "m" in the above formula is the plaintext value described above, encoded in the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC3447}} (see also {{pkcs-encoding}}).
+The value "m" in the above formula is the plaintext value described above, encoded in the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC8017}} (see also {{pkcs-encoding}}).
 Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
 
 ### Algorithm Specific Fields for Elgamal encryption {#pkesk-elgamal}
@@ -848,7 +848,7 @@ Note that when an implementation forms several PKESKs with one session key, form
 
 - MPI of Elgamal (Diffie-Hellman) value m * y\*\*k mod p.
 
-The value "m" in the above formula is the plaintext value described above, encoded in the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC3447}} (see also {{pkcs-encoding}}).
+The value "m" in the above formula is the plaintext value described above, encoded in the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC8017}} (see also {{pkcs-encoding}}).
 Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
 
 ### Algorithm-Specific Fields for ECDH encryption {#pkesk-ecdh}
@@ -992,7 +992,7 @@ Algorithm-Specific Fields for DSA signatures:
 The signature calculation is based on a hash of the signed data, as described above.
 The details of the calculation are different for DSA signatures than for RSA signatures.
 
-With RSA signatures, the hash value is encoded using PKCS#1 encoding type EMSA-PKCS1-v1_5 as described in Section 9.2 of {{RFC3447}}.
+With RSA signatures, the hash value is encoded using PKCS#1 encoding type EMSA-PKCS1-v1_5 as described in Section 9.2 of {{RFC8017}}.
 This requires inserting the hash value as an octet string into an ASN.1 structure.
 The object identifier for the type of hash being used is included in the structure.
 The hexadecimal representations for the currently defined hash algorithms are as follows:
@@ -3665,8 +3665,8 @@ Consistent with {{seipd}}, AEAD encryption or a Modification Detection Code (MDC
 
 This standard makes use of the PKCS#1 functions EME-PKCS1-v1_5 and EMSA-PKCS1-v1_5.
 However, the calling conventions of these functions has changed in the past.
-To avoid potential confusion and interoperability problems, we are including local copies in this document, adapted from those in PKCS#1 v2.1 {{RFC3447}}.
-{{RFC3447}} should be treated as the ultimate authority on PKCS#1 for OpenPGP.
+To avoid potential confusion and interoperability problems, we are including local copies in this document, adapted from those in PKCS#1 v2.1 {{RFC8017}}.
+{{RFC8017}} should be treated as the ultimate authority on PKCS#1 for OpenPGP.
 Nonetheless, we believe that there is value in having a self-contained document that avoids problems in the future with needed changes in the conventions.
 
 ### EME-PKCS1-v1_5-ENCODE
