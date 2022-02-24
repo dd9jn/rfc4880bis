@@ -2494,7 +2494,7 @@ An implementation adding padding to an OpenPGP stream SHOULD place such a packet
 
 - At the end of a v5 Transferable Public Key that is transferred over an encrypted channel (see {{transferable-public-keys}}).
 
-- As the last packet of an Optionally Padded Message within an AEAD Encrypted Data Packet (see {{openpgp-messages}}).
+- As the last packet of an Optionally Padded Message within a version 2 Symmetrically Encrypted Integrity Protected Data Packet (see {{unwrapping}}).
 
 An implementation MUST be able to process padding packets anywhere else in an OpenPGP stream, so that future revisions of this document may specify further locations for padding.
 
@@ -3307,7 +3307,9 @@ Optionally Padded Message :-
 In addition to the above grammar, certain messages can be "unwrapped" to yield new messages.
 In particular:
 
-- Decrypting a Symmetrically Encrypted and Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet must yield a valid OpenPGP Message.
+- Decrypting a version 2 Symmetrically Encrypted and Integrity Protected Data packet must yield a valid Optionally Padded Message.
+
+- Decrypting a version 1 Symmetrically Encrypted and Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet must yield a valid OpenPGP Message.
 
 - Decompressing a Compressed Data packet must also yield a valid OpenPGP Message.
 
