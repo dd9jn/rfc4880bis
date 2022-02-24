@@ -807,7 +807,7 @@ Tag | Packet Type
 
 ## Public-Key Encrypted Session Key Packets (Tag 1) {#pkesk}
 
-Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede an encryption container (that is, a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet), which holds an encrypted message.
+Zero or more Public-Key Encrypted Session Key (PKESK) packets and/or Symmetric-Key Encrypted Session Key packets ({{skesk}}) may precede an encryption container (that is, a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet), which holds an encrypted message.
 The message is encrypted with the session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet(s).
 The encryption container is preceded by one Public-Key Encrypted Session Key packet for each OpenPGP key to which the message is encrypted.
 The recipient of the message finds a session key that is encrypted to their public key, decrypts the session key, and then uses the session key to decrypt the message.
@@ -1707,11 +1707,19 @@ Either of these keys can verify a signature created by the other, and it may be 
 ## Symmetric-Key Encrypted Session Key Packets (Tag 3) {#skesk}
 
 The Symmetric-Key Encrypted Session Key (SKESK) packet holds the symmetric-key encryption of a session key used to encrypt a message.
-Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede a an encryption container (that is, a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet) that holds an encrypted message.
-The message is encrypted with a session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet or the Symmetric-Key Encrypted Session Key packet.
+Zero or more Public-Key Encrypted Session Key packets ({{pkesk}}) and/or Symmetric-Key Encrypted Session Key packets may precede a an encryption container (that is, a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet) that holds an encrypted message.
+The message is encrypted with a session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet(s).
 
 If the encryption container is preceded by one or more Symmetric-Key Encrypted Session Key packets, each specifies a passphrase that may be used to decrypt the message.
 This allows a message to be encrypted to a number of public keys, and also to one or more passphrases.
+
+The body of this packet starts with a one-octet number giving the version number of the packet type.
+The currently defined versions are 4 and 5.
+The remainder of the packet depends on the version.
+
+The versions differ in how they encrypt the session key with the password, and in what they encode.
+
+### v4 SKESK {#v4-skesk}
 
 A version 4 Symmetric-Key Encrypted Session Key packet consists of:
 
@@ -1731,13 +1739,15 @@ The decryption result consists of a one-octet algorithm identifier that specifie
 Note: because an all-zero IV is used for this decryption, the S2K specifier MUST use a salt value, either a Salted S2K, an Iterated-Salted S2K, or Argon2.
 The salt value will ensure that the decryption key is not repeated even if the passphrase is reused.
 
+### v5 SKESK {#v5-skesk}
+
 A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 
 - A one-octet version number with value 5.
 
-- A one-octet cipher algorithm.
+- A one-octet symmetric cipher algorithm identifier.
 
-- A one-octet AEAD algorithm.
+- A one-octet AEAD algorithm identifier.
 
 - A string-to-key (S2K) specifier, length as defined in {{s2k-types}}.
 
@@ -1748,10 +1758,10 @@ A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 - An authentication tag for the AEAD mode.
 
 HKDF is used with SHA256 as hash algorithm, the key derived from S2K as Initial Keying Material (IKM), no salt, and the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version, and the cipher-algo and AEAD-mode used to encrypt the key material, are used as info parameter.
-Then, the session key is encrypted using the resulting key, with one of the AEAD algorithms specified for version 2 of the Symmetrically Encrypted Integrity Protected Data packet.
+Then, the session key is encrypted using the resulting key, with the AEAD algorithm specified for version 2 of the Symmetrically Encrypted Integrity Protected Data packet.
 Note that no chunks are used and that there is only one authentication tag.
 The Packet Tag in OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are given as additional data.
-For example, the additional data used with EAX and AES-128 consists of the octets 0xC3, 0x05, 0x07, and 0x01.
+For example, the additional data used with AES-128 with OCB consists of the octets 0xC3, 0x05, 0x07, and 0x02.
 
 ### No v5 SKESK with v1 SEIPD {#no-v5-skesk-v1-seipd}
 
