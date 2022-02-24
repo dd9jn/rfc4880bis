@@ -560,8 +560,9 @@ The salt SHOULD be unique for each password.
 
 The number of passes t and the degree of parallelism p MUST be non-zero.
 
-The memory size m is 2\*\*encoded_m, where "encoded_m" is the encoded memory size in Octet 19.
+The memory size m is 2\*\*encoded_m kibibytes of RAM, where "encoded_m" is the encoded memory size in Octet 19.
 The encoded memory size MUST be a value from 3+ceil(log_2(p)) to 31, such that the decoded memory size m is a value from 8*p to 2\*\*31.
+Note that memory-hardness size is indicated in kibibytes (KiB), not octets.
 
 Argon2 is invoked with the passphrase as P, the salt as S, the values of t, p and m as described above, the required key size as the tag length T, 0x13 as the version v, and Argon2id as the type.
 
