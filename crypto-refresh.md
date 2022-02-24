@@ -226,6 +226,7 @@ normative:
   RFC8017:
   RFC8032:
   RFC8126:
+  RFC8174:
   RFC9106:
   SCHNEIER:
     title: "Applied Cryptography Second Edition: protocols, algorithms, and source code in C"
@@ -272,8 +273,6 @@ normative:
 
 --- abstract
 
-{ Work in progress to update the OpenPGP specification from RFC4880 }
-
 This document specifies the message formats used in OpenPGP.
 OpenPGP provides encryption with public-key or symmetric cryptographic algorithms, digital signatures, compression and key management.
 
@@ -283,13 +282,12 @@ It describes only the format and methods needed to read, check, generate, and wr
 It does not deal with storage and implementation questions.
 It does, however, discuss implementation issues necessary to avoid security flaws.
 
+This document obsoletes: RFC 4880 (OpenPGP), RFC 5581 (Camellia in OpenPGP) and RFC 6637 (Elliptic Curves in OpenPGP).
+
 --- middle
 
 # Introduction
 
-{ This is work in progress to update OpenPGP.
-  Editorial notes are enclosed in curly braces.
-  }
 
 This document provides information on the message-exchange packet formats used by OpenPGP to provide encryption, decryption, signing, and key management functions.
 It is a revision of RFC 4880, "OpenPGP Message Format", which is a revision of RFC 2440, which itself replaces RFC 1991, "PGP Message Exchange Formats" {{RFC1991}} {{RFC2440}} {{RFC4880}}.
@@ -318,7 +316,7 @@ This document obsoletes: RFC 4880 (OpenPGP), RFC 5581 (Camellia in OpenPGP) and 
 "PGP", "Pretty Good", and "Pretty Good Privacy" are trademarks of PGP Corporation and are used with permission.
 The term "OpenPGP" refers to the protocol described in this and related documents.
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in {{RFC2119}}.
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 {{RFC2119}} {{RFC8174}} when, and only when, they appear in all capitals, as shown here.
 
 The key words "PRIVATE USE", "SPECIFICATION REQUIRED", and "RFC REQUIRED" that appear in this document when used to describe namespace allocation are to be interpreted as described in {{RFC8126}}.
 
@@ -650,9 +648,9 @@ The remainder of the packet header is the length of the packet.
 Note that the most significant bit is the leftmost bit, called bit 7.
 A mask for this bit is 0x80 in hexadecimal.
 
-           ┌───────────────┐
-      PTag │7 6 5 4 3 2 1 0│
-           └───────────────┘
+           +---------------+
+      PTag |7 6 5 4 3 2 1 0|
+           +---------------+
       Bit 7 -- Always one
       Bit 6 -- New packet format if set
 
@@ -2523,6 +2521,8 @@ The nonzero initialization can detect more errors than a zero initialization.
 
 ## An Implementation of the CRC-24 in "C" {#sample-crc24}
 
+    <CODE BEGINS> file "sample-crc24.c"
+
     #define CRC24_INIT 0xB704CEL
     #define CRC24_GENERATOR 0x864CFBL
 
@@ -2543,6 +2543,8 @@ The nonzero initialization can detect more errors than a zero initialization.
         }
         return crc & 0xFFFFFFL;
     }
+
+    <CODE ENDS>
 
 ## Forming ASCII Armor
 
@@ -2651,11 +2653,11 @@ These 24 bits are then treated as four concatenated 6-bit groups, each of which 
 When encoding a bit stream with the Radix-64 encoding, the bit stream must be presumed to be ordered with the most significant bit first.
 That is, the first bit in the stream will be the high-order bit in the first 8-bit octet, and the eighth bit will be the low-order bit in the first 8-bit octet, and so on.
 
-    ┌──first octet──┬─second octet──┬──third octet──┐
-    │7 6 5 4 3 2 1 0│7 6 5 4 3 2 1 0│7 6 5 4 3 2 1 0│
-    ├───────────┬───┴───────┬───────┴───┬───────────┤
-    │5 4 3 2 1 0│5 4 3 2 1 0│5 4 3 2 1 0│5 4 3 2 1 0│
-    └──1.index──┴──2.index──┴──3.index──┴──4.index──┘
+    +--first octet--+-second octet--+--third octet--+
+    |7 6 5 4 3 2 1 0|7 6 5 4 3 2 1 0|7 6 5 4 3 2 1 0|
+    +-----------+---+-------+-------+---+-----------+
+    |5 4 3 2 1 0|5 4 3 2 1 0|5 4 3 2 1 0|5 4 3 2 1 0|
+    +--1.index--+--2.index--+--3.index--+--4.index--+
 
 Each 6-bit group is used as an index into an array of 64 printable characters from the table below.
 The character referenced by the index is placed in the output string.
