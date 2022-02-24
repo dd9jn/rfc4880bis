@@ -812,16 +812,39 @@ The message is encrypted with the session key, and the session key is itself enc
 The encryption container is preceded by one Public-Key Encrypted Session Key packet for each OpenPGP key to which the message is encrypted.
 The recipient of the message finds a session key that is encrypted to their public key, decrypts the session key, and then uses the session key to decrypt the message.
 
-The body of this packet consists of:
+The body of this packet starts with a one-octet number giving the version number of the packet type.
+The currently defined versions are 3 and 5.
+The remainder of the packet depends on the version.
 
-- A one-octet number giving the version number of the packet type.
-  The currently defined versions are 3 and 5.
+The versions differ in how they identify the recipient key, and in what they encode.
 
-- Only for V3 packets, an eight-octet number that gives the Key ID of the public key to which the session key is encrypted.
+### v3 PKESK {#v3-pkesk}
+
+The v3 PKESK packet consists of:
+
+- A one-octet version number with value 3.
+
+- An eight-octet number that gives the Key ID of the public key to which the session key is encrypted.
   If the session key is encrypted to a subkey, then the Key ID of this subkey is used here instead of the Key ID of the primary key.
   The Key ID may also be all zeros, for an "anonymous recipient" (see {{pkesk-notes}}).
 
-- Only for V5 packets, a one octet key version number and N octets of the fingerprint of the public key or subkey to which the session key is encrypted.
+- A one-octet number giving the public-key algorithm used.
+
+- A series of values comprising the encrypted session key.
+  This is algorithm-specific and described below.
+
+When creating a v3 PKESK packet, the session key is first prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container.
+Then a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, not including the algorithm identifier, modulo 65536.
+
+The resulting octet string (algorithm identifier, session key, and checksum) is encrypted according to the public-key algorithm used, as described below.
+
+### v5 PKESK {#v5-pkesk}
+
+The v5 PKESK packet consists of:
+
+- A one-octet version number with value 5.
+
+- A one octet key version number and N octets of the fingerprint of the public key or subkey to which the session key is encrypted.
   Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 5 key N is 32.
   The key version number may also be zero, and the fingerprint omitted (that is, the length N is zero in this case), for an "anonymous recipient" (see {{pkesk-notes}}).
 
@@ -830,11 +853,10 @@ The body of this packet consists of:
 - A series of values comprising the encrypted session key.
   This is algorithm-specific and described below.
 
-For V3 packets, before encrypting, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container.
-Then a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, not including the algorithm identifier, modulo 65536.
-
-For V5 packets, the symmetric encryption algorithm identifier is not included.
+When creating a V5 PKESK packet, the symmetric encryption algorithm identifier is not included.
 Before encrypting, a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, modulo 65536.
+
+The resulting octet string (session key and checksum) is encrypted according to the public-key algorithm used, as described below.
 
 ### Algorithm Specific Fields for RSA encryption {#pkesk-rsa}
 
