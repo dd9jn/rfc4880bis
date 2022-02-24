@@ -1753,7 +1753,7 @@ Note that no chunks are used and that there is only one authentication tag.
 The Packet Tag in OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are given as additional data.
 For example, the additional data used with EAX and AES-128 consists of the octets 0xC3, 0x05, 0x07, and 0x01.
 
-### No v5 SKESK with SEIPD {#no-v5-skesk-seipd}
+### No v5 SKESK with v1 SEIPD {#no-v5-skesk-v1-seipd}
 
 Note that version 1 of the Symmetrically Encrypted Integrity Protected Data Packet ({{version-one-seipd}}) does not internally indicate what cipher algorithm to use to decrypt it, unlike version 2 ({{version-two-seipd}}).
 Since the v5 SKESK packet's encrypted payload only indicates the key used, not the choice of cipher algorithm used for the subsequent encrypted data, a v5 SKESK packet can only provide a session key for a v2 SEIPD packet, and MUST NOT be used to provide a session key for a v1 SEIPD Packet.
@@ -3326,7 +3326,7 @@ If an implementation encounters a packet whose header length indicates that it w
 ### Additional Constraints on Packet Sequences
 
 Note that some subtle combinations that are formally acceptable by this grammar are nonetheless unacceptable.
-For example, a v5 SKESK packet cannot effectively precede a SEIPD packet, since that combination does not include any information about the choice of symmetric cipher used for SEIPD (see {{no-v5-skesk-seipd}} for more details).
+For example, a v5 SKESK packet cannot effectively precede a SEIPD packet, since that combination does not include any information about the choice of symmetric cipher used for SEIPD (see {{no-v5-skesk-v1-seipd}} for more details).
 
 ## Detached Signatures
 
