@@ -820,6 +820,10 @@ The versions differ in how they identify the recipient key, and in what they enc
 
 ### v3 PKESK {#v3-pkesk}
 
+A version 3 Public-Key Encrypted Session Key (PKESK) packet precedes a version 1 Symmetrically Encrypted Integrity Protected Data (v1 SEIPD, see {{version-one-seipd}}) packet.
+In historic data, it is sometimes found preceding a deprecated Symmetrically Encrypted Data packet (SED, see {{sed}}).
+A v3 PKESK packet MUST NOT precede a v2 SEIPD packet (see {{version-two-seipd}}).
+
 The v3 PKESK packet consists of:
 
 - A one-octet version number with value 3.
@@ -839,6 +843,9 @@ Then a two-octet checksum is appended, which is equal to the sum of the precedin
 The resulting octet string (algorithm identifier, session key, and checksum) is encrypted according to the public-key algorithm used, as described below.
 
 ### v5 PKESK {#v5-pkesk}
+
+A version 5 Public-Key Encrypted Session Key (PKESK) packet precedes a version 2 Symmetrically Encrypted Integrity Protected Data (v2 SEIPD, see {{version-two-seipd}}) packet.
+A v5 PKESK packet MUST NOT precede a v1 SEIPD packet ({{version-one-seipd}}) or a deprecated Symmetrically Encrypted Data packet (SED, see {{sed}}).
 
 The v5 PKESK packet consists of:
 
@@ -1743,6 +1750,10 @@ The versions differ in how they encrypt the session key with the password, and i
 
 ### v4 SKESK {#v4-skesk}
 
+A version 4 Symmetric-Key Encrypted Session Key (SKESK) packet precedes a version 1 Symmetrically Encrypted Integrity Protected Data (v1 SEIPD, see {{version-one-seipd}}) packet.
+In historic data, it is sometimes found preceding a deprecated Symmetrically Encrypted Data packet (SED, see {{sed}}).
+A v4 SKESK packet MUST NOT precede a v2 SEIPD packet (see {{version-two-seipd}}).
+
 A version 4 Symmetric-Key Encrypted Session Key packet consists of:
 
 - A one-octet version number with value 4.
@@ -1762,6 +1773,9 @@ Note: because an all-zero IV is used for this decryption, the S2K specifier MUST
 The salt value will ensure that the decryption key is not repeated even if the passphrase is reused.
 
 ### v5 SKESK {#v5-skesk}
+
+A version 5 Symmetric-Key Encrypted Session Key (SKESK) packet precedes a version 2 Symmetrically Encrypted Integrity Protected Data (v2 SEIPD, see {{version-two-seipd}}) packet.
+A v5 SKESK packet MUST NOT precede a v1 SEIPD packet ({{version-one-seipd}}) or a deprecated Symmetrically Encrypted Data packet (SED, see {{sed}}).
 
 A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 
