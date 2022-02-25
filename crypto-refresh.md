@@ -3891,7 +3891,7 @@ See {{BLEICHENBACHER}}.
 
 When using a version 1 Symmetrically Encrypted Integrity Protected Data packet ({{version-one-seipd}}) or --- for historic data --- a Symmetrically Encrypted Data packet ({{sed}}), OpenPGP does symmetric encryption using a variant of Cipher Feedback mode (CFB mode).
 This section describes the procedure it uses in detail.
-This mode is what is used for Symmetrically Encrypted Integrity Protected Data Packets (and the dangerously malleable -- and deprecated -- Symmetrically Encrypted Data Packets).
+This mode is what is used for Symmetrically Encrypted Integrity Protected Data Packets (and the dangerously malleable --- and deprecated --- Symmetrically Encrypted Data Packets).
 Some mechanisms for encrypting secret-key material also use CFB mode, as described in {{secret-key-encryption}}.
 
 In the description below, the value BS is the block size in octets of the cipher.
