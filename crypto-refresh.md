@@ -447,7 +447,7 @@ The wire representation is the same: two octets of length in bits counted from t
 
 ## Key IDs
 
-A Key ID is a scalar that identifies a key.
+A Key ID is an eight-octet scalar that identifies a key.
 Implementations SHOULD NOT assume that Key IDs are unique.
 {{key-ids-fingerprints}} describes how Key IDs are formed.
 
@@ -3470,7 +3470,7 @@ e.2) The octets representing a curve OID, defined in {{ec-curves}};
 e.3) An MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
 
 A V5 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9A, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
-The Key ID is the high-order 96 bits of the fingerprint.
+The Key ID is the high-order 64 bits of the fingerprint.
 Here are the fields of the hash material, with the example of an EdDSA key:
 
 a.1) 0x9A (1 octet)
