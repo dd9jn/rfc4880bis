@@ -650,11 +650,13 @@ There are two packet formats, the (current) OpenPGP packet format specified by t
 Note that the most significant bit is the leftmost bit, called bit 7.
 A mask for this bit is 0x80 in hexadecimal.
 
-           +---------------+
-      PTag |7 6 5 4 3 2 1 0|
-           +---------------+
-      Bit 7 -- Always one
-      Bit 6 -- Always one (except for Legacy packet format)
+~~~
+       ┌───────────────┐
+  PTag │7 6 5 4 3 2 1 0│
+       └───────────────┘
+  Bit 7 -- Always one
+  Bit 6 -- Always one (except for Legacy packet format)
+~~~~
 
 The Legacy packet format MAY be used when consuming packets to facilitate interoperability with legacy implementations and accessing archived data.
 The Legacy packet format SHOULD NOT be used to generate new data, unless the recepient is known to only support the Legacy packet format.
@@ -2655,11 +2657,13 @@ These 24 bits are then treated as four concatenated 6-bit groups, each of which 
 When encoding a bit stream with the Radix-64 encoding, the bit stream must be presumed to be ordered with the most significant bit first.
 That is, the first bit in the stream will be the high-order bit in the first 8-bit octet, and the eighth bit will be the low-order bit in the first 8-bit octet, and so on.
 
-    +--first octet--+-second octet--+--third octet--+
-    |7 6 5 4 3 2 1 0|7 6 5 4 3 2 1 0|7 6 5 4 3 2 1 0|
-    +-----------+---+-------+-------+---+-----------+
-    |5 4 3 2 1 0|5 4 3 2 1 0|5 4 3 2 1 0|5 4 3 2 1 0|
-    +--1.index--+--2.index--+--3.index--+--4.index--+
+~~~
+┌──first octet──┬─second octet──┬──third octet──┐
+│7 6 5 4 3 2 1 0│7 6 5 4 3 2 1 0│7 6 5 4 3 2 1 0│
+├───────────┬───┴───────┬───────┴───┬───────────┤
+│5 4 3 2 1 0│5 4 3 2 1 0│5 4 3 2 1 0│5 4 3 2 1 0│
+└──1.index──┴──2.index──┴──3.index──┴──4.index──┘
+~~~
 
 Each 6-bit group is used as an index into an array of 64 printable characters from the table below.
 The character referenced by the index is placed in the output string.
