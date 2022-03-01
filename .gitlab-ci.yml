@@ -9,7 +9,6 @@ pages:
     - make crypto-refresh.html
     - mkdir public
     - cp -v crypto-refresh.html public/index.html
-    - cp -v *.js public
   cache:
     paths:
       - .refcache
