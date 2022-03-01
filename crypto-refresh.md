@@ -1170,7 +1170,7 @@ Type | Description
   8 | Reserved
   9 | Key Expiration Time
  10 | Placeholder for backward compatibility
- 11 | Preferred Symmetric Algorithms
+ 11 | Preferred Symmetric Ciphers for v1 SEIPD
  12 | Revocation Key (deprecated)
 13 to 15 | Reserved
  16 | Issuer
@@ -1277,17 +1277,20 @@ For a subkey binding signature, the key creation time is that of the subkey.
 If this is not present or has a value of zero, the key never expires.
 This is found only on a self-signature.
 
-#### Preferred Symmetric Algorithms
+#### Preferred Symmetric Ciphers for v1 SEIPD {#preferred-v1-seipd}
 
 (array of one-octet values)
 
-Symmetric algorithm numbers that indicate which algorithms the key holder prefers to use.
+A series of symmetric cipher algorithm identifiers indicating how the keyholder prefers to receive version 1 Symmetrically Encrypted Integrity Protected Data ({{version-one-seipd}}).
 The subpacket body is an ordered list of octets with the most preferred listed first.
 It is assumed that only algorithms listed are supported by the recipient's software.
 Algorithm numbers are in {{symmetric-algos}}.
 This is only found on a self-signature.
 
-#### Preferred AEAD Ciphersuites
+When generating a v2 SEIPD packet, this preference list is not relevant.
+See {{preferred-v2-seipd}} instead.
+
+#### Preferred AEAD Ciphersuites {#preferred-v2-seipd}
 
 (array of pairs of octets indicating Symmetric Cipher and AEAD algorithms)
 
@@ -1311,6 +1314,9 @@ Indicates that the keyholder prefers to receive v2 SEIPD using AES-256 with OCB,
 Note that support for version 2 of the Symmetrically Encrypted Integrity Protected Data packet ({{version-two-seipd}}) in general is indicated by a Feature Flag ({{features-subpacket}}).
 
 This subpacket is only found on a self-signature.
+
+When generating a v1 SEIPD packet, this preference list is not relevant.
+See {{preferred-v1-seipd}} instead.
 
 #### Preferred Hash Algorithms
 
