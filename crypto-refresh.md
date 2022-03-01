@@ -1189,10 +1189,11 @@ Type | Description
  31 | Signature Target
  32 | Embedded Signature
  33 | Issuer Fingerprint
- 34 | Preferred AEAD Algorithms
+ 34 | Reserved
  35 | Intended Recipient Fingerprint
  37 | Reserved (Attested Certifications)
  38 | Reserved (Key Block)
+ 39 | Preferred AEAD Ciphersuites
 100 to 110 | Private or experimental
 
 An implementation SHOULD ignore any subpacket of a type that it does not recognize.
@@ -1286,16 +1287,30 @@ It is assumed that only algorithms listed are supported by the recipient's softw
 Algorithm numbers are in {{symmetric-algos}}.
 This is only found on a self-signature.
 
-#### Preferred AEAD Algorithms
+#### Preferred AEAD Ciphersuites
 
-(array of one-octet values)
+(array of pairs of octets indicating Symmetric Cipher and AEAD algorithms)
 
-AEAD algorithm numbers that indicate which AEAD algorithms the key holder prefers to use.
-The subpacket body is an ordered list of octets with the most preferred listed first.
-It is assumed that only algorithms listed are supported by the recipient's software.
-Algorithm numbers are in {{aead-algorithms}}.
-This is only found on a self-signature.
-Note that support for version 2 of the Symmetrically Encrypted Integrity Protected Data packet in general is indicated by a Feature Flag.
+A series of paired algorithm identifiers indicating how the keyholder prefers to receive version 2 Symmetrically Encrypted Integrity Protected Data ({{version-two-seipd}}).
+Each pair of octets indicates a combination of a symmetric cipher and an AEAD mode that the key holder prefers to use.
+The symmetric cipher identifier precedes the AEAD identifier in each pair.
+The subpacket body is an ordered list of pairs of octets with the most preferred algorithm combination listed first.
+
+It is assumed that only the combinations of algorithms listed are supported by the recipient's software, with the exception of the mandatory-to-implement combination of AES-128 and OCB.
+If AES-128 and OCB are not found in the subpacket, it is implicitly listed at the end.
+
+AEAD algorithm numbers are listed in {{aead-algorithms}}.
+Symmetric cipher algorithm numbers are listed in {{symmetric-algos}}.
+
+For example, a subpacket with content of these six octets:
+
+    09 02 09 03 13 02
+    
+Indicates that the keyholder prefers to receive v2 SEIPD using AES-256 with OCB, then AES-256 with GCM, then Camellia-256 with OCB, and finally the implicit AES-128 with OCB.
+
+Note that support for version 2 of the Symmetrically Encrypted Integrity Protected Data packet ({{version-two-seipd}}) in general is indicated by a Feature Flag ({{features-subpacket}}).
+
+This subpacket is only found on a self-signature.
 
 #### Preferred Hash Algorithms
 
@@ -2980,7 +2995,7 @@ Implementations MUST NOT use MD5, SHA-1, or RIPE-MD/160 as a hash function in an
 Implementations MUST NOT validate any recent signature that depends on MD5, SHA-1, or RIPE-MD/160.
 Implementations SHOULD NOT validate any old signature that depends on MD5, SHA-1, or RIPE-MD/160 unless the signature's creation date predates known weakness of the algorithm used, and the implementation is confident that the message has been in the secure custody of the user the whole time.
 
-## AEAD Algorithms
+## AEAD Algorithms {#aead-algorithms}
 
 {: title="AEAD algorithm registry"}
 ID | Algorithm | IV length (octets) | authentication tag length (octets)
