@@ -10,22 +10,18 @@ OUTPUT = $(draft).txt $(draft).html $(draft).xml
 
 all: $(OUTPUT)
 
-%.xmlv2: %.md
-	kramdown-rfc2629 < $< > $@.tmp
+%.xml: %.md
+	kramdown-rfc2629 --v3 < $< > $@.tmp
 	mv $@.tmp $@
 
-# convert to v3:
-%.xml: %.xmlv2
-	xml2rfc -o $@ --v2v3 $<
-
 %.html: %.xml
-	xml2rfc $< --html
+	xml2rfc --v3 $< --html
 
 %.txt: %.xml
-	xml2rfc $< --text
+	xml2rfc --v3 $< --text
 
 %.pdf: %.xml
-	xml2rfc $< --pdf
+	xml2rfc --v3 $< --pdf
 
 $(draft).txt.diff: $(draft).txt compare canonicalizetxt
 	! ./compare > $@.tmp
