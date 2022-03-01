@@ -2522,7 +2522,7 @@ The nonzero initialization can detect more errors than a zero initialization.
 
 ## An Implementation of the CRC-24 in "C" {#sample-crc24}
 
-{: sourcecode-name="sample-crc24.c" sourcecode-markers="true"}
+{: sourcecode-name="sample-crc24.c"}
 ~~~ text/x-csrc
 #define CRC24_INIT 0xB704CEL
 #define CRC24_GENERATOR 0x864CFBL
