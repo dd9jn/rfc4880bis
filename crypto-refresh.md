@@ -1232,9 +1232,9 @@ Lastly, subpackets on the direct-key signature apply to the entire key.
 
 Implementing software should interpret a self-signature's preference subpackets as narrowly as possible.
 For example, suppose a key has two user names, Alice and Bob.
-Suppose that Alice prefers the symmetric algorithm AES-256, and Bob prefers Camellia-256 or AES-128.
-If the software locates this key via Alice's name, then the preferred algorithm is AES-256; if software locates the key via Bob's name, then the preferred algorithm is Camellia-256.
-If the key is located by Key ID, the algorithm of the primary User ID of the key provides the preferred symmetric algorithm.
+Suppose that Alice prefers the AEAD ciphersuite AES-256 with OCB, and Bob prefers Camellia-256 with GCM.
+If the software locates this key via Alice's name, then the preferred AEAD ciphersuite is AES-256 with OCB; if software locates the key via Bob's name, then the preferred algorithm is Camellia-256 with GCM.
+If the key is located by Key ID, the algorithm of the primary User ID of the key provides the preferred AEAD ciphersuite.
 
 Revoking a self-signature or allowing it to expire has a semantic meaning that varies with the signature type.
 Revoking the self-signature on a User ID effectively retires that user name.
