@@ -2522,30 +2522,29 @@ The nonzero initialization can detect more errors than a zero initialization.
 
 ## An Implementation of the CRC-24 in "C" {#sample-crc24}
 
-    <CODE BEGINS> file "sample-crc24.c"
+{: sourcecode-name="sample-crc24.c" sourcecode-markers="true"}
+~~~ text/x-csrc
+#define CRC24_INIT 0xB704CEL
+#define CRC24_GENERATOR 0x864CFBL
 
-    #define CRC24_INIT 0xB704CEL
-    #define CRC24_GENERATOR 0x864CFBL
-
-    typedef unsigned long crc24;
-    crc24 crc_octets(unsigned char *octets, size_t len)
-    {
-        crc24 crc = CRC24_INIT;
-        int i;
-        while (len--) {
-            crc ^= (*octets++) << 16;
-            for (i = 0; i < 8; i++) {
-                crc <<= 1;
-                if (crc & 0x1000000) {
-                    crc &= 0xffffff; /* Clear bit 25 to avoid overflow */
-                    crc ^= CRC24_GENERATOR;
-                }
+typedef unsigned long crc24;
+crc24 crc_octets(unsigned char *octets, size_t len)
+{
+    crc24 crc = CRC24_INIT;
+    int i;
+    while (len--) {
+        crc ^= (*octets++) << 16;
+        for (i = 0; i < 8; i++) {
+            crc <<= 1;
+            if (crc & 0x1000000) {
+                crc &= 0xffffff; /* Clear bit 25 to avoid overflow */
+                crc ^= CRC24_GENERATOR;
             }
         }
-        return crc & 0xFFFFFFL;
     }
-
-    <CODE ENDS>
+    return crc & 0xFFFFFFL;
+}
+~~~
 
 ## Forming ASCII Armor
 
