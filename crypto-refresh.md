@@ -1323,7 +1323,7 @@ See {{preferred-v1-seipd}} instead.
 (array of one-octet values)
 
 Message digest algorithm numbers that indicate which algorithms the key holder prefers to receive.
-Like the preferred symmetric algorithms, the list is ordered.
+Like the preferred AEAD ciphersuites, the list is ordered.
 Algorithm numbers are in {{hash-algos}}.
 This is only found on a self-signature.
 
@@ -1332,7 +1332,7 @@ This is only found on a self-signature.
 (array of one-octet values)
 
 Compression algorithm numbers that indicate which algorithms the key holder prefers to use.
-Like the preferred symmetric algorithms, the list is ordered.
+Like the preferred AEAD ciphersuites, the list is ordered.
 Algorithm numbers are in {{compression-algos}}.
 A zero, or the absence of this subpacket, denotes that uncompressed data is preferred; the key holder's software might have no compression software in that implementation.
 This is only found on a self-signature.
