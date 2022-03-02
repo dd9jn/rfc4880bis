@@ -657,7 +657,7 @@ A mask for this bit is 0x80 in hexadecimal.
       Bit 6 -- Always one (except for Legacy packet format)
 
 The Legacy packet format MAY be used when consuming packets to facilitate interoperability with legacy implementations and accessing archived data.
-The Legacy packet format SHOULD NOT be used to generate new data, unless the recepient is known to only support the Legacy packet format.
+The Legacy packet format SHOULD NOT be used to generate new data, unless the recipient is known to only support the Legacy packet format.
 
 An implementation that consumes and re-distributes pre-existing OpenPGP data (such as Transferable Public Keys) may encounter packets framed with the Legacy packet format.
 Such an implementation MAY either re-distribute these packets in their Legacy format, or transform them to the current OpenPGP packet format before re-distribution.
@@ -999,7 +999,7 @@ The object identifier for the type of hash being used is included in the structu
 The hexadecimal representations for the currently defined hash algorithms are as follows:
 
 {: title="Hash hexadecimal representations"}
-algorithm | hexadecimal represenatation
+algorithm | hexadecimal representation
 ---|------------------
 MD5 | 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x02, 0x05
 RIPEMD-160 | 0x2B, 0x24, 0x03, 0x02, 0x01
