@@ -1126,7 +1126,7 @@ The algorithms for converting the hash function result to a signature are descri
 #### Signature Subpacket Specification {#signature-subpacket}
 
 A subpacket data set consists of zero or more Signature subpackets.
-In Signature packets, the subpacket data set is preceded by a two-octet scalar count of the length in octets of all the subpackets.
+In Signature packets, the subpacket data set is preceded by a two-octet (for V4 signatures) or four-octet (for V5 signatures) scalar count of the length in octets of all the subpackets.
 A pointer incremented by this number will skip over the subpacket data set.
 
 Each subpacket consists of a subpacket header and a body.
