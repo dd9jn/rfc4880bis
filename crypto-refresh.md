@@ -4659,35 +4659,41 @@ Iterations:
 
 Salt:
 
-      89 59 07 40 90 4d 87 36
+      e9 d3 97 85 b2 07 00 08
 
 ### Sample symmetric-key encrypted session key packet (v5)
 
 Packet header:
 
-      c3 3d
+      c3 3c
 
 Version, algorithms, S2K fields:
 
-      05 07 02 03 08 89 59 07 40 90 4d 87 36
+      05 1a 07 03 0b 03 08 e9 d3 97 85 b2 07 00 08 ff
+      b4 2e
 
 Nonce:
 
-      2c 76 eb af 34 ff d7 69 97 c0 40 b2
+      b4 2e 7c 48 3e f4 88 44 57 cb 37 26
 
-AEAD encrypted session key:
+Encrypted session key and AEAD tag:
 
-      3a 6b 9f 80 a1 8d b1 1d e3 3f b1 a2 cf f9 63 97
+      0c 0c 4b f3 f2 cd 6c b7 b6 e3 8b 5b f3 34 67 c1
+      c7 19 44 dd 59 03 46 66 2f 5a de 61 ff 84 bc e0
 
-Authentication tag:
-
-      e6 2b b0 2a 0d d9 9b 64 a4 e5 df a1 a7 bc de 8c
-
-### Starting AEAD-GCM decryption of the session key
+### Starting AEAD-EAX decryption of the session key
 
 The derived key is:
 
-      d8 9e 46 fb af fd 32 85 8c 47 c1 33 c6 32 3d 1f
+      25 02 81 71 5b ba 78 28 ef 71 ef 64 c4 78 47 53
+
+HKDF info:
+
+      c3 05 07 03
+
+HKDF output:
+
+      de ec e5 81 8b c0 aa b9 0f 8a fb 02 fa 00 cd 13
 
 Authenticated Data:
 
@@ -4695,39 +4701,40 @@ Authenticated Data:
 
 Nonce:
 
-      2c 76 eb af 34 ff d7 69 97 c0 40 b2
+      b4 2e 7c 48 3e f4 88 44 57 cb 37 26
 
 Decrypted session key:
 
-      63 8a 32 80 ad 39 cd a9 3c 13 54 63 a5 63 74 b7
+      19 36 fc 85 68 98 02 74 bb 90 0d 83 19 36 0c 77
 
-### Sample v2 SEIPD packet packet
+### Sample v2 SEIPD packet
 
 Packet header:
 
-      d4 59
+      d2 69
 
-Version, AES-128, GCM, Chunk size octet (06):
+Version, AES-128, EAX, Chunk size octet:
 
       02 07 03 06
 
 Salt:
 
-      4e 07 f5 df 66 39 f9 8d 8d 6c ad 10 2c 57 5d 2e
-      e0 8d 8a 12 db 17 1b df e0 89 2e 0e 83 3a 3c 61
+      fc b9 44 90 bc b9 8b bd c9 d1 06 c6 09 02 66 94
+      0f 72 e8 9e dc 21 b5 59 6b 15 76 b1 01 ed 0f 9f
 
-AEAD-GCM Encrypted data chunk #0:
+Chunk #0 encrypted data:
 
-      e6 c3 b2 b8 eb 78 43 93 6b 44 b2 b8 a7 2d 86 40
-      96 b5 dc 0c c0 aa 4a 10 8a 64 26 1d 5d 6e a5 ba
+      fc 6f c6 d6 5b bf d2 4d cd 07 90 96 6e 6d 1e 85
+      a3 00 53 78 4c b1 d8 b6 a0 69 9e f1 21 55 a7 b2
+      ad 62 58 53 1b
 
 Chunk #0 authentication tag:
 
-      e8 9d 60 77 c4 1c b8 16 f1 7b 44 89 53 08 f9 9f
+      57 65 1f d7 77 79 12 fa 95 e3 5d 9b 40 21 6f 69
 
 Final (zero-sized chunk #1) authentication tag:
 
-      96 5b 1b 17 d5 84 62 17 b9 e2 57 88 3b c5 78 ab
+      a4 c2 48 db 28 ff 43 31 f1 63 29 07 39 9e 6f f9
 
 ### Decryption of data
 
@@ -4739,22 +4746,22 @@ HKDF info:
 
 HKDF output:
 
-      ce c4 93 84 26 1c e3 88 5a 24 da ef 42 7c fa 21
-      24 04 fb 4a
+      ea 14 38 80 3c b8 a4 77 40 ce 9b 54 c3 38 77 8d
+      4d 2b dc 2b
 
 Message key:
 
-      ce c4 93 84 26 1c e3 88 5a 24 da ef 42 7c fa 21
+      ea 14 38 80 3c b8 a4 77 40 ce 9b 54 c3 38 77 8d
 
 Initialization vector:
 
-      24 04 fb 4a
+      4d 2b dc 2b
 
 Chunk #0:
 
 Nonce:
 
-      24 04 fb 4a 00 00 00 00 00 00 00 00
+      4d 2b dc 2b 00 00 00 00 00 00 00 00
 
 Additional authenticated data:
 
@@ -4762,31 +4769,35 @@ Additional authenticated data:
 
 Decrypted chunk #0.
 
-Literal data packet with the string contents `Hello, world!`.
+Literal data packet with the string contents `Hello, world!`:
 
-      cb 13 62 00 00 00 00 00  48 65 6c 6c 6f 2c 20 77
+      cb 13 62 00 00 00 00 00 48 65 6c 6c 6f 2c 20 77
       6f 72 6c 64 21
+
+Padding packet:
+
+      d5 0e 1c e2 26 9a 9e dd ef 81 03 21 72 b7 ed 7c
 
 Authenticating final tag:
 
 Final nonce:
 
-      24 04 fb 4a 00 00 00 00 00 00 00 01
+      4d 2b dc 2b 00 00 00 00 00 00 00 01
 
 Final additional authenticated data:
 
-      d2 02 07 03 06 00 00 00 00 00 00 00 15
+      d2 02 07 03 06 00 00 00 00 00 00 00 25
 
-### Complete AEAD-GCM encrypted packet sequence
+### Complete AEAD-EAX encrypted packet sequence
 
 ~~~
 -----BEGIN PGP MESSAGE-----
 
-wzoFBwMDCIlZB0CQTYc2/yx26680/9dpl8BAsjprn4ChjbEd4z+xos/5Y5fmK7Aq
-DdmbZKTl36GnvN6M0lkCBwMG5sOyuOt4Q5NrRLK4py2GQJa13AzAqkoQimQmHV1u
-pbrNE+KknwPjzTVaA9/OUxtlqOYJEFvonWB3xBy4FvF7RIlTCPmfllsbF9WEYhe5
-4leIO8V4qw==
-=klPb
+wzwFGgcDCwMI6dOXhbIHAAj/tC58SD70iERXyzcmDAxL8/LNbLe244tb8zRnwccZ
+RN1ZA0ZmL1reYf+EvODSaQIHAwb8uUSQvLmLvcnRBsYJAmaUD3LontwhtVlrFXax
+Ae0Pn/xvxtZbv9JNzQeQlm5tHoWjAFN4TLHYtqBpnvEhVaeyrWJYUxtXZR/Xd3kS
++pXjXZtAIW9ppMJI2yj/QzHxYykHOZ5v+Q==
+=ClBe
 -----END PGP MESSAGE-----
 ~~~
 
