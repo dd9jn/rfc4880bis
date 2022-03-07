@@ -1785,7 +1785,8 @@ A version 4 Symmetric-Key Encrypted Session Key packet consists of:
 
 - A one-octet number describing the symmetric algorithm used.
 
-- A string-to-key (S2K) specifier, length as defined in {{s2k-types}}.
+- A string-to-key (S2K) specifier.
+  The length of the string-to-key specifier depends on its type (see {{s2k-types}}).
 
 - Optionally, the encrypted session key itself, which is decrypted with the string-to-key object.
 
@@ -1806,11 +1807,16 @@ A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 
 - A one-octet version number with value 5.
 
+- A one-octet scalar octet count of the following 5 fields.
+
 - A one-octet symmetric cipher algorithm identifier.
 
 - A one-octet AEAD algorithm identifier.
 
-- A string-to-key (S2K) specifier, length as defined in {{s2k-types}}.
+- A one-octet scalar octet count of the following field.
+
+- A string-to-key (S2K) specifier.
+  The length of the string-to-key specifier depends on its type (see {{s2k-types}}).
 
 - A starting initialization vector of size specified by the AEAD algorithm.
 
@@ -1969,14 +1975,16 @@ The packet contains:
   Any other value is a symmetric-key encryption algorithm identifier.
   A version 5 packet MUST NOT use the value 255.
 
-- Only for a version 5 packet, a one-octet scalar octet count of the next 4 optional fields.
+- Only for a version 5 packet, a one-octet scalar octet count of the next 5 optional fields.
 
 - \[Optional\] If string-to-key usage octet was 255, 254, or 253, a one-octet symmetric encryption algorithm.
 
 - \[Optional\] If string-to-key usage octet was 253, a one-octet AEAD algorithm.
 
-- \[Optional\] If string-to-key usage octet was 255, 254, or 253, a string-to-key specifier.
-  The length of the string-to-key specifier is implied by its type, as described above.
+- \[Optional\] Only for a version 5 packet, and if string-to-key usage octet was 255, 254, or 253, an one-octet count of the following field.
+
+- \[Optional\] If string-to-key usage octet was 255, 254, or 253, a string-to-key (S2K) specifier.
+  The length of the string-to-key specifier depends on its type (see {{s2k-types}}).
 
 - \[Optional\] If string-to-key usage octet was 253 (that is, the secret data is AEAD-encrypted), an initialization vector (IV) of size specified by the AEAD algorithm (see {{version-two-seipd}}), which is used as the nonce for the AEAD algorithm.
 
