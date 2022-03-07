@@ -447,7 +447,7 @@ The wire representation is the same: two octets of length in bits counted from t
 
 ## Key IDs
 
-A Key ID is a scalar that identifies a key.
+A Key ID is an eight-octet scalar that identifies a key.
 Implementations SHOULD NOT assume that Key IDs are unique.
 {{key-ids-fingerprints}} describes how Key IDs are formed.
 
@@ -809,21 +809,52 @@ Tag | Packet Type
 
 ## Public-Key Encrypted Session Key Packets (Tag 1) {#pkesk}
 
-Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede an encryption container (that is, a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet), which holds an encrypted message.
+Zero or more Public-Key Encrypted Session Key (PKESK) packets and/or Symmetric-Key Encrypted Session Key packets ({{skesk}}) may precede an encryption container (that is, a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet), which holds an encrypted message.
 The message is encrypted with the session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet(s).
 The encryption container is preceded by one Public-Key Encrypted Session Key packet for each OpenPGP key to which the message is encrypted.
 The recipient of the message finds a session key that is encrypted to their public key, decrypts the session key, and then uses the session key to decrypt the message.
 
-The body of this packet consists of:
+The body of this packet starts with a one-octet number giving the version number of the packet type.
+The currently defined versions are 3 and 5.
+The remainder of the packet depends on the version.
 
-- A one-octet number giving the version number of the packet type.
-  The currently defined versions are 3 and 5.
+The versions differ in how they identify the recipient key, and in what they encode.
+The version of the PKESK packet must align with the version of the SEIPD packet (see {{encrypted-message-versions}}).
 
-- Only for V3 packets, an eight-octet number that gives the Key ID of the public key to which the session key is encrypted.
+### v3 PKESK {#v3-pkesk}
+
+A version 3 Public-Key Encrypted Session Key (PKESK) packet precedes a version 1 Symmetrically Encrypted Integrity Protected Data (v1 SEIPD, see {{version-one-seipd}}) packet.
+In historic data, it is sometimes found preceding a deprecated Symmetrically Encrypted Data packet (SED, see {{sed}}).
+A v3 PKESK packet MUST NOT precede a v2 SEIPD packet (see {{encrypted-message-versions}}).
+
+The v3 PKESK packet consists of:
+
+- A one-octet version number with value 3.
+
+- An eight-octet number that gives the Key ID of the public key to which the session key is encrypted.
   If the session key is encrypted to a subkey, then the Key ID of this subkey is used here instead of the Key ID of the primary key.
   The Key ID may also be all zeros, for an "anonymous recipient" (see {{pkesk-notes}}).
 
-- Only for V5 packets, a one octet key version number and N octets of the fingerprint of the public key or subkey to which the session key is encrypted.
+- A one-octet number giving the public-key algorithm used.
+
+- A series of values comprising the encrypted session key.
+  This is algorithm-specific and described below.
+
+When creating a v3 PKESK packet, the session key is first prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container.
+Then a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, not including the algorithm identifier, modulo 65536.
+
+The resulting octet string (algorithm identifier, session key, and checksum) is encrypted according to the public-key algorithm used, as described below.
+
+### v5 PKESK {#v5-pkesk}
+
+A version 5 Public-Key Encrypted Session Key (PKESK) packet precedes a version 2 Symmetrically Encrypted Integrity Protected Data (v2 SEIPD, see {{version-two-seipd}}) packet.
+A v5 PKESK packet MUST NOT precede a v1 SEIPD packet or a deprecated Symmetrically Encrypted Data packet (see {{encrypted-message-versions}}).
+
+The v5 PKESK packet consists of:
+
+- A one-octet version number with value 5.
+
+- A one octet key version number and N octets of the fingerprint of the public key or subkey to which the session key is encrypted.
   Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 5 key N is 32.
   The key version number may also be zero, and the fingerprint omitted (that is, the length N is zero in this case), for an "anonymous recipient" (see {{pkesk-notes}}).
 
@@ -832,11 +863,10 @@ The body of this packet consists of:
 - A series of values comprising the encrypted session key.
   This is algorithm-specific and described below.
 
-For V3 packets, before encrypting, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container.
-Then a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, not including the algorithm identifier, modulo 65536.
-
-For V5 packets, the symmetric encryption algorithm identifier is not included.
+When creating a V5 PKESK packet, the symmetric encryption algorithm identifier is not included.
 Before encrypting, a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, modulo 65536.
+
+The resulting octet string (session key and checksum) is encrypted according to the public-key algorithm used, as described below.
 
 ### Algorithm Specific Fields for RSA encryption {#pkesk-rsa}
 
@@ -1709,11 +1739,24 @@ Either of these keys can verify a signature created by the other, and it may be 
 ## Symmetric-Key Encrypted Session Key Packets (Tag 3) {#skesk}
 
 The Symmetric-Key Encrypted Session Key (SKESK) packet holds the symmetric-key encryption of a session key used to encrypt a message.
-Zero or more Public-Key Encrypted Session Key packets and/or Symmetric-Key Encrypted Session Key packets may precede a an encryption container (that is, a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet) that holds an encrypted message.
-The message is encrypted with a session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet or the Symmetric-Key Encrypted Session Key packet.
+Zero or more Public-Key Encrypted Session Key packets ({{pkesk}}) and/or Symmetric-Key Encrypted Session Key packets may precede a an encryption container (that is, a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet) that holds an encrypted message.
+The message is encrypted with a session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet(s).
 
 If the encryption container is preceded by one or more Symmetric-Key Encrypted Session Key packets, each specifies a passphrase that may be used to decrypt the message.
 This allows a message to be encrypted to a number of public keys, and also to one or more passphrases.
+
+The body of this packet starts with a one-octet number giving the version number of the packet type.
+The currently defined versions are 4 and 5.
+The remainder of the packet depends on the version.
+
+The versions differ in how they encrypt the session key with the password, and in what they encode.
+The version of the SKESK packet must align with the version of the SEIPD packet (see {{encrypted-message-versions}}).
+
+### v4 SKESK {#v4-skesk}
+
+A version 4 Symmetric-Key Encrypted Session Key (SKESK) packet precedes a version 1 Symmetrically Encrypted Integrity Protected Data (v1 SEIPD, see {{version-one-seipd}}) packet.
+In historic data, it is sometimes found preceding a deprecated Symmetrically Encrypted Data packet (SED, see {{sed}}).
+A v4 SKESK packet MUST NOT precede a v2 SEIPD packet (see {{encrypted-message-versions}}).
 
 A version 4 Symmetric-Key Encrypted Session Key packet consists of:
 
@@ -1733,13 +1776,18 @@ The decryption result consists of a one-octet algorithm identifier that specifie
 Note: because an all-zero IV is used for this decryption, the S2K specifier MUST use a salt value, either a Salted S2K, an Iterated-Salted S2K, or Argon2.
 The salt value will ensure that the decryption key is not repeated even if the passphrase is reused.
 
+### v5 SKESK {#v5-skesk}
+
+A version 5 Symmetric-Key Encrypted Session Key (SKESK) packet precedes a version 2 Symmetrically Encrypted Integrity Protected Data (v2 SEIPD, see {{version-two-seipd}}) packet.
+A v5 SKESK packet MUST NOT precede a v1 SEIPD packet or a deprecated Symmetrically Encrypted Data packet (see {{encrypted-message-versions}}).
+
 A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 
 - A one-octet version number with value 5.
 
-- A one-octet cipher algorithm.
+- A one-octet symmetric cipher algorithm identifier.
 
-- A one-octet AEAD algorithm.
+- A one-octet AEAD algorithm identifier.
 
 - A string-to-key (S2K) specifier, length as defined in {{s2k-types}}.
 
@@ -1750,15 +1798,10 @@ A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 - An authentication tag for the AEAD mode.
 
 HKDF is used with SHA256 as hash algorithm, the key derived from S2K as Initial Keying Material (IKM), no salt, and the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version, and the cipher-algo and AEAD-mode used to encrypt the key material, are used as info parameter.
-Then, the session key is encrypted using the resulting key, with one of the AEAD algorithms specified for version 2 of the Symmetrically Encrypted Integrity Protected Data packet.
+Then, the session key is encrypted using the resulting key, with the AEAD algorithm specified for version 2 of the Symmetrically Encrypted Integrity Protected Data packet.
 Note that no chunks are used and that there is only one authentication tag.
 The Packet Tag in OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are given as additional data.
-For example, the additional data used with EAX and AES-128 consists of the octets 0xC3, 0x05, 0x07, and 0x01.
-
-### No v5 SKESK with SEIPD {#no-v5-skesk-seipd}
-
-Note that version 1 of the Symmetrically Encrypted Integrity Protected Data Packet ({{version-one-seipd}}) does not internally indicate what cipher algorithm to use to decrypt it, unlike version 2 ({{version-two-seipd}}).
-Since the v5 SKESK packet's encrypted payload only indicates the key used, not the choice of cipher algorithm used for the subsequent encrypted data, a v5 SKESK packet can only provide a session key for a v2 SEIPD packet, and MUST NOT be used to provide a session key for a v1 SEIPD Packet.
+For example, the additional data used with AES-128 with OCB consists of the octets 0xC3, 0x05, 0x07, and 0x02.
 
 ## One-Pass Signature Packets (Tag 4)
 
@@ -3330,7 +3373,30 @@ If an implementation encounters a packet whose header length indicates that it w
 ### Additional Constraints on Packet Sequences
 
 Note that some subtle combinations that are formally acceptable by this grammar are nonetheless unacceptable.
-For example, a v5 SKESK packet cannot effectively precede a SEIPD packet, since that combination does not include any information about the choice of symmetric cipher used for SEIPD (see {{no-v5-skesk-seipd}} for more details).
+
+#### Packet Versions in Encrypted Messages {#encrypted-message-versions}
+
+As noted above, an Encrypted Message is a sequence of zero or more PKESKs ({{pkesk}}) and SKESKs ({{skesk}}), followed by an SEIPD ({{seipd}}) payload.
+In some historic data, the payload may be a deprecated SED ({{sed}}) packet instead of SEIPD, though implementations MUST NOT generate SED packets (see {{ciphertext-malleability}}).
+The versions of the preceding ESK packets within an Encrypted Message MUST align with the version of the payload SEIPD packet, as described in this section.
+
+v3 PKESK and v4 SKESK packets both contain in their cleartext the symmetric cipher algorithm identifier in addition to the session key for the subsequent SEIPD packet.
+Since a v1 SEIPD does not contain a symmetric algorithm identifier, so all ESK packets preceding a v1 SEIPD payload MUST be either v3 PKESK or v4 SKESK.
+
+On the other hand, the cleartext of the v5 ESK packets (either PKESK or SKESK) do not contain a symmetric cipher algorithm identifier, so they cannot be used in combination with a v1 SEIPD payload.
+The payload following any v5 PKESK or v5 SKESK packet MUST be a v2 SEIPD.
+
+Additionally, to avoid potentially conflicting cipher algorithm identifiers, and for simplicity, implementations MUST NOT precede a v2 SEIPD payload with either v3 PKESK or v4 SKESK packets.
+
+The acceptable versions of packets in an Encrypted Message are summarized in the following table:
+
+{: title="Encrypted Message Packet Version Alignment"}
+Version of Encrypted Data payload | Version of preceding Symmetric-Key ESK (if any) | Version of preceding Public-Key ESK (if any)
+---|---|---
+v1 SEIPD | v4 SKESK | v3 PKESK
+v2 SEIPD | v5 SKESK | v5 PKESK
+
+An implementation processing an Encrypted Message MUST discard any preceding ESK packet with a version that does not align with the version of the payload.
 
 ## Detached Signatures
 
@@ -3408,7 +3474,7 @@ e.2) The octets representing a curve OID, defined in {{ec-curves}};
 e.3) An MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
 
 A V5 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9A, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
-The Key ID is the high-order 96 bits of the fingerprint.
+The Key ID is the high-order 64 bits of the fingerprint.
 Here are the fields of the hash material, with the example of an EdDSA key:
 
 a.1) 0x9A (1 octet)
