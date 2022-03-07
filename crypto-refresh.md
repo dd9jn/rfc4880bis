@@ -4342,35 +4342,41 @@ Iterations:
 
 Salt:
 
-      a9 4f c8 3a 44 0b 07 fb
+      a5 ae 57 9d 1f c5 d8 2b
 
 ### Sample symmetric-key encrypted session key packet (v5)
 
 Packet header:
 
-      c3 3e
+      c3 40
 
 Version, algorithms, S2K fields:
 
-      05 07 01 03 08 a9 4f c8 3a 44 0b 07 fb
+      05 1e 07 01 0b 03 08 a5 ae 57 9d 1f c5 d8 2b ff
+      69 22
 
 Nonce:
 
-      93 6e 58 b4 61 a3 bf e9 d8 5f 41 1d 38 2c e1 7b
+      69 22 4f 91 99 93 b3 50 6f a3 b5 9a 6a 73 cf f8
 
-AEAD encrypted session key:
+Encrypted session key and AEAD tag:
 
-      08 7c 3a 3b d0 b0 b0 14 ac 5e 55 75 fd eb 45 a6
-
-Authentication tag:
-
-      45 e1 84 16 3c 20 3b d1 8d 09 65 c2 cc 1b 62 c2
+      da 74 6b 88 e3 57 e8 ae 54 eb 87 e1 d7 05 75 d7
+      2f 60 23 29 90 52 3e 9a 59 09 49 22 40 6b e1 c3
 
 ### Starting AEAD-EAX decryption of the session key
 
 The derived key is:
 
-      85 da f3 6a 10 ee 9e 98 1c a3 e0 49 e6 ea 3f 62
+      15 49 67 e5 90 aa 1f 92 3e 1c 0a c6 4c 88 f2 3d
+
+HKDF info:
+
+      c3 05 07 01
+
+HKDF output:
+
+      74 f0 46 03 63 a7 00 76 db 08 c4 92 ab f2 95 52
 
 Authenticated Data:
 
@@ -4378,39 +4384,40 @@ Authenticated Data:
 
 Nonce:
 
-      93 6e 58 b4 61 a3 bf e9 d8 5f 41 1d 38 2c e1 7b
+      69 22 4f 91 99 93 b3 50 6f a3 b5 9a 6a 73 cf f8
 
 Decrypted session key:
 
-      b6 48 1a fc 56 c2 03 04 ce 52 63 4f ea 91 c2 8a
+      38 81 ba fe 98 54 12 45 9b 86 c3 6f 98 cb 9a 5e
 
 ### Sample v2 SEIPD packet
 
 Packet header:
 
-      d2 59
+      d2 69
 
-Version, AES-128, EAX, Chunk size octet (06):
+Version, AES-128, EAX, Chunk size octet:
 
       02 07 01 06
 
 Salt:
 
-      65 d3 dd 10 f2 93 11 8d 14 4a 71 7f 0d 11 93 22
-      18 f6 d5 17 22 01 25 2f 49 aa 45 d2 cb 1b 15 e4
+      9f f9 0e 3b 32 19 64 f3 a4 29 13 c8 dc c6 61 93
+      25 01 52 27 ef b7 ea ea a4 9f 04 c2 e6 74 17 5d
 
-AEAD-EAX Encrypted data chunk #0:
+Chunk #0 encrypted data:
 
-      4c 11 fc d2 71 1a 26 a5 fe e0 5a 78 2b 33 52 2f
-      69 b7 63 27 ac
+      4a 3d 22 6e d6 af cb 9c a9 ac 12 2c 14 70 e1 1c
+      63 d4 c0 ab 24 1c 6a 93 8a d4 8b f9 9a 5a 99 b9
+      0b ba 83 25 de
 
 Chunk #0 authentication tag:
 
-      9e 71 33 a1 b2 29 37 f7 d0 f4 d9 44 64 32 54 49
+      61 04 75 40 25 8a b7 95 9a 95 ad 05 1d da 96 eb
 
 Final (zero-sized chunk #1) authentication tag:
 
-      d2 02 07 01 06 00 00 00 00 00 00 00 15
+      15 43 1d fe f5 f5 e2 25 5c a7 82 61 54 6e 33 9a
 
 ### Decryption of data
 
@@ -4422,22 +4429,22 @@ HKDF info:
 
 HKDF output:
 
-      3d 3e 33 f4 99 76 38 05 35 90 e9 9e f2 e7 4d 33
-      b2 06 ca 59 b1 f9 9e bb
+      b5 04 22 ac 1c 26 be 9d dd 83 1d 5b bb 36 b6 4f
+      78 b8 33 f2 e9 4a 60 c0
 
 Message key:
 
-      3d 3e 33 f4 99 76 38 05 35 90 e9 9e f2 e7 4d 33
+      b5 04 22 ac 1c 26 be 9d dd 83 1d 5b bb 36 b6 4f
 
 Initialization vector:
 
-      b2 06 ca 59 b1 f9 9e bb
+      78 b8 33 f2 e9 4a 60 c0
 
 Chunk #0:
 
 Nonce:
 
-      b2 06 ca 59 b1 f9 9e bb 00 00 00 00 00 00 00 00
+      78 b8 33 f2 e9 4a 60 c0 00 00 00 00 00 00 00 00
 
 Additional authenticated data:
 
@@ -4445,31 +4452,35 @@ Additional authenticated data:
 
 Decrypted chunk #0.
 
-Literal data packet with the string contents `Hello, world!`.
+Literal data packet with the string contents `Hello, world!`:
 
-      cb 13 62 00 00 00 00 00  48 65 6c 6c 6f 2c 20 77
+      cb 13 62 00 00 00 00 00 48 65 6c 6c 6f 2c 20 77
       6f 72 6c 64 21
+
+Padding packet:
+
+      d5 0e ae 5b f0 cd 67 05 50 03 55 81 6c b0 c8 ff
 
 Authenticating final tag:
 
 Final nonce:
 
-      b2 06 ca 59 b1 f9 9e bb 00 00 00 00 00 00 00 01
+      78 b8 33 f2 e9 4a 60 c0 00 00 00 00 00 00 00 01
 
 Final additional authenticated data:
 
-      d2 02 07 01 06 00 00 00 00 00 00 00 15
+      d2 02 07 01 06 00 00 00 00 00 00 00 25
 
 ### Complete AEAD-EAX encrypted packet sequence
 
 ~~~
 -----BEGIN PGP MESSAGE-----
 
-wz4FBwEDCKlPyDpECwf7/5NuWLRho7/p2F9BHTgs4XsIfDo70LCwFKxeVXX960Wm
-ReGEFjwgO9GNCWXCzBtiwtJZAgcBBmXT3RDykxGNFEpxfw0RkyIY9tUXIgElL0mq
-RdLLGxXkTBH80nEaJqX+4Fp4KzNSL2m3YyesnnEzobIpN/fQ9NlEZDJUScMcg94F
-ifzDRLB1bRQJu4E=
-=9Ck9
+w0AFHgcBCwMIpa5XnR/F2Cv/aSJPkZmTs1Bvo7WaanPP+Np0a4jjV+iuVOuH4dcF
+ddcvYCMpkFI+mlkJSSJAa+HD0mkCBwEGn/kOOzIZZPOkKRPI3MZhkyUBUifvt+rq
+pJ8EwuZ0F11KPSJu1q/LnKmsEiwUcOEcY9TAqyQcapOK1Iv5mlqZuQu6gyXeYQR1
+QCWKt5Wala0FHdqW6xVDHf719eIlXKeCYVRuM5o=
+=wG7F
 -----END PGP MESSAGE-----
 ~~~
 
@@ -4489,35 +4500,41 @@ Iterations:
 
 Salt:
 
-      97 c1 7e 9d fb d5 e9 25
+      56 a2 98 d2 f5 e3 64 53
 
 ### Sample symmetric-key encrypted session key packet (v5)
 
 Packet header:
 
-      c3 3d
+      c3 3f
 
 Version, algorithms, S2K fields:
 
-      05 07 02 03 08 97 c1 7e 9d fb d5 e9 25
+      05 1d 07 02 0b 03 08 56 a2 98 d2 f5 e3 64 53 ff
+      cf cc
 
 Nonce:
 
-      f2 d3 e3 f1 bc ae ca 8b d8 fd 6d 3d 56 de 49
+      cf cc 5c 11 66 4e db 9d b4 25 90 d7 dc 46 b0
 
-AEAD encrypted session key:
+Encrypted session key and AEAD tag:
 
-      84 ce 97 12 41 5b c3 c1 d8 40 85 25 dc 98 a8 f2
+      78 c5 c0 41 9c c5 1b 3a 46 87 cb 32 e5 b7 03 1c
+      e7 c6 69 75 76 5b 5c 21 d9 2a ef 4c c0 5c 3f ea
 
-Authentication tag:
-
-      ae e4 cb 81 81 c8 a9 57 d0 24 1d a7 46 74 3c e3
-
-### Starting AEAD-OCB decryption of the session key
+### Starting AEAD-EAX decryption of the session key
 
 The derived key is:
 
-      a5 1e 39 43 64 86 34 43 09 2d e1 10 d1 2d f6 79
+      e8 0d e2 43 a3 62 d9 3b 9d c6 07 ed e9 6a 73 56
+
+HKDF info:
+
+      c3 05 07 02
+
+HKDF output:
+
+      20 62 fb 76 31 ef be f4 df 81 67 ce d7 f3 a4 64
 
 Authenticated Data:
 
@@ -4525,39 +4542,40 @@ Authenticated Data:
 
 Nonce:
 
-      f2 d3 e3 f1 bc ae ca 8b d8 fd 6d 3d 56 de 49
+      cf cc 5c 11 66 4e db 9d b4 25 90 d7 dc 46 b0
 
 Decrypted session key:
 
-      3e 8b a9 50 9b f4 39 e8 d4 9f c2 93 8b 73 d1 20
+      28 e7 9a b8 23 97 d3 c6 3d e2 4a c2 17 d7 b7 91
 
-### Sample v2 SEIPD packet packet
+### Sample v2 SEIPD packet
 
 Packet header:
 
-      d4 59
+      d2 69
 
-Version, AES-128, OCB, Chunk size octet (06):
+Version, AES-128, EAX, Chunk size octet:
 
       02 07 02 06
 
 Salt:
 
-      4e 07 f5 df 66 39 f9 8d 8d 6c ad 10 2c 57 5d 2e
-      e0 8d 8a 12 db 17 1b df e0 89 2e 0e 83 3a 3c 61
+      20 a6 61 f7 31 fc 9a 30 32 b5 62 33 26 02 7e 3a
+      5d 8d b5 74 8e be ff 0b 0c 59 10 d0 9e cd d6 41
 
-AEAD-OCB Encrypted data chunk #0:
+Chunk #0 encrypted data:
 
-      70 55 aa 4a 95 2f 6b db f5 7d 10 6d 82 76 c7 7b
-      cb 4c e8 38 9a
+      ff 9f d3 85 62 75 80 35 bc 49 75 4c e1 bf 3f ff
+      a7 da d0 a3 b8 10 4f 51 33 cf 42 a4 10 0a 83 ee
+      f4 ca 1b 48 01
 
 Chunk #0 authentication tag:
 
-      4f cf a0 ea 40 3a 69 ef 53 b6 62 3b e4 d8 d1 d0
+      a8 84 6b f4 2b cd a7 c8 ce 9d 65 e2 12 f3 01 cb
 
 Final (zero-sized chunk #1) authentication tag:
 
-      48 96 02 6d cc dc 70 3d 53 62 23 4c 77 e8 dc 37
+      cd 98 fd ca de 69 4a 87 7a d4 24 73 23 f6 e8 57
 
 ### Decryption of data
 
@@ -4569,22 +4587,22 @@ HKDF info:
 
 HKDF output:
 
-      90 2e 0b ca d1 c4 86 f7 d6 52 66 80 f1 95 10 29
-      4b 1f e6 ee 5d 79 33
+      71 66 2a 11 ee 5b 4e 08 14 4e 6d e8 83 a0 09 99
+      eb de 12 bb 57 0d cf
 
 Message key:
 
-      90 2e 0b ca d1 c4 86 f7 d6 52 66 80 f1 95 10 29
+      71 66 2a 11 ee 5b 4e 08 14 4e 6d e8 83 a0 09 99
 
 Initialization vector:
 
-      4b 1f e6 ee 5d 79 33
+      eb de 12 bb 57 0d cf
 
 Chunk #0:
 
 Nonce:
 
-      4b 1f e6 ee 5d 79 33 00 00 00 00 00 00 00 00
+      eb de 12 bb 57 0d cf 00 00 00 00 00 00 00 00
 
 Additional authenticated data:
 
@@ -4592,31 +4610,36 @@ Additional authenticated data:
 
 Decrypted chunk #0.
 
-Literal data packet with the string contents `Hello, world!`.
+Literal data packet with the string contents `Hello, world!`:
 
-      cb 13 62 00 00 00 00 00  48 65 6c 6c 6f 2c 20 77
+      cb 13 62 00 00 00 00 00 48 65 6c 6c 6f 2c 20 77
       6f 72 6c 64 21
+
+Padding packet:
+
+      d5 0e ae 6a a1 64 9b 56 aa 83 5b 26 13 90 2b d2
 
 Authenticating final tag:
 
 Final nonce:
 
-      4b 1f e6 ee 5d 79 33 00 00 00 00 00 00 00 01
+      eb de 12 bb 57 0d cf 00 00 00 00 00 00 00 01
 
 Final additional authenticated data:
 
-      d2 02 07 02 06 00 00 00 00 00 00 00 15
+      d2 02 07 02 06 00 00 00 00 00 00 00 25
 
-### Complete AEAD-OCB encrypted packet sequence
+
+### Complete AEAD-EAX encrypted packet sequence
 
 ~~~
 -----BEGIN PGP MESSAGE-----
 
-wz0FBwIDCJfBfp371ekl//LT4/G8rsqL2P1tPVbeSYTOlxJBW8PB2ECFJdyYqPKu
-5MuBgcipV9AkHadGdDzj0lkCBwIGTgf132Y5+Y2NbK0QLFddLuCNihLbFxvf4Iku
-DoM6PGFwVapKlS9r2/V9EG2Cdsd7y0zoOJpPz6DqQDpp71O2Yjvk2NHQSJYCbczc
-cD1TYiNMd+jcNw==
-=bDfb
+wz8FHQcCCwMIVqKY0vXjZFP/z8xcEWZO2520JZDX3EaweMXAQZzFGzpGh8sy5bcD
+HOfGaXV2W1wh2SrvTMBcP+rSaQIHAgYgpmH3MfyaMDK1YjMmAn46XY21dI6+/wsM
+WRDQns3WQf+f04VidYA1vEl1TOG/P/+n2tCjuBBPUTPPQqQQCoPu9MobSAGohGv0
+K82nyM6dZeIS8wHLzZj9yt5pSod61CRzI/boVw==
+=K/pk
 -----END PGP MESSAGE-----
 ~~~
 
@@ -4636,35 +4659,41 @@ Iterations:
 
 Salt:
 
-      89 59 07 40 90 4d 87 36
+      e9 d3 97 85 b2 07 00 08
 
 ### Sample symmetric-key encrypted session key packet (v5)
 
 Packet header:
 
-      c3 3d
+      c3 3c
 
 Version, algorithms, S2K fields:
 
-      05 07 02 03 08 89 59 07 40 90 4d 87 36
+      05 1a 07 03 0b 03 08 e9 d3 97 85 b2 07 00 08 ff
+      b4 2e
 
 Nonce:
 
-      2c 76 eb af 34 ff d7 69 97 c0 40 b2
+      b4 2e 7c 48 3e f4 88 44 57 cb 37 26
 
-AEAD encrypted session key:
+Encrypted session key and AEAD tag:
 
-      3a 6b 9f 80 a1 8d b1 1d e3 3f b1 a2 cf f9 63 97
+      0c 0c 4b f3 f2 cd 6c b7 b6 e3 8b 5b f3 34 67 c1
+      c7 19 44 dd 59 03 46 66 2f 5a de 61 ff 84 bc e0
 
-Authentication tag:
-
-      e6 2b b0 2a 0d d9 9b 64 a4 e5 df a1 a7 bc de 8c
-
-### Starting AEAD-GCM decryption of the session key
+### Starting AEAD-EAX decryption of the session key
 
 The derived key is:
 
-      d8 9e 46 fb af fd 32 85 8c 47 c1 33 c6 32 3d 1f
+      25 02 81 71 5b ba 78 28 ef 71 ef 64 c4 78 47 53
+
+HKDF info:
+
+      c3 05 07 03
+
+HKDF output:
+
+      de ec e5 81 8b c0 aa b9 0f 8a fb 02 fa 00 cd 13
 
 Authenticated Data:
 
@@ -4672,39 +4701,40 @@ Authenticated Data:
 
 Nonce:
 
-      2c 76 eb af 34 ff d7 69 97 c0 40 b2
+      b4 2e 7c 48 3e f4 88 44 57 cb 37 26
 
 Decrypted session key:
 
-      63 8a 32 80 ad 39 cd a9 3c 13 54 63 a5 63 74 b7
+      19 36 fc 85 68 98 02 74 bb 90 0d 83 19 36 0c 77
 
-### Sample v2 SEIPD packet packet
+### Sample v2 SEIPD packet
 
 Packet header:
 
-      d4 59
+      d2 69
 
-Version, AES-128, GCM, Chunk size octet (06):
+Version, AES-128, EAX, Chunk size octet:
 
       02 07 03 06
 
 Salt:
 
-      4e 07 f5 df 66 39 f9 8d 8d 6c ad 10 2c 57 5d 2e
-      e0 8d 8a 12 db 17 1b df e0 89 2e 0e 83 3a 3c 61
+      fc b9 44 90 bc b9 8b bd c9 d1 06 c6 09 02 66 94
+      0f 72 e8 9e dc 21 b5 59 6b 15 76 b1 01 ed 0f 9f
 
-AEAD-GCM Encrypted data chunk #0:
+Chunk #0 encrypted data:
 
-      e6 c3 b2 b8 eb 78 43 93 6b 44 b2 b8 a7 2d 86 40
-      96 b5 dc 0c c0 aa 4a 10 8a 64 26 1d 5d 6e a5 ba
+      fc 6f c6 d6 5b bf d2 4d cd 07 90 96 6e 6d 1e 85
+      a3 00 53 78 4c b1 d8 b6 a0 69 9e f1 21 55 a7 b2
+      ad 62 58 53 1b
 
 Chunk #0 authentication tag:
 
-      e8 9d 60 77 c4 1c b8 16 f1 7b 44 89 53 08 f9 9f
+      57 65 1f d7 77 79 12 fa 95 e3 5d 9b 40 21 6f 69
 
 Final (zero-sized chunk #1) authentication tag:
 
-      96 5b 1b 17 d5 84 62 17 b9 e2 57 88 3b c5 78 ab
+      a4 c2 48 db 28 ff 43 31 f1 63 29 07 39 9e 6f f9
 
 ### Decryption of data
 
@@ -4716,22 +4746,22 @@ HKDF info:
 
 HKDF output:
 
-      ce c4 93 84 26 1c e3 88 5a 24 da ef 42 7c fa 21
-      24 04 fb 4a
+      ea 14 38 80 3c b8 a4 77 40 ce 9b 54 c3 38 77 8d
+      4d 2b dc 2b
 
 Message key:
 
-      ce c4 93 84 26 1c e3 88 5a 24 da ef 42 7c fa 21
+      ea 14 38 80 3c b8 a4 77 40 ce 9b 54 c3 38 77 8d
 
 Initialization vector:
 
-      24 04 fb 4a
+      4d 2b dc 2b
 
 Chunk #0:
 
 Nonce:
 
-      24 04 fb 4a 00 00 00 00 00 00 00 00
+      4d 2b dc 2b 00 00 00 00 00 00 00 00
 
 Additional authenticated data:
 
@@ -4739,31 +4769,35 @@ Additional authenticated data:
 
 Decrypted chunk #0.
 
-Literal data packet with the string contents `Hello, world!`.
+Literal data packet with the string contents `Hello, world!`:
 
-      cb 13 62 00 00 00 00 00  48 65 6c 6c 6f 2c 20 77
+      cb 13 62 00 00 00 00 00 48 65 6c 6c 6f 2c 20 77
       6f 72 6c 64 21
+
+Padding packet:
+
+      d5 0e 1c e2 26 9a 9e dd ef 81 03 21 72 b7 ed 7c
 
 Authenticating final tag:
 
 Final nonce:
 
-      24 04 fb 4a 00 00 00 00 00 00 00 01
+      4d 2b dc 2b 00 00 00 00 00 00 00 01
 
 Final additional authenticated data:
 
-      d2 02 07 03 06 00 00 00 00 00 00 00 15
+      d2 02 07 03 06 00 00 00 00 00 00 00 25
 
-### Complete AEAD-GCM encrypted packet sequence
+### Complete AEAD-EAX encrypted packet sequence
 
 ~~~
 -----BEGIN PGP MESSAGE-----
 
-wzoFBwMDCIlZB0CQTYc2/yx26680/9dpl8BAsjprn4ChjbEd4z+xos/5Y5fmK7Aq
-DdmbZKTl36GnvN6M0lkCBwMG5sOyuOt4Q5NrRLK4py2GQJa13AzAqkoQimQmHV1u
-pbrNE+KknwPjzTVaA9/OUxtlqOYJEFvonWB3xBy4FvF7RIlTCPmfllsbF9WEYhe5
-4leIO8V4qw==
-=klPb
+wzwFGgcDCwMI6dOXhbIHAAj/tC58SD70iERXyzcmDAxL8/LNbLe244tb8zRnwccZ
+RN1ZA0ZmL1reYf+EvODSaQIHAwb8uUSQvLmLvcnRBsYJAmaUD3LontwhtVlrFXax
+Ae0Pn/xvxtZbv9JNzQeQlm5tHoWjAFN4TLHYtqBpnvEhVaeyrWJYUxtXZR/Xd3kS
++pXjXZtAIW9ppMJI2yj/QzHxYykHOZ5v+Q==
+=ClBe
 -----END PGP MESSAGE-----
 ~~~
 
