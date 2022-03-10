@@ -1293,6 +1293,10 @@ For version 5 keys, it is RECOMMENDED to store information about the primary Pub
 An implementation MUST ensure that a valid direct-key signature is present before using a V5 key.
 This prevents certain attacks where an adversary strips a self-signature specifying a key expiration time or certain preferences.
 
+An implementation SHOULD NOT require a User ID self-signature to be present in order to consume or use a key, unless the particular use is contingent on the keyholder identifying themselves with the textual label in the User ID.
+For example, when refreshing a key to learn about changes in expiration, advertised features, algorithm preferences, revocation, subkey rotation, and so forth, there is no need to require a User ID self-signature.
+On the other hand, when verifying a signature over an e-mail message, an implementation MAY choose to only accept a signature from a key that has a valid self-signature over a User ID that matches the message's From: header, as a way to avoid a signature transplant attack.
+
 #### Signature Creation Time
 
 (4-octet time field)
