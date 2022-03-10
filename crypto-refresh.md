@@ -4350,6 +4350,66 @@ ftgr9N3lYG4NdWrtM2YBANCcT6EVJ/A44PV/IgHYLy6iyQMyZfps60iehUuuYbQE
 -----END PGP SIGNATURE-----
 ~~~
 
+## Sample v5 Certificate (Transferable Public Key) {#v5-cert}
+
+Here is a Transferable Public Key consisting of:
+
+- a v5 Ed25519 Public-Key packet
+- a v5 direct key self-signature
+- a v5 Curve25519 Public-Subkey packet
+- a v5 subkey binding signature
+
+{: sourcecode-name="v5-minimal-cert.key"}
+~~~ application/pgp-keys
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xjcFYiDQVxYAAAAtCSsGAQQB2kcPAQEHQLVQ/UIL3goq8tqYyAhqx19AG5YH
+uMyAHjCOTyUpVKtRwqgFHxYKAAAAIwUCYiDQVwMVCAoEFgACAQIbAwIeCQ0n
+CQMHAwkBBwEJAgcCAAAAIyIhBRtEKdW2+mmb5MgIz7teOE83FiJh8l1/FwE4
+zi0wDN9LAe6QPJVjW4F4PVc/MnGWVpABAQDII7BN+BLRKYzNOhbcPvfYF4z1
+eV8v9ZpnrKBtyU2VegEA4IBoRJBIBupzrKXL497Z1/H4t/zWsNOwx9Gk/NQN
+7QbOPAViINBXEgAAADIKKwYBBAGXVQEFAQEHQOwq6DFNBJ25z8Z/WKRA92BG
+lwBQnfJnGYBF7hPBMl1/AwEIB8KOBRgWCAAAAAkFAmIg0FcCGwwAAAAjIiEF
+G0Qp1bb6aZvkyAjPu144TzcWImHyXX8XATjOLTAM30t2vVIiqtITHHtzmroU
+10kwplUBANrkpE2T3XCNqLYnFEfpj0+eyNjUDX4LZye4k5SICcIkAPwNFfvq
+wyg7rLV+WXlG27Z7S2gNpt1VbZSBs6IxjzXABg==
+=/KaB
+-----END PGP PUBLIC KEY BLOCK-----
+~~~
+
+The corresponding Transferable Secret Key can be found in {{v5-key}}.
+
+## Sample v5 Secret Key (Transferable Secret Key) {#v5-key}
+
+Here is a Transferable Secret Key consisting of:
+
+- a v5 Ed25519 Secret-Key packet
+- a v5 direct key self-signature
+- a v5 Curve25519 Secret-Subkey packet
+- a v5 subkey binding signature
+
+{: sourcecode-name="v5-minimal-secret.key"}
+~~~ application/pgp-keys
+-----BEGIN PGP PRIVATE KEY BLOCK-----
+
+xV0FYiDQVxYAAAAtCSsGAQQB2kcPAQEHQLVQ/UIL3goq8tqYyAhqx19AG5YH
+uMyAHjCOTyUpVKtRAAABAKmpvxTlZ9KQ6j+aOEk8fYe/h0L8K5pJsuAYhvSV
+mL28EbTCqAUfFgoAAAAjBQJiINBXAxUICgQWAAIBAhsDAh4JDScJAwcDCQEH
+AQkCBwIAAAAjIiEFG0Qp1bb6aZvkyAjPu144TzcWImHyXX8XATjOLTAM30sB
+7pA8lWNbgXg9Vz8ycZZWkAEBAMgjsE34EtEpjM06Ftw+99gXjPV5Xy/1mmes
+oG3JTZV6AQDggGhEkEgG6nOspcvj3tnX8fi3/Naw07DH0aT81A3tBsdiBWIg
+0FcSAAAAMgorBgEEAZdVAQUBAQdA7CroMU0EnbnPxn9YpED3YEaXAFCd8mcZ
+gEXuE8EyXX8DAQgHAAAA/1b9bxwV0acRUcifrLiKHd0VVifoISz2PSVd4q5I
+c1+gD+HCjgUYFggAAAAJBQJiINBXAhsMAAAAIyIhBRtEKdW2+mmb5MgIz7te
+OE83FiJh8l1/FwE4zi0wDN9Ldr1SIqrSExx7c5q6FNdJMKZVAQDa5KRNk91w
+jai2JxRH6Y9PnsjY1A1+C2cnuJOUiAnCJAD8DRX76sMoO6y1fll5Rtu2e0to
+DabdVW2UgbOiMY81wAY=
+=GmWV
+-----END PGP PRIVATE KEY BLOCK-----
+~~~
+
+The corresponding Transferable Public Key can be found in {{v5-cert}}.
+
 ## Sample AEAD-EAX encryption and decryption
 
 This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-EAX encryption.
