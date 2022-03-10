@@ -1285,6 +1285,10 @@ It is good practice to verify that a self-signature imported into an implementat
 
 An implementation that encounters multiple self-signatures on the same object may resolve the ambiguity in any way it sees fit, but it is RECOMMENDED that priority be given to the most recent self-signature.
 
+By convention, a version 4 key stores information about the primary Public-Key (key flags, key expiration, etc.) and the Transferable Public Key as a whole (features, algorithm preferences, etc.) in a User ID self-signature of type 0x10 or 0x13.
+Some implementations require at least one User ID with a valid self-signature to be present to use a V4 key.
+For this reason, it is RECOMMENDED to include at least one User ID with a self-signature in V4 keys.
+
 #### Signature Creation Time
 
 (4-octet time field)
