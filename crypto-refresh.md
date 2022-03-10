@@ -4303,7 +4303,7 @@ The entire public key packet is thus:
 
 ## Sample EdDSA signature
 
-The signature is created using the sample key over the input data "OpenPGP" on 2015-09-16 12:24:53 and thus the input to the hash function is:
+The signature is created using the sample key over the input data "OpenPGP" on 2015-09-16 12:24:53 UTC and thus the input to the hash function is:
 
   m: 4f70656e504750040016080006050255f95f9504ff0000000c
 
