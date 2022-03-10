@@ -4546,7 +4546,7 @@ Encrypted session key and AEAD tag:
       78 c5 c0 41 9c c5 1b 3a 46 87 cb 32 e5 b7 03 1c
       e7 c6 69 75 76 5b 5c 21 d9 2a ef 4c c0 5c 3f ea
 
-### Starting AEAD-EAX decryption of the session key
+### Starting AEAD-OCB decryption of the session key
 
 The derived key is:
 
@@ -4578,7 +4578,7 @@ Packet header:
 
       d2 69
 
-Version, AES-128, EAX, Chunk size octet:
+Version, AES-128, OCB, Chunk size octet:
 
       02 07 02 06
 
@@ -4654,7 +4654,7 @@ Final additional authenticated data:
       d2 02 07 02 06 00 00 00 00 00 00 00 25
 
 
-### Complete AEAD-EAX encrypted packet sequence
+### Complete AEAD-OCB encrypted packet sequence
 
 ~~~
 -----BEGIN PGP MESSAGE-----
@@ -4705,7 +4705,7 @@ Encrypted session key and AEAD tag:
       0c 0c 4b f3 f2 cd 6c b7 b6 e3 8b 5b f3 34 67 c1
       c7 19 44 dd 59 03 46 66 2f 5a de 61 ff 84 bc e0
 
-### Starting AEAD-EAX decryption of the session key
+### Starting AEAD-GCM decryption of the session key
 
 The derived key is:
 
@@ -4737,7 +4737,7 @@ Packet header:
 
       d2 69
 
-Version, AES-128, EAX, Chunk size octet:
+Version, AES-128, GCM, Chunk size octet:
 
       02 07 03 06
 
@@ -4812,7 +4812,7 @@ Final additional authenticated data:
 
       d2 02 07 03 06 00 00 00 00 00 00 00 25
 
-### Complete AEAD-EAX encrypted packet sequence
+### Complete AEAD-GCM encrypted packet sequence
 
 ~~~
 -----BEGIN PGP MESSAGE-----
