@@ -4497,7 +4497,8 @@ Final additional authenticated data:
 
 ### Complete AEAD-EAX encrypted packet sequence
 
-~~~
+{: sourcecode-name="v5skesk-aes128-eax.pgp"}
+~~~ application/pgp-encrypted
 -----BEGIN PGP MESSAGE-----
 
 w0AFHgcBCwMIpa5XnR/F2Cv/aSJPkZmTs1Bvo7WaanPP+Np0a4jjV+iuVOuH4dcF
@@ -4656,7 +4657,8 @@ Final additional authenticated data:
 
 ### Complete AEAD-OCB encrypted packet sequence
 
-~~~
+{: sourcecode-name="v5skesk-aes128-ocb.pgp"}
+~~~ application/pgp-encrypted
 -----BEGIN PGP MESSAGE-----
 
 wz8FHQcCCwMIVqKY0vXjZFP/z8xcEWZO2520JZDX3EaweMXAQZzFGzpGh8sy5bcD
@@ -4814,7 +4816,8 @@ Final additional authenticated data:
 
 ### Complete AEAD-GCM encrypted packet sequence
 
-~~~
+{: sourcecode-name="v5skesk-aes128-gcm.pgp"}
+~~~ application/pgp-encrypted
 -----BEGIN PGP MESSAGE-----
 
 wzwFGgcDCwMI6dOXhbIHAAj/tC58SD70iERXyzcmDAxL8/LNbLe244tb8zRnwccZ
