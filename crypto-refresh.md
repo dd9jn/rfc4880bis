@@ -1289,6 +1289,10 @@ By convention, a version 4 key stores information about the primary Public-Key (
 Some implementations require at least one User ID with a valid self-signature to be present to use a V4 key.
 For this reason, it is RECOMMENDED to include at least one User ID with a self-signature in V4 keys.
 
+For version 5 keys, it is RECOMMENDED to store information about the primary Public-Key as well as the Transferable Public Key as a whole (key flags, key expiration, features, algorithm preferences, etc.) in a direct-key signature (type 0x1F) over the Public-Key instead of placing that information in a User ID self-signature.
+An implementation MUST ensure that a valid direct-key signature is present before using a V5 key.
+This prevents certain attacks where an adversary strips a self-signature specifying a key expiration time or certain preferences.
+
 #### Signature Creation Time
 
 (4-octet time field)
