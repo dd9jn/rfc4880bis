@@ -4320,7 +4320,7 @@ Which is fed into the EdDSA signature function and yields this signature:
 The entire signature packet is thus:
 
        88 5e 04 00 16 08 00 06  05 02 55 f9 5f 95 00 0a
-       09 10 8c fd e1 21 97 96  5a 9a f6 22 01 00 56 f9
+       09 10 8c fd e1 21 97 96  5a 9a f6 22 00 ff 56 f9
        0c ca 98 e2 10 26 37 bd  98 3f db 16 c1 31 df d2
        7e d8 2b f4 dd e5 60 6e  0d 75 6a ed 33 66 01 00
        d0 9c 4f a1 15 27 f0 38  e0 f5 7f 22 01 d8 2f 2e
