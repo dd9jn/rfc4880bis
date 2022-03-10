@@ -4801,14 +4801,16 @@ Ae0Pn/xvxtZbv9JNzQeQlm5tHoWjAFN4TLHYtqBpnvEhVaeyrWJYUxtXZR/Xd3kS
 -----END PGP MESSAGE-----
 ~~~
 
-## Sample message encrypted using Argon2
+## Sample messages encrypted using Argon2
 
-These messages are the literal data "Hello, world!" encrypted using Argon2 and the passphrase "password", using different session key sizes.
+These messages are the literal data "Hello, world!" encrypted using v1 SEIPD, with Argon2 and the passphrase "password", using different session key sizes.
+In each example, the choice of symmetric cipher is the same in both the v4 SKESK packet and v1 SEIPD packet.
 In all cases, the Argon2 parameters are t = 1, p = 4, and m = 21.
 
-AES-128:
+### v4 SKESK using Argon2 with AES-128
 
-~~~
+{: sourcecode-name="v4skesk-argon2-aes128.pgp"}
+~~~ application/pgp-encrypted
 -----BEGIN PGP MESSAGE-----
 Comment: Encrypted using AES with 128-bit key
 Comment: Session key: 01FE16BBACFD1E7B78EF3B865187374F
@@ -4820,9 +4822,10 @@ XfA3pqV4mTzF
 -----END PGP MESSAGE-----
 ~~~
 
-AES-192:
+### v4 SKESK using Argon2 with AES-192
 
-~~~
+{: sourcecode-name="v4skesk-argon2-aes192.pgp"}
+~~~ application/pgp-encrypted
 -----BEGIN PGP MESSAGE-----
 Comment: Encrypted using AES with 192-bit key
 Comment: Session key: 27006DAE68E509022CE45A14E569E91001C2955AF8DFE194
@@ -4834,9 +4837,10 @@ LVg77Mwwfgl2n/d572WciAM=
 -----END PGP MESSAGE-----
 ~~~
 
-AES-256:
+### v4 SKESK using Argon2 with AES-256
 
-~~~
+{: sourcecode-name="v4skesk-argon2-aes256.pgp"}
+~~~ application/pgp-encrypted
 -----BEGIN PGP MESSAGE-----
 Comment: Encrypted using AES with 256-bit key
 Comment: Session key: BBEDA55B9AAE63DAC45D4F49D89DACF4AF37FEFC13BAB2F1F8E18FB74580D8B0
