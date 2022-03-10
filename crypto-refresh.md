@@ -4301,6 +4301,18 @@ The entire public key packet is thus:
        79 34 e4 a8 7c 80 73 3a  12 80 d6 2f 80 10 99 2e
        43 ee 3b 24 06
 
+The same packet, represented in ASCII-armored form is:
+
+{: sourcecode-name="v4-ed25519-pubkey-packet.key"}
+~~~ application/pgp-keys
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xjMEU/NfCxYJKwYBBAHaRw8BAQdAPwmJlL3ZFu1AUxl5NOSofIBzOhKA1i+AEJku
+Q+47JAY=
+=zD4a
+-----END PGP PUBLIC KEY BLOCK-----
+~~~
+
 ## Sample v4 Ed25519 signature
 
 The signature is created using the sample key over the input data "OpenPGP" on 2015-09-16 12:24:53 UTC and thus the input to the hash function is:
@@ -4325,6 +4337,18 @@ The entire signature packet is thus:
        7e d8 2b f4 dd e5 60 6e  0d 75 6a ed 33 66 01 00
        d0 9c 4f a1 15 27 f0 38  e0 f5 7f 22 01 d8 2f 2e
        a2 c9 03 32 65 fa 6c eb  48 9e 85 4b ae 61 b4 04
+
+The same packet represented in ASCII-armored form is:
+
+{: sourcecode-name="v4-ed25519-signature-over-OpenPGP.sig"}
+~~~ application/pgp-signature
+-----BEGIN PGP SIGNATURE-----
+
+iF4EABYIAAYFAlX5X5UACgkQjP3hIZeWWpr2IgD/VvkMypjiECY3vZg/2xbBMd/S
+ftgr9N3lYG4NdWrtM2YBANCcT6EVJ/A44PV/IgHYLy6iyQMyZfps60iehUuuYbQE
+=e4KH
+-----END PGP SIGNATURE-----
+~~~
 
 ## Sample AEAD-EAX encryption and decryption
 
