@@ -4277,7 +4277,7 @@ Thus, this is a non-comprehensive list of potential problems and gotchas for a d
 
 To help implementing this specification a non-normative example for the EdDSA algorithm is given.
 
-## Sample EdDSA key
+## Sample v4 Ed25519 key
 
 The secret key used for this example is:
 
@@ -4301,7 +4301,7 @@ The entire public key packet is thus:
        79 34 e4 a8 7c 80 73 3a  12 80 d6 2f 80 10 99 2e
        43 ee 3b 24 06
 
-## Sample EdDSA signature
+## Sample v4 Ed25519 signature
 
 The signature is created using the sample key over the input data "OpenPGP" on 2015-09-16 12:24:53 UTC and thus the input to the hash function is:
 
