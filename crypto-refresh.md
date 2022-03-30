@@ -2684,9 +2684,6 @@ A sample implementation of this algorithm is in {{sample-crc24}}.
 
 If present, the checksum with its leading equal sign MUST appear on the next line after the base64 encoded data.
 
-Rationale for CRC-24: The size of 24 bits fits evenly into printable base64.
-The nonzero initialization can detect more errors than a zero initialization.
-
 ## An Implementation of the CRC-24 in "C" {#sample-crc24}
 
 {: sourcecode-name="sample-crc24.c"}
