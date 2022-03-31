@@ -3088,6 +3088,7 @@ Implementations MUST implement AES-128.
 Implementations SHOULD implement AES-256.
 Implementations MUST NOT encrypt data with IDEA, TripleDES, or CAST5.
 Implementations MAY decrypt data that uses IDEA, TripleDES, or CAST5 for the sake of reading older messages or new messages from legacy clients.
+An Implementation that decrypts data using IDEA, TripleDES, or CAST5 SHOULD generate a deprecation warning about the symmetric algorithm, indicating that message confidentiality is suspect.
 Implementations MAY implement any other algorithm.
 
 ## Compression Algorithms {#compression-algos}
