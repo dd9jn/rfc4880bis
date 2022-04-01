@@ -3703,7 +3703,7 @@ For encrypting to a v5 key, the size of the sequence is either 66 for curve P-25
 
 The key wrapping method is described in {{RFC3394}}.
 The KDF produces a symmetric key that is used as a key-encryption key (KEK) as specified in {{RFC3394}}.
-Refer to {{security-considerations}} for the details regarding the choice of the KEK algorithm, which SHOULD be one of three AES algorithms.
+Refer to {{ecdh-kek-choice}} for the details regarding the choice of the KEK algorithm, which SHOULD be one of three AES algorithms.
 Key wrapping and unwrapping is performed with the default initial value of {{RFC3394}}.
 
 The input to the key wrapping method is the plaintext described in {{pkesk}}, "Public-Key Encrypted Session Key Packets (Tag 1)", padded using the method described in {{PKCS5}} to an 8-octet granularity.
@@ -4114,19 +4114,23 @@ Asymmetric key size | Hash size | Symmetric key size
 
 - Some technologies mentioned here may be subject to government control in some countries.
 
-- An implementation SHOULD only use an AES algorithm as a KEK algorithm, since backward compatibility of the ECDH format is not a concern.
-  The KEK algorithm is only used within the scope of a Public-Key Encrypted Session Key Packet, which represents an ECDH key recipient of a message.
-  Compare this with the algorithm used for the session key of the message, which MAY be different from a KEK algorithm.
-
-  Side channel attacks are a concern when a compliant application's use of the OpenPGP format can be modeled by a decryption or signing oracle, for example, when an application is a network service performing decryption to unauthenticated remote users.
-  ECC scalar multiplication operations used in ECDSA and ECDH are vulnerable to side channel attacks.
-  Countermeasures can often be taken at the higher protocol level, such as limiting the number of allowed failures or time-blinding of the operations associated with each network interface.
-  Mitigations at the scalar multiplication level seek to eliminate any measurable distinction between the ECC point addition and doubling operations.
-
 - V5 signatures include a 128 bit salt that is hashed first.
   This makes OpenPGP signatures non-deterministic and protects against a broad class of attacks that depend on creating a signature over a predictable message.
   Hashing the salt first means that there is no attacker controlled hashed prefix.
   An example of this kind of attack is described in the paper SHA-1 Is A Shambles (see {{SHAMBLES}}), which leverages a chosen prefix collision attack against SHA-1.
+
+## Elliptic Curve Side Channels {#ecc-side-channels} 
+
+Side channel attacks are a concern when a compliant application's use of the OpenPGP format can be modeled by a decryption or signing oracle, for example, when an application is a network service performing decryption to unauthenticated remote users.
+ECC scalar multiplication operations used in ECDSA and ECDH are vulnerable to side channel attacks.
+Countermeasures can often be taken at the higher protocol level, such as limiting the number of allowed failures or time-blinding of the operations associated with each network interface.
+Mitigations at the scalar multiplication level seek to eliminate any measurable distinction between the ECC point addition and doubling operations.
+
+## Selecting a KEK for ECDH {#ecdh-kek-choice}
+
+An implementation SHOULD only use an AES algorithm as a KEK algorithm, since backward compatibility of the ECDH format is not a concern.
+The KEK algorithm is only used within the scope of a Public-Key Encrypted Session Key Packet, which represents an ECDH key recipient of a message.
+Compare this with the algorithm used for the session key of the message, which MAY be different from a KEK algorithm.
 
 ## Risks of a Quick Check Oracle {#quick-check-oracle}
 
