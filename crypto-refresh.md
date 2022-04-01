@@ -3822,7 +3822,7 @@ To decode an EME-PKCS1_v1_5 message, separate the encoded message EM into an oct
       EM = 0x00 || 0x02 || PS || 0x00 || M.
 
 If the first octet of EM does not have hexadecimal value 0x00, if the second octet of EM does not have hexadecimal value 0x02, if there is no octet with hexadecimal value 0x00 to separate PS from M, or if the length of PS is less than 8 octets, output "decryption error" and stop.
-See also the security note in {{security-considerations}} regarding differences in reporting between a decryption error and a padding error.
+See also {{pkcs1-errors}} regarding differences in reporting between a decryption error and a padding error.
 
 ### EMSA-PKCS1-v1_5
 
@@ -4112,10 +4112,6 @@ Asymmetric key size | Hash size | Symmetric key size
   This attack is a particular form of ciphertext malleability.
   See {{ciphertext-malleability}} for information on how to defend against such an attack using more recent versions of OpenPGP.
 
-- PKCS#1 has been found to be vulnerable to attacks in which a system that reports errors in padding differently from errors in decryption becomes a random oracle that can leak the private key in mere millions of queries.
-  Implementations must be aware of this attack and prevent it from happening.
-  The simplest solution is to report a single error code for all variants of decryption errors so as not to leak information to an attacker.
-
 - Some technologies mentioned here may be subject to government control in some countries.
 
 - In winter 2005, Serge Mister and Robert Zuccherato from Entrust released a paper describing a way that the "quick check" in OpenPGP CFB mode can be used with a random oracle to decrypt two octets of every cipher block {{MZ05}}.
@@ -4144,6 +4140,12 @@ Asymmetric key size | Hash size | Symmetric key size
   This makes OpenPGP signatures non-deterministic and protects against a broad class of attacks that depend on creating a signature over a predictable message.
   Hashing the salt first means that there is no attacker controlled hashed prefix.
   An example of this kind of attack is described in the paper SHA-1 Is A Shambles (see {{SHAMBLES}}), which leverages a chosen prefix collision attack against SHA-1.
+
+## Avoiding Leaks From PKCS#1 Errors {#pkcs1-errors}
+
+PKCS#1 has been found to be vulnerable to attacks in which a system that reports errors in padding differently from errors in decryption becomes a random oracle that can leak the private key in mere millions of queries.
+Implementations must be aware of this attack and prevent it from happening.
+The simplest solution is to report a single error code for all variants of decryption errors so as not to leak information to an attacker.
 
 ## Avoiding Ciphertext Malleability {#ciphertext-malleability}
 
