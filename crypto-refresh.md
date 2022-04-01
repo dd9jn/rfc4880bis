@@ -79,6 +79,21 @@ informative:
       DOI: 10.1109/IEEESTD.2018.8277153
     target: https://pubs.opengroup.org/onlinepubs/9699919799/utilities/pax.html
     date: 2018
+  PSSLR17:
+    target: https://eprint.iacr.org/2017/1014
+    title: Attacking Deterministic Signature Schemes using Fault Attacks
+    author:
+      -
+        ins: D. Poddebniak
+      -
+        ins: J. Somorovsky
+      -
+        ins: S. Schinzel
+      -
+        ins: M. Lochter
+      -
+        ins: P. Rösler
+    date: October 2017
   REGEX:
     title: Mastering Regular Expressions
     author:
@@ -1153,7 +1168,7 @@ The first field is hashed with the rest of the signature data, while the second 
 The second set of subpackets is not cryptographically protected by the signature and should include only advisory information.
 
 The differences between a V4 and V5 signature are two-fold: first, a V5 signature increases the width of the size indicators for the signed data, making it more capable when signing large keys or messages.
-Second, the hash is salted with 128 bit of random data.
+Second, the hash is salted with 128 bit of random data (see {{signature-salt-rationale}}.
 
 The algorithms for converting the hash function result to a signature are described in {{computing-signatures}}.
 
@@ -4114,10 +4129,18 @@ Asymmetric key size | Hash size | Symmetric key size
 
 - Some technologies mentioned here may be subject to government control in some countries.
 
-- V5 signatures include a 128 bit salt that is hashed first.
-  This makes OpenPGP signatures non-deterministic and protects against a broad class of attacks that depend on creating a signature over a predictable message.
-  Hashing the salt first means that there is no attacker controlled hashed prefix.
-  An example of this kind of attack is described in the paper SHA-1 Is A Shambles (see {{SHAMBLES}}), which leverages a chosen prefix collision attack against SHA-1.
+## Advantages of Salted Signatures {#signature-salt-rationale}
+
+V5 signatures include a 128 bit salt that is hashed first.
+This makes V5 OpenPGP signatures non-deterministic and protects against a broad class of attacks that depend on creating a signature over a predictable message.
+By selecting a new random salt for each signature made, signatures are not predictable.
+
+When the material to be signed may be attacker-controlled, hashing the salt first means that there is no attacker controlled hashed prefix.
+An example of this kind of attack is described in the paper SHA-1 Is A Shambles (see {{SHAMBLES}}), which leverages a chosen prefix collision attack against SHA-1.
+
+In some cases, an attacker may be able to induce a signature to be made, even if they do not control the content of the message.
+In some scenarios, a repeated signature over the exact same message may risk leakage of part or all of the signing key, for example see discussion of hardware faults over EdDSA and deterministic ECDSA in {{PSSLR17}}.
+Choosing a new random salt for each signature ensures that no repeated signatures are produced, and mitigates this risk.
 
 ## Elliptic Curve Side Channels {#ecc-side-channels} 
 
