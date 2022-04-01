@@ -2245,7 +2245,7 @@ After encrypting the first block-size-plus-two octets, the CFB state is resynchr
 The last block-size octets of ciphertext are passed through the cipher and the block boundary is reset.
 
 The repetition of 16 bits in the random data prefixed to the message allows the receiver to immediately check whether the session key is incorrect.
-See {{security-considerations}} for hints on the proper use of this "quick check".
+See {{quick-check-oracle}} for hints on the proper use of this "quick check".
 
 ## Marker Packet (Tag 10)
 
@@ -4114,19 +4114,6 @@ Asymmetric key size | Hash size | Symmetric key size
 
 - Some technologies mentioned here may be subject to government control in some countries.
 
-- In winter 2005, Serge Mister and Robert Zuccherato from Entrust released a paper describing a way that the "quick check" in OpenPGP CFB mode can be used with a random oracle to decrypt two octets of every cipher block {{MZ05}}.
-  They recommend as prevention not using the quick check at all.
-
-  Many implementers have taken this advice to heart for any data that is symmetrically encrypted and for which the session key is public-key encrypted.
-  In this case, the quick check is not needed as the public-key encryption of the session key should guarantee that it is the right session key.
-  In other cases, the implementation should use the quick check with care.
-
-  On the one hand, there is a danger to using it if there is a random oracle that can leak information to an attacker.
-  In plainer language, there is a danger to using the quick check if timing information about the check can be exposed to an attacker, particularly via an automated service that allows rapidly repeated queries.
-
-  On the other hand, it is inconvenient to the user to be informed that they typed in the wrong passphrase only after a petabyte of data is decrypted.
-  There are many cases in cryptographic engineering where the implementer must use care and wisdom, and this is one.
-
 - An implementation SHOULD only use an AES algorithm as a KEK algorithm, since backward compatibility of the ECDH format is not a concern.
   The KEK algorithm is only used within the scope of a Public-Key Encrypted Session Key Packet, which represents an ECDH key recipient of a message.
   Compare this with the algorithm used for the session key of the message, which MAY be different from a KEK algorithm.
@@ -4140,6 +4127,21 @@ Asymmetric key size | Hash size | Symmetric key size
   This makes OpenPGP signatures non-deterministic and protects against a broad class of attacks that depend on creating a signature over a predictable message.
   Hashing the salt first means that there is no attacker controlled hashed prefix.
   An example of this kind of attack is described in the paper SHA-1 Is A Shambles (see {{SHAMBLES}}), which leverages a chosen prefix collision attack against SHA-1.
+
+## Risks of a Quick Check Oracle {#quick-check-oracle}
+
+In winter 2005, Serge Mister and Robert Zuccherato from Entrust released a paper describing a way that the "quick check" in OpenPGP CFB mode can be used with a random oracle to decrypt two octets of every cipher block {{MZ05}}.
+They recommend as prevention not using the quick check at all.
+
+Many implementers have taken this advice to heart for any data that is symmetrically encrypted and for which the session key is public-key encrypted.
+In this case, the quick check is not needed as the public-key encryption of the session key should guarantee that it is the right session key.
+In other cases, the implementation should use the quick check with care.
+
+On the one hand, there is a danger to using it if there is a random oracle that can leak information to an attacker.
+In plainer language, there is a danger to using the quick check if timing information about the check can be exposed to an attacker, particularly via an automated service that allows rapidly repeated queries.
+
+On the other hand, it is inconvenient to the user to be informed that they typed in the wrong passphrase only after a petabyte of data is decrypted.
+There are many cases in cryptographic engineering where the implementer must use care and wisdom, and this is one.
 
 ## Avoiding Leaks From PKCS#1 Errors {#pkcs1-errors}
 
