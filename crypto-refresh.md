@@ -112,6 +112,15 @@ informative:
     author:
       org: Standards for Efficient Cryptography Group
     date: September 2000
+  SHA1CD:
+    target: https://github.com/cr-marcstevens/sha1collisiondetection
+    title: sha1collisiondetection
+    author:
+      -
+        name: Marc Stevens
+      -
+        name: Dan Shumow
+    date: 2017
   SHAMBLES:
     target: https://sha-mbles.github.io/
     title: "Sha-1 is a shambles: First chosen-prefix collision on sha-1 and application to the PGP web of trust"
@@ -129,6 +138,12 @@ informative:
     date: March 2007
     seriesinfo:
       NIST Special Publication: 800-57
+  STEVENS2013:
+    target: https://eprint.iacr.org/2013/358
+    title: Counter-cryptanalysis
+    author:
+      name: Marc Stevens
+    date: June 2013
 normative:
   AES:
     target: http://csrc.nist.gov/publications/fips/fips197/fips-197.{ps,pdf}
@@ -4128,6 +4143,19 @@ Asymmetric key size | Hash size | Symmetric key size
   See {{ciphertext-malleability}} for information on how to defend against such an attack using more recent versions of OpenPGP.
 
 - Some technologies mentioned here may be subject to government control in some countries.
+
+## SHA-1 Collision Detection {#sha1cd}
+
+As described in {{SHAMBLES}}, the SHA-1 digest algorithm is not collision-resistant.
+However, an OpenPGP implementation cannot completely discard the SHA-1 algorithm, because it is required for implementing and reasoning about V4 public keys.
+In particular, the V4 fingerprint derivation uses SHA-1.
+So as long as an OpenPGP implementation supports V4 public keys, it will need to implement SHA-1 in at least some scenarios.
+
+To avoid the risk of uncertain breakage from a maliciously introduced SHA-1 collision, an OpenPGP implementation MAY attempt to detect when a hash input is likely from a known collision attack, and then either deliberately reject the hash input or modifying the hash output.
+This should convert an uncertain breakage (where it is unclear what the effect of a collision will be) to an explicit breakage, which is more desirable for a robust implementation.
+
+{{STEVENS2013}} describes a method for detecting indicators of well-known SHA-1 collision attacks.
+Some example C code implementing this technique can be found at {{SHA1CD}}.
 
 ## Advantages of Salted Signatures {#signature-salt-rationale}
 
