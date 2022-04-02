@@ -50,5 +50,8 @@ docker-shell:
 clean:
 	-rm -rf $(OUTPUT) *.tmp $(draft).xmlv2 $(draft).txt.diff
 
-.PHONY: clean all
+check:
+	codespell crypto-refresh.md
+
+.PHONY: clean all check
 .SECONDARY: $(draft).xmlv2
