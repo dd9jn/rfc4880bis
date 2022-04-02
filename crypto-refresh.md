@@ -3464,6 +3464,17 @@ A subkey always has at least one subkey binding signature after it that is issue
 These binding signatures may be in either V3 or V4 format, but SHOULD be V4.
 Subkeys that can issue signatures MUST have a V4 binding signature due to the REQUIRED embedded primary key binding signature.
 
+The format of an OpenPGP V5 key is similar to a V4 key.
+
+    Primary-Key
+        [Revocation Self Signature...]
+        Direct Key Signature...
+        [User ID [Signature...]...]
+        [User Attribute [Signature...]...]
+        [Subkey [Binding-Signature-Revocation...] Subkey-Binding-Signature...]...
+
+Note, that a V5 key uses a Direct-Key-Signature to store algorithm preferences.
+
 In order to create self-signatures (see {{self-sigs}}), the primary key MUST be an algorithm capable of making signatures (that is, not an encryption-only algorithm).
 The subkeys may be keys of any type.
 For example, there may be a single-key RSA key, an EdDSA primary key with an RSA encryption key, or an EdDSA primary key with an ECDH subkey, etc.
