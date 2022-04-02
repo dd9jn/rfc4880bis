@@ -3475,6 +3475,13 @@ The format of an OpenPGP V5 key is similar to a V4 key.
 
 Note, that a V5 key uses a Direct-Key-Signature to store algorithm preferences.
 
+When a primary V5 Public Key is revoked, it is sometimes distributed with only the revocation self-signature:
+
+    Primary-Key
+        Revocation Self Signature
+
+In this case, the direct key signature is no longer necessary, since the primary key itself has been marked as unusable.
+
 In order to create self-signatures (see {{self-sigs}}), the primary key MUST be an algorithm capable of making signatures (that is, not an encryption-only algorithm).
 The subkeys may be keys of any type.
 For example, there may be a single-key RSA key, an EdDSA primary key with an RSA encryption key, or an EdDSA primary key with an ECDH subkey, etc.
