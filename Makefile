@@ -48,10 +48,9 @@ docker-shell:
 	docker run --rm -it --user ${UID}:${GID} -v $(PWD):/rfc kramdown-rfc2629-docker:latest bash
 
 clean:
-	-rm -rf $(OUTPUT) *.tmp $(draft).xmlv2 $(draft).txt.diff
+	-rm -rf $(OUTPUT) *.tmp $(draft).txt.diff
 
 check:
 	codespell crypto-refresh.md
 
 .PHONY: clean all check
-.SECONDARY: $(draft).xmlv2
