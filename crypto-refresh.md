@@ -591,11 +591,13 @@ For compatibility, when an S2K specifier is used, the special value 253, 254, or
 This is then followed immediately by a one-octet algorithm identifier, and other fields relevant to the type of encryption used.
 
 Therefore, the first octet of the secret key material describes how the secret key data is presented.
+The structures differ based on the version of the enclosing OpenPGP packet.
+The tables below summarize the details described in {{secret-key-packet-formats}}.
 
-In the table below, `check(x)` means the "2-octet checksum" meaning the sum of all octets in x mod 65536.
+In the tables below, `check(x)` means the "2-octet checksum" meaning the sum of all octets in x mod 65536.
 
-{: title="Secret Key protection details" #secret-key-protection-details}
-First octet | Next fields | Encryption | Generate?
+{: title="Version 4 Secret Key protection details" #v4-secret-key-protection-details}
+First octet | Encryption parameter fields | Encryption | Generate?
 ---|--------------------------------------------------|---|---|---
 0 | - | cleartext secrets \|\| check(secrets) | Yes
 Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password), secrets \|\| check(secrets)) | No
@@ -604,6 +606,15 @@ Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password
 255 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| check(secrets)) | No
 
 Each row with "Generate?" marked as "No" is described for backward compatibility, and MUST NOT be generated.
+
+A version 5 secret key that is cryptographically protected is stored with an additional pair of length counts, each of which is one octet wide:
+
+{: title="Version 5 Secret Key protection details" #v5-secret-key-protection-details}
+First octet | Encryption parameter fields | Encryption
+---|--------------------------------------------------|---|---
+0 | - | cleartext secrets \|\| check(secrets)
+253 | params-length, cipher-algo, AEAD-mode, S2K-specifier-length, S2K-specifier, nonce | AEAD(S2K(password), secrets, pubkey)
+254 | params-length, cipher-algo, S2K-specifier-length, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets))
 
 An implementation MUST NOT create and MUST reject as malformed a secret key packet where the S2K usage octet is anything but 253 and the S2K specifier type is Argon2.
 
@@ -1975,7 +1986,7 @@ The packet contains:
   Any other value is a symmetric-key encryption algorithm identifier.
   A version 5 packet MUST NOT use the value 255.
 
-- Only for a version 5 packet, a one-octet scalar octet count of the next 5 optional fields.
+- Only for a version 5 packet where the secret key material is encrypted (that is, where the previous octet is not zero), a one-octet scalar octet count of the cumulative length of all the following optional string-to-key parameter fields.
 
 - \[Optional\] If string-to-key usage octet was 255, 254, or 253, a one-octet symmetric encryption algorithm.
 
@@ -1999,7 +2010,7 @@ The packet contains:
 
 - If the string-to-key usage octet is zero, then a two-octet checksum of the algorithm-specific portion (sum of all octets, mod 65536).
 
-The details about storing algorithm-specific secrets above are summarized in {{secret-key-protection-details}}.
+The details about storing algorithm-specific secrets above are summarized in {{secret-key-encryption}}.
 
 Note that the version 5 packet format adds two count values to help parsing packets with unknown S2K or public key algorithms.
 
