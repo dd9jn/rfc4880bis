@@ -1757,6 +1757,26 @@ Please note that we are intentionally leaving conflict resolution to the impleme
 Some apparent conflicts may actually make sense --- for example, suppose a keyholder has a V3 key and a V4 key that share the same RSA key material.
 Either of these keys can verify a signature created by the other, and it may be reasonable for a signature to contain an issuer subpacket for each key, as a way of explicitly tying those keys to the signature.
 
+### Malformed and Unknown Signatures {#malformed-signatures}
+
+In some cases, a signature packet (or its corresponding One-Pass Signature Packet, see {{one-pass-sig}}) may be malformed or unknown.
+For example, it might encounter any of the following problems (this is not an exhaustive list):
+
+- an unknown signature type
+- an unknown signature version
+- an unsupported signature version
+- an unknown "critical" subpacket (see {{signature-subpacket}}) in the hashed area
+- a subpacket with a length that diverges from the expected length
+- a hashed subpacket area with length that exceeds the length of the signature packet itself
+- a known-weak hash algorithm (e.g. MD5)
+
+When an implementation encounters such a malformed or unknown signature, it MUST ignore the signature for validation purposes.
+It MUST NOT indicate a successful signature validation for such a signature.
+At the same time, it MUST NOT halt processing on the packet stream or reject other signatures in the same packet stream just because an unknown or invalid signature exists.
+
+This requirement is necessary for forward-compatibility.
+Producing an output that indicates that no successful signatures were found is preferable to aborting processing entirely.
+
 ## Symmetric-Key Encrypted Session Key Packets (Tag 3) {#skesk}
 
 The Symmetric-Key Encrypted Session Key (SKESK) packet holds the symmetric-key encryption of a session key used to encrypt a message.
@@ -1830,7 +1850,7 @@ Note that no chunks are used and that there is only one authentication tag.
 The Packet Tag in OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are given as additional data.
 For example, the additional data used with AES-128 with OCB consists of the octets 0xC3, 0x05, 0x07, and 0x02.
 
-## One-Pass Signature Packets (Tag 4)
+## One-Pass Signature Packets (Tag 4) {#one-pass-sig}
 
 The One-Pass Signature packet precedes the signed data and contains enough information to allow the receiver to begin calculating any hashes needed to verify the signature.
 It allows the Signature packet to be placed at the end of the message, so that the signer can compute the entire signed message in one pass.
