@@ -1256,7 +1256,7 @@ Type | Description
  11 | Preferred Symmetric Ciphers for v1 SEIPD
  12 | Revocation Key (deprecated)
 13 to 15 | Reserved
- 16 | Issuer
+ 16 | Issuer Key ID
 17 to 19 | Reserved
  20 | Notation Data
  21 | Preferred Hash Algorithms
@@ -1354,12 +1354,15 @@ The time the signature was made.
 
 MUST be present in the hashed area.
 
-#### Issuer
+#### Issuer Key ID {#issuer-keyid-subpacket}
 
 (8-octet Key ID)
 
 The OpenPGP Key ID of the key issuing the signature.
 If the version of that key is greater than 4, this subpacket MUST NOT be included in the signature.
+For these keys, consider the Issuer Fingerprint subpacket ({{issuer-fingerprint-subpacket}}) instead.
+
+Note: in previous versions of this specification, this subpacket was simply known as the "Issuer" subpacket.
 
 #### Key Expiration Time
 
@@ -1734,13 +1737,13 @@ For example, a target signature with a SHA-1 hash MUST have 20 octets of hash da
 This subpacket contains a complete Signature packet body as specified in {{signature-packet}}.
 It is useful when one signature needs to refer to, or be incorporated in, another signature.
 
-#### Issuer Fingerprint
+#### Issuer Fingerprint {#issuer-fingerprint-subpacket}
 
 (1 octet key version number, N octets of fingerprint)
 
 The OpenPGP Key fingerprint of the key issuing the signature.
 This subpacket SHOULD be included in all signatures.
-If the version of the issuing key is 4 and an Issuer subpacket is also included in the signature, the key ID of the Issuer subpacket MUST match the low 64 bits of the fingerprint.
+If the version of the issuing key is 4 and an Issuer Key ID subpacket ({{issuer-keyid-subpacket}}) is also included in the signature, the key ID of the Issuer Key ID subpacket MUST match the low 64 bits of the fingerprint.
 
 Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 5 key N is 32.
 Since the version of the signature is bound to the version of the key, the version octet here MUST match the version of the signature.
@@ -1818,7 +1821,7 @@ In most cases, an implementation SHOULD use the last subpacket in the signature,
 Please note that we are intentionally leaving conflict resolution to the implementer; most conflicts are simply syntax errors, and the wishy-washy language here allows a receiver to be generous in what they accept, while putting pressure on a creator to be stingy in what they generate.
 
 Some apparent conflicts may actually make sense --- for example, suppose a keyholder has a V3 key and a V4 key that share the same RSA key material.
-Either of these keys can verify a signature created by the other, and it may be reasonable for a signature to contain an issuer subpacket for each key, as a way of explicitly tying those keys to the signature.
+Either of these keys can verify a signature created by the other, and it may be reasonable for a signature to contain an Issuer Key ID subpacket ({{issuer-keyid-subpacket}}) for each key, as a way of explicitly tying those keys to the signature.
 
 ### Malformed and Unknown Signatures {#malformed-signatures}
 
