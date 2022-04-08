@@ -1682,6 +1682,8 @@ This subpacket SHOULD be included in all signatures.
 If the version of the issuing key is 4 and an Issuer subpacket is also included in the signature, the key ID of the Issuer subpacket MUST match the low 64 bits of the fingerprint.
 
 Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 5 key N is 32.
+Since the version of the signature is bound to the version of the key, the version octet here MUST match the version of the signature.
+If the version octet does not match the signature version, the receiving implementation MUST treat it as a malformed signature (see {{malformed-signatures}}).
 
 #### Intended Recipient Fingerprint
 
@@ -1874,6 +1876,8 @@ The body of this packet consists of:
 
 - Only for V5 packets, a one octet key version number and N octets of the fingerprint of the signing key.
   Note that the length N of the fingerprint for a version 5 key is 32.
+  Since a V5 signature can only be made by a V5 key, the key version number MUST be 5.
+  An application that encounters a V5 One-Pass Signature packet where the key version number is not 5 MUST treat the signature as invalid (see {{malformed-signatures}}).
 
 - A one-octet number holding a flag showing whether the signature is nested.
   A zero value indicates that the next packet is another One-Pass Signature packet that describes another signature to be applied to the same message data.
