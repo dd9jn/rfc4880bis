@@ -2838,6 +2838,8 @@ If the "SaltedHash" Armor Header is given, the specified message digest algorith
 The message digest name is followed by a colon (`:`) followed by 22 characters of Radix-64 encoded salt without padding.
 Note: The "SaltedHash" Armor Header contains digest algorithm and salt for a single signature; a second signature requires a second "SaltedHash" Armor Header.
 
+If neither a "Hash" nor a "SaltedHash" Armor Header is given, or the message digest algorithms (and salts) used in the signatures do not match the information in the headers, the signature MUST be considered invalid.
+
 Current message digest names are described with the algorithm IDs in {{hash-algos}}.
 
 An implementation SHOULD add a line break after the cleartext, but MAY omit it if the cleartext ends with a line break.
