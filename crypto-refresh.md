@@ -2656,13 +2656,6 @@ BEGIN PGP PUBLIC KEY BLOCK
 BEGIN PGP PRIVATE KEY BLOCK
 : Used for armoring private keys.
 
-BEGIN PGP MESSAGE, PART X/Y
-: Used for multi-part messages, where the armor is split amongst Y parts, and this is the Xth part out of Y.
-
-BEGIN PGP MESSAGE, PART X
-: Used for multi-part messages, where this is the Xth part of an unspecified number of parts.
-  Requires the MESSAGE-ID Armor Header to be used.
-
 BEGIN PGP SIGNATURE
 : Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures.
 
@@ -2695,15 +2688,6 @@ Currently defined Armor Header Keys are as follows:
   A comment may be any UTF-8 string.
   However, the whole point of armoring is to provide seven-bit-clean data.
   Consequently, if a comment has characters that are outside the US-ASCII range of UTF, they may very well not survive transport.
-
-- "MessageID", a 32-character string of printable characters.
-  The string must be the same for all parts of a multi-part message that uses the "PART X" Armor Header.
-  MessageID strings should be unique enough that the recipient of the mail can associate all the parts of a message with each other.
-  A good checksum or cryptographic hash function is sufficient.
-
-  The MessageID SHOULD NOT appear unless it is in a multi-part message.
-  If it appears at all, it MUST be computed from the finished (encrypted, signed, etc.) message in a deterministic fashion, rather than contain a purely random value.
-  This is to allow the legitimate recipient to determine that the MessageID cannot serve as a covert means of leaking cryptographic key information.
 
 - "Hash", a comma-separated list of hash algorithms used in this message.
   This is used only in cleartext signed messages.
