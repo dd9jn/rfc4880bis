@@ -2670,8 +2670,8 @@ The Armor Headers are a part of the armor, not a part of the message, and hence 
 
 The format of an Armor Header is that of a key-value pair.
 A colon (`:` 0x38) and a single space (0x20) separate the key and value.
-OpenPGP may consider improperly formatted Armor Headers to be corruption of the ASCII Armor, but SHOULD make an effort to recover.
-Unknown keys should be silently ignored, and OpenPGP should continue to process the message.
+An OpenPGP implementation may consider improperly formatted Armor Headers to be corruption of the ASCII Armor, but SHOULD make an effort to recover.
+Unknown keys should be silently ignored, and an OpenPGP implementation SHOULD continue to process the message.
 
 Note that some transport methods are sensitive to line length.
 While there is a limit of 76 characters for the Radix-64 data ({{encoding-binary-radix64}}), there is no limit to the length of Armor Headers.
