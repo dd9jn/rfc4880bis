@@ -2136,7 +2136,12 @@ The secret key is this single multiprecision integer:
 
 - An MPI-encoded octet string representing the native form of the secret key, in the curve-specific format described in {{curve-specific-formats}}.
 
-See {{RFC8032}} for more details about the native octet strings.
+Note that the native form for an EdDSA secret key is a fixed-width sequence of unstructured random octets, with size corresponding to the specific curve.
+That sequence of random octets is used with a cryptographic digest to produce both a curve-specific secret scalar and a prefix used when making a signature.
+See {{RFC8032}} for more details about how to use the native octet strings (section 5.1.5 for Ed25519 and 5.2.5 for Ed448).
+The value stored in an OpenPGP EdDSA secret key packet is the original sequence of random octets.
+
+Note that a ECDH secret key over the equivalent curve instead stores the curve-specific secret scalar itself, rather than the sequence of random octets stored in an EdDSA secret key.
 
 ### Algorithm-Specific Part for ECDH Keys {#key-ecdh}
 
