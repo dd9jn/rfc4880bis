@@ -461,6 +461,7 @@ Examples:
 
 (all numbers are in hexadecimal)
 
+The string of octets \[00 00\] forms an MPI with the value 0.
 The string of octets \[00 01 01\] forms an MPI with the value 1.
 The string \[00 09 01 FF\] forms an MPI with the value of 511.
 
