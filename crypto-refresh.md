@@ -79,6 +79,21 @@ informative:
       DOI: 10.1109/IEEESTD.2018.8277153
     target: https://pubs.opengroup.org/onlinepubs/9699919799/utilities/pax.html
     date: 2018
+  PSSLR17:
+    target: https://eprint.iacr.org/2017/1014
+    title: Attacking Deterministic Signature Schemes using Fault Attacks
+    author:
+      -
+        ins: D. Poddebniak
+      -
+        ins: J. Somorovsky
+      -
+        ins: S. Schinzel
+      -
+        ins: M. Lochter
+      -
+        ins: P. Rösler
+    date: October 2017
   REGEX:
     title: Mastering Regular Expressions
     author:
@@ -97,6 +112,15 @@ informative:
     author:
       org: Standards for Efficient Cryptography Group
     date: September 2000
+  SHA1CD:
+    target: https://github.com/cr-marcstevens/sha1collisiondetection
+    title: sha1collisiondetection
+    author:
+      -
+        name: Marc Stevens
+      -
+        name: Dan Shumow
+    date: 2017
   SHAMBLES:
     target: https://sha-mbles.github.io/
     title: "Sha-1 is a shambles: First chosen-prefix collision on sha-1 and application to the PGP web of trust"
@@ -114,6 +138,12 @@ informative:
     date: March 2007
     seriesinfo:
       NIST Special Publication: 800-57
+  STEVENS2013:
+    target: https://eprint.iacr.org/2013/358
+    title: Counter-cryptanalysis
+    author:
+      name: Marc Stevens
+    date: June 2013
 normative:
   AES:
     target: http://csrc.nist.gov/publications/fips/fips197/fips-197.{ps,pdf}
@@ -1153,7 +1183,7 @@ The first field is hashed with the rest of the signature data, while the second 
 The second set of subpackets is not cryptographically protected by the signature and should include only advisory information.
 
 The differences between a V4 and V5 signature are two-fold: first, a V5 signature increases the width of the size indicators for the signed data, making it more capable when signing large keys or messages.
-Second, the hash is salted with 128 bit of random data.
+Second, the hash is salted with 128 bit of random data (see {{signature-salt-rationale}}.
 
 The algorithms for converting the hash function result to a signature are described in {{computing-signatures}}.
 
@@ -2262,7 +2292,7 @@ After encrypting the first block-size-plus-two octets, the CFB state is resynchr
 The last block-size octets of ciphertext are passed through the cipher and the block boundary is reset.
 
 The repetition of 16 bits in the random data prefixed to the message allows the receiver to immediately check whether the session key is incorrect.
-See {{security-considerations}} for hints on the proper use of this "quick check".
+See {{quick-check-oracle}} for hints on the proper use of this "quick check".
 
 ## Marker Packet (Tag 10)
 
@@ -3722,7 +3752,7 @@ For encrypting to a v5 key, the size of the sequence is either 66 for curve P-25
 
 The key wrapping method is described in {{RFC3394}}.
 The KDF produces a symmetric key that is used as a key-encryption key (KEK) as specified in {{RFC3394}}.
-Refer to {{security-considerations}} for the details regarding the choice of the KEK algorithm, which SHOULD be one of three AES algorithms.
+Refer to {{ecdh-kek-choice}} for the details regarding the choice of the KEK algorithm, which SHOULD be one of three AES algorithms.
 Key wrapping and unwrapping is performed with the default initial value of {{RFC3394}}.
 
 The input to the key wrapping method is the plaintext described in {{pkesk}}, "Public-Key Encrypted Session Key Packets (Tag 1)", padded using the method described in {{PKCS5}} to an 8-octet granularity.
@@ -3841,7 +3871,7 @@ To decode an EME-PKCS1_v1_5 message, separate the encoded message EM into an oct
       EM = 0x00 || 0x02 || PS || 0x00 || M.
 
 If the first octet of EM does not have hexadecimal value 0x00, if the second octet of EM does not have hexadecimal value 0x02, if there is no octet with hexadecimal value 0x00 to separate PS from M, or if the length of PS is less than 8 octets, output "decryption error" and stop.
-See also the security note in {{security-considerations}} regarding differences in reporting between a decryption error and a padding error.
+See also {{pkcs1-errors}} regarding differences in reporting between a decryption error and a padding error.
 
 ### EMSA-PKCS1-v1_5
 
@@ -4131,38 +4161,67 @@ Asymmetric key size | Hash size | Symmetric key size
   This attack is a particular form of ciphertext malleability.
   See {{ciphertext-malleability}} for information on how to defend against such an attack using more recent versions of OpenPGP.
 
-- PKCS#1 has been found to be vulnerable to attacks in which a system that reports errors in padding differently from errors in decryption becomes a random oracle that can leak the private key in mere millions of queries.
-  Implementations must be aware of this attack and prevent it from happening.
-  The simplest solution is to report a single error code for all variants of decryption errors so as not to leak information to an attacker.
-
 - Some technologies mentioned here may be subject to government control in some countries.
 
-- In winter 2005, Serge Mister and Robert Zuccherato from Entrust released a paper describing a way that the "quick check" in OpenPGP CFB mode can be used with a random oracle to decrypt two octets of every cipher block {{MZ05}}.
-  They recommend as prevention not using the quick check at all.
+## SHA-1 Collision Detection {#sha1cd}
 
-  Many implementers have taken this advice to heart for any data that is symmetrically encrypted and for which the session key is public-key encrypted.
-  In this case, the quick check is not needed as the public-key encryption of the session key should guarantee that it is the right session key.
-  In other cases, the implementation should use the quick check with care.
+As described in {{SHAMBLES}}, the SHA-1 digest algorithm is not collision-resistant.
+However, an OpenPGP implementation cannot completely discard the SHA-1 algorithm, because it is required for implementing and reasoning about V4 public keys.
+In particular, the V4 fingerprint derivation uses SHA-1.
+So as long as an OpenPGP implementation supports V4 public keys, it will need to implement SHA-1 in at least some scenarios.
 
-  On the one hand, there is a danger to using it if there is a random oracle that can leak information to an attacker.
-  In plainer language, there is a danger to using the quick check if timing information about the check can be exposed to an attacker, particularly via an automated service that allows rapidly repeated queries.
+To avoid the risk of uncertain breakage from a maliciously introduced SHA-1 collision, an OpenPGP implementation MAY attempt to detect when a hash input is likely from a known collision attack, and then either deliberately reject the hash input or modifying the hash output.
+This should convert an uncertain breakage (where it is unclear what the effect of a collision will be) to an explicit breakage, which is more desirable for a robust implementation.
 
-  On the other hand, it is inconvenient to the user to be informed that they typed in the wrong passphrase only after a petabyte of data is decrypted.
-  There are many cases in cryptographic engineering where the implementer must use care and wisdom, and this is one.
+{{STEVENS2013}} describes a method for detecting indicators of well-known SHA-1 collision attacks.
+Some example C code implementing this technique can be found at {{SHA1CD}}.
 
-- An implementation SHOULD only use an AES algorithm as a KEK algorithm, since backward compatibility of the ECDH format is not a concern.
-  The KEK algorithm is only used within the scope of a Public-Key Encrypted Session Key Packet, which represents an ECDH key recipient of a message.
-  Compare this with the algorithm used for the session key of the message, which MAY be different from a KEK algorithm.
+## Advantages of Salted Signatures {#signature-salt-rationale}
 
-  Side channel attacks are a concern when a compliant application's use of the OpenPGP format can be modeled by a decryption or signing oracle, for example, when an application is a network service performing decryption to unauthenticated remote users.
-  ECC scalar multiplication operations used in ECDSA and ECDH are vulnerable to side channel attacks.
-  Countermeasures can often be taken at the higher protocol level, such as limiting the number of allowed failures or time-blinding of the operations associated with each network interface.
-  Mitigations at the scalar multiplication level seek to eliminate any measurable distinction between the ECC point addition and doubling operations.
+V5 signatures include a 128 bit salt that is hashed first.
+This makes V5 OpenPGP signatures non-deterministic and protects against a broad class of attacks that depend on creating a signature over a predictable message.
+By selecting a new random salt for each signature made, signatures are not predictable.
 
-- V5 signatures include a 128 bit salt that is hashed first.
-  This makes OpenPGP signatures non-deterministic and protects against a broad class of attacks that depend on creating a signature over a predictable message.
-  Hashing the salt first means that there is no attacker controlled hashed prefix.
-  An example of this kind of attack is described in the paper SHA-1 Is A Shambles (see {{SHAMBLES}}), which leverages a chosen prefix collision attack against SHA-1.
+When the material to be signed may be attacker-controlled, hashing the salt first means that there is no attacker controlled hashed prefix.
+An example of this kind of attack is described in the paper SHA-1 Is A Shambles (see {{SHAMBLES}}), which leverages a chosen prefix collision attack against SHA-1.
+
+In some cases, an attacker may be able to induce a signature to be made, even if they do not control the content of the message.
+In some scenarios, a repeated signature over the exact same message may risk leakage of part or all of the signing key, for example see discussion of hardware faults over EdDSA and deterministic ECDSA in {{PSSLR17}}.
+Choosing a new random salt for each signature ensures that no repeated signatures are produced, and mitigates this risk.
+
+## Elliptic Curve Side Channels {#ecc-side-channels} 
+
+Side channel attacks are a concern when a compliant application's use of the OpenPGP format can be modeled by a decryption or signing oracle, for example, when an application is a network service performing decryption to unauthenticated remote users.
+ECC scalar multiplication operations used in ECDSA and ECDH are vulnerable to side channel attacks.
+Countermeasures can often be taken at the higher protocol level, such as limiting the number of allowed failures or time-blinding of the operations associated with each network interface.
+Mitigations at the scalar multiplication level seek to eliminate any measurable distinction between the ECC point addition and doubling operations.
+
+## Selecting a KEK for ECDH {#ecdh-kek-choice}
+
+An implementation SHOULD only use an AES algorithm as a KEK algorithm, since backward compatibility of the ECDH format is not a concern.
+The KEK algorithm is only used within the scope of a Public-Key Encrypted Session Key Packet, which represents an ECDH key recipient of a message.
+Compare this with the algorithm used for the session key of the message, which MAY be different from a KEK algorithm.
+
+## Risks of a Quick Check Oracle {#quick-check-oracle}
+
+In winter 2005, Serge Mister and Robert Zuccherato from Entrust released a paper describing a way that the "quick check" in OpenPGP CFB mode can be used with a random oracle to decrypt two octets of every cipher block {{MZ05}}.
+They recommend as prevention not using the quick check at all.
+
+Many implementers have taken this advice to heart for any data that is symmetrically encrypted and for which the session key is public-key encrypted.
+In this case, the quick check is not needed as the public-key encryption of the session key should guarantee that it is the right session key.
+In other cases, the implementation should use the quick check with care.
+
+On the one hand, there is a danger to using it if there is a random oracle that can leak information to an attacker.
+In plainer language, there is a danger to using the quick check if timing information about the check can be exposed to an attacker, particularly via an automated service that allows rapidly repeated queries.
+
+On the other hand, it is inconvenient to the user to be informed that they typed in the wrong passphrase only after a petabyte of data is decrypted.
+There are many cases in cryptographic engineering where the implementer must use care and wisdom, and this is one.
+
+## Avoiding Leaks From PKCS#1 Errors {#pkcs1-errors}
+
+PKCS#1 has been found to be vulnerable to attacks in which a system that reports errors in padding differently from errors in decryption becomes a random oracle that can leak the private key in mere millions of queries.
+Implementations must be aware of this attack and prevent it from happening.
+The simplest solution is to report a single error code for all variants of decryption errors so as not to leak information to an attacker.
 
 ## Avoiding Ciphertext Malleability {#ciphertext-malleability}
 
