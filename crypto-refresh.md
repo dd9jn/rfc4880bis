@@ -2488,7 +2488,7 @@ Any failure SHOULD be reported to the user.
 >   simple, fast system.  (A downgrade attack would be an attack that
 >   replaced SHA2-256 with SHA-1, for example.  A cross-grade attack
 >   would replace SHA-1 with another 160-bit hash, such as
->   RIPE-MD/160, for example.)
+>   RIPEMD-160, for example.)
 >
 >   However, no update will be needed because the MDC has been replaced
 >   by the AEAD encryption described in this document.
@@ -3047,7 +3047,7 @@ ID | Algorithm | Text Name
 ---:|----------|--------------
   1 | MD5 {{HAC}} | "MD5"
   2 | SHA-1 {{FIPS180}} | "SHA1"
-  3 | RIPE-MD/160 {{HAC}} | "RIPEMD160"
+  3 | RIPEMD-160 {{HAC}} | "RIPEMD160"
   4 | Reserved
   5 | Reserved
   6 | Reserved
@@ -3065,10 +3065,10 @@ Implementations MUST implement SHA2-256.
 Implementations SHOULD implement SHA2-384 and SHA2-512.
 Implementations MAY implement other algorithms.
 Implementations SHOULD NOT create messages which require the use of SHA-1 with the exception of computing version 4 key fingerprints and for purposes of the Modification Detection Code (MDC) in version 1 Symmetrically Encrypted Integrity Protected Data packets.
-Implementations MUST NOT generate signatures with MD5, SHA-1, or RIPE-MD/160.
-Implementations MUST NOT use MD5, SHA-1, or RIPE-MD/160 as a hash function in an ECDH KDF.
-Implementations MUST NOT validate any recent signature that depends on MD5, SHA-1, or RIPE-MD/160.
-Implementations SHOULD NOT validate any old signature that depends on MD5, SHA-1, or RIPE-MD/160 unless the signature's creation date predates known weakness of the algorithm used, and the implementation is confident that the message has been in the secure custody of the user the whole time.
+Implementations MUST NOT generate signatures with MD5, SHA-1, or RIPEMD-160.
+Implementations MUST NOT use MD5, SHA-1, or RIPEMD-160 as a hash function in an ECDH KDF.
+Implementations MUST NOT validate any recent signature that depends on MD5, SHA-1, or RIPEMD-160.
+Implementations SHOULD NOT validate any old signature that depends on MD5, SHA-1, or RIPEMD-160 unless the signature's creation date predates known weakness of the algorithm used, and the implementation is confident that the message has been in the secure custody of the user the whole time.
 
 ## AEAD Algorithms {#aead-algorithms}
 
