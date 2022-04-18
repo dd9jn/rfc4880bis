@@ -4277,7 +4277,7 @@ Thus, this is a non-comprehensive list of potential problems and gotchas for a d
 
 To help implementing this specification a non-normative example for the EdDSA algorithm is given.
 
-## Sample EdDSA key
+## Sample v4 Ed25519 key
 
 The secret key used for this example is:
 
@@ -4301,9 +4301,21 @@ The entire public key packet is thus:
        79 34 e4 a8 7c 80 73 3a  12 80 d6 2f 80 10 99 2e
        43 ee 3b 24 06
 
-## Sample EdDSA signature
+The same packet, represented in ASCII-armored form is:
 
-The signature is created using the sample key over the input data "OpenPGP" on 2015-09-16 12:24:53 and thus the input to the hash function is:
+{: sourcecode-name="v4-ed25519-pubkey-packet.key"}
+~~~ application/pgp-keys
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xjMEU/NfCxYJKwYBBAHaRw8BAQdAPwmJlL3ZFu1AUxl5NOSofIBzOhKA1i+AEJku
+Q+47JAY=
+=zD4a
+-----END PGP PUBLIC KEY BLOCK-----
+~~~
+
+## Sample v4 Ed25519 signature
+
+The signature is created using the sample key over the input data "OpenPGP" on 2015-09-16 12:24:53 UTC and thus the input to the hash function is:
 
   m: 4f70656e504750040016080006050255f95f9504ff0000000c
 
@@ -4320,11 +4332,83 @@ Which is fed into the EdDSA signature function and yields this signature:
 The entire signature packet is thus:
 
        88 5e 04 00 16 08 00 06  05 02 55 f9 5f 95 00 0a
-       09 10 8c fd e1 21 97 96  5a 9a f6 22 01 00 56 f9
+       09 10 8c fd e1 21 97 96  5a 9a f6 22 00 ff 56 f9
        0c ca 98 e2 10 26 37 bd  98 3f db 16 c1 31 df d2
        7e d8 2b f4 dd e5 60 6e  0d 75 6a ed 33 66 01 00
        d0 9c 4f a1 15 27 f0 38  e0 f5 7f 22 01 d8 2f 2e
        a2 c9 03 32 65 fa 6c eb  48 9e 85 4b ae 61 b4 04
+
+The same packet represented in ASCII-armored form is:
+
+{: sourcecode-name="v4-ed25519-signature-over-OpenPGP.sig"}
+~~~ application/pgp-signature
+-----BEGIN PGP SIGNATURE-----
+
+iF4EABYIAAYFAlX5X5UACgkQjP3hIZeWWpr2IgD/VvkMypjiECY3vZg/2xbBMd/S
+ftgr9N3lYG4NdWrtM2YBANCcT6EVJ/A44PV/IgHYLy6iyQMyZfps60iehUuuYbQE
+=e4KH
+-----END PGP SIGNATURE-----
+~~~
+
+## Sample v5 Certificate (Transferable Public Key) {#v5-cert}
+
+Here is a Transferable Public Key consisting of:
+
+- a v5 Ed25519 Public-Key packet
+- a v5 direct key self-signature
+- a v5 Curve25519 Public-Subkey packet
+- a v5 subkey binding signature
+
+{: sourcecode-name="v5-minimal-cert.key"}
+~~~ application/pgp-keys
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xjcFYiDQVxYAAAAtCSsGAQQB2kcPAQEHQLVQ/UIL3goq8tqYyAhqx19AG5YH
+uMyAHjCOTyUpVKtRwqgFHxYKAAAAIwUCYiDQVwMVCAoEFgACAQIbAwIeCQ0n
+CQMHAwkBBwEJAgcCAAAAIyIhBRtEKdW2+mmb5MgIz7teOE83FiJh8l1/FwE4
+zi0wDN9LAe6QPJVjW4F4PVc/MnGWVpABAQDII7BN+BLRKYzNOhbcPvfYF4z1
+eV8v9ZpnrKBtyU2VegEA4IBoRJBIBupzrKXL497Z1/H4t/zWsNOwx9Gk/NQN
+7QbOPAViINBXEgAAADIKKwYBBAGXVQEFAQEHQOwq6DFNBJ25z8Z/WKRA92BG
+lwBQnfJnGYBF7hPBMl1/AwEIB8KOBRgWCAAAAAkFAmIg0FcCGwwAAAAjIiEF
+G0Qp1bb6aZvkyAjPu144TzcWImHyXX8XATjOLTAM30t2vVIiqtITHHtzmroU
+10kwplUBANrkpE2T3XCNqLYnFEfpj0+eyNjUDX4LZye4k5SICcIkAPwNFfvq
+wyg7rLV+WXlG27Z7S2gNpt1VbZSBs6IxjzXABg==
+=/KaB
+-----END PGP PUBLIC KEY BLOCK-----
+~~~
+
+The corresponding Transferable Secret Key can be found in {{v5-key}}.
+
+## Sample v5 Secret Key (Transferable Secret Key) {#v5-key}
+
+Here is a Transferable Secret Key consisting of:
+
+- a v5 Ed25519 Secret-Key packet
+- a v5 direct key self-signature
+- a v5 Curve25519 Secret-Subkey packet
+- a v5 subkey binding signature
+
+{: sourcecode-name="v5-minimal-secret.key"}
+~~~ application/pgp-keys
+-----BEGIN PGP PRIVATE KEY BLOCK-----
+
+xV0FYiDQVxYAAAAtCSsGAQQB2kcPAQEHQLVQ/UIL3goq8tqYyAhqx19AG5YH
+uMyAHjCOTyUpVKtRAAABAKmpvxTlZ9KQ6j+aOEk8fYe/h0L8K5pJsuAYhvSV
+mL28EbTCqAUfFgoAAAAjBQJiINBXAxUICgQWAAIBAhsDAh4JDScJAwcDCQEH
+AQkCBwIAAAAjIiEFG0Qp1bb6aZvkyAjPu144TzcWImHyXX8XATjOLTAM30sB
+7pA8lWNbgXg9Vz8ycZZWkAEBAMgjsE34EtEpjM06Ftw+99gXjPV5Xy/1mmes
+oG3JTZV6AQDggGhEkEgG6nOspcvj3tnX8fi3/Naw07DH0aT81A3tBsdiBWIg
+0FcSAAAAMgorBgEEAZdVAQUBAQdA7CroMU0EnbnPxn9YpED3YEaXAFCd8mcZ
+gEXuE8EyXX8DAQgHAAAA/1b9bxwV0acRUcifrLiKHd0VVifoISz2PSVd4q5I
+c1+gD+HCjgUYFggAAAAJBQJiINBXAhsMAAAAIyIhBRtEKdW2+mmb5MgIz7te
+OE83FiJh8l1/FwE4zi0wDN9Ldr1SIqrSExx7c5q6FNdJMKZVAQDa5KRNk91w
+jai2JxRH6Y9PnsjY1A1+C2cnuJOUiAnCJAD8DRX76sMoO6y1fll5Rtu2e0to
+DabdVW2UgbOiMY81wAY=
+=GmWV
+-----END PGP PRIVATE KEY BLOCK-----
+~~~
+
+The corresponding Transferable Public Key can be found in {{v5-cert}}.
 
 ## Sample AEAD-EAX encryption and decryption
 
@@ -4473,7 +4557,8 @@ Final additional authenticated data:
 
 ### Complete AEAD-EAX encrypted packet sequence
 
-~~~
+{: sourcecode-name="v5skesk-aes128-eax.pgp"}
+~~~ application/pgp-encrypted
 -----BEGIN PGP MESSAGE-----
 
 w0AFHgcBCwMIpa5XnR/F2Cv/aSJPkZmTs1Bvo7WaanPP+Np0a4jjV+iuVOuH4dcF
@@ -4522,7 +4607,7 @@ Encrypted session key and AEAD tag:
       78 c5 c0 41 9c c5 1b 3a 46 87 cb 32 e5 b7 03 1c
       e7 c6 69 75 76 5b 5c 21 d9 2a ef 4c c0 5c 3f ea
 
-### Starting AEAD-EAX decryption of the session key
+### Starting AEAD-OCB decryption of the session key
 
 The derived key is:
 
@@ -4554,7 +4639,7 @@ Packet header:
 
       d2 69
 
-Version, AES-128, EAX, Chunk size octet:
+Version, AES-128, OCB, Chunk size octet:
 
       02 07 02 06
 
@@ -4630,9 +4715,10 @@ Final additional authenticated data:
       d2 02 07 02 06 00 00 00 00 00 00 00 25
 
 
-### Complete AEAD-EAX encrypted packet sequence
+### Complete AEAD-OCB encrypted packet sequence
 
-~~~
+{: sourcecode-name="v5skesk-aes128-ocb.pgp"}
+~~~ application/pgp-encrypted
 -----BEGIN PGP MESSAGE-----
 
 wz8FHQcCCwMIVqKY0vXjZFP/z8xcEWZO2520JZDX3EaweMXAQZzFGzpGh8sy5bcD
@@ -4681,7 +4767,7 @@ Encrypted session key and AEAD tag:
       0c 0c 4b f3 f2 cd 6c b7 b6 e3 8b 5b f3 34 67 c1
       c7 19 44 dd 59 03 46 66 2f 5a de 61 ff 84 bc e0
 
-### Starting AEAD-EAX decryption of the session key
+### Starting AEAD-GCM decryption of the session key
 
 The derived key is:
 
@@ -4713,7 +4799,7 @@ Packet header:
 
       d2 69
 
-Version, AES-128, EAX, Chunk size octet:
+Version, AES-128, GCM, Chunk size octet:
 
       02 07 03 06
 
@@ -4788,9 +4874,10 @@ Final additional authenticated data:
 
       d2 02 07 03 06 00 00 00 00 00 00 00 25
 
-### Complete AEAD-EAX encrypted packet sequence
+### Complete AEAD-GCM encrypted packet sequence
 
-~~~
+{: sourcecode-name="v5skesk-aes128-gcm.pgp"}
+~~~ application/pgp-encrypted
 -----BEGIN PGP MESSAGE-----
 
 wzwFGgcDCwMI6dOXhbIHAAj/tC58SD70iERXyzcmDAxL8/LNbLe244tb8zRnwccZ
@@ -4801,14 +4888,16 @@ Ae0Pn/xvxtZbv9JNzQeQlm5tHoWjAFN4TLHYtqBpnvEhVaeyrWJYUxtXZR/Xd3kS
 -----END PGP MESSAGE-----
 ~~~
 
-## Sample message encrypted using Argon2
+## Sample messages encrypted using Argon2
 
-These messages are the literal data "Hello, world!" encrypted using Argon2 and the passphrase "password", using different session key sizes.
+These messages are the literal data "Hello, world!" encrypted using v1 SEIPD, with Argon2 and the passphrase "password", using different session key sizes.
+In each example, the choice of symmetric cipher is the same in both the v4 SKESK packet and v1 SEIPD packet.
 In all cases, the Argon2 parameters are t = 1, p = 4, and m = 21.
 
-AES-128:
+### v4 SKESK using Argon2 with AES-128
 
-~~~
+{: sourcecode-name="v4skesk-argon2-aes128.pgp"}
+~~~ application/pgp-encrypted
 -----BEGIN PGP MESSAGE-----
 Comment: Encrypted using AES with 128-bit key
 Comment: Session key: 01FE16BBACFD1E7B78EF3B865187374F
@@ -4820,9 +4909,10 @@ XfA3pqV4mTzF
 -----END PGP MESSAGE-----
 ~~~
 
-AES-192:
+### v4 SKESK using Argon2 with AES-192
 
-~~~
+{: sourcecode-name="v4skesk-argon2-aes192.pgp"}
+~~~ application/pgp-encrypted
 -----BEGIN PGP MESSAGE-----
 Comment: Encrypted using AES with 192-bit key
 Comment: Session key: 27006DAE68E509022CE45A14E569E91001C2955AF8DFE194
@@ -4834,9 +4924,10 @@ LVg77Mwwfgl2n/d572WciAM=
 -----END PGP MESSAGE-----
 ~~~
 
-AES-256:
+### v4 SKESK using Argon2 with AES-256
 
-~~~
+{: sourcecode-name="v4skesk-argon2-aes256.pgp"}
+~~~ application/pgp-encrypted
 -----BEGIN PGP MESSAGE-----
 Comment: Encrypted using AES with 256-bit key
 Comment: Session key: BBEDA55B9AAE63DAC45D4F49D89DACF4AF37FEFC13BAB2F1F8E18FB74580D8B0
