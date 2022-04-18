@@ -3345,6 +3345,8 @@ User Attribute packets and User ID packets may be freely intermixed in this sect
 After the User ID packet or Attribute packet, there may be zero or more Subkey packets.
 In general, subkeys are provided in cases where the top-level public key is a signature-only key.
 However, any V4 or V5 key may have subkeys, and the subkeys may be encryption-only keys, signature-only keys, or general-purpose keys.
+Every subkey for a v5 primary key MUST be a V5 subkey.
+Every subkey for a V4 primary key MUST be a V4 subkey.
 V3 keys MUST NOT have subkeys.
 
 Each Subkey packet MUST be followed by one Signature packet, which should be a subkey binding signature issued by the top-level key.
