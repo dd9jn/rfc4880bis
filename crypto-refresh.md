@@ -2746,13 +2746,6 @@ BEGIN PGP PUBLIC KEY BLOCK
 BEGIN PGP PRIVATE KEY BLOCK
 : Used for armoring private keys.
 
-BEGIN PGP MESSAGE, PART X/Y
-: Used for multi-part messages, where the armor is split amongst Y parts, and this is the Xth part out of Y.
-
-BEGIN PGP MESSAGE, PART X
-: Used for multi-part messages, where this is the Xth part of an unspecified number of parts.
-  Requires the MESSAGE-ID Armor Header to be used.
-
 BEGIN PGP SIGNATURE
 : Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures.
 
@@ -2767,8 +2760,8 @@ The Armor Headers are a part of the armor, not a part of the message, and hence 
 
 The format of an Armor Header is that of a key-value pair.
 A colon (`:` 0x38) and a single space (0x20) separate the key and value.
-OpenPGP should consider improperly formatted Armor Headers to be corruption of the ASCII Armor.
-Unknown keys should be reported to the user, but OpenPGP should continue to process the message.
+An OpenPGP implementation may consider improperly formatted Armor Headers to be corruption of the ASCII Armor, but SHOULD make an effort to recover.
+Unknown keys should be silently ignored, and an OpenPGP implementation SHOULD continue to process the message.
 
 Note that some transport methods are sensitive to line length.
 While there is a limit of 76 characters for the Radix-64 data ({{encoding-binary-radix64}}), there is no limit to the length of Armor Headers.
@@ -2785,15 +2778,6 @@ Currently defined Armor Header Keys are as follows:
   A comment may be any UTF-8 string.
   However, the whole point of armoring is to provide seven-bit-clean data.
   Consequently, if a comment has characters that are outside the US-ASCII range of UTF, they may very well not survive transport.
-
-- "MessageID", a 32-character string of printable characters.
-  The string must be the same for all parts of a multi-part message that uses the "PART X" Armor Header.
-  MessageID strings should be unique enough that the recipient of the mail can associate all the parts of a message with each other.
-  A good checksum or cryptographic hash function is sufficient.
-
-  The MessageID SHOULD NOT appear unless it is in a multi-part message.
-  If it appears at all, it MUST be computed from the finished (encrypted, signed, etc.) message in a deterministic fashion, rather than contain a purely random value.
-  This is to allow the legitimate recipient to determine that the MessageID cannot serve as a covert means of leaking cryptographic key information.
 
 - "Hash", a comma-separated list of hash algorithms used in this message.
   This is used only in cleartext signed messages.
@@ -2937,11 +2921,14 @@ The cleartext signed message consists of:
 - The ASCII armored signature(s) including the `-----BEGIN PGP SIGNATURE-----` Armor Header and Armor Tail Lines.
 
 If the "Hash" Armor Header is given, the specified message digest algorithm(s) are used for the signature.
-If more than one message digest is used in the signature, the "Hash" armor header contains a comma-delimited list of used message digests.
+If more than one message digest is used in the signatures, each digest algorithm has to be specified.
+To that end, the "Hash" Armor Header contains a comma-delimited list of used message digests, and the "Hash" Armor Header can be given multiple times.
 
 If the "SaltedHash" Armor Header is given, the specified message digest algorithm and salt are used for a signature.
 The message digest name is followed by a colon (`:`) followed by 22 characters of Radix-64 encoded salt without padding.
 Note: The "SaltedHash" Armor Header contains digest algorithm and salt for a single signature; a second signature requires a second "SaltedHash" Armor Header.
+
+If neither a "Hash" nor a "SaltedHash" Armor Header is given, or the message digest algorithms (and salts) used in the signatures do not match the information in the headers, the signature MUST be considered invalid.
 
 Current message digest names are described with the algorithm IDs in {{hash-algos}}.
 
