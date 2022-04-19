@@ -3092,7 +3092,7 @@ Implementations MAY implement any other algorithm.
 ID | Algorithm | Text Name
 ---:|----------|--------------
   1 | MD5 {{HAC}} | "MD5"
-  2 | SHA-1 {{!FIPS180=DOI.10.6028/NIST.FIPS.180-4}} | "SHA1"
+  2 | SHA-1 {{!FIPS180=DOI.10.6028/NIST.FIPS.180-4}}, {{sha1cd}} | "SHA1"
   3 | RIPEMD-160 {{HAC}} | "RIPEMD160"
   4 | Reserved
   5 | Reserved
