@@ -9,6 +9,7 @@ area: sec
 workgroup: Network Working Group
 keyword: Internet-Draft
 stand_alone: yes
+submissionType: IETF
 pi:
   toc: yes
   tocdepth: 4
