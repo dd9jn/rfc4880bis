@@ -146,6 +146,17 @@ informative:
     date: March 2007
     seriesinfo:
       NIST Special Publication: 800-57
+  SP800-131A:
+    target: "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-131Ar2.pdf"
+    title: Transitioning the Use of Cryptographic Algorithms and Key Lengths
+    author:
+      -
+        ins: E. Barker
+      -
+        ins: A. Roginsky
+    date: March 2019
+    seriesinfo:
+      NIST Special Publication: 800-131A Revision 2
   STEVENS2013:
     target: https://eprint.iacr.org/2013/358
     title: Counter-cryptanalysis
@@ -3002,9 +3013,9 @@ ID | Algorithm | Public Key Format | Secret Key Format | Signature Format | PKES
 100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement EdDSA (19) for signatures, and ECDH (18) for encryption.
-Implementations SHOULD implement RSA (1) for signatures and encryption.
 
-RSA Encrypt-Only (2) and RSA Sign-Only (3) are deprecated and SHOULD NOT be generated, but may be interpreted.
+RSA (1) keys are deprecated and SHOULD NOT be generated, but may be interpreted.
+RSA Encrypt-Only (2) and RSA Sign-Only (3) are deprecated and MUST NOT be generated.
 See {{rsa-notes}}.
 See {{reserved-notes}} for notes on Elgamal Encrypt or Sign (20), and X9.42 (21).
 Implementations MAY implement any other algorithm.
@@ -4027,10 +4038,13 @@ However, it is good form to place it there explicitly.
 
 ## RSA {#rsa-notes}
 
+The PKCS1-v1_5 padding scheme, used by the RSA algorithms defined in this document, is no longer recommended, and its use is deprecated by {{SP800-131A}}.
+Therefore, an implementation SHOULD NOT generate RSA keys.
+
 There are algorithm types for RSA Sign-Only, and RSA Encrypt-Only keys.
 These types are deprecated.
 The "key flags" subpacket in a signature is a much better way to express the same idea, and generalizes it to all algorithms.
-An implementation SHOULD NOT create such a key, but MAY interpret it.
+An implementation MUST NOT create such a key, but MAY interpret it.
 
 An implementation SHOULD NOT implement RSA keys of size less than 1024 bits.
 
