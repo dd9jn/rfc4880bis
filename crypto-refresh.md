@@ -2125,6 +2125,70 @@ When decrypting the secret key material using any of these schemes (that is, whe
 In particular, an implementation MUST NOT interpret octets beyond the unwrapped cleartext octet stream as part of any of the unwrapped MPI objects.
 Furthermore, an implementation MUST reject as unusable any secret key material whose cleartext length does not align with the lengths of the unwrapped MPI objects.
 
+## Key IDs and Fingerprints {#key-ids-fingerprints}
+
+For a V3 key, the eight-octet Key ID consists of the low 64 bits of the public modulus of the RSA key.
+
+The fingerprint of a V3 key is formed by hashing the body (but not the two-octet length) of the MPIs that form the key material (public modulus n, followed by exponent e) with MD5.
+Note that both V3 keys and MD5 are deprecated.
+
+A V4 fingerprint is the 160-bit SHA-1 hash of the octet 0x99, followed by the two-octet packet length, followed by the entire Public-Key packet starting with the version field.
+The Key ID is the low-order 64 bits of the fingerprint.
+Here are the fields of the hash material, with the example of an EdDSA key:
+
+a.1) 0x99 (1 octet)
+
+a.2) two-octet, big-endian scalar octet count of (b)-(e)
+
+b) version number = 4 (1 octet);
+
+c) timestamp of key creation (4 octets);
+
+d) algorithm (1 octet): 22 = EdDSA (example);
+
+e) Algorithm-specific fields.
+
+Algorithm-Specific Fields for EdDSA keys (example):
+
+e.1) A one-octet size of the following field;
+
+e.2) The octets representing a curve OID, defined in {{ec-curves}};
+
+e.3) An MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
+
+A V5 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9A, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
+The Key ID is the high-order 64 bits of the fingerprint.
+Here are the fields of the hash material, with the example of an EdDSA key:
+
+a.1) 0x9A (1 octet)
+
+a.2) four-octet scalar octet count of (b)-(f)
+
+b) version number = 5 (1 octet);
+
+c) timestamp of key creation (4 octets);
+
+d) algorithm (1 octet): 22 = EdDSA (example);
+
+e) four-octet scalar octet count for the following key material;
+
+f) algorithm-specific fields.
+
+Algorithm-Specific Fields for EdDSA keys (example):
+
+f.1) A one-octet size of the following field;
+
+f.2) The octets representing a curve OID, defined in {{ec-curves}};
+
+f.3) An MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
+
+Note that it is possible for there to be collisions of Key IDs --- two different keys with the same Key ID.
+Note that there is a much smaller, but still non-zero, probability that two different keys have the same fingerprint.
+
+Also note that if V3, V4, and V5 format keys share the same RSA key material, they will have different Key IDs as well as different fingerprints.
+
+Finally, the Key ID and fingerprint of a subkey are calculated in the same way as for a primary key, including the 0x99 (V4 key) or 0x9A (V5 key) as the first octet (even though this is not a valid packet ID for a public subkey).
+
 ## Algorithm-specific Parts of Keys
 
 The public and secret key format specifies algorithm-specific parts of a key.
@@ -3557,72 +3621,6 @@ An implementation processing an Encrypted Message MUST discard any preceding ESK
 Some OpenPGP applications use so-called "detached signatures".
 For example, a program bundle may contain a file, and with it a second file that is a detached signature of the first file.
 These detached signatures are simply a Signature packet stored separately from the data for which they are a signature.
-
-# Enhanced Key Formats {#enhanced-key-formats}
-
-## Key IDs and Fingerprints {#key-ids-fingerprints}
-
-For a V3 key, the eight-octet Key ID consists of the low 64 bits of the public modulus of the RSA key.
-
-The fingerprint of a V3 key is formed by hashing the body (but not the two-octet length) of the MPIs that form the key material (public modulus n, followed by exponent e) with MD5.
-Note that both V3 keys and MD5 are deprecated.
-
-A V4 fingerprint is the 160-bit SHA-1 hash of the octet 0x99, followed by the two-octet packet length, followed by the entire Public-Key packet starting with the version field.
-The Key ID is the low-order 64 bits of the fingerprint.
-Here are the fields of the hash material, with the example of an EdDSA key:
-
-a.1) 0x99 (1 octet)
-
-a.2) two-octet, big-endian scalar octet count of (b)-(e)
-
-b) version number = 4 (1 octet);
-
-c) timestamp of key creation (4 octets);
-
-d) algorithm (1 octet): 22 = EdDSA (example);
-
-e) Algorithm-specific fields.
-
-Algorithm-Specific Fields for EdDSA keys (example):
-
-e.1) A one-octet size of the following field;
-
-e.2) The octets representing a curve OID, defined in {{ec-curves}};
-
-e.3) An MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
-
-A V5 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9A, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
-The Key ID is the high-order 64 bits of the fingerprint.
-Here are the fields of the hash material, with the example of an EdDSA key:
-
-a.1) 0x9A (1 octet)
-
-a.2) four-octet scalar octet count of (b)-(f)
-
-b) version number = 5 (1 octet);
-
-c) timestamp of key creation (4 octets);
-
-d) algorithm (1 octet): 22 = EdDSA (example);
-
-e) four-octet scalar octet count for the following key material;
-
-f) algorithm-specific fields.
-
-Algorithm-Specific Fields for EdDSA keys (example):
-
-f.1) A one-octet size of the following field;
-
-f.2) The octets representing a curve OID, defined in {{ec-curves}};
-
-f.3) An MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
-
-Note that it is possible for there to be collisions of Key IDs --- two different keys with the same Key ID.
-Note that there is a much smaller, but still non-zero, probability that two different keys have the same fingerprint.
-
-Also note that if V3, V4, and V5 format keys share the same RSA key material, they will have different Key IDs as well as different fingerprints.
-
-Finally, the Key ID and fingerprint of a subkey are calculated in the same way as for a primary key, including the 0x99 (V4 key) or 0x9A (V5 key) as the first octet (even though this is not a valid packet ID for a public subkey).
 
 # Elliptic Curve Cryptography
 
