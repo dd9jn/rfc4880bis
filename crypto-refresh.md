@@ -3467,7 +3467,7 @@ The optional trailing Padding packet is a mechanism to defend against traffic an
 For maximum interoperability, if the Public-Key packet is a V4 key, the optional Padding packet SHOULD NOT be present unless the recipient has indicated that they are capable of ignoring it successfully.
 An implementation that is capable of receiving a transferable public key with a V5 Public-Key primary key MUST be able to accept (and ignore) the trailing optional Padding packet.
 
-Transferable public-key packet sequences may be concatenated to allow transferring multiple public keys in one operation.
+Transferable public-key packet sequences may be concatenated to allow transferring multiple public keys in one operation (see {{keyrings}}).
 
 ## Transferable Secret Keys
 
