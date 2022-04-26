@@ -3368,27 +3368,74 @@ This section describes the rules for how packets should be placed into sequences
 ## Transferable Public Keys
 
 OpenPGP users may transfer public keys.
-The essential elements of a transferable public key are as follows:
+This section describes the structure of public keys in transit to ensure interoperability.
 
-- One Public-Key packet
+### OpenPGP V3 Key Structure
 
-- Zero or more revocation signatures
+The format of an OpenPGP V3 key is as follows.
+Entries in square brackets are optional and ellipses indicate repetition.
 
-- Zero or more User ID packets
+    RSA Public Key
+       [Revocation Self Signature]
+        User ID [Signature ...]
+       [User ID [Signature ...] ...]
 
-- After each User ID packet, zero or more Signature packets (certifications)
+Each signature certifies the RSA public key and the preceding User ID.
+The RSA public key can have many User IDs and each User ID can have many signatures.
+V3 keys are deprecated.
+Implementations MUST NOT generate new V3 keys, but MAY continue to use existing ones.
 
-- Zero or more User Attribute packets
+V3 keys MUST NOT have subkeys.
 
-- After each User Attribute packet, zero or more Signature packets (certifications)
+### OpenPGP V4 Key Structure
 
-- Zero or more Subkey packets
+The format of an OpenPGP V4 key that uses multiple public keys is similar except that the other keys are added to the end as "subkeys" of the primary key.
 
-- After each Subkey packet, one Signature packet, plus optionally a revocation
+    Primary-Key
+       [Revocation Self Signature]
+       [Direct Key Signature...]
+       [User ID [Signature ...] ...]
+       [User Attribute [Signature ...] ...]
+       [[Subkey [Binding-Signature-Revocation ...]
+               Subkey-Binding-Signature ...] ...]
 
-- An optional Padding packet
+A subkey always has at least one subkey binding signature after it that is issued using the primary key to tie the two keys together.
+These binding signatures may be in either V3 or V4 format, but SHOULD be V4.
+Subkeys that can issue signatures MUST have a V4 binding signature due to the REQUIRED embedded primary key binding signature.
+
+Every subkey for a V4 primary key MUST be a V4 subkey.
+
+### OpenPGP V5 Key Structure
+
+The format of an OpenPGP V5 key is similar to a V4 key.
+
+    Primary-Key
+        [Revocation Self Signature...]
+        Direct Key Signature...
+        [User ID [Signature...]]...
+        [User Attribute [Signature...]]...
+        [Subkey [Binding-Signature-Revocation...] Subkey-Binding-Signature...]...
+		[Padding]
+
+Note, that a V5 key uses a Direct-Key-Signature to store algorithm preferences.
+
+Every subkey for a V5 primary key MUST be a V5 subkey.
+
+When a primary V5 Public Key is revoked, it is sometimes distributed with only the revocation self-signature:
+
+    Primary-Key
+        Revocation Self Signature
+
+In this case, the direct key signature is no longer necessary, since the primary key itself has been marked as unusable.
+
+### Common requirements
 
 The Public-Key packet occurs first.
+
+In order to create self-signatures (see {{self-sigs}}), the primary key MUST be an algorithm capable of making signatures (that is, not an encryption-only algorithm).
+The subkeys may be keys of any type.
+For example, there may be a single-key RSA key, an EdDSA primary key with an RSA encryption key, or an EdDSA primary key with an ECDH subkey, etc.
+
 Each of the following User ID packets provides the identity of the owner of this public key.
 If there are multiple User ID packets, this corresponds to multiple means of identifying the same unique individual user; for example, a user may have more than one email address, and construct a User ID for each one.
 A transferable public key SHOULD include at least one User ID packet unless storage requirements prohibit this.
@@ -3406,9 +3453,9 @@ User Attribute packets and User ID packets may be freely intermixed in this sect
 After the User ID packet or Attribute packet, there may be zero or more Subkey packets.
 In general, subkeys are provided in cases where the top-level public key is a signature-only key.
 However, any V4 or V5 key may have subkeys, and the subkeys may be encryption-only keys, signature-only keys, or general-purpose keys.
-Every subkey for a v5 primary key MUST be a V5 subkey.
-Every subkey for a V4 primary key MUST be a V4 subkey.
-V3 keys MUST NOT have subkeys.
+
+It is also possible to have a signature-only subkey.
+This permits a primary key that collects certifications (key signatures), but is used only for certifying subkeys that are used for encryption and signatures.
 
 Each Subkey packet MUST be followed by one Signature packet, which should be a subkey binding signature issued by the top-level key.
 For subkeys that can issue signatures, the subkey binding signature MUST contain an Embedded Signature subpacket with a primary key binding signature (0x19) issued by the subkey on the top-level key.
@@ -3514,60 +3561,6 @@ For example, a program bundle may contain a file, and with it a second file that
 These detached signatures are simply a Signature packet stored separately from the data for which they are a signature.
 
 # Enhanced Key Formats {#enhanced-key-formats}
-
-## Key Structures
-
-The format of an OpenPGP V3 key is as follows.
-Entries in square brackets are optional and ellipses indicate repetition.
-
-    RSA Public Key
-       [Revocation Self Signature]
-        User ID [Signature ...]
-       [User ID [Signature ...] ...]
-
-Each signature certifies the RSA public key and the preceding User ID.
-The RSA public key can have many User IDs and each User ID can have many signatures.
-V3 keys are deprecated.
-Implementations MUST NOT generate new V3 keys, but MAY continue to use existing ones.
-
-The format of an OpenPGP V4 key that uses multiple public keys is similar except that the other keys are added to the end as "subkeys" of the primary key.
-
-    Primary-Key
-       [Revocation Self Signature]
-       [Direct Key Signature...]
-       [User ID [Signature ...] ...]
-       [User Attribute [Signature ...] ...]
-       [[Subkey [Binding-Signature-Revocation ...]
-               Subkey-Binding-Signature ...] ...]
-
-A subkey always has at least one subkey binding signature after it that is issued using the primary key to tie the two keys together.
-These binding signatures may be in either V3 or V4 format, but SHOULD be V4.
-Subkeys that can issue signatures MUST have a V4 binding signature due to the REQUIRED embedded primary key binding signature.
-
-The format of an OpenPGP V5 key is similar to a V4 key.
-
-    Primary-Key
-        [Revocation Self Signature...]
-        Direct Key Signature...
-        [User ID [Signature...]]...
-        [User Attribute [Signature...]]...
-        [Subkey [Binding-Signature-Revocation...] Subkey-Binding-Signature...]...
-
-Note, that a V5 key uses a Direct-Key-Signature to store algorithm preferences.
-
-When a primary V5 Public Key is revoked, it is sometimes distributed with only the revocation self-signature:
-
-    Primary-Key
-        Revocation Self Signature
-
-In this case, the direct key signature is no longer necessary, since the primary key itself has been marked as unusable.
-
-In order to create self-signatures (see {{self-sigs}}), the primary key MUST be an algorithm capable of making signatures (that is, not an encryption-only algorithm).
-The subkeys may be keys of any type.
-For example, there may be a single-key RSA key, an EdDSA primary key with an RSA encryption key, or an EdDSA primary key with an ECDH subkey, etc.
-
-It is also possible to have a signature-only subkey.
-This permits a primary key that collects certifications (key signatures), but is used only for certifying subkeys that are used for encryption and signatures.
 
 ## Key IDs and Fingerprints {#key-ids-fingerprints}
 
