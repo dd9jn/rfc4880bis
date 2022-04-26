@@ -2125,7 +2125,7 @@ When decrypting the secret key material using any of these schemes (that is, whe
 In particular, an implementation MUST NOT interpret octets beyond the unwrapped cleartext octet stream as part of any of the unwrapped MPI objects.
 Furthermore, an implementation MUST reject as unusable any secret key material whose cleartext length does not align with the lengths of the unwrapped MPI objects.
 
-## Key IDs and Fingerprints {#key-ids-fingerprints}
+### Key IDs and Fingerprints {#key-ids-fingerprints}
 
 For a V3 key, the eight-octet Key ID consists of the low 64 bits of the public modulus of the RSA key.
 
@@ -2189,12 +2189,12 @@ Also note that if V3, V4, and V5 format keys share the same RSA key material, th
 
 Finally, the Key ID and fingerprint of a subkey are calculated in the same way as for a primary key, including the 0x99 (V4 key) or 0x9A (V5 key) as the first octet (even though this is not a valid packet ID for a public subkey).
 
-## Algorithm-specific Parts of Keys
+### Algorithm-specific Parts of Keys
 
 The public and secret key format specifies algorithm-specific parts of a key.
 The following sections describe them in detail.
 
-### Algorithm-Specific Part for RSA Keys {#key-rsa}
+#### Algorithm-Specific Part for RSA Keys {#key-rsa}
 
 The public key is this series of multiprecision integers:
 
@@ -2212,7 +2212,7 @@ The secret key is this series of multiprecision integers:
 
 - MPI of u, the multiplicative inverse of p, mod q.
 
-### Algorithm-Specific Part for DSA Keys {#key-dsa}
+#### Algorithm-Specific Part for DSA Keys {#key-dsa}
 
 The public key is this series of multiprecision integers:
 
@@ -2228,7 +2228,7 @@ The secret key is this single multiprecision integer:
 
 - MPI of DSA secret exponent x.
 
-### Algorithm-Specific Part for Elgamal Keys {#key-elgamal}
+#### Algorithm-Specific Part for Elgamal Keys {#key-elgamal}
 
 The public key is this series of multiprecision integers:
 
@@ -2242,7 +2242,7 @@ The secret key is this single multiprecision integer:
 
 - MPI of Elgamal secret exponent x.
 
-### Algorithm-Specific Part for ECDSA Keys {#key-ecdsa}
+#### Algorithm-Specific Part for ECDSA Keys {#key-ecdsa}
 
 The public key is this series of values:
 
@@ -2258,7 +2258,7 @@ The secret key is this single multiprecision integer:
 
 - MPI of an integer representing the secret key, which is a scalar of the public EC point.
 
-### Algorithm-Specific Part for EdDSA Keys {#key-eddsa}
+#### Algorithm-Specific Part for EdDSA Keys {#key-eddsa}
 
 The public key is this series of values:
 
@@ -2281,7 +2281,7 @@ The value stored in an OpenPGP EdDSA secret key packet is the original sequence 
 
 Note that a ECDH secret key over the equivalent curve instead stores the curve-specific secret scalar itself, rather than the sequence of random octets stored in an EdDSA secret key.
 
-### Algorithm-Specific Part for ECDH Keys {#key-ecdh}
+#### Algorithm-Specific Part for ECDH Keys {#key-ecdh}
 
 The public key is this series of values:
 
@@ -2309,12 +2309,12 @@ The secret key is this single multiprecision integer:
 
 - An MPI representing the secret key, in the curve-specific format described in {{curve-specific-formats}}.
 
-#### ECDH Secret Key Material
+##### ECDH Secret Key Material
 
 When curve P-256, P-384, or P-521 are used in ECDH, their secret keys are represented as a simple integer in standard MPI form.
 Other curves are presented on the wire differently (though still as a single MPI), as described below and in {{curve-specific-formats}}.
 
-##### Curve25519 ECDH Secret Key Material {#curve25519-secrets}
+###### Curve25519 ECDH Secret Key Material {#curve25519-secrets}
 
 A Curve25519 secret key is stored as a standard integer in big-endian MPI form.
 Note that this form is in reverse octet order from the little-endian "native" form found in {{RFC7748}}.
@@ -2331,7 +2331,7 @@ When generating a new Curve25519 secret key from 32 fully-random octets, the fol
         mpi_header = [ 0x00, 0xff ]
         return mpi_header || reversed(octet_list)
 
-##### X448 ECDH Secret Key Material
+###### X448 ECDH Secret Key Material
 
 An X448 secret key is contained within its MPI as a prefixed octet string (see {{ec-prefix}}), which encapsulates the native secret key format found in {{RFC7748}}.
 The full wire format (as an MPI) will thus be the three octets `01 c7 40` followed by the full 56 octet native secret key.
