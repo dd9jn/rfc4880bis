@@ -3370,44 +3370,10 @@ This section describes the rules for how packets should be placed into sequences
 OpenPGP users may transfer public keys.
 This section describes the structure of public keys in transit to ensure interoperability.
 
-### OpenPGP V3 Key Structure
-
-The format of an OpenPGP V3 key is as follows.
-Entries in square brackets are optional and ellipses indicate repetition.
-
-    RSA Public Key
-       [Revocation Self Signature]
-        User ID [Signature ...]
-       [User ID [Signature ...] ...]
-
-Each signature certifies the RSA public key and the preceding User ID.
-The RSA public key can have many User IDs and each User ID can have many signatures.
-V3 keys are deprecated.
-Implementations MUST NOT generate new V3 keys, but MAY continue to use existing ones.
-
-V3 keys MUST NOT have subkeys.
-
-### OpenPGP V4 Key Structure
-
-The format of an OpenPGP V4 key that uses multiple public keys is similar except that the other keys are added to the end as "subkeys" of the primary key.
-
-    Primary-Key
-       [Revocation Self Signature]
-       [Direct Key Signature...]
-       [User ID [Signature ...] ...]
-       [User Attribute [Signature ...] ...]
-       [[Subkey [Binding-Signature-Revocation ...]
-               Subkey-Binding-Signature ...] ...]
-
-A subkey always has at least one subkey binding signature after it that is issued using the primary key to tie the two keys together.
-These binding signatures may be in either V3 or V4 format, but SHOULD be V4.
-Subkeys that can issue signatures MUST have a V4 binding signature due to the REQUIRED embedded primary key binding signature.
-
-Every subkey for a V4 primary key MUST be a V4 subkey.
-
 ### OpenPGP V5 Key Structure
 
-The format of an OpenPGP V5 key is similar to a V4 key.
+The format of an OpenPGP V5 key is as follows.
+Entries in square brackets are optional and ellipses indicate repetition.
 
     Primary-Key
         [Revocation Self Signature...]
@@ -3427,6 +3393,40 @@ When a primary V5 Public Key is revoked, it is sometimes distributed with only t
         Revocation Self Signature
 
 In this case, the direct key signature is no longer necessary, since the primary key itself has been marked as unusable.
+
+### OpenPGP V4 Key Structure
+
+The format of an OpenPGP V4 key is as follows.
+
+    Primary-Key
+       [Revocation Self Signature]
+       [Direct Key Signature...]
+       [User ID [Signature ...] ...]
+       [User Attribute [Signature ...] ...]
+       [[Subkey [Binding-Signature-Revocation ...]
+               Subkey-Binding-Signature ...] ...]
+
+A subkey always has at least one subkey binding signature after it that is issued using the primary key to tie the two keys together.
+These binding signatures may be in either V3 or V4 format, but SHOULD be V4.
+Subkeys that can issue signatures MUST have a V4 binding signature due to the REQUIRED embedded primary key binding signature.
+
+Every subkey for a V4 primary key MUST be a V4 subkey.
+
+### OpenPGP V3 Key Structure
+
+The format of an OpenPGP V3 key is as follows.
+
+    RSA Public Key
+       [Revocation Self Signature]
+        User ID [Signature ...]
+       [User ID [Signature ...] ...]
+
+Each signature certifies the RSA public key and the preceding User ID.
+The RSA public key can have many User IDs and each User ID can have many signatures.
+V3 keys are deprecated.
+Implementations MUST NOT generate new V3 keys, but MAY continue to use existing ones.
+
+V3 keys MUST NOT have subkeys.
 
 ### Common requirements
 
