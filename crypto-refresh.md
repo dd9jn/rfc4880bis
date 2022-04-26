@@ -3454,9 +3454,6 @@ After the User ID packet or Attribute packet, there may be zero or more Subkey p
 In general, subkeys are provided in cases where the top-level public key is a signature-only key.
 However, any V4 or V5 key may have subkeys, and the subkeys may be encryption-only keys, signature-only keys, or general-purpose keys.
 
-It is also possible to have a signature-only subkey.
-This permits a primary key that collects certifications (key signatures), but is used only for certifying subkeys that are used for encryption and signatures.
-
 Each Subkey packet MUST be followed by one Signature packet, which should be a subkey binding signature issued by the top-level key.
 For subkeys that can issue signatures, the subkey binding signature MUST contain an Embedded Signature subpacket with a primary key binding signature (0x19) issued by the subkey on the top-level key.
 
