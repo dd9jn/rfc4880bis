@@ -2017,7 +2017,7 @@ V2 keys are identical to the deprecated V3 keys except for the version number.
 
 The version 4 format is similar to the version 3 format except for the absence of a validity period.
 This has been moved to the Signature packet.
-In addition, fingerprints of version 4 keys are calculated differently from version 3 keys, as described in {{enhanced-key-formats}}.
+In addition, fingerprints of version 4 keys are calculated differently from version 3 keys, as described in {{key-ids-fingerprints}}.
 
 A version 4 packet contains:
 
@@ -2032,7 +2032,7 @@ A version 4 packet contains:
 
 The version 5 format is similar to the version 4 format except for the addition of a count for the key material.
 This count helps parsing secret key packets (which are an extension of the public key packet format) in the case of an unknown algorithm.
-In addition, fingerprints of version 5 keys are calculated differently from version 4 keys, as described in {{enhanced-key-formats}}.
+In addition, fingerprints of version 5 keys are calculated differently from version 4 keys, as described in {{key-ids-fingerprints}}.
 
 A version 5 packet contains:
 
