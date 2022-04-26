@@ -3451,8 +3451,9 @@ Like the User ID packets, a User Attribute packet is followed by zero or more Si
 User Attribute packets and User ID packets may be freely intermixed in this section, so long as the signatures that follow them are maintained on the proper User Attribute or User ID packet.
 
 After the User ID packet or Attribute packet, there may be zero or more Subkey packets.
-In general, subkeys are provided in cases where the top-level public key is a signature-only key.
-However, any V4 or V5 key may have subkeys, and the subkeys may be encryption-only keys, signature-only keys, or general-purpose keys.
+In general, subkeys are provided in cases where the top-level public key is a certification-only key.
+However, any V4 or V5 key may have subkeys, and the subkeys may be encryption keys, signing keys, authentication keys, etc.
+It is good practice to use separate subkeys for every operation (i.e. signature-only, encryption-only, authentication-only keys, etc.).
 
 Each Subkey packet MUST be followed by one Signature packet, which should be a subkey binding signature issued by the top-level key.
 For subkeys that can issue signatures, the subkey binding signature MUST contain an Embedded Signature subpacket with a primary key binding signature (0x19) issued by the subkey on the top-level key.
