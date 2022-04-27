@@ -2677,6 +2677,8 @@ The OpenPGP standard specifies one such printable encoding scheme to ensure inte
 OpenPGP's Radix-64 encoding is composed of two parts: a base64 encoding of the binary data and an optional checksum.
 The base64 encoding is identical to the MIME base64 content-transfer-encoding {{RFC2045}}.
 
+## Optional checksum {#optional-crc24}
+
 The optional checksum is a 24-bit Cyclic Redundancy Check (CRC) converted to four characters of radix-64 encoding by the same MIME base64 transformation, preceded by an equal sign (=).
 The CRC is computed by using the generator 0x864CFB and an initialization of 0xB704CE.
 The accumulation is done on the data before it is converted to radix-64, rather than on the converted data.
@@ -2684,7 +2686,27 @@ A sample implementation of this algorithm is in {{sample-crc24}}.
 
 If present, the checksum with its leading equal sign MUST appear on the next line after the base64 encoded data.
 
-## An Implementation of the CRC-24 in "C" {#sample-crc24}
+An implementation MUST NOT reject an OpenPGP object when the CRC24 footer is present, missing, malformed, or disagrees with the computed CRC24 sum.
+When forming ASCII Armor, the CRC24 footer SHOULD NOT be generated, unless interoperability with implementations that require the CRC24 footer to be present is a concern.
+
+The CRC24 footer MUST NOT be generated if it can be determined by context or by the OpenPGP object being encoded that the consuming implementation accepts Radix-64 encoded blocks without CRC24 footer.
+Notably:
+
+- An ASCII-armored Encrypted Message packet sequence that ends in an v2 SEIPD packet MUST NOT contain a CRC24 footer.
+
+- An ASCII-armored sequence of Signature packets that only includes v5 Signature packets MUST NOT contain a CRC24 footer.
+
+- An ASCII-armored Transferable Public Key packet sequence of a v5 key MUST NOT contain a CRC24 footer.
+
+- An ASCII-armored keyring consisting of only v5 keys MUST NOT contain a CRC24 footer.
+
+Rationale:
+Previous versions of this document state that the CRC24 footer is optional, but the text was ambiguous.
+In practice, very few implementations require the CRC24 footer to be present.
+Computing the CRC24 incurs a significant cost, while providing no meaningful integrity protection.
+Therefore, generating it is now discouraged.
+
+### An Implementation of the CRC-24 in "C" {#sample-crc24}
 
 {: sourcecode-name="sample-crc24.c"}
 ~~~ text/x-csrc
@@ -2726,7 +2748,7 @@ Concatenating the following data creates ASCII Armor:
 
 - The ASCII-Armored data
 
-- An Armor Checksum
+- An optional Armor Checksum (discouraged, see {{optional-crc24}})
 
 - The Armor Tail, which depends on the Armor Header Line
 
@@ -2891,7 +2913,6 @@ No such assurance is possible, however, when the number of octets transmitted wa
 
 yDgBO22WxBHv7O8X7O/jygAEzol56iUKiXmV+XmpCtmpqQUKiQrFqclFqUDBovzS
 vBSFjNSiVHsuAA==
-=njUN
 -----END PGP MESSAGE-----
 ~~~
 
@@ -4433,7 +4454,6 @@ The same packet, represented in ASCII-armored form is:
 
 xjMEU/NfCxYJKwYBBAHaRw8BAQdAPwmJlL3ZFu1AUxl5NOSofIBzOhKA1i+AEJku
 Q+47JAY=
-=zD4a
 -----END PGP PUBLIC KEY BLOCK-----
 ~~~
 
@@ -4470,7 +4490,6 @@ The same packet represented in ASCII-armored form is:
 
 iF4EABYIAAYFAlX5X5UACgkQjP3hIZeWWpr2IgD/VvkMypjiECY3vZg/2xbBMd/S
 ftgr9N3lYG4NdWrtM2YBANCcT6EVJ/A44PV/IgHYLy6iyQMyZfps60iehUuuYbQE
-=e4KH
 -----END PGP SIGNATURE-----
 ~~~
 
@@ -4497,7 +4516,6 @@ lwBQnfJnGYBF7hPBMl1/AwEIB8KOBRgWCAAAAAkFAmIg0FcCGwwAAAAjIiEF
 G0Qp1bb6aZvkyAjPu144TzcWImHyXX8XATjOLTAM30t2vVIiqtITHHtzmroU
 10kwplUBANrkpE2T3XCNqLYnFEfpj0+eyNjUDX4LZye4k5SICcIkAPwNFfvq
 wyg7rLV+WXlG27Z7S2gNpt1VbZSBs6IxjzXABg==
-=/KaB
 -----END PGP PUBLIC KEY BLOCK-----
 ~~~
 
@@ -4528,7 +4546,6 @@ c1+gD+HCjgUYFggAAAAJBQJiINBXAhsMAAAAIyIhBRtEKdW2+mmb5MgIz7te
 OE83FiJh8l1/FwE4zi0wDN9Ldr1SIqrSExx7c5q6FNdJMKZVAQDa5KRNk91w
 jai2JxRH6Y9PnsjY1A1+C2cnuJOUiAnCJAD8DRX76sMoO6y1fll5Rtu2e0to
 DabdVW2UgbOiMY81wAY=
-=GmWV
 -----END PGP PRIVATE KEY BLOCK-----
 ~~~
 
@@ -4689,7 +4706,6 @@ w0AFHgcBCwMIpa5XnR/F2Cv/aSJPkZmTs1Bvo7WaanPP+Np0a4jjV+iuVOuH4dcF
 ddcvYCMpkFI+mlkJSSJAa+HD0mkCBwEGn/kOOzIZZPOkKRPI3MZhkyUBUifvt+rq
 pJ8EwuZ0F11KPSJu1q/LnKmsEiwUcOEcY9TAqyQcapOK1Iv5mlqZuQu6gyXeYQR1
 QCWKt5Wala0FHdqW6xVDHf719eIlXKeCYVRuM5o=
-=wG7F
 -----END PGP MESSAGE-----
 ~~~
 
@@ -4849,7 +4865,6 @@ wz8FHQcCCwMIVqKY0vXjZFP/z8xcEWZO2520JZDX3EaweMXAQZzFGzpGh8sy5bcD
 HOfGaXV2W1wh2SrvTMBcP+rSaQIHAgYgpmH3MfyaMDK1YjMmAn46XY21dI6+/wsM
 WRDQns3WQf+f04VidYA1vEl1TOG/P/+n2tCjuBBPUTPPQqQQCoPu9MobSAGohGv0
 K82nyM6dZeIS8wHLzZj9yt5pSod61CRzI/boVw==
-=K/pk
 -----END PGP MESSAGE-----
 ~~~
 
@@ -5008,7 +5023,6 @@ wzwFGgcDCwMI6dOXhbIHAAj/tC58SD70iERXyzcmDAxL8/LNbLe244tb8zRnwccZ
 RN1ZA0ZmL1reYf+EvODSaQIHAwb8uUSQvLmLvcnRBsYJAmaUD3LontwhtVlrFXax
 Ae0Pn/xvxtZbv9JNzQeQlm5tHoWjAFN4TLHYtqBpnvEhVaeyrWJYUxtXZR/Xd3kS
 +pXjXZtAIW9ppMJI2yj/QzHxYykHOZ5v+Q==
-=ClBe
 -----END PGP MESSAGE-----
 ~~~
 
@@ -5029,7 +5043,6 @@ Comment: Session key: 01FE16BBACFD1E7B78EF3B865187374F
 wycEBwScUvg8J/leUNU1RA7N/zE2AQQVnlL8rSLPP5VlQsunlO+ECxHSPgGYGKY+
 YJz4u6F+DDlDBOr5NRQXt/KJIf4m4mOlKyC/uqLbpnLJZMnTq3o79GxBTdIdOzhH
 XfA3pqV4mTzF
-=uIks
 -----END PGP MESSAGE-----
 ~~~
 
@@ -5044,7 +5057,6 @@ Comment: Session key: 27006DAE68E509022CE45A14E569E91001C2955AF8DFE194
 wy8ECAThTKxHFTRZGKli3KNH4UP4AQQVhzLJ2va3FG8/pmpIPd/H/mdoVS5VBLLw
 F9I+AdJ1Sw56PRYiKZjCvHg+2bnq02s33AJJoyBexBI4QKATFRkyez2gldJldRys
 LVg77Mwwfgl2n/d572WciAM=
-=n8Ma
 -----END PGP MESSAGE-----
 ~~~
 
@@ -5059,7 +5071,6 @@ Comment: Session key: BBEDA55B9AAE63DAC45D4F49D89DACF4AF37FEFC13BAB2F1F8E18FB745
 wzcECQS4eJUgIG/3mcaILEJFpmJ8AQQVnZ9l7KtagdClm9UaQ/Z6M/5roklSGpGu
 623YmaXezGj80j4B+Ku1sgTdJo87X1Wrup7l0wJypZls21Uwd67m9koF60eefH/K
 95D1usliXOEm8ayQJQmZrjf6K6v9PWwqMQ==
-=1fB/
 -----END PGP MESSAGE-----
 ~~~
 
