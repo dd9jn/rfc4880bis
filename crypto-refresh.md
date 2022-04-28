@@ -4033,10 +4033,10 @@ These types are deprecated.
 The "key flags" subpacket in a signature is a much better way to express the same idea, and generalizes it to all algorithms.
 An implementation SHOULD NOT create such a key, but MAY interpret it.
 
-An implementation MUST NOT generate RSA keys of size less than 2048 bits.
-An implementation SHOULD NOT encrypt, sign or verify using RSA keys of size less than 2048 bits.
-An implementation MUST NOT encrypt, sign or verify using RSA keys of size less than 1024 bits.
-An implementation that decrypts a message using an RSA secret key of size less than 2048 bits SHOULD generate a deprecation warning that the key is too weak for modern use.
+An implementation MUST NOT generate RSA keys of size less than 3072 bits.
+An implementation SHOULD NOT encrypt, sign or verify using RSA keys of size less than 3072 bits.
+An implementation MUST NOT encrypt, sign or verify using RSA keys of size less than 2048 bits.
+An implementation that decrypts a message using an RSA secret key of size less than 3072 bits SHOULD generate a deprecation warning that the key is too weak for modern use.
 
 ## DSA
 
