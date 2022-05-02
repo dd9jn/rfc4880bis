@@ -3018,6 +3018,7 @@ RSA (1) keys are deprecated and SHOULD NOT be generated, but may be interpreted.
 RSA Encrypt-Only (2) and RSA Sign-Only (3) are deprecated and MUST NOT be generated.
 See {{rsa-notes}}.
 Elgamal (16) keys are deprecated and MUST NOT be generated (see {{elgamal-notes}}).
+DSA (17) keys are deprecated and MUST NOT be generated (see {{dsa-notes}}).
 See {{reserved-notes}} for notes on Elgamal Encrypt or Sign (20), and X9.42 (21).
 Implementations MAY implement any other algorithm.
 
@@ -4049,27 +4050,12 @@ An implementation MUST NOT create such a key, but MAY interpret it.
 
 An implementation SHOULD NOT implement RSA keys of size less than 1024 bits.
 
-## DSA
+## DSA {#dsa-notes}
 
-An implementation SHOULD NOT implement DSA keys of size less than 1024 bits.
-It MUST NOT implement a DSA key with a q size of less than 160 bits.
-DSA keys MUST also be a multiple of 64 bits, and the q size MUST be a multiple of 8 bits.
-The Digital Signature Standard (DSS) {{FIPS186}} specifies that DSA be used in one of the following ways:
+DSA is expected to be deprecated in {{?FIPS186-5=DOI.10.6028/NIST.FIPS.186-5-draft}}.
+Therefore, an implementation MUST NOT generate DSA keys.
 
-- 1024-bit key, 160-bit q, SHA-1, SHA2-224, SHA2-256, SHA2-384, or SHA2-512 hash
-
-- 2048-bit key, 224-bit q, SHA2-224, SHA2-256, SHA2-384, or SHA2-512 hash
-
-- 2048-bit key, 256-bit q, SHA2-256, SHA2-384, or SHA2-512 hash
-
-- 3072-bit key, 256-bit q, SHA2-256, SHA2-384, or SHA2-512 hash
-
-The above key and q size pairs were chosen to best balance the strength of the key with the strength of the hash.
-Implementations SHOULD use one of the above key and q size pairs when generating DSA keys.
-If DSS compliance is desired, one of the specified SHA hashes must be used as well.
-{{FIPS186}} is the ultimate authority on DSS, and should be consulted for all questions of DSS compliance.
-
-Note that earlier versions of this standard only allowed a 160-bit q with no truncation allowed, so earlier implementations may not be able to handle signatures with a different q size or a truncated hash.
+An implementation MUST NOT sign or verify using DSA keys.
 
 ## Elgamal {#elgamal-notes}
 
