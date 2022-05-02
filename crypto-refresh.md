@@ -153,12 +153,6 @@ informative:
       name: Marc Stevens
     date: June 2013
 normative:
-  AES:
-    target: http://csrc.nist.gov/publications/fips/fips197/fips-197.{ps,pdf}
-    title: FIPS PUB 197, Advanced Encryption Standard (AES)
-    author:
-      org: NIST
-    date: November 2001'
   BLOWFISH:
     target: http://www.counterpane.com/bfsverlag.html
     title: Description of a New Variable-Length Key, 64-Bit Block Cipher (Blowfish)
@@ -191,24 +185,6 @@ normative:
       ins: T. Elgamal
     seriesinfo:
       IEEE Transactions on Information Theory: v. IT-31, n. 4, 1985, pp. 469-472
-  FIPS180:
-    target: http://dx.doi.org/10.6028/NIST.FIPS.180-4
-    title: Secure Hash Standard (SHS), FIPS 180-4
-    author:
-      org: National Institute of Standards and Technology, U.S. Department of Commerce
-    date: August 2015
-  FIPS186:
-    target: http://dx.doi.org/10.6028/NIST.FIPS.186-4
-    title: Digital Signature Standard (DSS), FIPS 186-4
-    author:
-      org: National Institute of Standards and Technology, U.S. Department of Commerce
-    date: July 2013
-  FIPS202:
-    target: http://dx.doi.org/10.6028/NIST.FIPS.202
-    title: "SHA-3 Standard: Permutation-Based Hash and Extendable-Output Functions, FIPS 202"
-    author:
-      org: National Institute of Standards and Technology, U.S. Department of Commerce
-    date: August 2015
   HAC:
     title: Handbook of Applied Cryptography
     date: 1996
@@ -2991,7 +2967,7 @@ ID | Algorithm | Public Key Format | Secret Key Format | Signature Format | PKES
  2 | RSA Encrypt-Only {{HAC}} | MPI(n), MPI(e) \[{{key-rsa}}]| MPI(d), MPI(p), MPI(q), MPI(u) | N/A | MPI(m\**e mod n) \[{{pkesk-rsa}}]
  3 | RSA Sign-Only {{HAC}} | MPI(n), MPI(e) \[{{key-rsa}}] | MPI(d), MPI(p), MPI(q), MPI(u) | MPI(m\**d mod n) \[{{sig-rsa}}] | N/A 
  16 | Elgamal (Encrypt-Only) {{ELGAMAL}} {{HAC}} | MPI(p), MPI(g), MPI(y) \[{{key-elgamal}}] | MPI(x) | N/A | MPI(g\*\*k mod p), MPI (m * y\*\*k mod p) \[{{pkesk-elgamal}}]
- 17 | DSA (Digital Signature Algorithm) {{FIPS186}} {{HAC}} | MPI(p), MPI(q), MPI(g), MPI(y) \[{{key-dsa}}] | MPI(x) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
+ 17 | DSA (Digital Signature Algorithm) {{!FIPS186=DOI.10.6028/NIST.FIPS.186-4}} {{HAC}} | MPI(p), MPI(q), MPI(g), MPI(y) \[{{key-dsa}}] | MPI(x) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
  18 | ECDH public key algorithm | OID, MPI(point in curve-specific point format), KDFParams \[see {{curve-specific-formats}}, {{key-ecdh}}]| MPI(value in curve-specific format) \[{{curve-specific-formats}}]| N/A | MPI(point in curve-specific point format), size octet, encoded key \[{{curve-specific-formats}}, {{pkesk-ecdh}}, {{ec-dh-algorithm-ecdh}}]
  19 | ECDSA public key algorithm {{FIPS186}} | OID, MPI(point in SEC1 format) \[{{key-ecdsa}}] | MPI(value) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
  20 | Reserved (formerly Elgamal Encrypt or Sign)
@@ -3074,7 +3050,7 @@ ID | Algorithm
   4 | Blowfish (128 bit key, 16 rounds) {{BLOWFISH}}
   5 | Reserved
   6 | Reserved
-  7 | AES with 128-bit key {{AES}}
+  7 | AES with 128-bit key {{!AES=DOI.10.6028/NIST.FIPS.197}}
   8 | AES with 192-bit key
   9 | AES with 256-bit key
  10 | Twofish with 256-bit key {{TWOFISH}}
@@ -3112,7 +3088,7 @@ Implementations MAY implement any other algorithm.
 ID | Algorithm | Text Name
 ---:|----------|--------------
   1 | MD5 {{HAC}} | "MD5"
-  2 | SHA-1 {{FIPS180}} | "SHA1"
+  2 | SHA-1 {{!FIPS180=DOI.10.6028/NIST.FIPS.180-4}} | "SHA1"
   3 | RIPEMD-160 {{HAC}} | "RIPEMD160"
   4 | Reserved
   5 | Reserved
@@ -3122,7 +3098,7 @@ ID | Algorithm | Text Name
   9 | SHA2-384 {{FIPS180}} | "SHA384"
  10 | SHA2-512 {{FIPS180}} | "SHA512"
  11 | SHA2-224 {{FIPS180}} | "SHA224"
- 12 | SHA3-256 {{FIPS202}} | "SHA3-256"
+ 12 | SHA3-256 {{!FIPS202=DOI.10.6028/NIST.FIPS.202}} | "SHA3-256"
  13 | Reserved
  14 | SHA3-512 {{FIPS202}} | "SHA3-512"
 100 to 110 | Private/Experimental algorithm
