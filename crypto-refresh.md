@@ -3064,6 +3064,7 @@ Implementations MUST implement AES-128.
 Implementations SHOULD implement AES-256.
 Implementations MUST NOT encrypt data with IDEA, TripleDES, or CAST5.
 Implementations MAY decrypt data that uses IDEA, TripleDES, or CAST5 for the sake of reading older messages or new messages from legacy clients.
+An Implementation that decrypts data using IDEA, TripleDES, or CAST5 SHOULD generate a deprecation warning about the symmetric algorithm, indicating that message confidentiality is suspect.
 Implementations MAY implement any other algorithm.
 
 ## Compression Algorithms {#compression-algos}
@@ -4008,7 +4009,10 @@ These types are deprecated.
 The "key flags" subpacket in a signature is a much better way to express the same idea, and generalizes it to all algorithms.
 An implementation SHOULD NOT create such a key, but MAY interpret it.
 
-An implementation SHOULD NOT implement RSA keys of size less than 1024 bits.
+An implementation MUST NOT generate RSA keys of size less than 3072 bits.
+An implementation SHOULD NOT encrypt, sign or verify using RSA keys of size less than 3072 bits.
+An implementation MUST NOT encrypt, sign or verify using RSA keys of size less than 2048 bits.
+An implementation that decrypts a message using an RSA secret key of size less than 3072 bits SHOULD generate a deprecation warning that the key is too weak for modern use.
 
 ## DSA
 
