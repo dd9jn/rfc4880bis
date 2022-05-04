@@ -3449,12 +3449,12 @@ The format of an OpenPGP v5 key is as follows.
 Entries in square brackets are optional and ellipses indicate repetition.
 
     Primary Key
-        [Revocation Signature...]
+       [Revocation Signature...]
         Direct-Key Signature...
-        [User ID [Signature...]]...
-        [User Attribute [Signature...]]...
-        [Subkey [Subkey Revocation Signature...] Subkey Binding Signature...]...
-        [Padding]
+       [User ID [Signature...]]...
+       [User Attribute [Signature...]]...
+       [Subkey [Subkey Revocation Signature...] Subkey Binding Signature...]...
+       [Padding]
 
 Note, that a v5 key uses a Direct-Key Signature to store algorithm preferences.
 
@@ -3474,10 +3474,9 @@ The format of an OpenPGP v4 key is as follows.
     Primary Key
        [Revocation Signature]
        [Direct-Key Signature...]
-       [User ID [Signature ...] ...]
-       [User Attribute [Signature ...] ...]
-       [[Subkey [Subkey Revocation Signature ...]
-               Subkey Binding Signature ...] ...]
+       [User ID [Signature...]]...
+       [User Attribute [Signature...]]...
+       [Subkey [Subkey Revocation Signature...] Subkey Binding Signature...]...
 
 A subkey always has at least one subkey binding signature after it that is issued using the primary key to tie the two keys together.
 These binding signatures may be in either v3 or v4 format, but SHOULD be v4.
@@ -3491,8 +3490,8 @@ The format of an OpenPGP v3 key is as follows.
 
     RSA Public Key
        [Revocation Signature]
-        User ID [Signature ...]
-       [User ID [Signature ...] ...]
+        User ID [Signature...]
+       [User ID [Signature...]]...
 
 Each signature certifies the RSA public key and the preceding User ID.
 The RSA public key can have many User IDs and each User ID can have many signatures.
