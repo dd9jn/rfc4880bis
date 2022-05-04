@@ -1996,7 +1996,7 @@ V2 keys are identical to the deprecated V3 keys except for the version number.
 
 The version 4 format is similar to the version 3 format except for the absence of a validity period.
 This has been moved to the Signature packet.
-In addition, fingerprints of version 4 keys are calculated differently from version 3 keys, as described in {{enhanced-key-formats}}.
+In addition, fingerprints of version 4 keys are calculated differently from version 3 keys, as described in {{key-ids-fingerprints}}.
 
 A version 4 packet contains:
 
@@ -2011,7 +2011,7 @@ A version 4 packet contains:
 
 The version 5 format is similar to the version 4 format except for the addition of a count for the key material.
 This count helps parsing secret key packets (which are an extension of the public key packet format) in the case of an unknown algorithm.
-In addition, fingerprints of version 5 keys are calculated differently from version 4 keys, as described in {{enhanced-key-formats}}.
+In addition, fingerprints of version 5 keys are calculated differently from version 4 keys, as described in {{key-ids-fingerprints}}.
 
 A version 5 packet contains:
 
@@ -2104,12 +2104,76 @@ When decrypting the secret key material using any of these schemes (that is, whe
 In particular, an implementation MUST NOT interpret octets beyond the unwrapped cleartext octet stream as part of any of the unwrapped MPI objects.
 Furthermore, an implementation MUST reject as unusable any secret key material whose cleartext length does not align with the lengths of the unwrapped MPI objects.
 
-## Algorithm-specific Parts of Keys
+### Key IDs and Fingerprints {#key-ids-fingerprints}
+
+For a V3 key, the eight-octet Key ID consists of the low 64 bits of the public modulus of the RSA key.
+
+The fingerprint of a V3 key is formed by hashing the body (but not the two-octet length) of the MPIs that form the key material (public modulus n, followed by exponent e) with MD5.
+Note that both V3 keys and MD5 are deprecated.
+
+A V4 fingerprint is the 160-bit SHA-1 hash of the octet 0x99, followed by the two-octet packet length, followed by the entire Public-Key packet starting with the version field.
+The Key ID is the low-order 64 bits of the fingerprint.
+Here are the fields of the hash material, with the example of an EdDSA key:
+
+a.1) 0x99 (1 octet)
+
+a.2) two-octet, big-endian scalar octet count of (b)-(e)
+
+b) version number = 4 (1 octet);
+
+c) timestamp of key creation (4 octets);
+
+d) algorithm (1 octet): 22 = EdDSA (example);
+
+e) Algorithm-specific fields.
+
+Algorithm-Specific Fields for EdDSA keys (example):
+
+e.1) A one-octet size of the following field;
+
+e.2) The octets representing a curve OID, defined in {{ec-curves}};
+
+e.3) An MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
+
+A V5 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9A, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
+The Key ID is the high-order 64 bits of the fingerprint.
+Here are the fields of the hash material, with the example of an EdDSA key:
+
+a.1) 0x9A (1 octet)
+
+a.2) four-octet scalar octet count of (b)-(f)
+
+b) version number = 5 (1 octet);
+
+c) timestamp of key creation (4 octets);
+
+d) algorithm (1 octet): 22 = EdDSA (example);
+
+e) four-octet scalar octet count for the following key material;
+
+f) algorithm-specific fields.
+
+Algorithm-Specific Fields for EdDSA keys (example):
+
+f.1) A one-octet size of the following field;
+
+f.2) The octets representing a curve OID, defined in {{ec-curves}};
+
+f.3) An MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
+
+Note that it is possible for there to be collisions of Key IDs --- two different keys with the same Key ID.
+Note that there is a much smaller, but still non-zero, probability that two different keys have the same fingerprint.
+
+Also note that if V3, V4, and V5 format keys share the same RSA key material, they will have different Key IDs as well as different fingerprints.
+
+Finally, the Key ID and fingerprint of a subkey are calculated in the same way as for a primary key, including the 0x99 (V4 key) or 0x9A (V5 key) as the first octet (even though this is not a valid packet ID for a public subkey).
+
+### Algorithm-specific Parts of Keys
 
 The public and secret key format specifies algorithm-specific parts of a key.
 The following sections describe them in detail.
 
-### Algorithm-Specific Part for RSA Keys {#key-rsa}
+#### Algorithm-Specific Part for RSA Keys {#key-rsa}
 
 The public key is this series of multiprecision integers:
 
@@ -2127,7 +2191,7 @@ The secret key is this series of multiprecision integers:
 
 - MPI of u, the multiplicative inverse of p, mod q.
 
-### Algorithm-Specific Part for DSA Keys {#key-dsa}
+#### Algorithm-Specific Part for DSA Keys {#key-dsa}
 
 The public key is this series of multiprecision integers:
 
@@ -2143,7 +2207,7 @@ The secret key is this single multiprecision integer:
 
 - MPI of DSA secret exponent x.
 
-### Algorithm-Specific Part for Elgamal Keys {#key-elgamal}
+#### Algorithm-Specific Part for Elgamal Keys {#key-elgamal}
 
 The public key is this series of multiprecision integers:
 
@@ -2157,7 +2221,7 @@ The secret key is this single multiprecision integer:
 
 - MPI of Elgamal secret exponent x.
 
-### Algorithm-Specific Part for ECDSA Keys {#key-ecdsa}
+#### Algorithm-Specific Part for ECDSA Keys {#key-ecdsa}
 
 The public key is this series of values:
 
@@ -2173,7 +2237,7 @@ The secret key is this single multiprecision integer:
 
 - MPI of an integer representing the secret key, which is a scalar of the public EC point.
 
-### Algorithm-Specific Part for EdDSA Keys {#key-eddsa}
+#### Algorithm-Specific Part for EdDSA Keys {#key-eddsa}
 
 The public key is this series of values:
 
@@ -2196,7 +2260,7 @@ The value stored in an OpenPGP EdDSA secret key packet is the original sequence 
 
 Note that a ECDH secret key over the equivalent curve instead stores the curve-specific secret scalar itself, rather than the sequence of random octets stored in an EdDSA secret key.
 
-### Algorithm-Specific Part for ECDH Keys {#key-ecdh}
+#### Algorithm-Specific Part for ECDH Keys {#key-ecdh}
 
 The public key is this series of values:
 
@@ -2224,12 +2288,12 @@ The secret key is this single multiprecision integer:
 
 - An MPI representing the secret key, in the curve-specific format described in {{curve-specific-formats}}.
 
-#### ECDH Secret Key Material
+##### ECDH Secret Key Material
 
 When curve P-256, P-384, or P-521 are used in ECDH, their secret keys are represented as a simple integer in standard MPI form.
 Other curves are presented on the wire differently (though still as a single MPI), as described below and in {{curve-specific-formats}}.
 
-##### Curve25519 ECDH Secret Key Material {#curve25519-secrets}
+###### Curve25519 ECDH Secret Key Material {#curve25519-secrets}
 
 A Curve25519 secret key is stored as a standard integer in big-endian MPI form.
 Note that this form is in reverse octet order from the little-endian "native" form found in {{RFC7748}}.
@@ -2246,7 +2310,7 @@ When generating a new Curve25519 secret key from 32 fully-random octets, the fol
         mpi_header = [ 0x00, 0xff ]
         return mpi_header || reversed(octet_list)
 
-##### X448 ECDH Secret Key Material
+###### X448 ECDH Secret Key Material
 
 An X448 secret key is contained within its MPI as a prefixed octet string (see {{ec-prefix}}), which encapsulates the native secret key format found in {{RFC7748}}.
 The full wire format (as an MPI) will thus be the three octets `01 c7 40` followed by the full 56 octet native secret key.
@@ -3348,27 +3412,74 @@ This section describes the rules for how packets should be placed into sequences
 ## Transferable Public Keys
 
 OpenPGP users may transfer public keys.
-The essential elements of a transferable public key are as follows:
+This section describes the structure of public keys in transit to ensure interoperability.
 
-- One Public-Key packet
+### OpenPGP V5 Key Structure
 
-- Zero or more revocation signatures
+The format of an OpenPGP V5 key is as follows.
+Entries in square brackets are optional and ellipses indicate repetition.
 
-- Zero or more User ID packets
+    Primary-Key
+        [Revocation Self Signature...]
+        Direct Key Signature...
+        [User ID [Signature...]]...
+        [User Attribute [Signature...]]...
+        [Subkey [Binding-Signature-Revocation...] Subkey-Binding-Signature...]...
+		[Padding]
 
-- After each User ID packet, zero or more Signature packets (certifications)
+Note, that a V5 key uses a Direct-Key-Signature to store algorithm preferences.
 
-- Zero or more User Attribute packets
+Every subkey for a V5 primary key MUST be a V5 subkey.
 
-- After each User Attribute packet, zero or more Signature packets (certifications)
+When a primary V5 Public Key is revoked, it is sometimes distributed with only the revocation self-signature:
 
-- Zero or more Subkey packets
+    Primary-Key
+        Revocation Self Signature
 
-- After each Subkey packet, one Signature packet, plus optionally a revocation
+In this case, the direct key signature is no longer necessary, since the primary key itself has been marked as unusable.
 
-- An optional Padding packet
+### OpenPGP V4 Key Structure
+
+The format of an OpenPGP V4 key is as follows.
+
+    Primary-Key
+       [Revocation Self Signature]
+       [Direct Key Signature...]
+       [User ID [Signature ...] ...]
+       [User Attribute [Signature ...] ...]
+       [[Subkey [Binding-Signature-Revocation ...]
+               Subkey-Binding-Signature ...] ...]
+
+A subkey always has at least one subkey binding signature after it that is issued using the primary key to tie the two keys together.
+These binding signatures may be in either V3 or V4 format, but SHOULD be V4.
+Subkeys that can issue signatures MUST have a V4 binding signature due to the REQUIRED embedded primary key binding signature.
+
+Every subkey for a V4 primary key MUST be a V4 subkey.
+
+### OpenPGP V3 Key Structure
+
+The format of an OpenPGP V3 key is as follows.
+
+    RSA Public Key
+       [Revocation Self Signature]
+        User ID [Signature ...]
+       [User ID [Signature ...] ...]
+
+Each signature certifies the RSA public key and the preceding User ID.
+The RSA public key can have many User IDs and each User ID can have many signatures.
+V3 keys are deprecated.
+Implementations MUST NOT generate new V3 keys, but MAY continue to use existing ones.
+
+V3 keys MUST NOT have subkeys.
+
+### Common requirements
 
 The Public-Key packet occurs first.
+
+In order to create self-signatures (see {{self-sigs}}), the primary key MUST be an algorithm capable of making signatures (that is, not an encryption-only algorithm).
+The subkeys may be keys of any type.
+For example, there may be a single-key RSA key, an EdDSA primary key with an RSA encryption key, or an EdDSA primary key with an ECDH subkey, etc.
+
 Each of the following User ID packets provides the identity of the owner of this public key.
 If there are multiple User ID packets, this corresponds to multiple means of identifying the same unique individual user; for example, a user may have more than one email address, and construct a User ID for each one.
 A transferable public key SHOULD include at least one User ID packet unless storage requirements prohibit this.
@@ -3384,11 +3495,9 @@ Like the User ID packets, a User Attribute packet is followed by zero or more Si
 User Attribute packets and User ID packets may be freely intermixed in this section, so long as the signatures that follow them are maintained on the proper User Attribute or User ID packet.
 
 After the User ID packet or Attribute packet, there may be zero or more Subkey packets.
-In general, subkeys are provided in cases where the top-level public key is a signature-only key.
-However, any V4 or V5 key may have subkeys, and the subkeys may be encryption-only keys, signature-only keys, or general-purpose keys.
-Every subkey for a v5 primary key MUST be a V5 subkey.
-Every subkey for a V4 primary key MUST be a V4 subkey.
-V3 keys MUST NOT have subkeys.
+In general, subkeys are provided in cases where the top-level public key is a certification-only key.
+However, any V4 or V5 key may have subkeys, and the subkeys may be encryption keys, signing keys, authentication keys, etc.
+It is good practice to use separate subkeys for every operation (i.e. signature-only, encryption-only, authentication-only keys, etc.).
 
 Each Subkey packet MUST be followed by one Signature packet, which should be a subkey binding signature issued by the top-level key.
 For subkeys that can issue signatures, the subkey binding signature MUST contain an Embedded Signature subpacket with a primary key binding signature (0x19) issued by the subkey on the top-level key.
@@ -3400,7 +3509,7 @@ The optional trailing Padding packet is a mechanism to defend against traffic an
 For maximum interoperability, if the Public-Key packet is a V4 key, the optional Padding packet SHOULD NOT be present unless the recipient has indicated that they are capable of ignoring it successfully.
 An implementation that is capable of receiving a transferable public key with a V5 Public-Key primary key MUST be able to accept (and ignore) the trailing optional Padding packet.
 
-Transferable public-key packet sequences may be concatenated to allow transferring multiple public keys in one operation.
+Transferable public-key packet sequences may be concatenated to allow transferring multiple public keys in one operation (see {{keyrings}}).
 
 ## Transferable Secret Keys
 
@@ -3492,126 +3601,6 @@ An implementation processing an Encrypted Message MUST discard any preceding ESK
 Some OpenPGP applications use so-called "detached signatures".
 For example, a program bundle may contain a file, and with it a second file that is a detached signature of the first file.
 These detached signatures are simply one or more Signature packets stored separately from the data for which they are a signature.
-
-# Enhanced Key Formats {#enhanced-key-formats}
-
-## Key Structures
-
-The format of an OpenPGP V3 key is as follows.
-Entries in square brackets are optional and ellipses indicate repetition.
-
-    RSA Public Key
-       [Revocation Self Signature]
-        User ID [Signature ...]
-       [User ID [Signature ...] ...]
-
-Each signature certifies the RSA public key and the preceding User ID.
-The RSA public key can have many User IDs and each User ID can have many signatures.
-V3 keys are deprecated.
-Implementations MUST NOT generate new V3 keys, but MAY continue to use existing ones.
-
-The format of an OpenPGP V4 key that uses multiple public keys is similar except that the other keys are added to the end as "subkeys" of the primary key.
-
-    Primary-Key
-       [Revocation Self Signature]
-       [Direct Key Signature...]
-       [User ID [Signature ...] ...]
-       [User Attribute [Signature ...] ...]
-       [[Subkey [Binding-Signature-Revocation ...]
-               Subkey-Binding-Signature ...] ...]
-
-A subkey always has at least one subkey binding signature after it that is issued using the primary key to tie the two keys together.
-These binding signatures may be in either V3 or V4 format, but SHOULD be V4.
-Subkeys that can issue signatures MUST have a V4 binding signature due to the REQUIRED embedded primary key binding signature.
-
-The format of an OpenPGP V5 key is similar to a V4 key.
-
-    Primary-Key
-        [Revocation Self Signature...]
-        Direct Key Signature...
-        [User ID [Signature...]]...
-        [User Attribute [Signature...]]...
-        [Subkey [Binding-Signature-Revocation...] Subkey-Binding-Signature...]...
-
-Note, that a V5 key uses a Direct-Key-Signature to store algorithm preferences.
-
-When a primary V5 Public Key is revoked, it is sometimes distributed with only the revocation self-signature:
-
-    Primary-Key
-        Revocation Self Signature
-
-In this case, the direct key signature is no longer necessary, since the primary key itself has been marked as unusable.
-
-In order to create self-signatures (see {{self-sigs}}), the primary key MUST be an algorithm capable of making signatures (that is, not an encryption-only algorithm).
-The subkeys may be keys of any type.
-For example, there may be a single-key RSA key, an EdDSA primary key with an RSA encryption key, or an EdDSA primary key with an ECDH subkey, etc.
-
-It is also possible to have a signature-only subkey.
-This permits a primary key that collects certifications (key signatures), but is used only for certifying subkeys that are used for encryption and signatures.
-
-## Key IDs and Fingerprints {#key-ids-fingerprints}
-
-For a V3 key, the eight-octet Key ID consists of the low 64 bits of the public modulus of the RSA key.
-
-The fingerprint of a V3 key is formed by hashing the body (but not the two-octet length) of the MPIs that form the key material (public modulus n, followed by exponent e) with MD5.
-Note that both V3 keys and MD5 are deprecated.
-
-A V4 fingerprint is the 160-bit SHA-1 hash of the octet 0x99, followed by the two-octet packet length, followed by the entire Public-Key packet starting with the version field.
-The Key ID is the low-order 64 bits of the fingerprint.
-Here are the fields of the hash material, with the example of an EdDSA key:
-
-a.1) 0x99 (1 octet)
-
-a.2) two-octet, big-endian scalar octet count of (b)-(e)
-
-b) version number = 4 (1 octet);
-
-c) timestamp of key creation (4 octets);
-
-d) algorithm (1 octet): 22 = EdDSA (example);
-
-e) Algorithm-specific fields.
-
-Algorithm-Specific Fields for EdDSA keys (example):
-
-e.1) A one-octet size of the following field;
-
-e.2) The octets representing a curve OID, defined in {{ec-curves}};
-
-e.3) An MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
-
-A V5 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9A, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
-The Key ID is the high-order 64 bits of the fingerprint.
-Here are the fields of the hash material, with the example of an EdDSA key:
-
-a.1) 0x9A (1 octet)
-
-a.2) four-octet scalar octet count of (b)-(f)
-
-b) version number = 5 (1 octet);
-
-c) timestamp of key creation (4 octets);
-
-d) algorithm (1 octet): 22 = EdDSA (example);
-
-e) four-octet scalar octet count for the following key material;
-
-f) algorithm-specific fields.
-
-Algorithm-Specific Fields for EdDSA keys (example):
-
-f.1) A one-octet size of the following field;
-
-f.2) The octets representing a curve OID, defined in {{ec-curves}};
-
-f.3) An MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
-
-Note that it is possible for there to be collisions of Key IDs --- two different keys with the same Key ID.
-Note that there is a much smaller, but still non-zero, probability that two different keys have the same fingerprint.
-
-Also note that if V3, V4, and V5 format keys share the same RSA key material, they will have different Key IDs as well as different fingerprints.
-
-Finally, the Key ID and fingerprint of a subkey are calculated in the same way as for a primary key, including the 0x99 (V4 key) or 0x9A (V5 key) as the first octet (even though this is not a valid packet ID for a public subkey).
 
 # Elliptic Curve Cryptography
 
