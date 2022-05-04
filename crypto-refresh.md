@@ -3092,7 +3092,7 @@ Implementations MAY implement any other algorithm.
 ID | Algorithm | Text Name
 ---:|----------|--------------
   1 | MD5 {{HAC}} | "MD5"
-  2 | SHA-1 {{!FIPS180=DOI.10.6028/NIST.FIPS.180-4}} | "SHA1"
+  2 | SHA-1 {{!FIPS180=DOI.10.6028/NIST.FIPS.180-4}}, {{sha1cd}} | "SHA1"
   3 | RIPEMD-160 {{HAC}} | "RIPEMD160"
   4 | Reserved
   5 | Reserved
@@ -4202,7 +4202,7 @@ However, an OpenPGP implementation cannot completely discard the SHA-1 algorithm
 In particular, the V4 fingerprint derivation uses SHA-1.
 So as long as an OpenPGP implementation supports V4 public keys, it will need to implement SHA-1 in at least some scenarios.
 
-To avoid the risk of uncertain breakage from a maliciously introduced SHA-1 collision, an OpenPGP implementation MAY attempt to detect when a hash input is likely from a known collision attack, and then either deliberately reject the hash input or modifying the hash output.
+To avoid the risk of uncertain breakage from a maliciously introduced SHA-1 collision, an OpenPGP implementation MAY attempt to detect when a hash input is likely from a known collision attack, and then either deliberately reject the hash input or modify the hash output.
 This should convert an uncertain breakage (where it is unclear what the effect of a collision will be) to an explicit breakage, which is more desirable for a robust implementation.
 
 {{STEVENS2013}} describes a method for detecting indicators of well-known SHA-1 collision attacks.
