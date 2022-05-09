@@ -49,6 +49,36 @@ informative:
     date: 1996
     seriesinfo:
       Lecture Notes in Computer Science: Volume 1070, pp. 10-18
+  BLEICHENBACHER-PKCS1:
+    title: Chosen Ciphertext Attacks Against Protocols Based on the RSA Encryption Standard PKCS \#1
+    author:
+      -
+        ins: D. Bleichenbacher
+    date: 1998
+    target: http://archiv.infsec.ethz.ch/education/fs08/secsem/Bleichenbacher98.pdf
+  EFAIL:
+    title: "Efail: Breaking S/MIME and OpenPGP Email Encryption using Exfiltration Channels"
+    target: https://www.usenix.org/system/files/conference/usenixsecurity18/sec18-poddebniak.pdf
+    date: 2018
+    author:
+      -
+        name: Damian Poddebniak
+      -
+        name: Christian Dresen
+      -
+        name: Jens Müller
+      -
+        name: Fabian Ising
+      -
+        name: Sebastian Schinzel
+      -
+        name: Simon Friedberger
+      -
+        name: Juraj Somorovsky
+      -
+        name: Jörg Schwenk
+    seriesinfo:
+      Proceedings of the 27th USENIX Conference on Security Symposium, August 2018, Pages 549–566
   JKS02:
     title: Implementation of Chosen-Ciphertext Attacks against PGP and GnuPG
     target: http://www.counterpane.com/pgp-attack.html
@@ -67,6 +97,35 @@ informative:
     author:
       ins: N. Koblitz
     date: 1997
+  KOPENPGP:
+    title: "Victory by KO: Attacking OpenPGP Using Key Overwriting"
+    target: https://www.kopenpgp.com/
+    date: 2022
+    author:
+      -
+        name: Lara Bruseghini
+      -
+        name: Kenneth G. Paterson
+      -
+        name: Daniel Huigens
+    seriesinfo:
+      Proceedings of the 29th ACM Conference on Computer and Communications Security, November 2022 (to appear)
+    
+  MRLG15:
+    title: Format Oracles on OpenPGP
+    authors:
+      -
+        name: Florian Maury
+      -
+        name: Jean-René Reinhard
+      -
+        name: Olivier Levillain
+      -
+        name: Henri Gilbert
+    date: 2015
+    seriesinfo:
+      CT-RSA 2015: Topics in Cryptology –- CT-RSA 2015 pp 220–236
+      DOI: 10.1007/978-3-319-16715-2_12
   MZ05:
     title: An Attack on CFB Mode Encryption As Used By OpenPGP
     seriesinfo:
@@ -4199,7 +4258,7 @@ Asymmetric key size | Hash size | Symmetric key size
 
 - In late summer 2002, Jallad, Katz, and Schneier published an interesting attack on older versions of the OpenPGP protocol and some of its implementations {{JKS02}}.
   In this attack, the attacker modifies a message and sends it to a user who then returns the erroneously decrypted message to the attacker.
-  The attacker is thus using the user as a random oracle, and can often decrypt the message.
+  The attacker is thus using the user as a decryption oracle, and can often decrypt the message.
   This attack is a particular form of ciphertext malleability.
   See {{ciphertext-malleability}} for information on how to defend against such an attack using more recent versions of OpenPGP.
 
@@ -4246,24 +4305,23 @@ Compare this with the algorithm used for the session key of the message, which M
 
 ## Risks of a Quick Check Oracle {#quick-check-oracle}
 
-In winter 2005, Serge Mister and Robert Zuccherato from Entrust released a paper describing a way that the "quick check" in OpenPGP CFB mode can be used with a random oracle to decrypt two octets of every cipher block {{MZ05}}.
-They recommend as prevention not using the quick check at all.
+In winter 2005, Serge Mister and Robert Zuccherato from Entrust released a paper describing a way that the "quick check" in OpenPGP CFB mode (used by SEIPD v1 and SED packets) can be as an oracle to decrypt two octets of every cipher block {{MZ05}}. This check was intended for early detection of session key decryption errors, particularly to detect a wrong passphrase, since SKESK v4 packets do not include an integrity check.
 
-Many implementers have taken this advice to heart for any data that is symmetrically encrypted and for which the session key is public-key encrypted.
-In this case, the quick check is not needed as the public-key encryption of the session key should guarantee that it is the right session key.
-In other cases, the implementation should use the quick check with care.
+There is a danger to using the quick check if timing or error information about the check can be exposed to an attacker, particularly via an automated service that allows rapidly repeated queries.
 
-On the one hand, there is a danger to using it if there is a random oracle that can leak information to an attacker.
-In plainer language, there is a danger to using the quick check if timing information about the check can be exposed to an attacker, particularly via an automated service that allows rapidly repeated queries.
+Disabling the quick check prevents the attacks.
 
-On the other hand, it is inconvenient to the user to be informed that they typed in the wrong passphrase only after a petabyte of data is decrypted.
-There are many cases in cryptographic engineering where the implementer must use care and wisdom, and this is one.
+For very large legacy encrypted data whose session key is protected by a passphrase (SKESK v4), while the quick check may be convenient to the user to be informed early on that they typed the wrong passphrase, the implementation should use the quick check with care. The recommended approach for secure and early detection of decryption failure is to encrypt data using SEIPD v2.
+If the session key is public-key encrypted, the quick check is not useful as the public-key encryption of the session key should guarantee that it is the right session key.
 
 ## Avoiding Leaks From PKCS#1 Errors {#pkcs1-errors}
 
-PKCS#1 has been found to be vulnerable to attacks in which a system that reports errors in padding differently from errors in decryption becomes a random oracle that can leak the private key in mere millions of queries.
-Implementations must be aware of this attack and prevent it from happening.
-The simplest solution is to report a single error code for all variants of decryption errors so as not to leak information to an attacker.
+The PKCS#1 padding (used in RSA-encrypted and ElGamal-encrypted PKESK) has been found to be vulnerable to attacks in which a system that allows distinguishing padding errors from other decryption errors can act as a decryption and/or signing oracle that can leak the session key or allow signing arbitrary data, respectively {{BLEICHENBACHER-PKCS1}}. The number of queries required to carry out an attack can range from thousands to millions, depending on how strict and careful an implementation is in processing the padding.
+
+To make the attack more difficult, an implementation should implement strict padding checks.
+
+To prevent the attack, in settings where the attacker does not have access to timing information concerning the PKESK decryption operation, the simplest solution is to report a single error code for all variants of PKESK processing errors (this includes also session key parsing errors, such as on invalid cipher algorithm).
+If the attacker may have access to timing information, then a constant time solution is needed. This requires careful design since session key size and cipher information is typically not known in advance, as it is part of the the PKESK encrypted payload.
 
 ## Fingerprint Usability {#fingerprint-usability}
 
@@ -4292,7 +4350,8 @@ A number of attacks can arise in any cryptosystem that uses malleable encryption
 However, legacy OpenPGP data may have been created before these mechanisms were available.
 Because OpenPGP implementations deal with historic stored data, they may encounter malleable ciphertexts.
 
-When an OpenPGP implementation discovers that it is decrypting data that appears to be malleable, it MUST indicate a clear error message that the integrity of the message is suspect, SHOULD NOT release decrypted data to the user, and SHOULD halt with an error.
+When an OpenPGP implementation discovers that it is decrypting data that appears to be malleable, it MUST indicate a clear error message that the integrity of the message is suspect, SHOULD NOT attempt to parse nor release decrypted data to the user, and SHOULD halt with an error. Parsing or releasing decrypted data before having confirmed its integrity can leak the decrypted data {{EFAIL, MRLG15}}.
+
 An implementation that encounters malleable ciphertext MAY choose to release cleartext to the user if it is known to be dealing with historic archived legacy data, and the user is aware of the risks.
 
 Any of the following OpenPGP data elements indicate that malleable ciphertext is present:
@@ -4324,7 +4383,7 @@ In particular:
 
   - If one of the recipients does not support v2 SEIPD packets, then the message generator MAY use a v1 SEIPD packet instead.
 
-- Password-protected secret key material in a v5 Secret Key or v5 Secret Subkey packet SHOULD be protected with AEAD encryption (S2K usage octet 253) unless it will be transferred to an implementation that is known to not support AEAD.
+- Password-protected secret key material in a v5 Secret Key or v5 Secret Subkey packet SHOULD be protected with AEAD encryption (S2K usage octet 253) unless it will be transferred to an implementation that is known to not support AEAD. Implementations should be aware that, in scenarios where an attacker has access to encypted private keys, CFB-encrypted keys (S2K usage octet 254 or 255) are vulnerable to corruption attacks that can cause leakage of secret data when the secret key is used {{KOPENPGP}}.
 
 Implementers should implement AEAD (v2 SEIPD and S2K usage octet 253) promptly and encourage its spread.
 
