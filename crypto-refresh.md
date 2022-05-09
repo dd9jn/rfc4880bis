@@ -3532,7 +3532,8 @@ Transferable public-key packet sequences may be concatenated to allow transferri
 ## Transferable Secret Keys
 
 OpenPGP users may transfer secret keys.
-The format of a transferable secret key is the same as a transferable public key except that secret-key and secret-subkey packets are used instead of the public key and public-subkey packets.
+The format of a transferable secret key is the same as a transferable public key except that secret-key and secret-subkey packets can be used in addition to the public key and public-subkey packets.
+If a single secret-key or secret-subkey packet is included in a packet sequence, it is a transferable secret key and should be handled and marked as such (see {{forming-ascii-armor}}).
 Implementations SHOULD include self-signatures on any User IDs and subkeys, as this allows for a complete public key to be automatically extracted from the transferable secret key.
 Implementations MAY choose to omit the self-signatures, especially if a transferable public key accompanies the transferable secret key.
 
