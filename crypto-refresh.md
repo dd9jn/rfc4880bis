@@ -3078,6 +3078,7 @@ Implementations MUST implement EdDSA (19) for signatures, and ECDH (18) for encr
 RSA (1) keys are deprecated and SHOULD NOT be generated, but may be interpreted.
 RSA Encrypt-Only (2) and RSA Sign-Only (3) are deprecated and MUST NOT be generated.
 See {{rsa-notes}}.
+Elgamal (16) keys are deprecated and MUST NOT be generated (see {{elgamal-notes}}).
 See {{reserved-notes}} for notes on Elgamal Encrypt or Sign (20), and X9.42 (21).
 Implementations MAY implement any other algorithm.
 
@@ -4060,9 +4061,13 @@ If DSS compliance is desired, one of the specified SHA hashes must be used as we
 
 Note that earlier versions of this standard only allowed a 160-bit q with no truncation allowed, so earlier implementations may not be able to handle signatures with a different q size or a truncated hash.
 
-## Elgamal
+## Elgamal {#elgamal-notes}
 
-An implementation SHOULD NOT implement Elgamal keys of size less than 1024 bits.
+The PKCS1-v1_5 padding scheme, used by the Elgamal algorithm defined in this document, is no longer recommended, and its use is deprecated by {{SP800-131A}}.
+Therefore, an implementation MUST NOT generate Elgamal keys.
+
+An implementation MUST NOT encrypt using Elgamal keys.
+An implementation that decrypts a message using an Elgamal secret key SHOULD generate a deprecation warning that the key is too weak for modern use.
 
 ## EdDSA
 
