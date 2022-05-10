@@ -1,5 +1,11 @@
 image: debian:testing
 
+codespell:
+  stage: test
+  script:
+    - apt update -y -qq && apt install -y -qq --no-install-recommends make codespell
+    - make check
+
 pages:
   stage: deploy
   script:
