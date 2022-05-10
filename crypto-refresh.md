@@ -238,7 +238,6 @@ normative:
   RFC1950:
   RFC1951:
   RFC2045:
-  RFC2119:
   RFC2144:
   RFC2822:
   RFC3156:
@@ -251,7 +250,6 @@ normative:
   RFC8017:
   RFC8032:
   RFC8126:
-  RFC8174:
   RFC9106:
   SCHNEIER:
     title: "Applied Cryptography Second Edition: protocols, algorithms, and source code in C"
@@ -341,7 +339,7 @@ This document obsoletes: RFC 4880 (OpenPGP), RFC 5581 (Camellia in OpenPGP) and 
 "PGP", "Pretty Good", and "Pretty Good Privacy" are trademarks of PGP Corporation and are used with permission.
 The term "OpenPGP" refers to the protocol described in this and related documents.
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 {{RFC2119}} {{RFC8174}} when, and only when, they appear in all capitals, as shown here.
+{::boilerplate bcp14-tagged}
 
 The key words "PRIVATE USE", "SPECIFICATION REQUIRED", and "RFC REQUIRED" that appear in this document when used to describe namespace allocation are to be interpreted as described in {{RFC8126}}.
 
