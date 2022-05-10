@@ -1507,14 +1507,10 @@ The "flags" field holds four octets of flags.
 All undefined flags MUST be zero.
 Defined flags are as follows:
 
-First octet:
-
-{: title="Notation flag registry (first octet)"}
-flag | shorthand | definition
----|---|---
-0x80 | human-readable | This note value is text.
-
-Other octets: none.
+{: title="Signature Notation Data Subpacket Notation Flag registry"}
+Flag | Shorthand | Description | Security Recommended | Interoperability Recommended | Reference
+-----|-----------|-------------|----------------------|------------------------------|----------
+0x80 0x00 0x00 0x00 | human-readable | Notation value is text. | No | Yes | This document
 
 Notation names are arbitrary strings encoded in UTF-8.
 They reside in two namespaces: The IETF namespace and the user namespace.
@@ -3274,7 +3270,7 @@ Adding a new Signature Notation Data subpacket MUST be done through the SPECIFIC
 #### Signature Notation Data Subpacket Notation Flags
 
 This specification creates a new registry of Signature Notation Data Subpacket Notation Flags.
-The registry includes the columns "Flag", "Description", "Security Recommended", "Interoperability Recommended", and "Reference".
+The registry includes the columns "Flag", "Shorthand", "Description", "Security Recommended", "Interoperability Recommended", and "Reference".
 The initial values for this registry can be found in {{notation-data}}.
 Adding a new item MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
