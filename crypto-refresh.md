@@ -1519,6 +1519,13 @@ The IETF namespace is registered with IANA.
 These names MUST NOT contain the "@" character (0x40).
 This is a tag for the user namespace.
 
+{: title="Signature Notation Data Subpacket registry"}
+Notation Name | Data Type | Allowed Values | Reference
+--------------|-----------|----------------|----------
+ | | |
+
+[comment]: # (kramdown ignores tables without bodies, hence the empty row hack)
+
 Names in the user namespace consist of a UTF-8 string tag followed by "@" followed by a DNS domain name.
 Note that the tag MUST NOT contain an "@" character.
 For example, the "sample" tag used by Example Corporation could be "sample@example.com".
@@ -3263,7 +3270,7 @@ These are the Notation Data subpackets, which contain a key/value pair.
 Notations contain a user space that is completely unmanaged and an IETF space.
 
 This specification creates a registry of Signature Notation Data types.
-The registry includes the Signature Notation Data type, the name of the Signature Notation Data, its allowed values, and a reference to the defining specification.
+The registry includes the name of the Signature Notation Data, the Signature Notation Data type, its allowed values, and a reference to the defining specification.
 The initial values for this registry can be found in {{notation-data}}.
 Adding a new Signature Notation Data subpacket MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
