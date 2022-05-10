@@ -3801,7 +3801,7 @@ For encrypting to a v5 key, the size of the sequence is either 66 for curve P-25
 
 The key wrapping method is described in {{RFC3394}}.
 The KDF produces a symmetric key that is used as a key-encryption key (KEK) as specified in {{RFC3394}}.
-Refer to {{ecdh-kek-choice}} for the details regarding the choice of the KEK algorithm, which SHOULD be one of three AES algorithms.
+Refer to {{ecdh-parameters}} for the details regarding the choice of the KEK algorithm, which SHOULD be one of three AES algorithms.
 Key wrapping and unwrapping is performed with the default initial value of {{RFC3394}}.
 
 The input to the key wrapping method is the plaintext described in {{pkesk}}, "Public-Key Encrypted Session Key Packets (Tag 1)", padded using the method described in {{PKCS5}} to an 8-octet granularity.
@@ -3862,6 +3862,26 @@ Note that the recipient obtains the shared secret by calculating
     S = rV = rvG, where (r,R) is the recipient's key pair.
 
 Consistent with {{seipd}}, AEAD encryption or a Modification Detection Code (MDC) MUST be used anytime the symmetric key is protected by ECDH.
+
+### ECDH Parameters
+
+ECDH keys have a hash algorithm parameter for key derivation and a symmetric algorithm for key encapsulation.
+
+For v5 keys, the following algorithms MUST be used depending on the curve.
+An implementation MUST NOT generate a v5 ECDH key over any listed curve that uses different KDF or KEK parameters.
+An implementation MUST NOT encrypt any message to a v5 ECDH key over a listed curve that announces a different KDF or KEK parameter.
+
+For v4 keys, the following algorithms SHOULD be used depending on the curve.
+An implementation SHOULD only use an AES algorithm as a KEK algorithm.
+
+{: title="ECDH KDF and KEK parameters"}
+Curve | Hash algorithm | Symmetric algorithm
+------|----------------|--------------------
+NIST P-256 | SHA2-256 | AES-128
+NIST P-384 | SHA2-384 | AES-192
+NIST P-521 | SHA2-512 | AES-256
+Curve25519 | SHA2-256 | AES-128
+X448 | SHA2-512 | AES-256
 
 # Notes on Algorithms {#notes-on-algorithms}
 
@@ -4239,12 +4259,6 @@ Side channel attacks are a concern when a compliant application's use of the Ope
 ECC scalar multiplication operations used in ECDSA and ECDH are vulnerable to side channel attacks.
 Countermeasures can often be taken at the higher protocol level, such as limiting the number of allowed failures or time-blinding of the operations associated with each network interface.
 Mitigations at the scalar multiplication level seek to eliminate any measurable distinction between the ECC point addition and doubling operations.
-
-## Selecting a KEK for ECDH {#ecdh-kek-choice}
-
-An implementation SHOULD only use an AES algorithm as a KEK algorithm, since backward compatibility of the ECDH format is not a concern.
-The KEK algorithm is only used within the scope of a Public-Key Encrypted Session Key Packet, which represents an ECDH key recipient of a message.
-Compare this with the algorithm used for the session key of the message, which MAY be different from a KEK algorithm.
 
 ## Risks of a Quick Check Oracle {#quick-check-oracle}
 
