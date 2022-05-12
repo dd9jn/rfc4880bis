@@ -147,6 +147,12 @@ informative:
       -
         name: Robert Zuccherato
     target: http://eprint.iacr.org/2005/033
+  OPENPGPCARD:
+    target: https://gnupg.org/ftp/specs/OpenPGP-smart-card-application-3.4.1.pdf
+    title: Functional Specification of the OpenPGP application on ISO Smart Card Operating Systems (version 3.4.1)
+    date: 2020
+    author:
+      name: Achim Pietig
   PAX:
     title: "IEEE Standard for Information Technology--Portable Operating System Interface (POSIX(R)) Base Specifications, Issue 7: pax - portable archive interchange"
     author: 
@@ -4522,6 +4528,14 @@ Thus, this is a non-comprehensive list of potential problems and gotchas for a d
 - What this document calls Legacy packet format {{legacy-packet-format}} is what older documents called the "old packet format".
   It is the packet format of the legacy PGP 2 implementation.
   Older RFCs called the current OpenPGP packet format {{openpgp-packet-format}} the "new packet format".
+
+## Constrained Legacy Fingerprint Storage for v5 Keys
+
+Some OpenPGP implementations have fixed length constraints for key fingerprint storage that will not fit all 32 octets of a v5 fingerprint.
+For example, {{OPENPGPCARD}} reserves 20 octets for each stored fingerprint.
+
+An OpenPGP implementation MUST NOT attempt to map any part of a v5 fingerprint to such a constrained field unless the relevant spec for the constrained environment has explicit guidance for storing a v5 fingerprint that distinguishes it from a v4 fingerprint.
+An implementation interacting with such a constrained field SHOULD directly calculate the v5 fingerprint from public key material and associated metadata instead of relying on the constrained field.
 
 --- back
 
