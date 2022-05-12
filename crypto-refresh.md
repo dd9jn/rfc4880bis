@@ -3163,7 +3163,7 @@ The parameter curve OID is an array of octets that define a named curve.
 The table below specifies the exact sequence of octets for each named curve referenced in this document.
 It also specifies which public key algorithms the curve can be used with, as well as the size of expected elements in octets:
 
-{: title="ECC Curve OID and usage registry"}
+{: title="ECC Curve OID and usage registry" #ecc-oid-usage}
 ASN.1 Object Identifier | OID len | Curve OID octets in hexadecimal representation | Curve name | Usage | Field Size (fsize)
 ------------------------|----|-------------------------------|-------------|-----|-----|-----
 1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256 | ECDSA, ECDH | 32
@@ -3191,7 +3191,7 @@ Some Elliptic Curve Public Key Algorithms use different conventions for specific
 Each field is always formatted as an MPI, but with a curve-specific framing.
 This table summarizes those distinctions.
 
-{: title="Curve-specific wire formats"}
+{: title="Curve-specific wire formats" #ecc-wire-formats}
 Curve | ECDH Point Format | ECDH Secret Key MPI | EdDSA Secret Key MPI | EdDSA Signature first MPI | EdDSA Signature second MPI
 ------|-----------------|------------------|---------------------------|---------------------------
 NIST P-256 | SEC1 | integer | N/A | N/A | N/A
@@ -3428,6 +3428,12 @@ ID | Algorithm | Reference
 
    \[ Note to RFC-Editor: Please remove the table above on publication.
 \]
+
+#### Elliptic Curve Algorithms
+
+Some public key algorithms use Elliptic Curves.
+In particular, ECDH/EdDSA/ECDSA public key algorithms all allow specific curves to be used, as indicated by OID.
+To register a new elliptic curve for use with OpenPGP, its OID needs to be registered in {{ecc-oid-usage}}, its wire format needs to be documented in {{ecc-wire-formats}}, and if used for ECDH, its KDF and KEK parameters must be populated in {{ecdh-kdf-kek-parameters}}.
 
 ### Symmetric-Key Algorithms
 
@@ -3947,7 +3953,7 @@ An implementation MUST NOT encrypt any message to a v5 ECDH key over a listed cu
 For v4 keys, the following algorithms SHOULD be used depending on the curve.
 An implementation SHOULD only use an AES algorithm as a KEK algorithm.
 
-{: title="ECDH KDF and KEK parameters"}
+{: title="ECDH KDF and KEK parameters" #ecdh-kdf-kek-parameters}
 Curve | Hash algorithm | Symmetric algorithm
 ------|----------------|--------------------
 NIST P-256 | SHA2-256 | AES-128
