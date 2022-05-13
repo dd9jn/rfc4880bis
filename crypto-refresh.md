@@ -110,6 +110,17 @@ informative:
         name: Daniel Huigens
     seriesinfo:
       Proceedings of the 29th ACM Conference on Computer and Communications Security, November 2022 (to appear)
+  KR02:
+    title: "Attack on Private Signature Keys of the OpenPGP Format, PGP(TM) Programs and Other Applications Compatible with OpenPGP"
+    target: https://eprint.iacr.org/2002/076
+    date: 2002
+    author:
+      -
+        name: Vlastimil Klíma
+      -
+        name: Tomáš Rosa
+    seriesinfo:
+      Cryptology ePrint Archive, Report 2002/076
   MRLG15:
     title: Format Oracles on OpenPGP
     authors:
@@ -4309,22 +4320,24 @@ This check was intended for early detection of session key decryption errors, pa
 
 There is a danger to using the quick check if timing or error information about the check can be exposed to an attacker, particularly via an automated service that allows rapidly repeated queries.
 
-Disabling the quick check prevents the attacks.
+Disabling the quick check prevents the attack.
 
 For very large legacy encrypted data whose session key is protected by a passphrase (v4 SKESK), while the quick check may be convenient to the user to be informed early on that they typed the wrong passphrase, the implementation should use the quick check with care.
 The recommended approach for secure and early detection of decryption failure is to encrypt data using v2 SEIPD.
 If the session key is public-key encrypted, the quick check is not useful as the public-key encryption of the session key should guarantee that it is the right session key.
+
+The quick check oracle attack is a particular type of attack that exploits ciphertext malleability. For information about other similar attacks, see {{ciphertext-malleability}}.
 
 ## Avoiding Leaks From PKCS#1 Errors {#pkcs1-errors}
 
 The PKCS#1 padding (used in RSA-encrypted and ElGamal-encrypted PKESK) has been found to be vulnerable to attacks in which a system that allows distinguishing padding errors from other decryption errors can act as a decryption and/or signing oracle that can leak the session key or allow signing arbitrary data, respectively {{BLEICHENBACHER-PKCS1}}.
 The number of queries required to carry out an attack can range from thousands to millions, depending on how strict and careful an implementation is in processing the padding.
 
-To make the attack more difficult, an implementation should implement strict padding checks.
+To make the attack more difficult, an implementation SHOULD implement strict, robust, constant time padding checks.
 
-To prevent the attack, in settings where the attacker does not have access to timing information concerning the PKESK decryption operation, the simplest solution is to report a single error code for all variants of PKESK processing errors (this includes also session key parsing errors, such as on invalid cipher algorithm).
-If the attacker may have access to timing information, then a constant time solution is needed.
-This requires careful design since session key size and cipher information is typically not known in advance, as it is part of the the PKESK encrypted payload.
+To prevent the attack, in settings where the attacker does not have access to timing information concerning message decryption, the simplest solution is to report a single error code for all variants of PKESK processing errors as well as SEIPD integrity errors (this includes also session key parsing errors, such as on invalid cipher algorithm for v3 PKESK, or session key size mismatch for v5 PKESK).
+If the attacker may have access to timing information, then a constant time solution is also needed.
+This requires careful design, especially for v3 PKESK, where session key size and cipher information is typically not known in advance, as it is part of the PKESK encrypted payload.
 
 ## Fingerprint Usability {#fingerprint-usability}
 
@@ -4388,7 +4401,7 @@ In particular:
   - If one of the recipients does not support v2 SEIPD packets, then the message generator MAY use a v1 SEIPD packet instead.
 
 - Password-protected secret key material in a v5 Secret Key or v5 Secret Subkey packet SHOULD be protected with AEAD encryption (S2K usage octet 253) unless it will be transferred to an implementation that is known to not support AEAD.
-  Implementations should be aware that, in scenarios where an attacker has access to encypted private keys, CFB-encrypted keys (S2K usage octet 254 or 255) are vulnerable to corruption attacks that can cause leakage of secret data when the secret key is used {{KOPENPGP}}.
+  Implementations should be aware that, in scenarios where an attacker has access to encrypted private keys, CFB-encrypted keys (S2K usage octet 254 or 255) are vulnerable to corruption attacks that can cause leakage of secret data when the secret key is used {{KOPENPGP}}, {{KR02}}.
 
 Implementers should implement AEAD (v2 SEIPD and S2K usage octet 253) promptly and encourage its spread.
 
