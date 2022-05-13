@@ -882,7 +882,7 @@ The packet tag denotes what type of packet the body holds.
 Note that Legacy format headers can only have tags less than 16, whereas OpenPGP format headers can have tags as great as 63.
 The defined tags (in decimal) are as follows:
 
-{: title="Packet type registry"}
+{: title="Packet type registry" #packet-type-registry}
 Tag | Packet Type
 ---:|--------------------------------------------------
   0 | Reserved - a packet tag MUST NOT have this value
@@ -2461,7 +2461,7 @@ The last block-size octets of ciphertext are passed through the cipher and the b
 The repetition of 16 bits in the random data prefixed to the message allows the receiver to immediately check whether the session key is incorrect.
 See {{quick-check-oracle}} for hints on the proper use of this "quick check".
 
-## Marker Packet (Tag 10)
+## Marker Packet (Tag 10) {#marker-packet}
 
 The body of this packet consists of:
 
@@ -3514,6 +3514,19 @@ And populate them with the values found in {{pubkey-algos}}.
 OpenPGP packets are assembled into sequences in order to create messages and to transfer keys.
 Not all possible packet sequences are meaningful and correct.
 This section describes the rules for how packets should be placed into sequences.
+
+There are three distinct sequences of packets:
+
+- Transferable Public Keys ({{transferable-public-keys}}) and its close counterpart, Transferable Secret Keys ({{transferable-secret-keys}})
+- OpenPGP Messages ({{openpgp-messages}})
+- Detached Signatures ({{detached-signatures}})
+
+Each sequence has an explicit grammar of what packet types ({{packet-type-registry}}) can appear in what places.
+With the exception of the Marker packet ({{marker-packet}}) and the Padding packet ({{padding-packet}}), both of which can appear anywhere within any sequence, the presence of an unknown or unexpected packet type is a critical error, invalidating the entire sequence.
+
+When generating a sequence of OpenPGP packets according to one of the three grammars, an implementation MUST NOT inject a packet of a type that does not adhere to the grammar.
+
+When consuming a sequence of OpenPGP packets according to one of the three grammars, an implementation MUST reject the sequence with an error if it encounters a packet of inappropriate type according to the grammar.
 
 ## Transferable Public Keys
 
