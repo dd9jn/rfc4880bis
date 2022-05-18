@@ -923,7 +923,7 @@ Note that when an implementation forms several PKESKs with one session key, form
 
 - MPI of an EC point representing an ephemeral public key, in the point format associated with the curve as specified in {{ec-curves}}.
 
-- A one-octet size, followed by a symmetric key encoded using the method described in {{ec-dh-algorithm-ecdh}}.
+- A one-octet size, followed by a symmetric key encoded using the method described in {{ecdh}}.
 
 ### Notes on PKESK {#pkesk-notes}
 
@@ -1735,7 +1735,7 @@ Note that the length N of the fingerprint for a version 4 key is 20 octets; for 
 Since the version of the signature is bound to the version of the key, the version octet here MUST match the version of the signature.
 If the version octet does not match the signature version, the receiving implementation MUST treat it as a malformed signature (see {{malformed-signatures}}).
 
-#### Intended Recipient Fingerprint
+#### Intended Recipient Fingerprint {#intended-recipient-fingerprint}
 
 (1 octet key version number, N octets of fingerprint)
 
@@ -2289,7 +2289,7 @@ The public key is this series of values:
 
   - A one-octet hash function ID used with a KDF,
 
-  - A one-octet algorithm ID for the symmetric algorithm used to wrap the symmetric key used for the message encryption; see {{ec-dh-algorithm-ecdh}} for details.
+  - A one-octet algorithm ID for the symmetric algorithm used to wrap the symmetric key used for the message encryption; see {{ecdh}} for details.
 
 Observe that an ECDH public key is composed of the same sequence of fields that define an ECDSA key plus the KDF parameters field.
 
@@ -3062,7 +3062,7 @@ ID | Algorithm | Public Key Format | Secret Key Format | Signature Format | PKES
  3 | RSA Sign-Only {{HAC}} | MPI(n), MPI(e) \[{{key-rsa}}] | MPI(d), MPI(p), MPI(q), MPI(u) | MPI(m\**d mod n) \[{{sig-rsa}}] | N/A 
  16 | Elgamal (Encrypt-Only) {{ELGAMAL}} {{HAC}} | MPI(p), MPI(g), MPI(y) \[{{key-elgamal}}] | MPI(x) | N/A | MPI(g\*\*k mod p), MPI (m * y\*\*k mod p) \[{{pkesk-elgamal}}]
  17 | DSA (Digital Signature Algorithm) {{!FIPS186=DOI.10.6028/NIST.FIPS.186-4}} {{HAC}} | MPI(p), MPI(q), MPI(g), MPI(y) \[{{key-dsa}}] | MPI(x) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
- 18 | ECDH public key algorithm | OID, MPI(point in curve-specific point format), KDFParams \[see {{curve-specific-formats}}, {{key-ecdh}}]| MPI(value in curve-specific format) \[{{curve-specific-formats}}]| N/A | MPI(point in curve-specific point format), size octet, encoded key \[{{curve-specific-formats}}, {{pkesk-ecdh}}, {{ec-dh-algorithm-ecdh}}]
+ 18 | ECDH public key algorithm | OID, MPI(point in curve-specific point format), KDFParams \[see {{curve-specific-formats}}, {{key-ecdh}}]| MPI(value in curve-specific format) \[{{curve-specific-formats}}]| N/A | MPI(point in curve-specific point format), size octet, encoded key \[{{curve-specific-formats}}, {{pkesk-ecdh}}, {{ecdh}}]
  19 | ECDSA public key algorithm {{FIPS186}} | OID, MPI(point in SEC1 format) \[{{key-ecdsa}}] | MPI(value) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
  20 | Reserved (formerly Elgamal Encrypt or Sign)
  21 | Reserved for Diffie-Hellman (X9.42, as defined for IETF-S/MIME)
@@ -3083,7 +3083,7 @@ Implementations MAY implement any other algorithm.
 
 Note that an implementation conforming to the previous version of this standard ({{RFC4880}}) have only DSA (17) and Elgamal (16) as its MUST-implement algorithms.
 
-A compatible specification of ECDSA is given in {{RFC6090}} as "KT-I Signatures" and in {{SEC1}}; ECDH is defined in {{ec-dh-algorithm-ecdh}} of this document.
+A compatible specification of ECDSA is given in {{RFC6090}} as "KT-I Signatures" and in {{SEC1}}; ECDH is defined in {{ecdh}} of this document.
 
 ## ECC Curves for OpenPGP {#ec-curves}
 
@@ -3763,7 +3763,7 @@ However, {{SP800-56A}} is the normative source of the definition.
 
 Note that ZB in the KDF description above is the compact representation of X as defined in Section 4.2 of {{RFC6090}}.
 
-## EC DH Algorithm (ECDH)
+## EC DH Algorithm (ECDH) {#ecdh}
 
 The method is a combination of an ECC Diffie-Hellman method to establish a shared secret, a key derivation method to process the shared secret into a derived key, and a key wrapping method that uses the derived key to protect a session key used to encrypt a message.
 
@@ -3787,7 +3787,7 @@ The KDF parameters are encoded as a concatenation of the following 5 variable-le
 
   - A one-octet hash function ID used with the KDF,
 
-  - A one-octet algorithm ID for the symmetric algorithm used to wrap the symmetric key for message encryption; see {{ec-dh-algorithm-ecdh}} for details;
+  - A one-octet algorithm ID for the symmetric algorithm used to wrap the symmetric key for message encryption; see {{ecdh}} for details;
 
 - 20 octets representing the UTF-8 encoding of the string `Anonymous Sender    `, which is the octet sequence 41 6E 6F 6E 79 6D 6F 75 73 20 53 65 6E 64 65 72 20 20 20 20;
 
@@ -4265,6 +4265,26 @@ There are many cases in cryptographic engineering where the implementer must use
 PKCS#1 has been found to be vulnerable to attacks in which a system that reports errors in padding differently from errors in decryption becomes a random oracle that can leak the private key in mere millions of queries.
 Implementations must be aware of this attack and prevent it from happening.
 The simplest solution is to report a single error code for all variants of decryption errors so as not to leak information to an attacker.
+
+## Fingerprint Usability {#fingerprint-usability}
+
+This specification uses fingerprints in several places on the wire (e.g., {{revocation-key}}, {{issuer-fingerprint-subpacket}}, and {{intended-recipient-fingerprint}}), and in processing (e.g., in ECDH KDF {{ecdh}}).
+An implementation may also use the fingerprint internally, for example as an index to a keystore.
+
+Additionally, some OpenPGP users have historically used manual fingerprint comparison to verify the public key of a peer.
+For a version 4 fingerprint, this has typically been done with the fingerprint represented as 40 hexadecimal digits, often broken into groups of four digits with whitespace between each group.
+
+When a human is actively involved, the result of such a verification is dubious.
+We have little evidence that most humans are good at precise comparison of high-entropy data, particularly when that data is represented in compact textual form like a hexadecimal fingerprint.
+
+The version 5 fingerprint makes the challenge for a human verifier even worse.
+At 256 bits (compared to v4's 160 bit fingerprint), a v5 fingerprint is even harder for a human to successfully compare.
+
+An OpenPGP implementation should prioritize mechanical fingerprint transfer and comparison where possible, and SHOULD NOT promote manual transfer or comparison of full fingerprints by a human unless there is no other way to achieve the desired result.
+
+While this subsection acknowledges existing practice for human-representable v4 fingerprints, this document does not attempt to standardize any specific human-readable form of v5 fingerprint for this discouraged use case.
+
+NOTE: the topic of interoperable human-in-the-loop key verification needs more work, probably in a separate document.
 
 ## Avoiding Ciphertext Malleability {#ciphertext-malleability}
 
