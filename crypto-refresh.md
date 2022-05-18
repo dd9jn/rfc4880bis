@@ -3537,6 +3537,9 @@ The presence of an unknown critical packet, or a known but unexpected packet is 
 On the other hand, unknown non-critical packets can appear anywhere within any sequence.
 This provides a structured way to introduce new packets into the protocol, while making sure that certain packets will be handled strict.
 
+An implementation may "recognize" a packet, but not implement it.
+The purpose of Packet Criticality is to allow the producer to tell the consumer whether it would prefer a new, unknown packet to generate an error or be ignored.
+
 Note that previous versions of this document did not have a concept of Packet Criticality, and did not give clear guidance on what to do when unknown packets are encountered.
 Therefore, a legacy implementation may reject unknown non-critical packets, or accept unknown critical packets.
 
