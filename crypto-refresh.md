@@ -1752,7 +1752,8 @@ All signatures are formed by producing a hash over the signature data, and then 
 When a v5 signature is made, the salt is hashed first.
 
 For binary document signatures (type 0x00), the document data is hashed directly.
-For text document signatures (type 0x01), the document is canonicalized by converting line endings to \<CR>\<LF>, and the resulting data is hashed.
+For text document signatures (type 0x01), the implementation MUST first canonicalize the document by converting line endings to \<CR>\<LF> and encoding it in UTF-8 (see {{RFC3629}}).
+The resulting UTF-8 bytestream is hashed.
 
 When a v4 signature is made over a key, the hash data starts with the octet 0x99, followed by a two-octet length of the key, and then body of the key packet.
 When a v5 signature is made over a key, the hash data starts with the octet 0x9a, followed by a four-octet length of the key, and then body of the key packet.
@@ -2428,7 +2429,7 @@ The body of this packet consists of:
 
 - The remainder of the packet is literal data.
 
-  Text data is stored with \<CR>\<LF> text endings (that is, network-normal line endings).
+  Text data MUST be encoded with UTF-8 (see {{RFC3629}}), and stored with \<CR>\<LF> text endings (that is, network-normal line endings).
   These should be converted to native line endings by the receiving software.
 
 Note that OpenPGP signatures do not include the formatting octet, the file name, and the date field of the literal packet in a signature hash and thus those fields are not protected against tampering in a signed document.
