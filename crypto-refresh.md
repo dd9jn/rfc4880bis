@@ -903,14 +903,14 @@ Before encrypting, a two-octet checksum is appended, which is equal to the sum o
 
 The resulting octet string (session key and checksum) is encrypted according to the public-key algorithm used, as described below.
 
-### Algorithm Specific Fields for RSA encryption {#pkesk-rsa}
+### Algorithm-Specific Fields for RSA encryption {#pkesk-rsa}
 
 - Multiprecision integer (MPI) of RSA-encrypted value m\*\*e mod n.
 
 The value "m" in the above formula is the plaintext value described above, encoded in the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC8017}} (see also {{pkcs-encoding}}).
 Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
 
-### Algorithm Specific Fields for Elgamal encryption {#pkesk-elgamal}
+### Algorithm-Specific Fields for Elgamal encryption {#pkesk-elgamal}
 
 - MPI of Elgamal (Diffie-Hellman) value g\*\*k mod p.
 
@@ -1041,7 +1041,7 @@ The body of a version 3 Signature Packet contains:
 - Two-octet field holding left 16 bits of signed hash value.
 
 - One or more multiprecision integers comprising the signature.
-  This portion is algorithm specific, as described below.
+  This portion is algorithm-specific, as described below.
 
 The concatenation of the data to be signed, the signature type, and creation time from the Signature packet (5 additional octets) is hashed.
 The resulting hash value is used in the signature algorithm.
@@ -1139,7 +1139,7 @@ The body of a v4 or v5 Signature packet contains:
 - Only for v5 signatures, a 16 octet field containing random values used as salt.
 
 - One or more multiprecision integers comprising the signature.
-  This portion is algorithm specific:
+  This portion is algorithm-specific:
 
 #### Algorithm-Specific Fields for RSA signatures {#sig-rsa}
 
@@ -4430,7 +4430,7 @@ The key was created on 2014-08-19 14:28:27 and thus the fingerprint of the OpenP
 
        C959 BDBA FA32 A2F8 9A15  3B67 8CFD E121 9796 5A9A
 
-The algorithm specific input parameters without the MPI length headers are:
+The algorithm-specific input parameters without the MPI length headers are:
 
   oid: 2b06010401da470f01
 
