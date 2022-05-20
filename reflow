@@ -65,6 +65,11 @@ def is_header(para:str) -> bool:
         return True
     return False
 
+def is_command(para:str) -> bool:
+    if para.startswith('{::'):
+        return True
+    return False
+
 class DraftState:
     def __init__(self) -> None:
         self.verbatim = False
@@ -88,7 +93,11 @@ class DraftState:
 
     def reflow(self, para:str) -> str:
         # don't reflow tables, verbatim blocks, YAML metadata, or quoted text:
-        if is_table(para) or self.is_verbatim(para) or is_yaml_metadata(para) or is_quoted_text(para):
+        if is_table(para) or \
+           self.is_verbatim(para) or \
+           is_yaml_metadata(para) or \
+           is_quoted_text(para) or \
+           is_command(para):
             return para
 
         if is_header(para):
