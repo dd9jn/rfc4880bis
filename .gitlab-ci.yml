@@ -1,5 +1,11 @@
 image: debian:testing
 
+reflow:
+  stage: test
+  script:
+    - apt update -y -qq && apt install -y -qq --no-install-recommends make python3 diffutils
+    - make check-reflow
+
 codespell:
   stage: test
   script:
