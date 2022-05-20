@@ -293,7 +293,6 @@ normative:
       -
         ins: N. Ferguson
     date: 1999
-
 --- abstract
 
 This document specifies the message formats used in OpenPGP.
@@ -310,7 +309,6 @@ This document obsoletes: RFC 4880 (OpenPGP), RFC 5581 (Camellia in OpenPGP) and 
 --- middle
 
 # Introduction
-
 
 This document provides information on the message-exchange packet formats used by OpenPGP to provide encryption, decryption, signing, and key management functions.
 It is a revision of RFC 4880, "OpenPGP Message Format", which is a revision of RFC 2440, which itself replaces RFC 1991, "PGP Message Exchange Formats" {{RFC1991}} {{RFC2440}} {{RFC4880}}.
