@@ -4326,7 +4326,8 @@ For very large legacy encrypted data whose session key is protected by a passphr
 The recommended approach for secure and early detection of decryption failure is to encrypt data using v2 SEIPD.
 If the session key is public-key encrypted, the quick check is not useful as the public-key encryption of the session key should guarantee that it is the right session key.
 
-The quick check oracle attack is a particular type of attack that exploits ciphertext malleability. For information about other similar attacks, see {{ciphertext-malleability}}.
+The quick check oracle attack is a particular type of attack that exploits ciphertext malleability.
+For information about other similar attacks, see {{ciphertext-malleability}}.
 
 ## Avoiding Leaks From PKCS#1 Errors {#pkcs1-errors}
 
