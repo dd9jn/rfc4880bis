@@ -50,7 +50,9 @@ docker-shell:
 clean:
 	-rm -rf $(OUTPUT) *.tmp $(draft).txt.diff
 
-check:
+check: codespell
+
+codespell:
 	codespell crypto-refresh.md
 
-.PHONY: clean all check
+.PHONY: clean all check codespell

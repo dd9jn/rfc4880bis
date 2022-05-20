@@ -4,7 +4,7 @@ codespell:
   stage: test
   script:
     - apt update -y -qq && apt install -y -qq --no-install-recommends make codespell
-    - make check
+    - make codespell
 
 pages:
   stage: deploy
