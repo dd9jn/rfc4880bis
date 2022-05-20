@@ -48,11 +48,15 @@ docker-shell:
 	docker run --rm -it --user ${UID}:${GID} -v $(PWD):/rfc kramdown-rfc2629-docker:latest bash
 
 clean:
-	-rm -rf $(OUTPUT) *.tmp $(draft).txt.diff
+	-rm -rf $(OUTPUT) *.tmp $(draft).txt.diff $(draft).md.reflowed
 
-check: codespell
+check: codespell check-reflow
+
+check-reflow:
+	./reflow < $(draft).md > $(draft).md.reflowed
+	diff -u $(draft).md $(draft).md.reflowed
 
 codespell:
 	codespell crypto-refresh.md
 
-.PHONY: clean all check codespell
+.PHONY: clean all check codespell check-reflow
