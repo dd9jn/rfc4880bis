@@ -123,7 +123,7 @@ informative:
       Cryptology ePrint Archive, Report 2002/076
   MRLG15:
     title: Format Oracles on OpenPGP
-    authors:
+    author:
       -
         name: Florian Maury
       -
