@@ -1601,7 +1601,7 @@ First octet:
 {: title="Key flags registry (first octet)"}
 flag | definition
 ---|-------------
-0x01 | This key may be used to make User ID certifications (signature types 0x10-0x13) or direct key signatures (signature type 0x1F) over other keys.
+0x01 | This key may be used to make User ID certifications (signature types 0x10-0x13) or direct-key signatures (signature type 0x1F) over other keys.
 0x02 | This key may be used to sign data.
 0x04 | This key may be used to encrypt communications.
 0x08 | This key may be used to encrypt storage.
@@ -3447,36 +3447,34 @@ This section describes the structure of public keys in transit to ensure interop
 The format of an OpenPGP v5 key is as follows.
 Entries in square brackets are optional and ellipses indicate repetition.
 
-    Primary-Key
-        [Revocation Self Signature...]
-        Direct Key Signature...
-        [User ID [Signature...]]...
-        [User Attribute [Signature...]]...
-        [Subkey [Binding-Signature-Revocation...] Subkey-Binding-Signature...]...
-        [Padding]
+    Primary Key
+       [Revocation Signature...]
+        Direct-Key Signature...
+       [User ID or User Attribute
+               [Certification Revocation Signature...] [Certification Signature...]]...
+       [Subkey [Subkey Revocation Signature...] Subkey Binding Signature...]...
+       [Padding]
 
-Note, that a v5 key uses a Direct-Key-Signature to store algorithm preferences.
+Note, that a v5 key uses a Direct-Key Signature to store algorithm preferences.
 
 Every subkey for a v5 primary key MUST be a v5 subkey.
 
-When a primary v5 Public Key is revoked, it is sometimes distributed with only the revocation self-signature:
+When a primary v5 Public Key is revoked, it is sometimes distributed with only the revocation signature:
 
-    Primary-Key
-        Revocation Self Signature
+    Primary Key
+        Revocation Signature
 
-In this case, the direct key signature is no longer necessary, since the primary key itself has been marked as unusable.
+In this case, the direct-key signature is no longer necessary, since the primary key itself has been marked as unusable.
 
 ### OpenPGP v4 Key Structure
 
 The format of an OpenPGP v4 key is as follows.
 
-    Primary-Key
-       [Revocation Self Signature]
-       [Direct Key Signature...]
-       [User ID [Signature ...] ...]
-       [User Attribute [Signature ...] ...]
-       [[Subkey [Binding-Signature-Revocation ...]
-               Subkey-Binding-Signature ...] ...]
+    Primary Key
+       [Revocation Signature]
+       [Direct-Key Signature...]
+       [User ID or User Attribute [Signature...]]...
+       [Subkey [Subkey Revocation Signature...] Subkey Binding Signature...]...
 
 A subkey always has at least one subkey binding signature after it that is issued using the primary key to tie the two keys together.
 These binding signatures may be in either v3 or v4 format, but SHOULD be v4.
@@ -3492,9 +3490,9 @@ Instead, a v5 revocation certificate MUST include the primary key packet, as des
 The format of an OpenPGP v3 key is as follows.
 
     RSA Public Key
-       [Revocation Self Signature]
-        User ID [Signature ...]
-       [User ID [Signature ...] ...]
+       [Revocation Signature]
+        User ID [Signature...]
+       [User ID [Signature...]]...
 
 Each signature certifies the RSA public key and the preceding User ID.
 The RSA public key can have many User IDs and each User ID can have many signatures.
