@@ -3523,8 +3523,10 @@ Entries in square brackets are optional and ellipses indicate repetition.
        [Revocation Signature...]
         Direct-Key Signature...
        [User ID or User Attribute
-               [Certification Revocation Signature...] [Certification Signature...]]...
-       [Subkey [Subkey Revocation Signature...] Subkey Binding Signature...]...
+               [Certification Revocation Signature...]
+               [Certification Signature...]]...
+       [Subkey [Subkey Revocation Signature...]
+               Subkey Binding Signature...]...
        [Padding]
 
 Note, that a v5 key uses a Direct-Key Signature to store algorithm preferences.
@@ -5143,7 +5145,8 @@ XfA3pqV4mTzF
 ~~~ application/pgp-encrypted
 -----BEGIN PGP MESSAGE-----
 Comment: Encrypted using AES with 192-bit key
-Comment: Session key: 27006DAE68E509022CE45A14E569E91001C2955AF8DFE194
+Comment: Session key: 27006DAE68E509022CE45A14E569E91001C2955...
+Comment: Session key: ...AF8DFE194
 
 wy8ECAThTKxHFTRZGKli3KNH4UP4AQQVhzLJ2va3FG8/pmpIPd/H/mdoVS5VBLLw
 F9I+AdJ1Sw56PRYiKZjCvHg+2bnq02s33AJJoyBexBI4QKATFRkyez2gldJldRys
@@ -5157,7 +5160,8 @@ LVg77Mwwfgl2n/d572WciAM=
 ~~~ application/pgp-encrypted
 -----BEGIN PGP MESSAGE-----
 Comment: Encrypted using AES with 256-bit key
-Comment: Session key: BBEDA55B9AAE63DAC45D4F49D89DACF4AF37FEFC13BAB2F1F8E18FB74580D8B0
+Comment: Session key: BBEDA55B9AAE63DAC45D4F49D89DACF4AF37FEF
+Comment: Session key: ...C13BAB2F1F8E18FB74580D8B0
 
 wzcECQS4eJUgIG/3mcaILEJFpmJ8AQQVnZ9l7KtagdClm9UaQ/Z6M/5roklSGpGu
 623YmaXezGj80j4B+Ku1sgTdJo87X1Wrup7l0wJypZls21Uwd67m9koF60eefH/K
