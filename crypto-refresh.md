@@ -1583,14 +1583,10 @@ The "flags" field holds four octets of flags.
 All undefined flags MUST be zero.
 Defined flags are as follows:
 
-First octet:
-
-{: title="Notation flag registry (first octet)"}
-flag | shorthand | definition
----|---|---
-0x80 | human-readable | This note value is text.
-
-Other octets: none.
+{: title="Signature Notation Data Subpacket Notation Flag registry"}
+Flag | Shorthand | Description | Security Recommended | Interoperability Recommended | Reference
+-----|-----------|-------------|----------------------|------------------------------|----------
+0x80 0x00 0x00 0x00 | human-readable | Notation value is text. | No | Yes | This document
 
 Notation names are arbitrary strings encoded in UTF-8.
 They reside in two namespaces: The IETF namespace and the user namespace.
@@ -1598,6 +1594,13 @@ They reside in two namespaces: The IETF namespace and the user namespace.
 The IETF namespace is registered with IANA.
 These names MUST NOT contain the "@" character (0x40).
 This is a tag for the user namespace.
+
+{: title="Signature Notation Data Subpacket registry"}
+Notation Name | Data Type | Allowed Values | Reference
+--------------|-----------|----------------|----------
+ | | |
+
+[comment]: # (kramdown ignores tables without bodies, hence the empty row hack)
 
 Names in the user namespace consist of a UTF-8 string tag followed by "@" followed by a DNS domain name.
 Note that the tag MUST NOT contain an "@" character.
@@ -3346,14 +3349,14 @@ These are the Notation Data subpackets, which contain a key/value pair.
 Notations contain a user space that is completely unmanaged and an IETF space.
 
 This specification creates a registry of Signature Notation Data types.
-The registry includes the Signature Notation Data type, the name of the Signature Notation Data, its allowed values, and a reference to the defining specification.
+The registry includes the name of the Signature Notation Data, the Signature Notation Data type, its allowed values, and a reference to the defining specification.
 The initial values for this registry can be found in {{notation-data}}.
 Adding a new Signature Notation Data subpacket MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 #### Signature Notation Data Subpacket Notation Flags
 
 This specification creates a new registry of Signature Notation Data Subpacket Notation Flags.
-The registry includes the columns "Flag", "Description", "Security Recommended", "Interoperability Recommended", and "Reference".
+The registry includes the columns "Flag", "Shorthand", "Description", "Security Recommended", "Interoperability Recommended", and "Reference".
 The initial values for this registry can be found in {{notation-data}}.
 Adding a new item MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
