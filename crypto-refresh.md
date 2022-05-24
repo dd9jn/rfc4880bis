@@ -1239,7 +1239,7 @@ The two MPIs for Ed25519 use octet strings R and S as described in {{RFC8032}}.
 For Ed448 signatures, the native signature format is used as described in {{RFC8032}}.
 The two MPIs are composed as follows:
 
-- The first MPI has a body of 58 octets: a prefix 0x40 octet, followed by 57 octets of the native signature.
+- The first MPI has a body of 115 octets: a prefix 0x40 octet, followed by 114 octets of the native signature.
 
 - The second MPI is set to 0 (this is a placeholder, and is unused).
   Note that an MPI with a value of 0 is encoded on the wire as a pair of zero octets: `00 00`.
