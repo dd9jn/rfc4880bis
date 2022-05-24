@@ -3484,6 +3484,9 @@ Subkeys that can issue signatures MUST have a v4 binding signature due to the RE
 
 Every subkey for a v4 primary key MUST be a v4 subkey.
 
+When a primary v4 Public Key is revoked, the revocation signature is sometimes distributed by itself, without the primary key packet it applies to. This is referred to as a "revocation certificate".
+Instead, a v5 revocation certificate MUST include the primary key packet, as described above.
+
 ### OpenPGP v3 Key Structure
 
 The format of an OpenPGP v3 key is as follows.
