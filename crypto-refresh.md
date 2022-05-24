@@ -1811,9 +1811,11 @@ If the version octet does not match the signature version, the receiving impleme
 
 The OpenPGP Key fingerprint of the intended recipient primary key.
 If one or more subpackets of this type are included in a signature, it SHOULD be considered valid only in an encrypted context, where the key it was encrypted to is one of the indicated primary keys, or one of their subkeys.
-This can be used to prevent forwarding a signature outside of its intended, encrypted context.
+This can be used to prevent forwarding a signature outside of its intended, encrypted context (see {{surreptitious-forwarding}}).
 
 Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 5 key N is 32.
+
+An implementation SHOULD generate this subpacket when creating a signed and encrypted message.
 
 ### Computing Signatures {#computing-signatures}
 
@@ -4489,6 +4491,11 @@ In another example, sending an OpenPGP Transferable Public Key over an encrypted
 Since the length of an OpenPGP certificate varies based on the content, an external observer interested in metadata (who is trying to contact who) may be able to guess the identity of the certificate sent, if its length is unique.
 
 In both cases, an implementation can adjust the size of the compound structure by including a Padding packet (see {{padding-packet}}).
+
+## Surreptitious Forwarding {#surreptitious-forwarding}
+
+When an attacker obtains a signature for some text, e.g. by receiving a signed message, they may be able to use that signature maliciously by sending a message purporting to come from the original sender, with the same body and signature, to a different recipient.
+To prevent this, implementations SHOULD implement the Intended Recipient Fingerprint signature subpacket ({{intended-recipient-fingerprint}}).
 
 # Implementation Nits
 
