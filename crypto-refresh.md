@@ -149,7 +149,7 @@ informative:
     target: http://eprint.iacr.org/2005/033
   PAX:
     title: "IEEE Standard for Information Technology--Portable Operating System Interface (POSIX(R)) Base Specifications, Issue 7: pax - portable archive interchange"
-    author: 
+    author:
       org: The Open Group
     seriesinfo:
       IEEE Standard: 1003.1-2017
@@ -1459,7 +1459,7 @@ Symmetric cipher algorithm numbers are listed in {{symmetric-algos}}.
 For example, a subpacket with content of these six octets:
 
     09 02 09 03 13 02
-    
+
 Indicates that the keyholder prefers to receive v2 SEIPD using AES-256 with OCB, then AES-256 with GCM, then Camellia-256 with OCB, and finally the implicit AES-128 with OCB.
 
 Note that support for version 2 of the Symmetrically Encrypted Integrity Protected Data packet ({{version-two-seipd}}) in general is indicated by a Feature Flag ({{features-subpacket}}).
@@ -2010,7 +2010,7 @@ When generating a one-pass signature, the OPS packet version MUST correspond to 
 {: title="Versions of packets used in a one-pass signature"}
 Signing key version | OPS packet version | Signature packet version
 ---|--------------|--------
-4 | 3 | 4 
+4 | 3 | 4
 5 | 5 | 5
 
 Note that if a message contains more than one one-pass signature, then the Signature packets bracket the message; that is, the first Signature packet after the message corresponds to the last one-pass packet and the final Signature packet corresponds to the first one-pass packet.
@@ -3132,7 +3132,7 @@ ID | Algorithm | Public Key Format | Secret Key Format | Signature Format | PKES
 ---:|--------------------------|---|---|---|---
  1 | RSA (Encrypt or Sign) {{HAC}} | MPI(n), MPI(e) \[{{key-rsa}}] | MPI(d), MPI(p), MPI(q), MPI(u) | MPI(m\**d mod n) \[{{sig-rsa}}] | MPI(m\**e mod n) \[{{pkesk-rsa}}]
  2 | RSA Encrypt-Only {{HAC}} | MPI(n), MPI(e) \[{{key-rsa}}]| MPI(d), MPI(p), MPI(q), MPI(u) | N/A | MPI(m\**e mod n) \[{{pkesk-rsa}}]
- 3 | RSA Sign-Only {{HAC}} | MPI(n), MPI(e) \[{{key-rsa}}] | MPI(d), MPI(p), MPI(q), MPI(u) | MPI(m\**d mod n) \[{{sig-rsa}}] | N/A 
+ 3 | RSA Sign-Only {{HAC}} | MPI(n), MPI(e) \[{{key-rsa}}] | MPI(d), MPI(p), MPI(q), MPI(u) | MPI(m\**d mod n) \[{{sig-rsa}}] | N/A
  16 | Elgamal (Encrypt-Only) {{ELGAMAL}} {{HAC}} | MPI(p), MPI(g), MPI(y) \[{{key-elgamal}}] | MPI(x) | N/A | MPI(g\*\*k mod p), MPI (m * y\*\*k mod p) \[{{pkesk-elgamal}}]
  17 | DSA (Digital Signature Algorithm) {{!FIPS186=DOI.10.6028/NIST.FIPS.186-4}} {{HAC}} | MPI(p), MPI(q), MPI(g), MPI(y) \[{{key-dsa}}] | MPI(x) | MPI(r), MPI(s) \[{{sig-dsa}}] | N/A
  18 | ECDH public key algorithm | OID, MPI(point in curve-specific point format), KDFParams \[see {{curve-specific-formats}}, {{key-ecdh}}]| MPI(value in curve-specific format) \[{{curve-specific-formats}}]| N/A | MPI(point in curve-specific point format), size octet, encoded key \[{{curve-specific-formats}}, {{pkesk-ecdh}}, {{ecdh}}]
@@ -4335,7 +4335,7 @@ In some cases, an attacker may be able to induce a signature to be made, even if
 In some scenarios, a repeated signature over the exact same message may risk leakage of part or all of the signing key, for example see discussion of hardware faults over EdDSA and deterministic ECDSA in {{PSSLR17}}.
 Choosing a new random salt for each signature ensures that no repeated signatures are produced, and mitigates this risk.
 
-## Elliptic Curve Side Channels {#ecc-side-channels} 
+## Elliptic Curve Side Channels {#ecc-side-channels}
 
 Side channel attacks are a concern when a compliant application's use of the OpenPGP format can be modeled by a decryption or signing oracle, for example, when an application is a network service performing decryption to unauthenticated remote users.
 ECC scalar multiplication operations used in ECDSA and ECDH are vulnerable to side channel attacks.
