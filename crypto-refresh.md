@@ -3556,7 +3556,8 @@ The format of an OpenPGP v4 key is as follows.
        [Revocation Signature]
        [Direct-Key Signature...]
        [User ID or User Attribute [Signature...]]...
-       [Subkey [Subkey Revocation Signature...] Subkey Binding Signature...]...
+       [Subkey [Subkey Revocation Signature...]
+               Subkey Binding Signature...]...
 
 A subkey always has at least one subkey binding signature after it that is issued using the primary key to tie the two keys together.
 These binding signatures may be in either v3 or v4 format, but SHOULD be v4.
