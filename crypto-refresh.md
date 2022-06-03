@@ -3532,7 +3532,7 @@ There are three distinct sequences of packets:
 - OpenPGP Messages ({{openpgp-messages}})
 - Detached Signatures ({{detached-signatures}})
 
-Each sequence has an explicit grammar of what packet types ({{packet-type-registry}}) can appear in what places.
+Each sequence has an explicit grammar of what packet types ({{packet-type-registry}}) can appear in what place.
 The presence of an unknown critical packet, or a known but unexpected packet is a critical error, invalidating the entire sequence (see {{packet-criticality}}).
 On the other hand, unknown non-critical packets can appear anywhere within any sequence.
 This provides a structured way to introduce new packets into the protocol, while making sure that certain packets will be handled strict.
