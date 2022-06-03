@@ -882,30 +882,41 @@ The packet tag denotes what type of packet the body holds.
 Note that Legacy format headers can only have tags less than 16, whereas OpenPGP format headers can have tags as great as 63.
 The defined tags (in decimal) are as follows:
 
-{: title="Packet type registry"}
-Tag | Packet Type
----:|--------------------------------------------------
-  0 | Reserved - a packet tag MUST NOT have this value
-  1 | Public-Key Encrypted Session Key Packet
-  2 | Signature Packet
-  3 | Symmetric-Key Encrypted Session Key Packet
-  4 | One-Pass Signature Packet
-  5 | Secret-Key Packet
-  6 | Public-Key Packet
-  7 | Secret-Subkey Packet
-  8 | Compressed Data Packet
-  9 | Symmetrically Encrypted Data Packet
- 10 | Marker Packet
- 11 | Literal Data Packet
- 12 | Trust Packet
- 13 | User ID Packet
- 14 | Public-Subkey Packet
- 17 | User Attribute Packet
- 18 | Sym. Encrypted and Integrity Protected Data Packet
- 19 | Reserved (formerly Modification Detection Code Packet)
- 20 | Reserved (formerly AEAD Encrypted Data Packet)
- 21 | Padding Packet
-60 to 63 | Private or Experimental Values
+{: title="Packet type registry" #packet-type-registry}
+Tag | Critical | Packet Type
+---:|----------|--------------------------------------------------
+  0 | yes      | Reserved - a packet tag MUST NOT have this value
+  1 | yes      | Public-Key Encrypted Session Key Packet
+  2 | yes      | Signature Packet
+  3 | yes      | Symmetric-Key Encrypted Session Key Packet
+  4 | yes      | One-Pass Signature Packet
+  5 | yes      | Secret-Key Packet
+  6 | yes      | Public-Key Packet
+  7 | yes      | Secret-Subkey Packet
+  8 | yes      | Compressed Data Packet
+  9 | yes      | Symmetrically Encrypted Data Packet
+ 10 | yes      | Marker Packet
+ 11 | yes      | Literal Data Packet
+ 12 | yes      | Trust Packet
+ 13 | yes      | User ID Packet
+ 14 | yes      | Public-Subkey Packet
+ 17 | yes      | User Attribute Packet
+ 18 | yes      | Sym. Encrypted and Integrity Protected Data Packet
+ 19 | yes      | Reserved (formerly Modification Detection Code Packet)
+ 20 | yes      | Reserved (formerly AEAD Encrypted Data Packet)
+ 21 | yes      | Padding Packet
+22 to 39 | yes | Unassigned Critical Packet
+40 to 59 | no  | Unassigned Non-Critical Packet
+60 to 63 | no  | Private or Experimental Values
+
+### Packet Criticality
+
+The Packet Tag space is partitioned into critical packets and non-critical packets.
+If an implementation encounters a critical packet where the packet type is unknown in a Packet Sequence, it MUST reject the whole Packet Sequence (see {{packet-composition}}).
+On the other hand, an unknown non-critical packet MUST be ignored.
+
+Packet Tags from 0 to 39 are critical.
+Packet Tags from 40 to 63 are non-critical.
 
 # Packet Types {#packet-types}
 
@@ -2463,7 +2474,7 @@ The last block-size octets of ciphertext are passed through the cipher and the b
 The repetition of 16 bits in the random data prefixed to the message allows the receiver to immediately check whether the session key is incorrect.
 See {{quick-check-oracle}} for hints on the proper use of this "quick check".
 
-## Marker Packet (Tag 10)
+## Marker Packet (Tag 10) {#marker-packet}
 
 The body of this packet consists of:
 
@@ -3517,6 +3528,27 @@ OpenPGP packets are assembled into sequences in order to create messages and to 
 Not all possible packet sequences are meaningful and correct.
 This section describes the rules for how packets should be placed into sequences.
 
+There are three distinct sequences of packets:
+
+- Transferable Public Keys ({{transferable-public-keys}}) and its close counterpart, Transferable Secret Keys ({{transferable-secret-keys}})
+- OpenPGP Messages ({{openpgp-messages}})
+- Detached Signatures ({{detached-signatures}})
+
+Each sequence has an explicit grammar of what packet types ({{packet-type-registry}}) can appear in what place.
+The presence of an unknown critical packet, or a known but unexpected packet is a critical error, invalidating the entire sequence (see {{packet-criticality}}).
+On the other hand, unknown non-critical packets can appear anywhere within any sequence.
+This provides a structured way to introduce new packets into the protocol, while making sure that certain packets will be handled strict.
+
+An implementation may "recognize" a packet, but not implement it.
+The purpose of Packet Criticality is to allow the producer to tell the consumer whether it would prefer a new, unknown packet to generate an error or be ignored.
+
+Note that previous versions of this document did not have a concept of Packet Criticality, and did not give clear guidance on what to do when unknown packets are encountered.
+Therefore, a legacy implementation may reject unknown non-critical packets, or accept unknown critical packets.
+
+When generating a sequence of OpenPGP packets according to one of the three grammars, an implementation MUST NOT inject a critical packet of a type that does not adhere to the grammar.
+
+When consuming a sequence of OpenPGP packets according to one of the three grammars, an implementation MUST reject the sequence with an error if it encounters a critical packet of inappropriate type according to the grammar.
+
 ## Transferable Public Keys
 
 OpenPGP users may transfer public keys.
@@ -3536,6 +3568,8 @@ Entries in square brackets are optional and ellipses indicate repetition.
        [Subkey [Subkey Revocation Signature...]
                Subkey Binding Signature...]...
        [Padding]
+
+In addition to these rules, a marker packet ({{marker-packet}}) can appear anywhere in the sequence.
 
 Note, that a v5 key uses a Direct-Key Signature to store algorithm preferences.
 
@@ -3559,6 +3593,8 @@ The format of an OpenPGP v4 key is as follows.
        [Subkey [Subkey Revocation Signature...]
                Subkey Binding Signature...]...
 
+In addition to these rules, a marker packet ({{marker-packet}}) can appear anywhere in the sequence.
+
 A subkey always has at least one subkey binding signature after it that is issued using the primary key to tie the two keys together.
 These binding signatures may be in either v3 or v4 format, but SHOULD be v4.
 Subkeys that can issue signatures MUST have a v4 binding signature due to the REQUIRED embedded primary key binding signature.
@@ -3576,6 +3612,8 @@ The format of an OpenPGP v3 key is as follows.
        [Revocation Signature]
         User ID [Signature...]
        [User ID [Signature...]]...
+
+In addition to these rules, a marker packet ({{marker-packet}}) can appear anywhere in the sequence.
 
 Each signature certifies the RSA public key and the preceding User ID.
 The RSA public key can have many User IDs and each User ID can have many signatures.
@@ -3665,6 +3703,8 @@ Signed Message :-
 Optionally Padded Message :-
 : OpenPGP Message \| OpenPGP Message, Padding Packet.
 
+In addition to these rules, a marker packet ({{marker-packet}}) can appear anywhere in the sequence.
+
 ### Unwrapping Encrypted and Compressed Messages {#unwrapping}
 
 In addition to the above grammar, certain messages can be "unwrapped" to yield new messages.
@@ -3714,6 +3754,8 @@ An implementation processing an Encrypted Message MUST discard any preceding ESK
 Some OpenPGP applications use so-called "detached signatures".
 For example, a program bundle may contain a file, and with it a second file that is a detached signature of the first file.
 These detached signatures are simply one or more Signature packets stored separately from the data for which they are a signature.
+
+In addition, a marker packet ({{marker-packet}} and a padding packet ({{padding-packet}}) can appear anywhere in the sequence.
 
 # Elliptic Curve Cryptography
 
