@@ -40,6 +40,21 @@ author:
     email: paul.wouters@aiven.io
     org: Aiven
     role: editor
+  -
+    ins: D. Huigens
+    name: Daniel Huigens
+    email: d.huigens@protonmail.com
+    org: Proton AG
+  -
+    ins: J. Winter
+    name: Justus Winter
+    email: justus@sequoia-pgp.org
+    org: Sequoia-PGP
+  -
+    ins: Yutaka N.
+    name: Yutaka Niibe
+    email: gniibe@fsij.org
+    org: FSIJ
 informative:
   BLEICHENBACHER:
     title: Generating ElGamal Signatures Without Knowing the Secret Key
