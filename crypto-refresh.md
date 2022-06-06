@@ -3940,7 +3940,6 @@ Note that the recipient obtains the shared secret by calculating
 
     S = rV = rvG, where (r,R) is the recipient's key pair.
 
-Consistent with {{seipd}}, AEAD encryption MUST be used anytime the symmetric key is protected by ECDH.
 
 ### ECDH Parameters
 
