@@ -51,7 +51,7 @@ author:
     email: justus@sequoia-pgp.org
     org: Sequoia-PGP
   -
-    ins: Yutaka N.
+    ins: Y. Niibe
     name: Yutaka Niibe
     email: gniibe@fsij.org
     org: FSIJ
