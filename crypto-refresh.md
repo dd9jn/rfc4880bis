@@ -24,17 +24,6 @@ venue:
   latest: "https://openpgp-wg.gitlab.io/rfc4880bis/"
 author:
   -
-    ins: W. Koch
-    name: Werner Koch
-    org: GnuPG e.V.
-    street: Rochusstr. 44
-    city: Duesseldorf
-    code: 40479
-    country: Germany
-    email: wk@gnupg.org
-    uri: https://gnupg.org/verein
-    role: editor
-  -
     ins: P. Wouters
     name: Paul Wouters
     email: paul.wouters@aiven.io
@@ -45,6 +34,16 @@ author:
     name: Daniel Huigens
     email: d.huigens@protonmail.com
     org: Proton AG
+  -
+    ins: W. Koch
+    name: Werner Koch
+    org: GnuPG e.V.
+    street: Rochusstr. 44
+    city: Duesseldorf
+    code: 40479
+    country: Germany
+    email: wk@gnupg.org
+    uri: https://gnupg.org/verein
   -
     ins: J. Winter
     name: Justus Winter
