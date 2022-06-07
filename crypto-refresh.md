@@ -2395,8 +2395,6 @@ The public key is this series of values:
 
   - A one-octet algorithm ID for the symmetric algorithm used to wrap the symmetric key used for the message encryption; see {{ecdh}} for details.
 
-Observe that an ECDH public key is composed of the same sequence of fields that define an ECDSA key plus the KDF parameters field.
-
 The secret key is this single multiprecision integer:
 
 - An MPI representing the secret key, in the curve-specific format described in {{curve-specific-formats}}.
