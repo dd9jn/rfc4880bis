@@ -2668,6 +2668,7 @@ For example, with a cipher whose block size is 128 bits or 16 octets, the prefix
 Unlike the Symmetrically Encrypted Data Packet, this prefix data is encrypted in the same CFB context, and no special CFB resynchronization is done.
 
 The repetition of 16 bits in the random data prefixed to the message allows the receiver to immediately check whether the session key is incorrect.
+See {{quick-check-oracle}} for hints on the proper use of this "quick check".
 
 Two constant octets with the values 0xD3 and 0x14 are appended to the plaintext.
 Then, the plaintext of the data to be encrypted is passed through the SHA-1 hash function.
