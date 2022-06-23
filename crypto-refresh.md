@@ -3449,7 +3449,7 @@ Adding a new packet version MUST be done through the RFC REQUIRED method, as des
 {{constants}} lists the core algorithms that OpenPGP uses.
 Adding in a new algorithm is usually simple.
 For example, adding in a new symmetric cipher usually would not need anything more than allocating a constant for that cipher.
-If that cipher had other than a 64-bit or 128-bit block size, there might need to be additional documentation describing how OpenPGP-CFB mode would be adjusted.
+If that cipher had other than a 64-bit or 128-bit block size, there might need to be additional documentation describing how the use of CFB mode would be adjusted.
 Similarly, when DSA was expanded from a maximum of 1024-bit public keys to 3072-bit public keys, the revision of FIPS 186 contained enough information itself to allow implementation.
 Changes to this document were made mainly for emphasis.
 
@@ -4372,7 +4372,7 @@ Mitigations at the scalar multiplication level seek to eliminate any measurable 
 
 ## Risks of a Quick Check Oracle {#quick-check-oracle}
 
-In winter 2005, Serge Mister and Robert Zuccherato from Entrust released a paper describing a way that the "quick check" in OpenPGP CFB mode (used by v1 SEIPD and SED packets) can be as an oracle to decrypt two octets of every cipher block {{MZ05}}.
+In winter 2005, Serge Mister and Robert Zuccherato from Entrust released a paper describing a way that the "quick check" in v1 SEIPD and SED packets can be used as an oracle to decrypt two octets of every cipher block {{MZ05}}.
 This check was intended for early detection of session key decryption errors, particularly to detect a wrong passphrase, since v4 SKESK packets do not include an integrity check.
 
 There is a danger to using the quick check if timing or error information about the check can be exposed to an attacker, particularly via an automated service that allows rapidly repeated queries.
