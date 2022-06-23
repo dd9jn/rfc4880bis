@@ -346,6 +346,14 @@ normative:
       ins: B. Schneier
       name: Bruce Schneier
     date: 1996
+  SP800-38A:
+    title: "Recommendation for Block Cipher Modes of Operation: Methods and Techniques"
+    author:
+      -
+        ins: M. Dworkin
+    date: December 2001
+    seriesinfo:
+      NIST Special Publication: 800-38A
   SP800-38D:
     title: "Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC"
     author:
@@ -2482,7 +2490,7 @@ The symmetric cipher used may be specified in a Public-Key or Symmetric-Key Encr
 In that case, the cipher algorithm octet is prefixed to the session key before it is encrypted.
 If no packets of these types precede the encrypted data, the IDEA algorithm is used with the session key calculated as the MD5 hash of the passphrase, though this use is deprecated.
 
-The data is encrypted in CFB mode, with a CFB shift size equal to the cipher's block size.
+The data is encrypted in CFB mode (see {#cfb-mode}).
 For the random prefix, the Initial Vector (IV) is specified as all zeros.
 Instead of using an IV, a string of length equal to the block size of the cipher plus two is encrypted.
 The first block-size octets (for example, 8 octets for a 64-bit block length) are random, and the following two octets are copies of the last two octets of the IV.
@@ -2646,12 +2654,12 @@ A version 1 Symmetrically Encrypted Integrity Protected Data packet consists of:
 
 - A one-octet version number with value 1.
 
-- Encrypted data, the output of the selected symmetric-key cipher operating in Cipher Feedback mode with shift amount equal to the block size of the cipher (CFB-n where n is the block size).
+- Encrypted data, the output of the selected symmetric-key cipher operating in Cipher Feedback (CFB) mode.
 
 The symmetric cipher used MUST be specified in a Public-Key or Symmetric-Key Encrypted Session Key packet that precedes the Symmetrically Encrypted Integrity Protected Data packet.
 In either case, the cipher algorithm octet is prefixed to the session key before it is encrypted.
 
-The data is encrypted in CFB mode, with a CFB shift size equal to the cipher's block size.
+The data is encrypted in CFB mode (see {#cfb-mode}).
 The Initial Vector (IV) is specified as all zeros.
 Instead of using an IV, OpenPGP prefixes an octet string to the data before it is encrypted.
 The length of the octet string equals the block size of the cipher in octets, plus two.
@@ -4244,6 +4252,12 @@ These are no longer permitted.
 An implementation MUST NOT generate such keys.
 An implementation MUST NOT generate Elgamal signatures.
 See {{BLEICHENBACHER}}.
+
+## CFB Mode {#cfb-mode}
+
+The Cipher Feedback (CFB) mode used in this document is defined in {{SP800-38A}}.
+
+The CFB bit size `s` is equal to the block size of the cipher (i.e., n-bit CFB mode where n is the block size is used).
 
 ## Private or Experimental Parameters
 
