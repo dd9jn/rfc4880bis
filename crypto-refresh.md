@@ -2484,7 +2484,7 @@ The body of this packet consists of:
 
 - A random prefix, containing block-size random octets (for example, 8 octets for a 64-bit block length) followed by a copy of the last two octets, encrypted together using Cipher Feedback (CFB) mode, with an Initial Vector (IV) of all zeros.
 
-- Data encrypted using CFB mode, with as the IV the last block-size octets of the encrypted random prefix.
+- Data encrypted using CFB mode, with the last block-size octets of the encrypted random prefix as the IV.
 
 The symmetric cipher used may be specified in a Public-Key or Symmetric-Key Encrypted Session Key packet that precedes the Symmetrically Encrypted Data packet.
 In that case, the cipher algorithm octet is prefixed to the session key before it is encrypted.
@@ -2498,7 +2498,8 @@ For example, in an 8-octet block, octet 9 is a repeat of octet 7, and octet 10 i
 In a cipher of length 16, octet 17 is a repeat of octet 15 and octet 18 is a repeat of octet 16.
 (In both these examples, we consider the first octet to be numbered 1.)
 
-After encrypting these block-size-plus-two octets, a new CFB context is created for the encryption of the data, with the last block-size octets of the encrypted random prefix as the IV. (Alternatively and equivalently, the CFB state is resynchronized: the last block-size octets of ciphertext are passed through the cipher and the block boundary is reset.)
+After encrypting these block-size-plus-two octets, a new CFB context is created for the encryption of the data, with the last block-size octets of the encrypted random prefix as the IV.
+(Alternatively and equivalently, the CFB state is resynchronized: the last block-size octets of ciphertext are passed through the cipher and the block boundary is reset.)
 
 The repetition of 16 bits in the random prefix allows the receiver to immediately check whether the session key is incorrect.
 See {{quick-check-oracle}} for hints on the proper use of this "quick check".
