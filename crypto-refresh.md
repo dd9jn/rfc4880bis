@@ -202,6 +202,7 @@ informative:
   RFC1991:
   RFC2440:
   RFC4880:
+  RFC5639:
   RFC5869:
   RFC6090:
   SEC1:
@@ -2403,7 +2404,7 @@ The secret key is this single multiprecision integer:
 
 ##### ECDH Secret Key Material
 
-When curve P-256, P-384, or P-521 are used in ECDH, their secret keys are represented as a simple integer in standard MPI form.
+When curve NIST P-256, NIST P-384, NIST P-521, brainpoolP256r1, brainpoolP384r1, or brainpoolP512r1 are used in ECDH, their secret keys are represented as a simple integer in standard MPI form.
 Other curves are presented on the wire differently (though still as a single MPI), as described below and in {{curve-specific-formats}}.
 
 ###### Curve25519 ECDH Secret Key Material {#curve25519-secrets}
@@ -3202,6 +3203,9 @@ ASN.1 Object Identifier | OID len | Curve OID octets in hexadecimal representati
 1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256 | ECDSA, ECDH | 32
 1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384 | ECDSA, ECDH | 48
 1.3.132.0.35            | 5  | 2B 81 04 00 23                | NIST P-521 | ECDSA, ECDH | 66
+1.3.36.3.3.2.8.1.1.7    | 9  | 2B 24 03 03 02 08 01 01 07    | brainpoolP256r1 | ECDSA, ECDH | 32
+1.3.36.3.3.2.8.1.1.11   | 9  | 2B 24 03 03 02 08 01 01 0B    | brainpoolP384r1 | ECDSA, ECDH | 48
+1.3.36.3.3.2.8.1.1.13   | 9  | 2B 24 03 03 02 08 01 01 0D    | brainpoolP512r1 | ECDSA, ECDH | 64
 1.3.6.1.4.1.11591.15.1  | 9  | 2B 06 01 04 01 DA 47 0F 01    | Ed25519    | EdDSA       | 32
 1.3.101.113             | 3  | 2B 65 71                      | Ed448      | EdDSA       | 57
 1.3.6.1.4.1.3029.1.5.1  | 10 | 2B 06 01 04 01 97 55 01 05 01 | Curve25519 | ECDH        | 32
@@ -3230,6 +3234,9 @@ Curve | ECDH Point Format | ECDH Secret Key MPI | EdDSA Secret Key MPI | EdDSA S
 NIST P-256 | SEC1 | integer | N/A | N/A | N/A
 NIST P-384 | SEC1 | integer | N/A | N/A | N/A
 NIST P-521 | SEC1 | integer | N/A | N/A | N/A
+brainpoolP256r1 | SEC1 | integer | N/A | N/A | N/A
+brainpoolP384r1 | SEC1 | integer | N/A | N/A | N/A
+brainpoolP512r1 | SEC1 | integer | N/A | N/A | N/A
 Ed25519    | N/A | N/A | 32 octets of secret | 32 octets of R | 32 octets of S
 Ed448      | N/A | N/A | prefixed 57 octets of secret | prefixed 114 octets of signature | 0 \[this is an unused placeholder]
 Curve25519 | prefixed native | integer (see {{curve25519-secrets}}) | N/A | N/A | N/A
@@ -3787,8 +3794,8 @@ Refer to {{FIPS186}}, B.4.1, for the method to generate a uniformly distributed 
 
 ## Supported ECC Curves
 
-This document references three named prime field curves defined in {{FIPS186}} as "Curve P-256", "Curve P-384", and "Curve P-521".
-These three {{FIPS186}} curves can be used with ECDSA and ECDH public key algorithms.
+This document references three named prime field curves defined in {{FIPS186}} as "Curve P-256", "Curve P-384", and "Curve P-521"; and three named prime field curves defined in {{RFC5639}} as "brainpoolP256r1", "brainpoolP384r1", and "brainpoolP512r1".
+These three {{FIPS186}} curves and the three {{RFC5639}} curves can be used with ECDSA and ECDH public key algorithms.
 Additionally, curve "Curve25519" and "Curve448" are referenced for use with Ed25519 and Ed448 (EdDSA signing, see {{RFC8032}}); and X25519 and X448 (ECDH encryption, see {{RFC7748}}).
 
 The named curves are referenced as a sequence of octets in this document, called throughout, curve OID.
@@ -3827,7 +3834,7 @@ This format is used for ECDH keys based on curves expressed in Montgomery form, 
 
 ### Notes on EC Point Wire Formats
 
-Given the above definitions, the exact size of the MPI payload for an encoded point is 515 bits for "Curve P-256", 771 for "Curve P-384", 1059 for "Curve P-521", 263 for both "Curve25519" and "Ed25519", 463 for "Ed448", and 455 for "X448".
+Given the above definitions, the exact size of the MPI payload for an encoded point is 515 bits for both NIST P-256 and brainpoolP256r1, 771 for both NIST P-384 and brainpoolP384r1, 1059 for NIST P-521, 1027 for brainpoolP512r1, 263 for both Curve25519 and Ed25519, 463 for Ed448, and 455 for X448.
 For example, the length of a EdDSA public key for the curve Ed25519 is 263 bits: 7 bits to represent the 0x40 prefix octet and 32 octets for the native value of the public key.
 
 Even though the zero point, also called the point at infinity, may occur as a result of arithmetic operations on points of an elliptic curve, it SHALL NOT appear in data structures defined in this document.
@@ -3940,8 +3947,8 @@ The KDF parameters are encoded as a concatenation of the following 5 variable-le
   For version 4 keys, this field is 20 octets.
   For version 5 keys, this field is 32 octets.
 
-The size in octets of the KDF parameters sequence, defined above, for encrypting to a v4 key is either 54 for curve P-256, 51 for curves P-384 and P-521, 56 for Curve25519, or 49 for X448.
-For encrypting to a v5 key, the size of the sequence is either 66 for curve P-256, 63 for curves P-384 and P-521, 68 for Curve25519, or 61 for X448.
+The size in octets of the KDF parameters sequence, defined above, for encrypting to a v4 key is either 54 for curve NIST P-256, 51 for curves NIST P-384 and NIST P-521, 55 for curves brainpoolP256r1, brainpoolP384r1 and brainpoolP512r1, 56 for Curve25519, or 49 for X448.
+For encrypting to a v5 key, the size of the sequence is either 66 for curve NIST P-256, 63 for curves NIST P-384 and NIST P-521, 67 for curves brainpoolP256r1, brainpoolP384r1 and brainpoolP512r1, 68 for Curve25519, or 61 for X448.
 
 The key wrapping method is described in {{RFC3394}}.
 The KDF produces a symmetric key that is used as a key-encryption key (KEK) as specified in {{RFC3394}}.
@@ -4024,6 +4031,9 @@ Curve | Hash algorithm | Symmetric algorithm
 NIST P-256 | SHA2-256 | AES-128
 NIST P-384 | SHA2-384 | AES-192
 NIST P-521 | SHA2-512 | AES-256
+brainpoolP256r1 | SHA2-256 | AES-128
+brainpoolP384r1 | SHA2-384 | AES-192
+brainpoolP512r1 | SHA2-512 | AES-256
 Curve25519 | SHA2-256 | AES-128
 X448 | SHA2-512 | AES-256
 
