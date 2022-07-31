@@ -2390,7 +2390,7 @@ When generating a new Curve25519 secret key from 32 fully-random octets, the fol
         mpi_header = [ 0x00, 0xff ]
         return mpi_header || reversed(octet_list)
 
-###### X448 ECDH Secret Key Material
+###### X448 ECDH Secret Key Material {#x448-secrets}
 
 An X448 secret key is contained within its MPI as a prefixed octet string (see {{ec-prefix}}), which encapsulates the native secret key format found in {{RFC7748}}.
 The full wire format (as an MPI) will thus be the three octets `01 c7 40` followed by the full 56 octet native secret key.
@@ -3200,7 +3200,7 @@ NIST P-521 | SEC1 | integer | N/A | N/A | N/A
 Ed25519    | N/A | N/A | 32 octets of secret | 32 octets of R | 32 octets of S
 Ed448      | N/A | N/A | prefixed 57 octets of secret | prefixed 114 octets of signature | 0 \[this is an unused placeholder]
 Curve25519 | prefixed native | integer (see {{curve25519-secrets}}) | N/A | N/A | N/A
-X448       | prefixed native | prefixed 56 octets of secret | N/A | N/A | N/A
+X448       | prefixed native | prefixed 56 octets of secret (see {{x448-secrets}}) | N/A | N/A | N/A
 
 For the native octet-string forms of EdDSA values, see {{RFC8032}}.
 For the native octet-string forms of ECDH secret scalars and points, see {{RFC7748}}.
