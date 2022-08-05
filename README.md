@@ -1,6 +1,6 @@
 # OpenPGP Cryptographic Refresh of RFC 4880
 
-This repository holds the text for [draft-ietf-openpgp-crypo-refresh](https://datatracker.ietf.org/doc/draft-ietf-openpgp-crypto-refresh/).
+This repository holds the text for [draft-ietf-openpgp-crypto-refresh](https://datatracker.ietf.org/doc/draft-ietf-openpgp-crypto-refresh/).
 
 The goal of the document is to revise RFC 4880 with the ability to include more modern cryptographic primitives, and to be able to fully deprecate those primitives known to be problematic.
 
