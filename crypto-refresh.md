@@ -3782,7 +3782,7 @@ Some OpenPGP applications use so-called "detached signatures".
 For example, a program bundle may contain a file, and with it a second file that is a detached signature of the first file.
 These detached signatures are simply one or more Signature packets stored separately from the data for which they are a signature.
 
-In addition, a marker packet ({{marker-packet}} and a padding packet ({{padding-packet}}) can appear anywhere in the sequence.
+In addition, a marker packet ({{marker-packet}}) and a padding packet ({{padding-packet}}) can appear anywhere in the sequence.
 
 # Elliptic Curve Cryptography
 
