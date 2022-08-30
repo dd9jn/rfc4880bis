@@ -268,6 +268,14 @@ normative:
 
 { Work in progress to update the OpenPGP specification from RFC4880 }
 
+{ This version is on the Git head with rfc4880bis-10 before the great
+  refactoring.  That refactoring, dubbed crypto-refresh, basically
+  started from scratch with lots of re-formatting and switching to a
+  Gitlab based approach with merge requests mainly prepared in advance
+  by dkg.  This was done despite that -10 was basically ready for last
+  call after a long iterative process adding feature by feature with
+  rough consent from the WG. }
+
 This document specifies the message formats used in OpenPGP.  OpenPGP
 provides encryption with public-key or symmetric cryptographic
 algorithms, digital signatures, compression and key management.
