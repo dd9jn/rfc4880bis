@@ -3158,11 +3158,12 @@ formula (in C), where c is the chunk size octet:
 
         chunk_size = ((uint64_t)1 << (c + 6))
 
-An implementation MUST support chunk size octets with values from 0 to
-56.  Chunk size octets with other values are reserved for future
-extensions.  Implementations SHOULD NOT create data with a chunk size
-octet value larger than 21 (128 MiB chunks) to facilitate buffering of
-not yet authenticated plaintext.
+To facilitate interoperability between a wide variety of
+implementations, from constrained to large compute environments, a
+chunk size maximum is specified: An implementation MUST accept chunk
+size octets with values from 0 to 16. An implementation MUST NOT
+create data with a chunk size octet value larger than 16 (4 MiB
+chunks).
 
 A new random initialization vector MUST be used for each message.
 Failure to do so for each message will lead to a catastrophic failure
