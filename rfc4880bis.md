@@ -1,7 +1,7 @@
 ---
 title: OpenPGP Message Format
-docname: draft-ietf-openpgp-rfc4880bis-10
-date: 2020-08-31
+docname: draft-koch-openpgp-2015-rfc4880bis-00
+date: 2022-09-07
 category: std
 
 obsoletes: 4880, 5581, 6637
@@ -274,7 +274,10 @@ normative:
   Gitlab based approach with merge requests mainly prepared in advance
   by one of the chairs.  This was done despite that -10 was basically
   ready for last call after a long iterative process adding feature by
-  feature with rough consent from the WG. }
+  feature with rough consent from the WG.
+
+  Due to the IETF submission system the draft has a new name but
+  nevertheless is the direct successor of draft-ietf-openpgp-rfc4880bis-10 }
 
 This document specifies the message formats used in OpenPGP.  OpenPGP
 provides encryption with public-key or symmetric cryptographic
