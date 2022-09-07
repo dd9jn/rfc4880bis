@@ -1841,8 +1841,7 @@ First octet:
 
 Second octet:
 
-    0x04 - This key may be used as an additional decryption subkey
-           (ADSK).
+    0x04 - This key may be used to encrypt communications or storage.
 
     0x08 - This key may be used for timestamping.
 
@@ -1861,13 +1860,16 @@ wholly up to the implementation; the authors of this document do not
 claim any special wisdom on the issue and realize that accepted
 opinion may change.
 
-The "split key" (0x10) and "group key" (0x80) flags are placed on a
-self-signature only; they are meaningless on a certification
-signature.  They SHOULD be placed only on a direct-key signature (type
-0x1F) or a subkey signature (type 0x18), one that refers to the key
-the flag applies to.
+The "split key" (1st,0x10) and "group key" (1st,0x80) flags are
+placed on a self-signature only; they are meaningless on a
+certification signature.  They SHOULD be placed only on a direct-key
+signature (type 0x1F) or a subkey signature (type 0x18), one that
+refers to the key the flag applies to.
 
-The ADSK flag helps to figure out an encryption subkey.
+The "restricted encryption key" (2nd,0x04) does not take part in any
+automatic selection of encryption keys.  It is only found on a subkey
+signature (type 0x18), one that refers to the key the flag applies to.
+
 
 #### Signer's User ID
 
@@ -5752,7 +5754,7 @@ other values might also be interesting for other ECC specifications:
   - Added v5 Symmetric-Key Encrypted Session Key packet.
   - Added AEAD encryption of secret keys.
   - Added test vectors for AEAD.
-  - Added the Additional Encryption Subkey key flag.
+  - Added the Restricted Encryption key flag.
   - Deprecated the Symmetrically Encrypted Data Packet.
   - Suggest limitation of the AEAD chunksize to 128 MiB.
   - Specified the V5 signature format.
