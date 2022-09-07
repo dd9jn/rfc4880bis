@@ -1367,7 +1367,9 @@ Type | Description
  35 | Intended Recipient Fingerprint
  37 | Attested Certifications
  38 | Key Block
-100 to 110 | Private or experimental
+ 39 | Reserved
+ 40 | Literal Data Meta Hash
+100 to 110 | Private or  experimental
 
 An implementation SHOULD ignore any subpacket of a type that it does
 not recognize.
@@ -2090,6 +2092,24 @@ packet and the corresponding self-signatures.
 Implementations MUST ignore this subpacket if the first octet does not
 have a value of zero or if the key data does not represent a valid
 transferable public key.
+
+#### Literal Data Meta Hash
+
+(1 octet with value 0, 32 octets hash value)
+
+This subpacket MAY be used to protect the meta data from the Literal
+Data Packet with V4 signatures. The hash is computed using SHA2-256
+from this data:
+
+  - the one-octet content format,
+  - the file name as a string (one octet length, followed by the file name),
+  - a four-octet number that indicates a date.
+
+These three data items need to mirror the corresponding values of the
+Literal Data packet.  Implementations encountering this subpacket must
+re-create the hash from the received Literal Data packet and compare
+them.  If the hash values do not match or if this packet is used in a
+V5 signature the signature MUST be deemed as invalid.
 
 
 ### Computing Signatures
@@ -5743,6 +5763,7 @@ other values might also be interesting for other ECC specifications:
   - Added Intended Recipient signature subpacket.
   - Added Attested Certifications signature subpacket and signature class.
   - Added Key Block signature subpacket.
+  - Added Literal Data Meta Hash subpacket.
 
 # The principal authors of RFC-4880
 
