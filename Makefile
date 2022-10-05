@@ -11,7 +11,7 @@ OUTPUT = $(draft).txt $(draft).html $(draft).xml
 all: $(OUTPUT)
 
 %.xml: %.md
-	kramdown-rfc2629 --v3 < $< > $@.tmp
+	kramdown-rfc2629 --v3 $< > $@.tmp
 	mv $@.tmp $@
 
 %.html: %.xml
