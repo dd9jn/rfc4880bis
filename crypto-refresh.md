@@ -35,16 +35,6 @@ author:
     email: d.huigens@protonmail.com
     org: Proton AG
   -
-    ins: W. Koch
-    name: Werner Koch
-    org: GnuPG e.V.
-    street: Rochusstr. 44
-    city: Duesseldorf
-    code: 40479
-    country: Germany
-    email: wk@gnupg.org
-    uri: https://gnupg.org/verein
-  -
     ins: J. Winter
     name: Justus Winter
     email: justus@sequoia-pgp.org
@@ -5264,5 +5254,7 @@ wzcECQS4eJUgIG/3mcaILEJFpmJ8AQQVnZ9l7KtagdClm9UaQ/Z6M/5roklSGpGu
 # Acknowledgements
 
 Thanks to the openpgp design team for working on this document to prepare it for working group consumption: Stephen Farrell, Daniel Kahn Gillmor, Daniel Huigens, Jeffrey Lau, Yutaka Niibe, Justus Winter and Paul Wouters.
+
+Thanks to Werner Koch for the early work on rfc4880bis.
 
 This document also draws on much previous work from a number of other authors, including: Derek Atkins, Charles Breed, Dave Del Torto, Marc Dyksterhouse, Gail Haspert, Gene Hoffman, Paul Hoffman, Ben Laurie, Raph Levien, Colin Plumb, Will Price, David Shaw, William Stallings, Mark Weaver, and Philip R. Zimmermann.
