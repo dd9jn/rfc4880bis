@@ -1,6 +1,6 @@
 ---
 title: OpenPGP Message Format
-docname: draft-ietf-openpgp-crypto-refresh-06
+docname: draft-ietf-openpgp-crypto-refresh-07
 category: std
 obsoletes: 4880, 5581, 6637
 ipr: trust200902
