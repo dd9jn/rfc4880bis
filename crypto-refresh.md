@@ -2666,7 +2666,7 @@ Instead of using an IV, OpenPGP prefixes an octet string to the data before it i
 The length of the octet string equals the block size of the cipher in octets, plus two.
 The first octets in the group, of length equal to the block size of the cipher, are random; the last two octets are each copies of their 2nd preceding octet.
 For example, with a cipher whose block size is 128 bits or 16 octets, the prefix data will contain 16 random octets, then two more octets, which are copies of the 15th and 16th octets, respectively.
-Unlike the Symmetrically Encrypted Data Packet, this prefix data is encrypted in the same CFB context, and no special CFB resynchronization is done.
+Unlike the deprecated Symmetrically Encrypted Data Packet ({{sed}}), this prefix data is encrypted in the same CFB context, and no special CFB resynchronization is done.
 
 The repetition of 16 bits in the random data prefixed to the message allows the receiver to immediately check whether the session key is incorrect.
 See {{quick-check-oracle}} for hints on the proper use of this "quick check".
@@ -4257,9 +4257,9 @@ See {{BLEICHENBACHER}}.
 
 ## CFB Mode {#cfb-mode}
 
-The Cipher Feedback (CFB) mode used in this document is defined in {{SP800-38A}}.
+The Cipher Feedback (CFB) mode used in this document is defined in Section 6.3 of {{SP800-38A}}.
 
-The CFB bit size `s` is equal to the block size of the cipher (i.e., n-bit CFB mode where n is the block size is used).
+The CFB segment size `s` is equal to the block size of the cipher (i.e., n-bit CFB mode where n is the block size is used).
 
 ## Private or Experimental Parameters
 
