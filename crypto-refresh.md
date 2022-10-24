@@ -4459,7 +4459,11 @@ Because OpenPGP implementations deal with historic stored data, they may encount
 When an OpenPGP implementation discovers that it is decrypting data that appears to be malleable, it MUST indicate a clear error message that the integrity of the message is suspect, SHOULD NOT attempt to parse nor release decrypted data to the user, and SHOULD halt with an error.
 Parsing or releasing decrypted data before having confirmed its integrity can leak the decrypted data {{EFAIL}}, {{MRLG15}}.
 
-An implementation that encounters malleable ciphertext MAY choose to release cleartext to the user if it is known to be dealing with historic archived legacy data, and the user is aware of the risks.
+In the case of AEAD encrypted data, if the authentication tag fails to verify, the implementation MUST NOT attempt to parse nor release decrypted data to the user, and MUST halt with an error.
+
+An implementation that encounters malleable ciphertext MAY choose to release cleartext to the user if it is not encrypted using AEAD, and it is known to be dealing with historic archived legacy data, and the user is aware of the risks.
+
+In the case of AEAD encrypted messages, if the message is truncated, i.e. the final zero-octet chunk and possibly (part of) some chunks before it are missing, the implementation MAY choose to release cleartext from fully authenticated chunks before it to the user if it is operating in a streaming fashion, but it MUST indicate a clear error message as soon as the truncation is detected.
 
 Any of the following OpenPGP data elements indicate that malleable ciphertext is present:
 
