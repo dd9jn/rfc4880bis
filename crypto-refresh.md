@@ -536,6 +536,7 @@ The size of an MPI is ((MPI.length + 7) / 8) + 2 octets.
 The length field of an MPI describes the length starting from its most significant non-zero bit.
 Thus, the MPI \[00 02 01\] is not formed correctly.
 It should be \[00 01 01\].
+When parsing an MPI in a v5 Key, Signature, or Public-Key Encrypted Session Key packet, the implementation MUST check that the encoded length matches the length starting from the most significant non-zero bit, and reject the packet as malformed if not.
 
 Unused bits of an MPI MUST be zero.
 
