@@ -2916,7 +2916,6 @@ BEGIN PGP SIGNATURE
 : Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures.
 
 Note that all these Armor Header Lines are to consist of a complete line.
-That is to say, there is always a line ending preceding the starting five dashes, and following the ending five dashes.
 The header lines, therefore, MUST start at the beginning of a line, and MUST NOT have text other than whitespace following them on the same line.
 These line endings are considered a part of the Armor Header Line for the purposes of determining the content they delimit.
 This is particularly important when computing a cleartext signature (see {{cleartext-signature}}).
