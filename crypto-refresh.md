@@ -185,10 +185,10 @@ informative:
   RFC5869:
   RFC6090:
   SEC1:
-    title: "SEC 1: Elliptic Curve Cryptography"
+    title: "Standards for Efficient Cryptography 1 (SEC 1)”"
     author:
       org: Standards for Efficient Cryptography Group
-    date: September 2000
+    date: May 2009
   SHA1CD:
     target: https://github.com/cr-marcstevens/sha1collisiondetection
     title: sha1collisiondetection
