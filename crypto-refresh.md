@@ -185,7 +185,8 @@ informative:
   RFC5869:
   RFC6090:
   SEC1:
-    title: "Standards for Efficient Cryptography 1 (SEC 1)”"
+    target: https://www.secg.org/sec1-v2.pdf
+    title: "Standards for Efficient Cryptography 1 (SEC 1)"
     author:
       org: Standards for Efficient Cryptography Group
     date: May 2009
