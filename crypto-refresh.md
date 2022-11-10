@@ -1231,7 +1231,7 @@ The body of a v4 or v6 Signature packet contains:
 
 - Two-octet field holding the left 16 bits of the signed hash value.
 
-- Only for v6 signatures, a 16 octet field containing random values used as salt.
+- Only for v6 signatures, a fixed-length octet field containing random values used as salt, which length depends on the hash algorithm used and is defined in table {{hash-registry}}.
 
 - One or more multiprecision integers comprising the signature.
   This portion is algorithm-specific:
@@ -2022,8 +2022,8 @@ The body of this packet consists of:
 
 - A one-octet number describing the public-key algorithm used.
 
-- Only for v6 packets, a 16 octet field containing random values used as salt.
-  The value must match the salt field of the corresponding Signature packet.
+- Only for v6 packets, a fixed-length octet field containing random values used as salt, which length depends on the hash algorithm used and is defined in table {{hash-registry}}.
+  The value MUST match the salt field of the corresponding Signature packet.
 
 - Only for v3 packets, an eight-octet number holding the Key ID of the signing key.
 
@@ -3289,23 +3289,23 @@ Implementations MAY implement any other algorithm.
 
 ## Hash Algorithms {#hash-algos}
 
-{: title="Hash algorithm registry"}
-ID | Algorithm | Text Name
----:|----------|--------------
-  1 | MD5 {{HAC}} | "MD5"
-  2 | SHA-1 {{!FIPS180=DOI.10.6028/NIST.FIPS.180-4}}, {{sha1cd}} | "SHA1"
-  3 | RIPEMD-160 {{HAC}} | "RIPEMD160"
+{: title="Hash algorithm registry" #hash-registry}
+ID | Algorithm | Text Name | Salt octet size
+---:|----------|-----------| ---------
+  1 | MD5 {{HAC}} | "MD5" | 16
+  2 | SHA-1 {{!FIPS180=DOI.10.6028/NIST.FIPS.180-4}}, {{sha1cd}} | "SHA1" | 16
+  3 | RIPEMD-160 {{HAC}} | "RIPEMD160" | 16
   4 | Reserved
   5 | Reserved
   6 | Reserved
   7 | Reserved
-  8 | SHA2-256 {{FIPS180}} | "SHA256"
-  9 | SHA2-384 {{FIPS180}} | "SHA384"
- 10 | SHA2-512 {{FIPS180}} | "SHA512"
- 11 | SHA2-224 {{FIPS180}} | "SHA224"
- 12 | SHA3-256 {{!FIPS202=DOI.10.6028/NIST.FIPS.202}} | "SHA3-256"
+  8 | SHA2-256 {{FIPS180}} | "SHA256" | 16
+  9 | SHA2-384 {{FIPS180}} | "SHA384" | 24
+ 10 | SHA2-512 {{FIPS180}} | "SHA512" | 32
+ 11 | SHA2-224 {{FIPS180}} | "SHA224" | 16
+ 12 | SHA3-256 {{!FIPS202=DOI.10.6028/NIST.FIPS.202}} | "SHA3-256" | 16
  13 | Reserved
- 14 | SHA3-512 {{FIPS202}} | "SHA3-512"
+ 14 | SHA3-512 {{FIPS202}} | "SHA3-512" | 32
 100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement SHA2-256.
@@ -4392,9 +4392,9 @@ Some example C code implementing this technique can be found at {{SHA1CD}}.
 
 ## Advantages of Salted Signatures {#signature-salt-rationale}
 
-V6 signatures include a 128 bit salt that is hashed first.
+V6 signatures include a salt that is hashed first, which size depends on the hashing algorithm.
 This makes v6 OpenPGP signatures non-deterministic and protects against a broad class of attacks that depend on creating a signature over a predictable message.
-By selecting a new random salt for each signature made, signatures are not predictable.
+By selecting a new random salt for each signature made, the signed hashes and the signatures are not predictable.
 
 When the material to be signed may be attacker-controlled, hashing the salt first means that there is no attacker controlled hashed prefix.
 An example of this kind of attack is described in the paper SHA-1 Is A Shambles (see {{SHAMBLES}}), which leverages a chosen prefix collision attack against SHA-1.
@@ -4402,6 +4402,9 @@ An example of this kind of attack is described in the paper SHA-1 Is A Shambles 
 In some cases, an attacker may be able to induce a signature to be made, even if they do not control the content of the message.
 In some scenarios, a repeated signature over the exact same message may risk leakage of part or all of the signing key, for example see discussion of hardware faults over EdDSA and deterministic ECDSA in {{PSSLR17}}.
 Choosing a new random salt for each signature ensures that no repeated signatures are produced, and mitigates this risk.
+
+Furthermore, an adversary carrying out a chosen-message attack will not be able to control the hash that is being signed, and will need to break second-preimage resistance instead of the simpler collision resistance to create two messages having the same signature.
+The size of the salt is bound to the hash function to match the expected collision resistance level, and at least 16 octets.
 
 ## Elliptic Curve Side Channels {#ecc-side-channels}
 
