@@ -4398,13 +4398,12 @@ By selecting a new random salt for each signature made, the signed hashes and th
 
 When the material to be signed may be attacker-controlled, hashing the salt first means that there is no attacker controlled hashed prefix.
 An example of this kind of attack is described in the paper SHA-1 Is A Shambles (see {{SHAMBLES}}), which leverages a chosen prefix collision attack against SHA-1.
+This means that an adversary carrying out a chosen-message attack will not be able to control the hash that is being signed, and will need to break second-preimage resistance instead of the simpler collision resistance to create two messages having the same signature.
+The size of the salt is bound to the hash function to match the expected collision resistance level, and at least 16 octets.
 
 In some cases, an attacker may be able to induce a signature to be made, even if they do not control the content of the message.
 In some scenarios, a repeated signature over the exact same message may risk leakage of part or all of the signing key, for example see discussion of hardware faults over EdDSA and deterministic ECDSA in {{PSSLR17}}.
 Choosing a new random salt for each signature ensures that no repeated signatures are produced, and mitigates this risk.
-
-Furthermore, an adversary carrying out a chosen-message attack will not be able to control the hash that is being signed, and will need to break second-preimage resistance instead of the simpler collision resistance to create two messages having the same signature.
-The size of the salt is bound to the hash function to match the expected collision resistance level, and at least 16 octets.
 
 ## Elliptic Curve Side Channels {#ecc-side-channels}
 
