@@ -1231,7 +1231,9 @@ The body of a v4 or v6 Signature packet contains:
 
 - Two-octet field holding the left 16 bits of the signed hash value.
 
-- Only for v6 signatures, a fixed-length octet field containing random values used as salt, which length depends on the hash algorithm used and is defined in table {{hash-registry}}.
+- Only for v6 signatures, a variable-length octet field containing:
+  - a single octet scalar octet count. The value MUST match the value defined for the hash algorithm as specified in table {{hash-registry}}.
+  - a random value used as salt of the specified length.
 
 - One or more multiprecision integers comprising the signature.
   This portion is algorithm-specific:
@@ -1924,6 +1926,7 @@ For example, it might encounter any of the following problems (this is not an ex
 - A subpacket with a length that diverges from the expected length
 - A hashed subpacket area with length that exceeds the length of the signature packet itself
 - A known-weak hash algorithm (e.g. MD5)
+- A mismatch between the hash algorithm expected salt length and the actual salt length
 
 When an implementation encounters such a malformed or unknown signature, it MUST ignore the signature for validation purposes.
 It MUST NOT indicate a successful signature validation for such a signature.
@@ -2022,8 +2025,9 @@ The body of this packet consists of:
 
 - A one-octet number describing the public-key algorithm used.
 
-- Only for v6 packets, a fixed-length octet field containing random values used as salt, which length depends on the hash algorithm used and is defined in table {{hash-registry}}.
-  The value MUST match the salt field of the corresponding Signature packet.
+- Only for v6 signatures, a variable-length octet field containing:
+  - a single octet scalar octet count. The value MUST match the value defined for the hash algorithm as specified in table {{hash-registry}}.
+  - a random value used as salt of the specified length. The value MUST match the salt field of the corresponding Signature packet.
 
 - Only for v3 packets, an eight-octet number holding the Key ID of the signing key.
 
