@@ -3102,7 +3102,7 @@ If more than one message digest is used in the signatures, each digest algorithm
 To that end, the "Hash" Armor Header contains a comma-delimited list of used message digests, and the "Hash" Armor Header can be given multiple times.
 
 If the "SaltedHash" Armor Header is given, the specified message digest algorithm and salt are used for a signature.
-The message digest name is followed by a colon (`:`) followed by 22 characters of Radix-64 encoded salt without padding.
+The message digest name is followed by a colon (`:`) followed by a random value encoded in Radix-64 without padding, which decoded length depends on the hash as specified in table {{hash-registry}}.
 Note: The "SaltedHash" Armor Header contains digest algorithm and salt for a single signature; a second signature requires a second "SaltedHash" Armor Header.
 
 If neither a "Hash" nor a "SaltedHash" Armor Header is given, or the message digest algorithms (and salts) used in the signatures do not match the information in the headers, the signature MUST be considered invalid.
