@@ -1202,7 +1202,7 @@ DSA signatures MUST use hashes that are equal in size to the number of bits of q
 If the output size of the chosen hash is larger than the number of bits of q, the hash result is truncated to fit by taking the number of leftmost bits equal to the number of bits of q.
 This (possibly truncated) hash function result is treated as a number and used directly in the DSA signature algorithm.
 
-### Version 4 and 6 Signature Packet Formats
+### Version 4 and 6 Signature Packet Formats {#version-four-and-six-sig}
 
 The body of a v4 or v6 Signature packet contains:
 
@@ -1898,7 +1898,7 @@ This trailer depends on the version of the signature.
     For a v4 signature, this is a four-octet big-endian number, considered to be an unsigned integer modulo 2\*\*32.
     For a v6 signature, this is an eight-octet big-endian number, considered to be an unsigned integer modulo 2\*\*64.
 
-After all this has been hashed in a single hash context, the resulting hash field is used in the signature algorithm and placed at the end of the Signature packet.
+After all this has been hashed in a single hash context, the resulting hash field is used in the signature algorithm and its first two octets are placed in the Signature packet, as described in {{version-four-and-six-sig}}.
 
 For worked examples of the data hashed during a signature, see {{sig-hashed-data-example}}.
 
