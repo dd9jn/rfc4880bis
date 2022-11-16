@@ -1925,9 +1925,8 @@ This trailer depends on the version of the signature.
 
   - A single octet 0xFF,
 
-  - A number representing the length of the hashed data from the Signature packet stopping right before the second version octet.
-    For a v4 signature, this is a four-octet big-endian number, considered to be an unsigned integer modulo 2\*\*32.
-    For a v6 signature, this is an eight-octet big-endian number, considered to be an unsigned integer modulo 2\*\*64.
+  - A number representing the length (in octets) of the hashed data from the Signature packet through the hashed subpacket body.
+    This a four-octet big-endian unsigned integer of the length modulo 2\*\*32.
 
 After all this has been hashed in a single hash context, the resulting hash field is used in the signature algorithm and its first two octets are placed in the Signature packet, as described in {{version-four-and-six-sig}}.
 
