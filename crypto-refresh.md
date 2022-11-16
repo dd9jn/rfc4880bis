@@ -588,6 +588,7 @@ ID | S2K Type | Generate? | S2K field size (octets) | Reference
 100 to 110 | Private/Experimental S2K | As appropriate
 
 These are described in the subsections below.
+If the "Generate?" column is not "Y", the S2K entry is used only for reading in backwards compatibility mode and should not be used to generate new output.
 
 #### Simple S2K {#s2k-simple}
 
@@ -708,6 +709,9 @@ Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password
 254 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Yes
 255 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| check(secrets)) | No
 
+If the "Generate?" column is not "Y", the Secret Key protection details entry is used only for reading in backwards compatibility mode and MUST NOT be used to generate new output.
+
+
 Each row with "Generate?" marked as "No" is described for backward compatibility, and MUST NOT be generated.
 
 A version 5 secret key that is cryptographically protected is stored with an additional pair of length counts, each of which is one octet wide:
@@ -749,8 +753,8 @@ When handling a stream of packets, the length information in each packet header 
 An implementation handling a packet stream that wants to find the next packet MUST look for it at the precise offset indicated in the previous packet header.
 
 Additionally, some packets contain internal length indicators (for example, a subfield within the packet).
-In the event that a subfield length indicator within a packet implies inclusion of octets outside the range indicated in the packet header, a parser MUST truncate the subfield at the octet boundary indicated in the packet header.
-Such a truncation renders the packet malformed and unusable.
+In the event that a subfield length indicator within a packet implies inclusion of octets outside the range indicated in the packet header, a parser MUST abort without writing outside the indicated range and MUST treat the packet as malformed and unusable.
+
 An implementation MUST NOT interpret octets outside the range indicated in the packet header as part of the contents of the packet.
 
 ## Packet Headers
@@ -1255,7 +1259,7 @@ The two MPIs for Ed25519 use octet strings R and S as described in {{RFC8032}}.
 
 - MPI of an EC point R, represented as a (non-prefixed) native (little-endian) octet string up to 32 octets.
 
-- MPI of EdDSA value S, also in (non-prefixed) native little-endian format with a length up to 32 octets.
+- MPI of EdDSA value S, also in (non-prefixed) native (little-endian) format with a length up to 32 octets.
 
 ##### Algorithm-Specific Fields for Ed448 signatures
 
@@ -1362,7 +1366,7 @@ If set, it denotes that the subpacket is one that is critical for the evaluator 
 If a subpacket is encountered that is marked critical but is unknown to the evaluating software, the evaluator SHOULD consider the signature to be in error.
 
 An evaluator may "recognize" a subpacket, but not implement it.
-The purpose of the critical bit is to allow the signer to tell an evaluator that it would prefer a new, unknown feature to generate an error than be ignored.
+The purpose of the critical bit is to allow the signer to tell an evaluator that it would prefer a new, unknown feature to generate an error rather than being ignored.
 
 Implementations SHOULD implement the four preferred algorithm subpackets (11, 21, 22, and 34), as well as the "Reason for Revocation" subpacket.
 Note, however, that if an implementation chooses not to implement some of the preferences, it is required to behave in a polite manner to respect the wishes of those users who do implement these preferences.
@@ -3747,7 +3751,7 @@ In some historic data, the payload may be a deprecated SED ({{sed}}) packet inst
 The versions of the preceding ESK packets within an Encrypted Message MUST align with the version of the payload SEIPD packet, as described in this section.
 
 v3 PKESK and v4 SKESK packets both contain in their cleartext the symmetric cipher algorithm identifier in addition to the session key for the subsequent SEIPD packet.
-Since a v1 SEIPD does not contain a symmetric algorithm identifier, so all ESK packets preceding a v1 SEIPD payload MUST be either v3 PKESK or v4 SKESK.
+Since a v1 SEIPD does not contain a symmetric algorithm identifier, all ESK packets preceding a v1 SEIPD payload MUST be either v3 PKESK or v4 SKESK.
 
 On the other hand, the cleartext of the v5 ESK packets (either PKESK or SKESK) do not contain a symmetric cipher algorithm identifier, so they cannot be used in combination with a v1 SEIPD payload.
 The payload following any v5 PKESK or v5 SKESK packet MUST be a v2 SEIPD.
@@ -3940,7 +3944,7 @@ For encrypting to a v5 key, the size of the sequence is either 66 for curve NIST
 
 The key wrapping method is described in {{RFC3394}}.
 The KDF produces a symmetric key that is used as a key-encryption key (KEK) as specified in {{RFC3394}}.
-Refer to {{ecdh-parameters}} for the details regarding the choice of the KEK algorithm, which SHOULD be one of three AES algorithms.
+Refer to {{ecdh-parameters}} for the details regarding the choice of the KEK algorithm, which SHOULD be one of the three AES algorithms.
 Key wrapping and unwrapping is performed with the default initial value of {{RFC3394}}.
 
 The input to the key wrapping method is the plaintext described in {{pkesk}}, "Public-Key Encrypted Session Key Packets (Tag 1)", padded using the method described in {{PKCS5}} to an 8-octet granularity.
@@ -4504,7 +4508,7 @@ Users should migrate to AEAD with all due speed.
 
 A keyholder Alice may wish to designate a third party to be able to revoke Alice's own key.
 
-The preferred way for her to do this is produce a specific Revocation Signature (signature types 0x20, 0x28, or 0x30) and distribute it securely to her preferred revoker who can hold it in escrow.
+The preferred way for her to do this is to produce a specific Revocation Signature (signature types 0x20, 0x28, or 0x30) and distribute it securely to her preferred revoker who can hold it in escrow.
 The preferred revoker can then publish the escrowed Revocation Signature at whatever time is deemed appropriate, rather than generating a revocation signature themselves.
 
 There are multiple advantages of using an escrowed Revocation Signature over the deprecated Revocation Key subpacket ({{revocation-key}}):
