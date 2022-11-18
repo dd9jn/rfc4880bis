@@ -1138,6 +1138,10 @@ These meanings are as follows:
   Note that we really do mean SHOULD.
   There are plausible uses for this (such as a blind party that only sees the signature, not the key or source document) that cannot include a target subpacket.
 
+0xFF: Reserved.
+: An implementation MUST NOT create any signature with this type, and MUST NOT validate any signature made with this type.
+  See {{sig-computation-notes}} for more details.
+
 ### Version 3 Signature Packet Format {#version-three-sig}
 
 The body of a version 3 Signature Packet contains:
@@ -1931,6 +1935,17 @@ This trailer depends on the version of the signature.
 After all this has been hashed in a single hash context, the resulting hash field is used in the signature algorithm and its first two octets are placed in the Signature packet, as described in {{version-four-and-six-sig}}.
 
 For worked examples of the data hashed during a signature, see {{sig-hashed-data-example}}.
+
+#### Notes About Signature Computation {#sig-computation-notes}
+
+The data actually hashed by OpenPGP varies depending on signature version, in order to ensure that a signature made using one version cannot be repurposed as a signature with a different version over subtly different data.
+The hashed data streams differ based on their trailer, most critically in the fifth and sixth octets from the end of the stream.
+In particular:
+
+- A v3 signature uses the fifth octet from the end to store its signature type.
+  This MUST NOT be signature type `0xff`.
+- All signature versions later than v3 always use a literal `0xff` in the fifth octet from the end.
+  For these later signature versions, the sixth octet from the end (the octet before the `0xff`) stores the signature version number.
 
 #### Subpacket Hints
 
