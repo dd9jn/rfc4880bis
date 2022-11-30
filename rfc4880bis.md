@@ -343,7 +343,7 @@ document are to be interpreted as described in [](#RFC2119).
 The key words "PRIVATE USE", "EXPERT REVIEW", "SPECIFICATION
 REQUIRED", "RFC REQUIRED", and "IETF REVIEW" that appear in this
 document when used to describe namespace allocation are to be
-interpreted as described in [](#RFC8126).
+interpreted as described in  [](#RFC8126).
 
 # General functions
 
@@ -3124,7 +3124,7 @@ packet length.  The reason for this is that the hashing rules for
 modification detection include a one-octet tag and one-octet length in
 the data hash.  While this is a bit restrictive, it reduces complexity.
 
-## AEAD Encrypted Data Packet (Tag 20)
+## OCB Encrypted Data Packet (Tag 20)
 
 This packet contains data encrypted with an authenticated encryption and
 additional data (AEAD) construction.  When it has been decrypted, it
@@ -5447,147 +5447,10 @@ The entire signature packet is thus:
        d0 9c 4f a1 15 27 f0 38  e0 f5 7f 22 01 d8 2f 2e
        a2 c9 03 32 65 fa 6c eb  48 9e 85 4b ae 61 b4 04
 
-
-## Sample AEAD-EAX encryption and decryption
-
-Encryption is performed with the string 'Hello, world!' and password
-'password', using AES-128 with AEAD-EAX encryption.
-
-### Sample Parameters
-
-S2K:
-
-      type 3
-
-Iterations:
-
-      524288 (144), SHA2-256
-
-Salt:
-
-      cd5a9f70fbe0bc65
-
-### Sample symmetric-key encrypted session key packet (v5)
-
-Packet header:
-
-      c3 3e
-
-Version, algorithms, S2K fields:
-
-      05 07 01 03 08 cd 5a 9f 70 fb e0 bc 65 90
-
-AEAD IV:
-
-      bc 66 9e 34 e5 00 dc ae dc 5b 32 aa 2d ab 02 35
-
-AEAD encrypted CEK:
-
-      9d ee 19 d0 7c 34 46 c4 31 2a 34 ae 19 67 a2 fb
-
-Authentication tag:
-
-      7e 92 8e a5 b4 fa 80 12 bd 45 6d 17 38 c6 3c 36
-
-### Starting AEAD-EAX decryption of CEK
-
-The derived key is:
-
-      b2 55 69 b9 54 32 45 66 45 27 c4 97 6e 7a 5d 6e
-
-Authenticated Data:
-
-      c3 05 07 01
-
-Nonce:
-
-      bc 66 9e 34 e5 00 dc ae dc 5b 32 aa 2d ab 02 35
-
-Decrypted CEK:
-
-      86 f1 ef b8 69 52 32 9f 24 ac d3 bf d0 e5 34 6d
-
-
-### Sample AEAD encrypted data packet
-
-Packet header:
-
-      d4 4a
-
-Version, AES-128, EAX, Chunk bits (14):
-
-      01 07 01 0e
-
-IV:
-
-      b7 32 37 9f 73 c4 92 8d e2 5f ac fe 65 17 ec 10
-
-AEAD-EAX Encrypted data chunk #0:
-
-      5d c1 1a 81 dc 0c b8 a2 f6 f3 d9 00 16 38 4a 56
-      fc 82 1a e1 1a e8
-
-Chunk #0 authentication tag:
-
-      db cb 49 86 26 55 de a8 8d 06 a8 14 86 80 1b 0f
-
-Final (zero-size chunk #1) authentication tag:
-
-      f3 87 bd 2e ab 01 3d e1 25 95 86 90 6e ab 24 76
-
-### Decryption of data
-
-Starting AEAD-EAX decryption of data, using the CEK.
-
-Chunk #0:
-
-Authenticated data:
-
-      d4 01 07 01 0e 00 00 00 00 00 00 00 00
-
-Nonce:
-
-      b7 32 37 9f 73 c4 92 8d e2 5f ac fe 65 17 ec 10
-
-Decrypted chunk #0.
-
-Literal data packet with the string contents 'Hello, world!\n'.
-
-      cb 14 62 00 00 00 00 00  48 65 6c 6c 6f 2c 20 77
-      6f 72 6c 64 21 0a
-
-Authenticating final tag:
-
-Authenticated data:
-
-      d4 01 07 01 0e 00 00 00  00 00 00 00 01 00 00 00
-      00 00 00 00 16
-
-Nonce:
-
-      b7 32 37 9f 73 c4 92 8d e2 5f ac fe 65 17 ec 11
-
-### Complete AEAD-EAX encrypted packet sequence
-
-Symmetric-key encrypted session key packet (v5):
-
-       c3 3e 05 07 01 03 08 cd  5a 9f 70 fb e0 bc 65 90
-       bc 66 9e 34 e5 00 dc ae  dc 5b 32 aa 2d ab 02 35
-       9d ee 19 d0 7c 34 46 c4  31 2a 34 ae 19 67 a2 fb
-       7e 92 8e a5 b4 fa 80 12  bd 45 6d 17 38 c6 3c 36
-
-AEAD encrypted data packet:
-
-       d4 4a 01 07 01 0e b7 32  37 9f 73 c4 92 8d e2 5f
-       ac fe 65 17 ec 10 5d c1  1a 81 dc 0c b8 a2 f6 f3
-       d9 00 16 38 4a 56 fc 82  1a e1 1a e8 db cb 49 86
-       26 55 de a8 8d 06 a8 14  86 80 1b 0f f3 87 bd 2e
-       ab 01 3d e1 25 95 86 90  6e ab 24 76
-
 ## Sample AEAD-OCB encryption and decryption
 
-Encryption is performed with the string 'Hello, world!' and password
-'password', using AES-128 with AEAD-OCB encryption.
+Encryption is performed with the string 'Hello, world!',LF and
+password 'password', using AES-128 with AEAD-OCB encryption.
 
 ### Sample Parameters
 
@@ -5679,7 +5542,7 @@ Chunk #0:
 
 Authenticated data:
 
-      r4 01 07 02 0e 00 00 00 00 00 00 00 00
+      d4 01 07 02 0e 00 00 00 00 00 00 00 00
 
 Nonce:
 
