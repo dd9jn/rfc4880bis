@@ -1295,9 +1295,9 @@ A pointer incremented by this number will skip over the subpacket data set.
 Each subpacket consists of a subpacket header and a body.
 The header consists of:
 
-- the subpacket length (1, 2, or 5 octets),
+- The subpacket length (1, 2, or 5 octets),
 
-- the subpacket type (1 octet),
+- The subpacket type (1 octet),
 
 and is followed by the subpacket-specific data.
 
@@ -1879,15 +1879,15 @@ This trailer depends on the version of the signature.
 
   - An octet indicating the signature version (0x04 for v4, 0x05 for v5),
 
-  - the signature type,
+  - The signature type,
 
-  - the public-key algorithm,
+  - The public-key algorithm,
 
-  - the hash algorithm,
+  - The hash algorithm,
 
-  - the hashed subpacket length,
+  - The hashed subpacket length,
 
-  - the hashed subpacket body,
+  - The hashed subpacket body,
 
   - A second version octet (0x04 for v4, 0x05 for v5)
 
@@ -1914,13 +1914,13 @@ Either of these keys can verify a signature created by the other, and it may be 
 In some cases, a signature packet (or its corresponding One-Pass Signature Packet, see {{one-pass-sig}}) may be malformed or unknown.
 For example, it might encounter any of the following problems (this is not an exhaustive list):
 
-- an unknown signature type
-- an unknown signature version
-- an unsupported signature version
-- an unknown "critical" subpacket (see {{signature-subpacket}}) in the hashed area
-- a subpacket with a length that diverges from the expected length
-- a hashed subpacket area with length that exceeds the length of the signature packet itself
-- a known-weak hash algorithm (e.g. MD5)
+- An unknown signature type
+- An unknown signature version
+- An unsupported signature version
+- An unknown "critical" subpacket (see {{signature-subpacket}}) in the hashed area
+- A subpacket with a length that diverges from the expected length
+- A hashed subpacket area with length that exceeds the length of the signature packet itself
+- A known-weak hash algorithm (e.g. MD5)
 
 When an implementation encounters such a malformed or unknown signature, it MUST ignore the signature for validation purposes.
 It MUST NOT indicate a successful signature validation for such a signature.
@@ -2090,9 +2090,9 @@ A version 3 public key or public-subkey packet contains:
 
 - A series of multiprecision integers comprising the key material:
 
-  - a multiprecision integer (MPI) of RSA public modulus n;
+  - A multiprecision integer (MPI) of RSA public modulus n;
 
-  - an MPI of RSA public encryption exponent e.
+  - An MPI of RSA public encryption exponent e.
 
 V3 keys are deprecated.
 They contain three weaknesses.
@@ -2583,9 +2583,9 @@ The User Attribute packet is made up of one or more attribute subpackets.
 Each subpacket consists of a subpacket header and a body.
 The header consists of:
 
-- the subpacket length (1, 2, or 5 octets)
+- The subpacket length (1, 2, or 5 octets)
 
-- the subpacket type (1 octet)
+- The subpacket type (1 octet)
 
 and is followed by the subpacket specific data.
 
@@ -3860,11 +3860,11 @@ To encode `X` to the wire format, we set the MPI's two-octet bit counter to the 
 
 To reverse the process, an implementation that knows this value has an expected length of 5 octets can take the following steps:
 
-- ensure that the MPI's two-octet bitcount is less than or equal to 40 (5 octets of 8 bits)
+- Ensure that the MPI's two-octet bitcount is less than or equal to 40 (5 octets of 8 bits)
 
-- allocate 5 octets, setting all to zero initially
+- Allocate 5 octets, setting all to zero initially
 
-- copy the MPI data octets (without the two count octets) into the lower octets of the allocated space
+- Copy the MPI data octets (without the two count octets) into the lower octets of the allocated space
 
 ### Elliptic Curve Prefixed Octet String Wire Format {#ec-prefix}
 
@@ -3878,9 +3878,9 @@ To encode the string, we prefix it with the octet 0x40 (whose 7th bit is set), t
 
 To decode the string from the wire, an implementation that knows that the variable is formed in this way can:
 
-- ensure that the first three octets of the MPI (the two bit-count octets plus the prefix octet)  are `00 2f 40`, and
+- Ensure that the first three octets of the MPI (the two bit-count octets plus the prefix octet)  are `00 2f 40`, and
 
-- use the remainder of the MPI directly off the wire.
+- Use the remainder of the MPI directly off the wire.
 
 Note that this is a similar approach to that used in the EC point encodings found in {{ec-point-prefixed-native}}.
 
@@ -4470,21 +4470,21 @@ In the case of AEAD encrypted messages, if the message is truncated, i.e. the fi
 
 Any of the following OpenPGP data elements indicate that malleable ciphertext is present:
 
-- all Symmetrically Encrypted Data packets ({{sed}}).
+- All Symmetrically Encrypted Data packets ({{sed}}).
 
-- within any encrypted container, any Compressed Data packet ({{compressed-data}}) where there is a decompression failure.
+- Within any encrypted container, any Compressed Data packet ({{compressed-data}}) where there is a decompression failure.
 
-- any version 1 Symmetrically Encrypted Integrity Protected Data packet ({{version-one-seipd}}) where the internal Modification Detection Code does not validate.
+- Any version 1 Symmetrically Encrypted Integrity Protected Data packet ({{version-one-seipd}}) where the internal Modification Detection Code does not validate.
 
-- any version 2 Symmetrically Encrypted Integrity Protected Data packet ({{version-two-seipd}}) where the authentication tag of any chunk fails, or where there is no final zero-octet chunk.
+- Any version 2 Symmetrically Encrypted Integrity Protected Data packet ({{version-two-seipd}}) where the authentication tag of any chunk fails, or where there is no final zero-octet chunk.
 
-- any Secret Key packet with encrypted secret key material ({{secret-key-encryption}}) where there is an integrity failure, based on the value of the secret key protection octet:
+- Any Secret Key packet with encrypted secret key material ({{secret-key-encryption}}) where there is an integrity failure, based on the value of the secret key protection octet:
 
-  - value 255 or raw cipher algorithm: where the trailing 2-octet checksum does not match.
+  - Value 255 or raw cipher algorithm: where the trailing 2-octet checksum does not match.
 
-  - value 254: where the SHA1 checksum is mismatched.
+  - Value 254: where the SHA1 checksum is mismatched.
 
-  - value 253: where the AEAD authentication tag is invalid.
+  - Value 253: where the AEAD authentication tag is invalid.
 
 To avoid these circumstances, an implementation that generates OpenPGP encrypted data SHOULD select the encrypted container format with the most robust protections that can be handled by the intended recipients.
 In particular:
@@ -4493,7 +4493,7 @@ In particular:
 
 - When encrypting to one or more public keys:
 
-  - all recipient keys indicate support for version 2 of the Symmetrically Encrypted Integrity Protected Data packet in their Features subpacket ({{features-subpacket}}), or are v5 keys without a Features subpacket, or the implementation can otherwise infer that all recipients support v2 SEIPD packets, the implementation MUST encrypt using a v2 SEIPD packet.
+  - All recipient keys indicate support for version 2 of the Symmetrically Encrypted Integrity Protected Data packet in their Features subpacket ({{features-subpacket}}), or are v5 keys without a Features subpacket, or the implementation can otherwise infer that all recipients support v2 SEIPD packets, the implementation MUST encrypt using a v2 SEIPD packet.
 
   - If one of the recipients does not support v2 SEIPD packets, then the message generator MAY use a v1 SEIPD packet instead.
 
@@ -4537,11 +4537,11 @@ Should those prove unsatisfactory, {{RFC4086}} provides guidance on the generati
 
 OpenPGP uses random data with three different levels of visibility:
 
-- in publicly-visible fields such as nonces, IVs, public padding material, or salts,
+- In publicly-visible fields such as nonces, IVs, public padding material, or salts,
 
-- in shared-secret values, such as session keys for encrypted data or padding material within an encrypted packet, and
+- In shared-secret values, such as session keys for encrypted data or padding material within an encrypted packet, and
 
-- in entirely private data, such as asymmetric key generation.
+- In entirely private data, such as asymmetric key generation.
 
 With a properly functioning CSPRNG, this does not present a security problem, as it is not feasible to determine the CSPRNG state from its output.
 However, with a broken CSPRNG, it may be possible for an attacker to use visible output to determine the CSPRNG internal state and thereby predict less-visible data like keying material, as documented in {{?CHECKOWAY=DOI.10.1145/2976749.2978395}}.
@@ -4679,10 +4679,10 @@ ftgr9N3lYG4NdWrtM2YBANCcT6EVJ/A44PV/IgHYLy6iyQMyZfps60iehUuuYbQE
 
 Here is a Transferable Public Key consisting of:
 
-- a v5 Ed25519 Public-Key packet
-- a v5 direct key self-signature
-- a v5 Curve25519 Public-Subkey packet
-- a v5 subkey binding signature
+- A v5 Ed25519 Public-Key packet
+- A v5 direct key self-signature
+- A v5 Curve25519 Public-Subkey packet
+- A v5 subkey binding signature
 
 {: sourcecode-name="v5-minimal-cert.key"}
 ~~~ application/pgp-keys
@@ -4707,10 +4707,10 @@ The corresponding Transferable Secret Key can be found in {{v5-key}}.
 
 Here is a Transferable Secret Key consisting of:
 
-- a v5 Ed25519 Secret-Key packet
-- a v5 direct key self-signature
-- a v5 Curve25519 Secret-Subkey packet
-- a v5 subkey binding signature
+- A v5 Ed25519 Secret-Key packet
+- A v5 direct key self-signature
+- A v5 Curve25519 Secret-Subkey packet
+- A v5 subkey binding signature
 
 {: sourcecode-name="v5-minimal-secret.key"}
 ~~~ application/pgp-keys
