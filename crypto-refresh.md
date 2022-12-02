@@ -1302,7 +1302,7 @@ The header consists of:
 and is followed by the subpacket-specific data.
 
 The length includes the type octet but not this length.
-Its format is similar to the "new" format packet header lengths, but cannot have Partial Body Lengths.
+Its format is similar to the OpenPGP format packet header lengths, but cannot have Partial Body Lengths.
 That is:
 
     if the 1st octet <  192, then
@@ -1996,7 +1996,7 @@ A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 
 - An authentication tag for the AEAD mode.
 
-HKDF is used with SHA256 as hash algorithm, the key derived from S2K as Initial Keying Material (IKM), no salt, and the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version, and the cipher-algo and AEAD-mode used to encrypt the key material, are used as info parameter.
+HKDF is used with SHA256 as hash algorithm, the key derived from S2K as Initial Keying Material (IKM), no salt, and the Packet Tag in the OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version, and the cipher-algo and AEAD-mode used to encrypt the key material, are used as info parameter.
 Then, the session key is encrypted using the resulting key, with the AEAD algorithm specified for version 2 of the Symmetrically Encrypted Integrity Protected Data packet.
 Note that no chunks are used and that there is only one authentication tag.
 The Packet Tag in OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are given as additional data.
