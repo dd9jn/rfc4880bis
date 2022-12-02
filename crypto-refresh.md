@@ -928,7 +928,7 @@ Tag | Critical | Packet Type
 ### Packet Criticality
 
 The Packet Tag space is partitioned into critical packets and non-critical packets.
-If an implementation encounters a critical packet where the packet type is unknown in a Packet Sequence, it MUST reject the whole Packet Sequence (see {{packet-composition}}).
+If an implementation encounters a critical packet where the packet type is unknown in a packet sequence, it MUST reject the whole packet sequence (see {{packet-composition}}).
 On the other hand, an unknown non-critical packet MUST be ignored.
 
 Packet Tags from 0 to 39 are critical.
