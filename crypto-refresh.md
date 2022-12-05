@@ -928,7 +928,7 @@ Tag | Critical | Packet Type
 ### Packet Criticality
 
 The Packet Tag space is partitioned into critical packets and non-critical packets.
-If an implementation encounters a critical packet where the packet type is unknown in a Packet Sequence, it MUST reject the whole Packet Sequence (see {{packet-composition}}).
+If an implementation encounters a critical packet where the packet type is unknown in a packet sequence, it MUST reject the whole packet sequence (see {{packet-composition}}).
 On the other hand, an unknown non-critical packet MUST be ignored.
 
 Packet Tags from 0 to 39 are critical.
@@ -1214,7 +1214,7 @@ The body of a v4 or v5 Signature packet contains:
 
 - One-octet hash algorithm.
 
-- A scalar octet count for following hashed subpacket data.
+- A scalar octet count for the following hashed subpacket data.
   For a v4 signature, this is a two-octet field.
   For a v5 signature, this is a four-octet field.
   Note that this is the length in octets of all of the hashed subpackets; a pointer incremented by this number will skip over the hashed subpackets.
@@ -1282,7 +1282,7 @@ The first field is hashed with the rest of the signature data, while the second 
 The second set of subpackets is not cryptographically protected by the signature and should include only advisory information.
 
 The differences between a v4 and v5 signature are two-fold: first, a v5 signature increases the width of the size indicators for the signed data, making it more capable when signing large keys or messages.
-Second, the hash is salted with 128 bit of random data (see {{signature-salt-rationale}}.
+Second, the hash is salted with 128 bit of random data (see {{signature-salt-rationale}}).
 
 The algorithms for converting the hash function result to a signature are described in {{computing-signatures}}.
 
@@ -1295,14 +1295,14 @@ A pointer incremented by this number will skip over the subpacket data set.
 Each subpacket consists of a subpacket header and a body.
 The header consists of:
 
-- the subpacket length (1, 2, or 5 octets),
+- The subpacket length (1, 2, or 5 octets),
 
-- the subpacket type (1 octet),
+- The subpacket type (1 octet),
 
 and is followed by the subpacket-specific data.
 
 The length includes the type octet but not this length.
-Its format is similar to the "new" format packet header lengths, but cannot have Partial Body Lengths.
+Its format is similar to the OpenPGP format packet header lengths, but cannot have Partial Body Lengths.
 That is:
 
     if the 1st octet <  192, then
@@ -1854,8 +1854,8 @@ For binary document signatures (type 0x00), the document data is hashed directly
 For text document signatures (type 0x01), the implementation MUST first canonicalize the document by converting line endings to \<CR>\<LF> and encoding it in UTF-8 (see {{RFC3629}}).
 The resulting UTF-8 bytestream is hashed.
 
-When a v4 signature is made over a key, the hash data starts with the octet 0x99, followed by a two-octet length of the key, and then body of the key packet.
-When a v5 signature is made over a key, the hash data starts with the octet 0x9a, followed by a four-octet length of the key, and then body of the key packet.
+When a v4 signature is made over a key, the hash data starts with the octet 0x99, followed by a two-octet length of the key, and then the body of the key packet.
+When a v5 signature is made over a key, the hash data starts with the octet 0x9a, followed by a four-octet length of the key, and then the body of the key packet.
 
 A subkey binding signature (type 0x18) or primary key binding signature (type 0x19) then hashes the subkey using the same format as the main key (also using 0x99 or 0x9a as the first octet).
 Primary key revocation signatures (type 0x20) hash only the key being revoked.
@@ -1872,22 +1872,22 @@ Once the data body is hashed, then a trailer is hashed.
 This trailer depends on the version of the signature.
 
 - A v3 signature hashes five octets of the packet body, starting from the signature type field.
-  This data is the signature type, followed by the four-octet signature time.
+  This data is the signature type, followed by the four-octet signature creation time.
 
 - A v4 or v5 signature hashes the packet body starting from its first field, the version number, through the end of the hashed subpacket data and a final extra trailer.
   Thus, the hashed fields are:
 
   - An octet indicating the signature version (0x04 for v4, 0x05 for v5),
 
-  - the signature type,
+  - The signature type,
 
-  - the public-key algorithm,
+  - The public-key algorithm,
 
-  - the hash algorithm,
+  - The hash algorithm,
 
-  - the hashed subpacket length,
+  - The hashed subpacket length,
 
-  - the hashed subpacket body,
+  - The hashed subpacket body,
 
   - A second version octet (0x04 for v4, 0x05 for v5)
 
@@ -1914,13 +1914,13 @@ Either of these keys can verify a signature created by the other, and it may be 
 In some cases, a signature packet (or its corresponding One-Pass Signature Packet, see {{one-pass-sig}}) may be malformed or unknown.
 For example, it might encounter any of the following problems (this is not an exhaustive list):
 
-- an unknown signature type
-- an unknown signature version
-- an unsupported signature version
-- an unknown "critical" subpacket (see {{signature-subpacket}}) in the hashed area
-- a subpacket with a length that diverges from the expected length
-- a hashed subpacket area with length that exceeds the length of the signature packet itself
-- a known-weak hash algorithm (e.g. MD5)
+- An unknown signature type
+- An unknown signature version
+- An unsupported signature version
+- An unknown "critical" subpacket (see {{signature-subpacket}}) in the hashed area
+- A subpacket with a length that diverges from the expected length
+- A hashed subpacket area with length that exceeds the length of the signature packet itself
+- A known-weak hash algorithm (e.g. MD5)
 
 When an implementation encounters such a malformed or unknown signature, it MUST ignore the signature for validation purposes.
 It MUST NOT indicate a successful signature validation for such a signature.
@@ -1932,7 +1932,7 @@ Producing an output that indicates that no successful signatures were found is p
 ## Symmetric-Key Encrypted Session Key Packets (Tag 3) {#skesk}
 
 The Symmetric-Key Encrypted Session Key (SKESK) packet holds the symmetric-key encryption of a session key used to encrypt a message.
-Zero or more Public-Key Encrypted Session Key packets ({{pkesk}}) and/or Symmetric-Key Encrypted Session Key packets may precede a an encryption container (that is, a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet) that holds an encrypted message.
+Zero or more Public-Key Encrypted Session Key packets ({{pkesk}}) and/or Symmetric-Key Encrypted Session Key packets may precede an encryption container (that is, a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet) that holds an encrypted message.
 The message is encrypted with a session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet(s).
 
 If the encryption container is preceded by one or more Symmetric-Key Encrypted Session Key packets, each specifies a passphrase that may be used to decrypt the message.
@@ -1996,7 +1996,7 @@ A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 
 - An authentication tag for the AEAD mode.
 
-HKDF is used with SHA256 as hash algorithm, the key derived from S2K as Initial Keying Material (IKM), no salt, and the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version, and the cipher-algo and AEAD-mode used to encrypt the key material, are used as info parameter.
+HKDF is used with SHA256 as hash algorithm, the key derived from S2K as Initial Keying Material (IKM), no salt, and the Packet Tag in the OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version, and the cipher-algo and AEAD-mode used to encrypt the key material, are used as info parameter.
 Then, the session key is encrypted using the resulting key, with the AEAD algorithm specified for version 2 of the Symmetrically Encrypted Integrity Protected Data packet.
 Note that no chunks are used and that there is only one authentication tag.
 The Packet Tag in OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are given as additional data.
@@ -2090,9 +2090,9 @@ A version 3 public key or public-subkey packet contains:
 
 - A series of multiprecision integers comprising the key material:
 
-  - a multiprecision integer (MPI) of RSA public modulus n;
+  - A multiprecision integer (MPI) of RSA public modulus n;
 
-  - an MPI of RSA public encryption exponent e.
+  - An MPI of RSA public encryption exponent e.
 
 V3 keys are deprecated.
 They contain three weaknesses.
@@ -2439,7 +2439,7 @@ The body of this packet consists of:
 
 - Compressed data, which makes up the remainder of the packet.
 
-A Compressed Data Packet's body contains an block that compresses some set of packets.
+A Compressed Data Packet's body contains a block that compresses some set of packets.
 See {{packet-composition}} for details on how messages are formed.
 
 ZIP-compressed packets are compressed with raw {{RFC1951}} DEFLATE blocks.
@@ -2583,9 +2583,9 @@ The User Attribute packet is made up of one or more attribute subpackets.
 Each subpacket consists of a subpacket header and a body.
 The header consists of:
 
-- the subpacket length (1, 2, or 5 octets)
+- The subpacket length (1, 2, or 5 octets)
 
-- the subpacket type (1 octet)
+- The subpacket type (1 octet)
 
 and is followed by the subpacket specific data.
 
@@ -2747,7 +2747,7 @@ The left-most M bits are used as symmetric algorithm key, the remaining N - 64 b
 HKDF is used with SHA256 as hash algorithm, the session key as Initial Keying Material (IKM), the salt as salt, and the Packet Tag in OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), version number, cipher algorithm octet, AEAD algorithm octet, and chunk size octet as info parameter.
 
 The KDF mechanism provides key separation between cipher and AEAD algorithms.
-Furthermore, an implementation can securely reply to a message even if a recipients certificate is unknown by reusing the encrypted session key packets and replying with a different salt yielding a new, unique message key.
+Furthermore, an implementation can securely reply to a message even if a recipient's certificate is unknown by reusing the encrypted session key packets and replying with a different salt yielding a new, unique message key.
 
 A v2 SEIPD packet consists of one or more chunks of data.
 The plaintext of each chunk is of a size specified using the chunk size octet using the method specified below.
@@ -3178,13 +3178,13 @@ DSA (17) keys are deprecated and MUST NOT be generated (see {{dsa-notes}}).
 See {{reserved-notes}} for notes on Elgamal Encrypt or Sign (20), and X9.42 (21).
 Implementations MAY implement any other algorithm.
 
-Note that an implementation conforming to the previous version of this standard ({{RFC4880}}) have only DSA (17) and Elgamal (16) as its MUST-implement algorithms.
+Note that an implementation conforming to the previous version of this standard ({{RFC4880}}) has only DSA (17) and Elgamal (16) as its MUST-implement algorithms.
 
 A compatible specification of ECDSA is given in {{RFC6090}} as "KT-I Signatures" and in {{SEC1}}; ECDH is defined in {{ecdh}} of this document.
 
 ## ECC Curves for OpenPGP {#ec-curves}
 
-The parameter curve OID is an array of octets that define a named curve.
+The parameter curve OID is an array of octets that defines a named curve.
 
 The table below specifies the exact sequence of octets for each named curve referenced in this document.
 It also specifies which public key algorithms the curve can be used with, as well as the size of expected elements in octets:
@@ -3556,7 +3556,7 @@ There are three distinct sequences of packets:
 Each sequence has an explicit grammar of what packet types ({{packet-type-registry}}) can appear in what place.
 The presence of an unknown critical packet, or a known but unexpected packet is a critical error, invalidating the entire sequence (see {{packet-criticality}}).
 On the other hand, unknown non-critical packets can appear anywhere within any sequence.
-This provides a structured way to introduce new packets into the protocol, while making sure that certain packets will be handled strict.
+This provides a structured way to introduce new packets into the protocol, while making sure that certain packets will be handled strictly.
 
 An implementation may "recognize" a packet, but not implement it.
 The purpose of Packet Criticality is to allow the producer to tell the consumer whether it would prefer a new, unknown packet to generate an error or be ignored.
@@ -3615,7 +3615,7 @@ The format of an OpenPGP v4 key is as follows.
 In addition to these rules, a marker packet ({{marker-packet}}) can appear anywhere in the sequence.
 
 A subkey always has at least one subkey binding signature after it that is issued using the primary key to tie the two keys together.
-These binding signatures may be in either v3 or v4 format, but SHOULD be v4.
+These binding signatures may be in either v3 or v4 format, but SHOULD be in v4 format.
 Subkeys that can issue signatures MUST have a v4 binding signature due to the REQUIRED embedded primary key binding signature.
 
 Every subkey for a v4 primary key MUST be a v4 subkey.
@@ -3845,7 +3845,7 @@ The choice of encoding is specific to the public key algorithm in use.
 Type | Description | Reference
 -----|-------------|-----------
 integer | An integer, big-endian encoded as a standard OpenPGP MPI | {{mpi}}
-octet string | An octet string of fixed length, that may be shorter on the wire due to leading zeros being stripped by the MPI encoding, and may need to be zero-padded before usage | {{ec-octet-string}}
+octet string | An octet string of fixed length, that may be shorter on the wire due to leading zeros being stripped by the MPI encoding, and may need to be zero-padded before use | {{ec-octet-string}}
 prefixed N octets | An octet string of fixed length N, prefixed with octet 0x40 to ensure no leading zero octet | {{ec-prefix}}
 
 ### EC Octet String Wire Format {#ec-octet-string}
@@ -3860,11 +3860,11 @@ To encode `X` to the wire format, we set the MPI's two-octet bit counter to the 
 
 To reverse the process, an implementation that knows this value has an expected length of 5 octets can take the following steps:
 
-- ensure that the MPI's two-octet bitcount is less than or equal to 40 (5 octets of 8 bits)
+- Ensure that the MPI's two-octet bitcount is less than or equal to 40 (5 octets of 8 bits)
 
-- allocate 5 octets, setting all to zero initially
+- Allocate 5 octets, setting all to zero initially
 
-- copy the MPI data octets (without the two count octets) into the lower octets of the allocated space
+- Copy the MPI data octets (without the two count octets) into the lower octets of the allocated space
 
 ### Elliptic Curve Prefixed Octet String Wire Format {#ec-prefix}
 
@@ -3878,9 +3878,9 @@ To encode the string, we prefix it with the octet 0x40 (whose 7th bit is set), t
 
 To decode the string from the wire, an implementation that knows that the variable is formed in this way can:
 
-- ensure that the first three octets of the MPI (the two bit-count octets plus the prefix octet)  are `00 2f 40`, and
+- Ensure that the first three octets of the MPI (the two bit-count octets plus the prefix octet)  are `00 2f 40`, and
 
-- use the remainder of the MPI directly off the wire.
+- Use the remainder of the MPI directly off the wire.
 
 Note that this is a similar approach to that used in the EC point encodings found in {{ec-point-prefixed-native}}.
 
@@ -4470,21 +4470,21 @@ In the case of AEAD encrypted messages, if the message is truncated, i.e. the fi
 
 Any of the following OpenPGP data elements indicate that malleable ciphertext is present:
 
-- all Symmetrically Encrypted Data packets ({{sed}}).
+- All Symmetrically Encrypted Data packets ({{sed}}).
 
-- within any encrypted container, any Compressed Data packet ({{compressed-data}}) where there is a decompression failure.
+- Within any encrypted container, any Compressed Data packet ({{compressed-data}}) where there is a decompression failure.
 
-- any version 1 Symmetrically Encrypted Integrity Protected Data packet ({{version-one-seipd}}) where the internal Modification Detection Code does not validate.
+- Any version 1 Symmetrically Encrypted Integrity Protected Data packet ({{version-one-seipd}}) where the internal Modification Detection Code does not validate.
 
-- any version 2 Symmetrically Encrypted Integrity Protected Data packet ({{version-two-seipd}}) where the authentication tag of any chunk fails, or where there is no final zero-octet chunk.
+- Any version 2 Symmetrically Encrypted Integrity Protected Data packet ({{version-two-seipd}}) where the authentication tag of any chunk fails, or where there is no final zero-octet chunk.
 
-- any Secret Key packet with encrypted secret key material ({{secret-key-encryption}}) where there is an integrity failure, based on the value of the secret key protection octet:
+- Any Secret Key packet with encrypted secret key material ({{secret-key-encryption}}) where there is an integrity failure, based on the value of the secret key protection octet:
 
-  - value 255 or raw cipher algorithm: where the trailing 2-octet checksum does not match.
+  - Value 255 or raw cipher algorithm: where the trailing 2-octet checksum does not match.
 
-  - value 254: where the SHA1 checksum is mismatched.
+  - Value 254: where the SHA1 checksum is mismatched.
 
-  - value 253: where the AEAD authentication tag is invalid.
+  - Value 253: where the AEAD authentication tag is invalid.
 
 To avoid these circumstances, an implementation that generates OpenPGP encrypted data SHOULD select the encrypted container format with the most robust protections that can be handled by the intended recipients.
 In particular:
@@ -4493,7 +4493,7 @@ In particular:
 
 - When encrypting to one or more public keys:
 
-  - all recipient keys indicate support for version 2 of the Symmetrically Encrypted Integrity Protected Data packet in their Features subpacket ({{features-subpacket}}), or are v5 keys without a Features subpacket, or the implementation can otherwise infer that all recipients support v2 SEIPD packets, the implementation MUST encrypt using a v2 SEIPD packet.
+  - All recipient keys indicate support for version 2 of the Symmetrically Encrypted Integrity Protected Data packet in their Features subpacket ({{features-subpacket}}), or are v5 keys without a Features subpacket, or the implementation can otherwise infer that all recipients support v2 SEIPD packets, the implementation MUST encrypt using a v2 SEIPD packet.
 
   - If one of the recipients does not support v2 SEIPD packets, then the message generator MAY use a v1 SEIPD packet instead.
 
@@ -4506,7 +4506,7 @@ Users should migrate to AEAD with all due speed.
 
 ## Escrowed Revocation Signatures {#escrowed-revocations}
 
-A keyholder Alice may wish to designate a third party to be able to revoke Alice's own key.
+A keyholder, Alice, may wish to designate a third party to be able to revoke Alice's own key.
 
 The preferred way for her to do this is to produce a specific Revocation Signature (signature types 0x20, 0x28, or 0x30) and distribute it securely to her preferred revoker who can hold it in escrow.
 The preferred revoker can then publish the escrowed Revocation Signature at whatever time is deemed appropriate, rather than generating a revocation signature themselves.
@@ -4537,11 +4537,11 @@ Should those prove unsatisfactory, {{RFC4086}} provides guidance on the generati
 
 OpenPGP uses random data with three different levels of visibility:
 
-- in publicly-visible fields such as nonces, IVs, public padding material, or salts,
+- In publicly-visible fields such as nonces, IVs, public padding material, or salts,
 
-- in shared-secret values, such as session keys for encrypted data or padding material within an encrypted packet, and
+- In shared-secret values, such as session keys for encrypted data or padding material within an encrypted packet, and
 
-- in entirely private data, such as asymmetric key generation.
+- In entirely private data, such as asymmetric key generation.
 
 With a properly functioning CSPRNG, this does not present a security problem, as it is not feasible to determine the CSPRNG state from its output.
 However, with a broken CSPRNG, it may be possible for an attacker to use visible output to determine the CSPRNG internal state and thereby predict less-visible data like keying material, as documented in {{?CHECKOWAY=DOI.10.1145/2976749.2978395}}.
@@ -4556,7 +4556,7 @@ There are circumstances where such a leak could be unacceptable from a security 
 For example, if possible cleartext messages for a given protocol are known to be either `yes` (three octets) and `no` (two octets) and the messages are sent within a Symmetrically-Encrypted Integrity Protected Data packet, the length of the encrypted message will reveal the contents of the cleartext.
 
 In another example, sending an OpenPGP Transferable Public Key over an encrypted network connection might reveal the length of the certificate.
-Since the length of an OpenPGP certificate varies based on the content, an external observer interested in metadata (who is trying to contact who) may be able to guess the identity of the certificate sent, if its length is unique.
+Since the length of an OpenPGP certificate varies based on the content, an external observer interested in metadata (who is trying to contact whom) may be able to guess the identity of the certificate sent, if its length is unique.
 
 In both cases, an implementation can adjust the size of the compound structure by including a Padding packet (see {{padding-packet}}).
 
@@ -4679,10 +4679,10 @@ ftgr9N3lYG4NdWrtM2YBANCcT6EVJ/A44PV/IgHYLy6iyQMyZfps60iehUuuYbQE
 
 Here is a Transferable Public Key consisting of:
 
-- a v5 Ed25519 Public-Key packet
-- a v5 direct key self-signature
-- a v5 Curve25519 Public-Subkey packet
-- a v5 subkey binding signature
+- A v5 Ed25519 Public-Key packet
+- A v5 direct key self-signature
+- A v5 Curve25519 Public-Subkey packet
+- A v5 subkey binding signature
 
 {: sourcecode-name="v5-minimal-cert.key"}
 ~~~ application/pgp-keys
@@ -4707,10 +4707,10 @@ The corresponding Transferable Secret Key can be found in {{v5-key}}.
 
 Here is a Transferable Secret Key consisting of:
 
-- a v5 Ed25519 Secret-Key packet
-- a v5 direct key self-signature
-- a v5 Curve25519 Secret-Subkey packet
-- a v5 subkey binding signature
+- A v5 Ed25519 Secret-Key packet
+- A v5 direct key self-signature
+- A v5 Curve25519 Secret-Subkey packet
+- A v5 subkey binding signature
 
 {: sourcecode-name="v5-minimal-secret.key"}
 ~~~ application/pgp-keys
