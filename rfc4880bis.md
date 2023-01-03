@@ -882,7 +882,7 @@ Tag | Packet Type
  17 | User Attribute Packet
  18 | Sym. Encrypted and Integrity Protected Data Packet
  19 | Modification Detection Code Packet
- 20 | AEAD Encrypted Data Packet
+ 20 | OCB Encrypted Data Packet
 60 to 63 | Private or Experimental Values
 
 
@@ -1366,7 +1366,7 @@ Type | Description
  31 | Signature Target
  32 | Embedded Signature
  33 | Issuer Fingerprint
- 34 | Preferred AEAD Algorithms
+ 34 | Preferred Encryption Modes
  35 | Intended Recipient Fingerprint
  37 | Attested Certifications
  38 | Key Block
@@ -1495,16 +1495,19 @@ with the most preferred listed first.  It is assumed that only
 algorithms listed are supported by the recipient's software.  Algorithm
 numbers are in [](#constants).  This is only found on a self-signature.
 
-#### Preferred AEAD Algorithms
+#### Preferred Encryption Modes
 
 (array of one-octet values)
 
-AEAD algorithm numbers that indicate which AEAD algorithms the key
-holder prefers to use.  The subpacket body is an ordered list of
+This is a deprecated subpacket with
+encryption mode numbers to indicate which modes the key
+holder prefers to use with OCB Encrypted Data Pakets.  Implementations
+SHOULD ignore this subpacket and assume OCB.
+The subpacket body is an ordered list of
 octets with the most preferred listed first.  It is assumed that only
 algorithms listed are supported by the recipient's software.
 Algorithm numbers are in [](#aead-algorithms).  This is only
-found on a self-signature.  Note that support for the AEAD Encrypted
+found on a self-signature.  Note that support for the OCB Encrypted
 Data packet in the general is indicated by a Feature Flag.
 
 
@@ -1747,12 +1750,16 @@ might not be vital to the signature itself but still needs to be
 protected and authenticated without requiring a second signature.
 
 The 'hash' notation has the following structure:
-* A single byte specifying the length of the name of the hashed data
-* A UTF-8 string of the name of the hashed data
-* A single byte specifying the hash algorithm (see section 9.4)
-* The binary hash output of the hashed data using the specified
-  algorithm.  (The length of this data is implicit based on the
-  algorithm specified).
+
+  * A single byte specifying the length of the name of the hashed data.
+
+  * A UTF-8 string of the name of the hashed data.
+
+  * A single byte specifying the hash algorithm (see section 9.4).
+
+  * The binary hash output of the hashed data using the specified
+    algorithm.  (The length of this data is implicit based on the
+    algorithm specified).
 
 Due to its nature a 'hash' notation is not human readable and MUST NOT
 be marked as such when used.
@@ -1952,7 +1959,7 @@ First octet:
 
     0x01 - Modification Detection (packets 18 and 19)
 
-    0x02 - AEAD Encrypted Data Packet (packet 20) and version 5
+    0x02 - OCB Encrypted Data Packet (packet 20) and version 5
            Symmetric-Key Encrypted Session Key Packets (packet 3)
 
     0x04 - Version 5 Public-Key Packet format and corresponding new
@@ -2290,26 +2297,27 @@ A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 
   * A one-octet cipher algorithm.
 
-  * A one-octet AEAD algorithm.
+  * A one-octet encryption mode number which SHOULD be 2 to indicate
+    OCB.
 
   * A string-to-key (S2K) specifier, length as defined above.
 
-  * A starting initialization vector of size specified by the AEAD
-    algorithm.
+  * A starting initialization vector of size specified by the
+    mode.
 
   * The encrypted session key itself, which is decrypted with the
-    string-to-key object using the given cipher and AEAD mode.
+    string-to-key object using the given cipher and encryption mode.
 
-  * An authentication tag for the AEAD mode.
+  * An authentication tag for the encryption mode.
 
-The encrypted session key is encrypted using one of the AEAD
-algorithms specified for the AEAD Encrypted Packet.  Note that no
+The encrypted session key is encrypted using the encryption
+mode specified for the OCB Encrypted Packet.  Note that no
 chunks are used and that there is only one authentication tag.  The
 Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry
 the packet tag), the packet version number, the cipher algorithm
-octet, and the AEAD algorithm octet are given as additional data.  For
-example, the additional data used with EAX and AES-128 consists of the
-octets 0xC3, 0x05, 0x07, and 0x01.
+octet, and the mode octet are given as additional data.  For
+example, the additional data used with OCB and AES-128 consists of the
+octets 0xC3, 0x05, 0x07, and 0x02.
 
 
 ## One-Pass Signature Packets (Tag 4)
@@ -2487,23 +2495,23 @@ The packet contains:
   * \[Optional\] If string-to-key usage octet was 255, 254, or 253, a
     one-octet symmetric encryption algorithm.
 
-  * \[Optional\] If string-to-key usage octet was 253, a one-octet AEAD
-    algorithm.
+  * \[Optional\] If string-to-key usage octet was 253, an octet with
+    the values 0x02 to indicate the OCB encryption mode.
 
   * \[Optional\] If string-to-key usage octet was 255, 254, or 253, a
     string-to-key specifier.  The length of the string-to-key
     specifier is implied by its type, as described above.
 
-  * \[Optional\] If secret data is encrypted (string-to-key usage octet
-    not zero), an Initial Vector (IV) of the same length as the
+  * \[Optional\] If secret data is encrypted (string-to-key usage
+    octet not zero), an Initial Vector (IV) of the same length as the
     cipher's block size.  If string-to-key usage octet was 253 the IV
-    is used as the nonce for the AEAD algorithm.  If the AEAD
-    algorithm requires a shorter nonce, the high-order bits of the IV
-    are used and the remaining bits MUST be zero.
+    is used as the nonce for the OCB mode.  If the OCB mode requires a
+    shorter nonce, the high-order bits of the IV are used and the
+    remaining bits MUST be zero.
 
   * Only for a version 5 packet, a four-octet scalar octet count for
     the following secret key material.  This includes the encrypted
-    SHA-1 hash or AEAD tag if the string-to-key usage octet is 254 or
+    SHA-1 hash or OCB tag if the string-to-key usage octet is 254 or
     253.
 
   * Plain or encrypted series of values comprising the secret key
@@ -2512,7 +2520,7 @@ The packet contains:
     string-to-key usage octet is 254, a 20-octet SHA-1 hash of the
     plaintext of the algorithm-specific portion is appended to
     plaintext and encrypted with it.  If the string-to-key usage octet
-    is 253, then an AEAD authentication tag is part of that data.
+    is 253, then the OCB authentication tag is part of that data.
 
   * If the string-to-key usage octet is zero or 255, then a
     two-octet checksum of the plaintext of the algorithm-specific
@@ -2543,15 +2551,15 @@ With V4 and V5 keys, a simpler method is used.  All secret MPI values
 are encrypted, including the MPI bitcount prefix.
 
 If the string-to-key usage octet is 253, the encrypted MPI values are
-encrypted as one combined plaintext using one of the AEAD algorithms
-specified for the AEAD Encrypted Packet.  Note that no chunks are used
-and that there is only one authentication tag.  The Packet Tag in new
-format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the
-packet version number, the cipher algorithm octet, and the AEAD
-algorithm octet are given as additional data.  For example, the
-additional data used with EAX and AES-128 in a Secret-Key Packet of
-version 4 consists of the octets 0xC5, 0x04, 0x07, and 0x01; in a
-Secret-Subkey Packet the first octet would be 0xC7.
+encrypted as one combined plaintext using OCB mode.  Note that no
+chunks are used and that there is only one authentication tag.  The
+Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry
+the packet tag), the packet version number, the cipher algorithm
+octet, and an octet with value 0x02, to indicate OCB mode, are given as
+additional data.  For example, the additional data used with AES-128
+in a Secret-Key Packet of version 4 consists of the octets 0xC5, 0x04,
+0x07, and 0x02; in a Secret-Subkey Packet the first octet would be
+0xC7.
 
 The two-octet checksum that follows the algorithm-specific portion is
 the algebraic sum, mod 65536, of the plaintext of all the algorithm-
@@ -2563,8 +2571,7 @@ deprecated; an implementation SHOULD NOT use it, but should rather use
 the SHA-1 hash denoted with a usage octet of 254.  The reason for this
 is that there are some attacks that involve undetectably modifying the
 secret key.  If the string-to-key usage octet is 253 no checksum or
-SHA-1 hash is used but the authentication tag of the AEAD algorithm
-follows.
+SHA-1 hash is used but the authentication tag of the OCB mode follows.
 
 
 ## Algorithm-specific Parts of Keys
@@ -2989,7 +2996,7 @@ The body of this packet consists of:
 
   * A one-octet version number.  The only defined value is 1.  There
     won't be any future versions of this packet because the MDC system
-    has been superseded by the AEAD Encrypted Data packet.
+    has been superseded by the OCB Encrypted Data packet.
 
   * Encrypted data, the output of the selected symmetric-key cipher
     operating in Cipher Feedback mode with shift amount equal to
@@ -3098,7 +3105,7 @@ plaintext.  Any failure SHOULD be reported to the user.
       hash, such as RIPE-MD/160, for example.)
 
       However, no update will be needed because the MDC will be
-      replaced by the AEAD encryption described in this document.
+      replaced by the OCB encryption described in this document.
 
 ## Modification Detection Code Packet (Tag 19)
 
@@ -3138,19 +3145,22 @@ The body of this packet consists of:
 
   * A one-octet cipher algorithm.
 
-  * A one-octet AEAD algorithm.
+  * A one-octet encryption mode octet with the fixed value 0x02.  If
+    decryption using the EAX mode is supported this octet may have the
+    value 0x01.
 
   * A one-octet chunk size.
 
-  * A starting initialization vector of size specified by the AEAD
-    algorithm.
+  * A starting initialization vector of size specified by the
+    encryption mode (15 octets for OCB).
 
   * Encrypted data, the output of the selected symmetric-key cipher
-    operating in the given AEAD mode.
+    operating in the given encryption mode.
 
-  * A final, summary authentication tag for the AEAD mode.
+  * A final, summary authentication tag for the encryption mode (16 octets
+    for OCB).
 
-An AEAD encrypted data packet consists of one or more chunks of data.
+An OCB Encrypted Data packet consists of one or more chunks of data.
 The plaintext of each chunk is of a size specified using the chunk size
 octet using the method specified below.
 
@@ -3162,14 +3172,14 @@ a full authentication tag.
 
 For each chunk, the AEAD construction is given the Packet Tag in new
 format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag),
-version number, cipher algorithm octet, AEAD algorithm octet, chunk
+version number, cipher algorithm octet, encryption mode octet, chunk
 size octet, and an eight-octet, big-endian chunk index as additional
 data.  The index of the first chunk is zero.  For example, the
-additional data of the first chunk using EAX and AES-128 with a chunk
-size of 64 kiByte consists of the octets 0xD4, 0x01, 0x07, 0x01, 0x10,
+additional data of the first chunk using OCB and AES-128 with a chunk
+size of 64 kiByte consists of the octets 0xD4, 0x01, 0x07, 0x02, 0x10,
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, and 0x00.
 
-After the final chunk, the AEAD algorithm is used to produce a final
+After the final chunk, the encryption mode is used to produce a final
 authentication tag encrypting the empty string.  This AEAD instance is
 given the additional data specified above, plus an eight-octet,
 big-endian value specifying the total number of plaintext octets
@@ -3192,7 +3202,7 @@ chunks).
 
 A new random initialization vector MUST be used for each message.
 Failure to do so for each message will lead to a catastrophic failure
-depending on the used AEAD mode.
+depending on the used encryption mode.
 
 ### EAX Mode
 
@@ -3209,6 +3219,10 @@ exclusive-oring the low eight octets of it with the chunk index.
 
 The security of EAX requires that the nonce is never reused, hence the
 requirement that the starting initialization vector be unique.
+
+EAX mode is deprecated due to the far better properties of the OCB
+mode.  Implementations may use EAX mode only for decryption of
+existing data.
 
 ### OCB Mode
 
@@ -3783,16 +3797,17 @@ require the use of SHA-1 with the exception of computing version 4 key
 fingerprints and for purposes of the MDC packet.  Implementations
 SHOULD NOT use MD5 or RIPE-MD/160.
 
-## AEAD Algorithms
+## Encryption Modes
 
-ID | Algorithm
+ID | Mode
 ---:|-----------------
  1 | EAX [](#EAX)
  2 | OCB [](#RFC7253)
-100--110 | Private/Experimental algorithm
 
-Implementations MUST implement EAX.  Implementations MAY implement
-OCB and other algorithms.
+Implementations MUST implement OCB if they support the packet 20 (OCB
+Encrypted Data Packet).  Implementations MAY implement EAX only for
+decryption and only for backward compatibility with former drafts of
+this specification.
 
 # IANA Considerations
 
@@ -4160,7 +4175,8 @@ composition, and vertical bar separates alternatives):
 
     ESK Sequence :- ESK | ESK Sequence, ESK.
 
-    Encrypted Data :- Symmetrically Encrypted Data Packet |
+    Encrypted Data :- OCB Encrypted Data Packet |
+        Symmetrically Encrypted Data Packet |
         Symmetrically Encrypted Integrity Protected Data Packet
 
     Encrypted Message :- Encrypted Data | ESK Sequence, Encrypted Data.
@@ -4550,10 +4566,10 @@ recipient obtains the shared secret by calculating
 
     S = rV = rvG, where (r,R) is the recipient's key pair.
 
-Consistent with [](#aead-encrypted-data-packet-tag-20), "AEAD
+Consistent with [](#aead-encrypted-data-packet-tag-20), "OCB
 Encrypted Data Packet (Tag 20)" and
 [](#sym-encrypted-integrity-protected-data-packet-tag-18),
-"Sym. Encrypted Integrity Protected Data Packet (Tag 18)", AEAD
+"Sym. Encrypted Integrity Protected Data Packet (Tag 18)", OCB
 encryption or a Modification Detection Code (MDC) MUST be used anytime
 the symmetric key is protected by ECDH.
 
@@ -5043,7 +5059,7 @@ Asymmetric key size | Hash size | Symmetric key size
     This attack can be defeated by the use of modification detection,
     provided that the implementation does not let the user naively
     return the data to the attacker.  The modification detection is
-    prefereabble implemented by using the AEAD Encrypted Data Packet
+    prefereabble implemented by using the OCB Encrypted Data Packet
     and only if the recipients don't supports this by use of the
     Symmmetric Encrypted and Integrity Protected Data Packet.  An
     implementation MUST treat an authentication or MDC failure as a
@@ -5063,10 +5079,10 @@ Asymmetric key size | Hash size | Symmetric key size
           decompression failures or no use of MDC or AEAD as security
           problems.
 
-      2.  Implementers implement AEAD with all due speed and encourage
+      2.  Implementers implement OCB with all due speed and encourage
           its spread.
 
-      3.  Users migrate to implementations that support AEAD
+      3.  Users migrate to implementations that support OCB
           encryption with all due speed.
 
   - PKCS\#1 has been found to be vulnerable to attacks in which a system
@@ -5381,11 +5397,6 @@ backward-compatible.
     requirement for ASCII armor so those implementations will
     necessarily have support.
 
-  * The OCB mode is patented and a debate is still underway on whether
-    it can be included in RFC4880bis or needs to be moved to a
-    separate document.  For the sole purpose of experimenting with the
-    Preferred AEAD Algorithms signature subpacket it is has been
-    included in this I-D.
 
 --- back
 
@@ -5447,10 +5458,10 @@ The entire signature packet is thus:
        d0 9c 4f a1 15 27 f0 38  e0 f5 7f 22 01 d8 2f 2e
        a2 c9 03 32 65 fa 6c eb  48 9e 85 4b ae 61 b4 04
 
-## Sample AEAD-OCB encryption and decryption
+## Sample OCB encryption and decryption
 
 Encryption is performed with the string 'Hello, world!',LF and
-password 'password', using AES-128 with AEAD-OCB encryption.
+password 'password', using AES-128 with OCB encryption.
 
 ### Sample Parameters
 
@@ -5477,11 +5488,11 @@ Version, algorithms, S2K fields:
       05 07 02 03 08 9f 0b 7d a3 e5 ea 64 77 90
 
 
-AEAD IV:
+OCB IV:
 
       99 e3 26 e5 40 0a 90 93 6c ef b4 e8 eb a0 8c
 
-AEAD encrypted CEK:
+OCB encrypted CEK:
 
       67 73 71 6d 1f 27 14 54 0a  38 fc ac 52 99 49 da
 
@@ -5489,7 +5500,7 @@ Authentication tag:
 
       c5 29 d3 de 31 e1 5b 4a eb  72 9e 33 00 33 db ed
 
-### Starting AEAD-OCB decryption of CEK
+### Starting OCB decryption of CEK
 
 The derived key is:
 
@@ -5507,7 +5518,7 @@ Decrypted CEK:
 
       d1 f0 1b a3 0e 13 0a a7 d2 58 2c 16 e0 50 ae 44
 
-### Sample AEAD encrypted data packet
+### Sample OCB Encrypted Data packet
 
 Packet header:
 
@@ -5521,7 +5532,7 @@ IV:
 
       5e d2 bc 1e 47 0a be 8f 1d 64 4c 7a 6c 8a 56
 
-AEAD-OCB Encrypted data chunk #0:
+OCB Encrypted data chunk #0:
 
       7b 0f 77 01 19 66 11 a1  54 ba 9c 25 74 cd 05 62
       84 a8 ef 68 03 5c
@@ -5536,7 +5547,7 @@ Final (zero-size chunk #1) authentication tag:
 
 ### Decryption of data
 
-Starting AEAD-OCB decryption of data, using the CEK.
+Starting OCB decryption of data, using the CEK.
 
 Chunk #0:
 
@@ -5566,7 +5577,7 @@ Nonce:
 
       5e d2 bc 1e 47 0a be 8f 1d 64 4c 7a 6c 8a 57
 
-### Complete AEAD-OCB encrypted packet sequence
+### Complete OCB encrypted packet sequence
 
 Symmetric-key encrypted session key packet (v5):
 
@@ -5575,7 +5586,7 @@ Symmetric-key encrypted session key packet (v5):
       73 71 6d 1f 27 14 54 0a  38 fc ac 52 99 49 da c5
       29 d3 de 31 e1 5b 4a eb  72 9e 33 00 33 db ed
 
-AEAD encrypted data packet:
+OCB Encrypted Data packet:
 
       d4 49 01 07 02 0e 5e d2  bc 1e 47 0a be 8f 1d 64
       4c 7a 6c 8a 56 7b 0f 77  01 19 66 11 a1 54 ba 9c
@@ -5615,14 +5626,14 @@ other values might also be interesting for other ECC specifications:
   - Changed v5 key fingerprint format to full 32 octets.
   - Added Literal Data Packet format octet `m`.
   - Added Feature Flag for v5 key support.
-  - Added AEAD Encrypted Data Packet.
+  - Added OCB Encrypted Data Packet.
   - Removed notes on extending the MDC packet.
   - Added v5 Symmetric-Key Encrypted Session Key packet.
-  - Added AEAD encryption of secret keys.
-  - Added test vectors for AEAD.
+  - Added OCB encryption of secret keys.
+  - Added test vectors for OCB.
   - Added the Restricted Encryption key flag.
   - Deprecated the Symmetrically Encrypted Data Packet.
-  - Suggest limitation of the AEAD chunksize to 128 MiB.
+  - Suggest limitation of the OCB chunksize to 128 MiB.
   - Specified the V5 signature format.
   - Deprectated the creation of V3 signatures.
   - Adapted terms from RFC 8126.
