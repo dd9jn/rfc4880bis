@@ -5238,13 +5238,14 @@ signature.
 ## OpenPGP ECC Profile
 
 A compliant application MUST implement NIST curve P-256, SHOULD
-implement NIST curve P-521, SHOULD implemend Ed25519, SHOULD implement
-Curve25519, MAY implement NIST curve P-384, MAY implement
-brainpoolP256r1, and MAY implement brainpoolP512r1,
-as defined in [](#ecc-curve-oid).  A compliant application MUST
-implement SHA2-256 and SHOULD implement SHA2-384 and SHA2-512.  A
-compliant application MUST implement AES-128 and SHOULD implement
-AES-256.
+implement NIST curve P-521, SHOULD implement brainpoolP256r1 and
+brainpoolP512r1, SHOULD implement Ed25519, SHOULD implement
+Curve25519, MAY implement NIST curve P-384, and MAY implement
+brainpoolP384r1, as defined in [](#ecc-curve-oid).
+
+A compliant application MUST implement SHA2-256 and SHOULD implement
+SHA2-384 and SHA2-512.  A compliant application MUST implement AES-128
+and SHOULD implement AES-256.
 
 A compliant application SHOULD follow [](#security-considerations)
 regarding the choice of the following algorithms for each curve:
