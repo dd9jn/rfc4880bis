@@ -935,7 +935,7 @@ The body of this packet consists of:
       - MPI of an EC point representing an ephemeral public key.
 
       - a one-octet size, followed by a symmetric key encoded using the
-        method described in [](#ec-dh-algorithm-ecdh).
+        method described in [](#ecdh-algorithm).
 
 The value "m" in the above formulas is derived from the session key as
 follows.  First, the session key is prefixed with a one-octet algorithm
@@ -2702,7 +2702,7 @@ The public key is this series of values:
 
       - a one-octet algorithm ID for the symmetric algorithm
         used to wrap the symmetric key used for the message
-        encryption; see [](#ec-dh-algorithm-ecdh) for details.
+        encryption; see [](#ecdh-algorithm) for details.
 
 Observe that an ECDH public key is composed of the same sequence of
 fields that define an ECDSA key, plus the KDF parameters field.
@@ -3700,7 +3700,7 @@ standard (RFC-4880) have DSA (17) and Elgamal (16) as its only
 MUST-implement algorithm.
 
 A compatible specification of ECDSA is given in [](#RFC6090) as "KT-I
-Signatures" and in [](#SEC1); ECDH is defined in [](#ec-dh-algorithm-ecdh)
+Signatures" and in [](#SEC1); ECDH is defined in [](#ecdh-algorithm)
 this document.
 
 ## ECC Curve OID
@@ -3715,6 +3715,7 @@ ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representatio
 1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384
 1.3.132.0.35            | 5  | 2B 81 04 00 23                | NIST P-521
 1.3.36.3.3.2.8.1.1.7    | 9  | 2B 24 03 03 02 08 01 01 07    | brainpoolP256r1
+1.3.36.3.3.2.8.1.1.11   | 9  | 2B 24 03 03 02 08 01 01 0B    | brainpoolP384r1
 1.3.36.3.3.2.8.1.1.13   | 9  | 2B 24 03 03 02 08 01 01 0D    | brainpoolP512r1
 1.3.6.1.4.1.11591.15.1  | 9  | 2B 06 01 04 01 DA 47 0F 01    | Ed25519
 1.3.6.1.4.1.3029.1.5.1  | 10 | 2B 06 01 04 01 97 55 01 05 01 | Curve25519
@@ -4354,11 +4355,12 @@ found in [](#KOBLITZ).
 
 ## Supported ECC Curves
 
-This document references five named prime field curves, defined in
+This document references six named prime field curves, defined in
 [](#FIPS186) as "Curve P-256", "Curve P-384", and "Curve P-521"; and
-defined in [](#RFC5639) as "brainpoolP256r1", and "brainpoolP512r1".
-Further curve "Curve25519", defined in [](#RFC7748) is referenced
-for use with Ed25519 (EdDSA signing) and X25519 (encryption).
+defined in [](#RFC5639) as "brainpoolP256r1" "brainpoolP384r1", and
+"brainpoolP512r1".  Further curves "Curve25519" and "Curve448", defined in
+[](#RFC7748) are referenced for use with Ed25519/Ed448 (EdDSA signing) and
+X25519/X448 (ECDH encryption).
 
 The named curves are referenced as a sequence of bytes in this
 document, called throughout, curve OID.  [](#ecc-curve-oid) describes
@@ -4451,7 +4453,7 @@ normative source of the definition.
 Note that ZB in the KDF description above is the compact
 representation of X, defined in Section 4.2 of [](#RFC6090).
 
-## EC DH Algorithm (ECDH)
+## ECDH Algorithm
 
 The method is a combination of an ECC Diffie-Hellman method to
 establish a shared secret, a key derivation method to process the
@@ -4490,7 +4492,7 @@ definition of the OtherInfo bitstring [](#SP800-56A):
 
       + a one-octet algorithm ID for the symmetric algorithm used to
         wrap the symmetric key for message encryption; see
-        [](#ec-dh-algorithm-ecdh) for details
+        [](#ecdh-algorithm) for details
 
   - 20 octets representing the UTF-8 encoding of the string
     "Anonymous Sender    ", which is the octet sequence
@@ -4575,6 +4577,32 @@ Encrypted Data Packet (Tag 20)" and
 "Sym. Encrypted Integrity Protected Data Packet (Tag 18)", OCB
 encryption or a Modification Detection Code (MDC) MUST be used anytime
 the symmetric key is protected by ECDH.
+
+### ECDH Parameters
+
+ECDH keys have a hash algorithm parameter for key derivation and a
+symmetric algorithm for key encapsulation.
+
+For v4 keys, the following algorithms SHOULD be used depending on the
+curve.  An implementation SHOULD only use an AES algorithm as a KEK
+algorithm.
+
+For v5 keys, the following algorithms MUST be used depending on the
+curve.  An implementation MUST NOT generate a v5 ECDH key over any
+listed curve that uses different KDF or KEK parameters.  An
+implementation MUST NOT encrypt any message to a v5 ECDH key over a
+listed curve that announces a different KDF or KEK parameter.
+
+Curve           | Hash algorithm | Symmetric algorithm
+---------------:|----------------|---------------------
+NIST P-256      | SHA2-256       | AES-128
+NIST P-384      | SHA2-384       | AES-192
+NIST P-521      | SHA2-512       | AES-256
+brainpoolP256r1 | SHA2-256       | AES-128
+brainpoolP384r1 | SHA2-384       | AES-192
+brainpoolP512r1 | SHA2-512       | AES-256
+Curve25519      | SHA2-256       | AES-128
+X448            | SHA2-512       | AES-256
 
 
 # Notes on Algorithms
@@ -4963,9 +4991,10 @@ SHOULD be rejected.
 
 # Security Considerations
 
-  - As with any technology involving cryptography, you should check the
-    current literature to determine if any algorithms used here have
-    been found to be vulnerable to attack.
+  - As with any technology involving cryptography, you should check
+    the current literature to determine if any algorithms used here
+    have been found to be vulnerable to attack or have been found to
+    be too weak.
 
   - This specification uses Public-Key Cryptography technologies.  It is
     assumed that the private key portion of a public-private key pair is
@@ -5000,46 +5029,10 @@ SHOULD be rejected.
     the signature to use a weak one.  Only signatures using acceptably
     strong hash algorithms should be accepted as valid.
 
-  - As OpenPGP combines many different asymmetric, symmetric, and hash
-    algorithms, each with different measures of strength, care should be
-    taken that the weakest element of an OpenPGP message is still
-    sufficiently strong for the purpose at hand.  While consensus about
-    the strength of a given algorithm may evolve, NIST Special
-    Publication 800-57 [](#SP800-57) recommends the following list of
-    equivalent strengths:
-
-Asymmetric key size | Hash size | Symmetric key size
--------------------:|-----------|-------------------
- 1024 | 160 |  80
- 2048 | 224 | 112
- 3072 | 256 | 128
- 7680 | 384 | 192
-15360 | 512 | 256
-
-  - There is a somewhat-related potential security problem in
-    signatures.  If an attacker can find a message that hashes to the
-    same hash with a different algorithm, a bogus signature structure
-    can be constructed that evaluates correctly.
-
-    For example, suppose Alice DSA signs message M using hash
-    algorithm H.  Suppose that Mallet finds a message M' that has the
-    same hash value as M with H'.  Mallet can then construct a
-    signature block that verifies as Alice's signature of M' with H'.
-    However, this would also constitute a weakness in either H or H'
-    or both.  Should this ever occur, a revision will have to be made
-    to this document to revise the allowed hash algorithms.
-
-
   - If you are building an authentication system, the recipient may
     specify a preferred signing algorithm.  However, the signer would be
     foolish to use a weak algorithm simply because the recipient
     requests it.
-
-  - Some of the encryption algorithms mentioned in this document have
-    been analyzed less than others.  For example, although CAST5 is
-    presently considered strong, it has been analyzed less than
-    TripleDES.  Other algorithms may have other controversies surrounding
-    them.
 
   - In late summer 2002, Jallad, Katz, and Schneier published an
     interesting attack on the OpenPGP protocol and some of its
@@ -5126,42 +5119,6 @@ Asymmetric key size | Hash size | Symmetric key size
 
   - Refer to [](#FIPS186), B.4.1, for the method to generate a
     uniformly distributed ECC private key.
-
-  - The curves proposed in this document correspond to the symmetric
-    key sizes 128 bits, 192 bits, and 256 bits, as described in the
-    table below.  This allows a compliant application to offer
-    balanced public key security, which is compatible with the
-    symmetric key strength for each AES algorithm defined here.
-
-    The following table defines the hash and the symmetric encryption
-    algorithm that SHOULD be used with a given curve for ECDSA or ECDH.
-    A stronger hash algorithm or a symmetric key algorithm MAY be used
-    for a given ECC curve.  However, note that the increase in the
-    strength of the hash algorithm or the symmetric key algorithm may
-    not increase the overall security offered by the given ECC key.
-
-Curve name | ECC | RSA strength | Hash size strength, informative | Symmetric key size
------------|-----|--------------|---------------------------------|-------------------
-NIST P-256 | 256 | 3072 | 256 | 128
-NIST P-384 | 384 | 7680 | 384 | 192
-NIST P-521 | 521 | 15360 | 512 | 256
-
-  - Requirement levels indicated elsewhere in this document lead to the
-    following combinations of algorithms in the OpenPGP profile: MUST
-    implement NIST curve P-256 / SHA2-256 / AES-128, SHOULD implement
-    NIST curve P-521 / SHA2-512 / AES-256, MAY implement NIST curve
-    P-384 / SHA2-384 / AES-256, among other allowed combinations.
-
-    Consistent with the table above, the following table defines the KDF
-    hash algorithm and the AES KEK encryption algorithm that SHOULD be
-    used with a given curve for ECDH.  A stronger KDF hash algorithm or
-    AES KEK algorithm MAY be used for a given ECC curve.
-
-Curve name | Recommended KDF hash algorithm | Recommended KEK encryption algorithm
------------|--------------------------------|-------------------------------------
-NIST P-256 | SHA2-256 | AES-128
-NIST P-384 | SHA2-384 | AES-192
-NIST P-521 | SHA2-512 | AES-256
 
   - This document explicitly discourages the use of algorithms other
     than AES as a KEK algorithm because backward compatibility of the
@@ -5301,32 +5258,6 @@ regarding the choice of the following algorithms for each curve:
 It is recommended that the chosen symmetric algorithm for message
 encryption be no less secure than the KEK algorithm.
 
-## Suite-B Profile
-
-A subset of algorithms allowed by this document can be used to achieve
-[](#SuiteB) compatibility.  The references to [](#SuiteB) in this
-document are informative.  This document is primarily concerned with
-format specification, leaving additional security restrictions
-unspecified, such as matching the assigned security level of
-information to authorized recipients or interoperability concerns
-arising from fewer allowed algorithms in [](#SuiteB) than allowed by
-this document.
-
-### Security Strength at 192 Bits
-
-To achieve the security strength of 192 bits, [](#SuiteB) requires
-NIST curve P-384, AES-256, and SHA2-384.  The symmetric algorithm
-restriction means that the algorithm of KEK used for key wrapping in
-[](#ec-dh-algorithm-ecdh) and an OpenPGP session key used for message
-encryption must be AES-256.  The hash algorithm restriction means that
-the hash algorithms of KDF and the OpenPGP message digest calculation
-must be SHA2-384.
-
-### Security Strength at 128 Bits
-
-The set of algorithms in [](#security-strength-at-192-bits) is
-extended to allow NIST curve P-256, AES-128, and SHA2-256.
-
 
 # Implementation Nits
 
@@ -5337,10 +5268,6 @@ differences are small, but small differences are frequently more
 vexing than large differences.  Thus, this is a non-comprehensive list
 of potential problems and gotchas for a developer who is trying to be
 backward-compatible.
-
-  * The IDEA algorithm is patented, and yet it is required for PGP 2
-    interoperability.  It is also the de-facto preferred algorithm for
-    a V3 key with a V3 self-signature (or no self- signature).
 
   * When exporting a private key, PGP 2 generates the header
     "BEGIN PGP SECRET KEY BLOCK" instead of "BEGIN PGP PRIVATE KEY
@@ -5381,7 +5308,7 @@ backward-compatible.
     use different upper bounds for public key sizes, and so care
     should be taken when choosing sizes to maintain
     interoperability.  As of 2007 most implementations have an
-    upper bound of 4096 bits.
+    upper bound of 4096 bits for RSA, DSA, and Elgamal
 
   * ASCII armor is an optional feature of OpenPGP.  The OpenPGP
     working group strives for a minimal set of
