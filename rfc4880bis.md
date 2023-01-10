@@ -1,7 +1,7 @@
 ---
 title: OpenPGP Message Format
 docname: draft-koch-openpgp-2015-rfc4880bis-00
-date: 2022-09-07
+date: 2023-01-09
 category: std
 
 obsoletes: 4880, 5581, 6637
@@ -1505,8 +1505,8 @@ holder prefers to use with OCB Encrypted Data Pakets.  Implementations
 SHOULD ignore this subpacket and assume OCB.
 The subpacket body is an ordered list of
 octets with the most preferred listed first.  It is assumed that only
-algorithms listed are supported by the recipient's software.
-Algorithm numbers are in [](#aead-algorithms).  This is only
+modes listed are supported by the recipient's software.
+Mode numbers are in [](#encryption-modes).  This is only
 found on a self-signature.  Note that support for the OCB Encrypted
 Data packet in the general is indicated by a Feature Flag.
 
@@ -4566,7 +4566,7 @@ recipient obtains the shared secret by calculating
 
     S = rV = rvG, where (r,R) is the recipient's key pair.
 
-Consistent with [](#aead-encrypted-data-packet-tag-20), "OCB
+Consistent with [](#ocb-encrypted-data-packet-tag-20), "OCB
 Encrypted Data Packet (Tag 20)" and
 [](#sym-encrypted-integrity-protected-data-packet-tag-18),
 "Sym. Encrypted Integrity Protected Data Packet (Tag 18)", OCB
