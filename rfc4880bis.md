@@ -883,6 +883,8 @@ Tag | Packet Type
  18 | Sym. Encrypted and Integrity Protected Data Packet
  19 | Modification Detection Code Packet
  20 | OCB Encrypted Data Packet
+ 21 | Reserved
+ 26 | Reserved (CMS Encrypted Session Key Packet)
 60 to 63 | Private or Experimental Values
 
 
@@ -3716,7 +3718,8 @@ ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representatio
 1.3.36.3.3.2.8.1.1.13   | 9  | 2B 24 03 03 02 08 01 01 0D    | brainpoolP512r1
 1.3.6.1.4.1.11591.15.1  | 9  | 2B 06 01 04 01 DA 47 0F 01    | Ed25519
 1.3.6.1.4.1.3029.1.5.1  | 10 | 2B 06 01 04 01 97 55 01 05 01 | Curve25519
-
+1.3.101.113             | 3  | 2B 65 71                      | Ed448
+1.3.101.111             | 3  | 2B 65 6F                      | X448
 
 The sequence of octets in the third column is the result of applying
 the Distinguished Encoding Rules (DER) to the ASN.1 Object Identifier
