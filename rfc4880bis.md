@@ -4083,14 +4083,14 @@ transferable public key are as follows:
 
   - Zero or more revocation signatures
 
-  - Zero or more User ID packets
+  - One or more User ID packets
 
-  - After each User ID packet, zero or more Signature packets
+  - After each User ID packet, one or more Signature packets
     (certifications and attestation key signatures)
 
   - Zero or more User Attribute packets
 
-  - After each User Attribute packet, zero or more Signature packets
+  - After each User Attribute packet, one or more Signature packets
     (certifications and attestation key signatures)
 
   - Zero or more Subkey packets
@@ -4103,10 +4103,9 @@ packets provides the identity of the owner of this public key.  If
 there are multiple User ID packets, this corresponds to multiple means
 of identifying the same unique individual user; for example, a user
 may have more than one email address, and construct a User ID for each
-one.  A transferable public key SHOULD include at least one User ID
-packet unless storage requirements prohibit this.
+one.
 
-Immediately following each User ID packet, there are zero or more
+Immediately following each User ID packet, there are one or more
 Signature packets.  Each Signature packet is calculated on the
 immediately preceding User ID packet and the initial Public-Key
 packet.  The signature serves to certify the corresponding public key
@@ -4119,7 +4118,7 @@ certifications over the associated User ID.
 
 Within the same section as the User ID packets, there are zero or more
 User Attribute packets.  Like the User ID packets, a User Attribute
-packet is followed by zero or more Signature packets calculated on the
+packet is followed by one or more Signature packets calculated on the
 immediately preceding User Attribute packet and the initial Public-Key
 packet.
 
