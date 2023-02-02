@@ -711,7 +711,6 @@ Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password
 
 If the "Generate?" column is not "Y", the Secret Key protection details entry is used only for reading in backwards compatibility mode and MUST NOT be used to generate new output.
 
-
 Each row with "Generate?" marked as "No" is described for backward compatibility, and MUST NOT be generated.
 
 A version 5 secret key that is cryptographically protected is stored with an additional pair of length counts, each of which is one octet wide:
