@@ -1899,6 +1899,8 @@ This trailer depends on the version of the signature.
 
 After all this has been hashed in a single hash context, the resulting hash field is used in the signature algorithm and placed at the end of the Signature packet.
 
+For worked examples of the data hashed during a signature, see {{sig-hashed-data-example}}.
+
 #### Subpacket Hints
 
 It is certainly possible for a signature to contain conflicting information in subpackets.
@@ -4702,6 +4704,132 @@ P2hBxmeHI2hZWqRa+bdUEqbC+5xMveIL
 ~~~
 
 The corresponding Transferable Secret Key can be found in {{v5-key}}.
+
+### Hashed Data Stream for Signature Verification {#sig-hashed-data-example}
+
+The direct key self signature in the certificate in {{v5-cert}} is made over the following sequence of data:
+
+~~~
+0x0000  26 b3 b3 02 ac 8d 0e 7e  salt
+0x0008  9d 62 29 5e 90 c0 61 44
+        [ pubkey begins ]
+0x0010  9a                       v5 pubkey
+0x0011     00 00 00 37           pubkey length
+0x0015                 05        pubkey version
+0x0016                    63 87  creation time
+0x0018  7f e3                      (2022-11-30T16:08:03Z)
+0x001a        16                 key algo: EdDSA
+0x001b           00 00 00 2d     key length
+0x001f                       09  OID length
+0x0020  2b 06 01 04 01 da 47 0f  OID (Ed25519)
+0x0028  01
+0x0029     01 07                 MPI length
+0x002a           40              prefix octet
+0x002b              f9 4d a7 bb  x coordinate
+0x0030  48 d6 0a 61 e5 67 70 6a
+0x0038  65 87 d0 33 19 99 bb 9d
+0x0040  89 1a 08 24 2e ad 84 54
+0x0048  3d f8 95 a3
+         [ trailer begins ]
+0x004c              05           sig version
+0x004d                 1f        sig type: direct key signature
+0x004e                    16     sig algo: EdDSA
+0x004f                       0a  hash ago: SHA2-512
+0x0050  00 00 00 1f              hashed subpackets length
+0x0054              05           subpkt length
+0x0055                 02        subpkt type: Signature Creation Time
+0x0056                    63 87  Signature Creation Time
+0x0058  7f e3                       (2022-11-30T16:08:03Z)
+0x005a        03                 subpkt length
+0x005b           0b              subpkt type: Pref. Ciphers (v1 SEIPD)
+0x005c              09 07        Ciphers: [AES256 AES128]
+0x005e                    05     subpkt length
+0x005f                       15  subpkt type: Pref. Hash Algorithms
+0x0060  0a 0e                    Hashes: [SHA2-512 SHA3-512
+0x0062        08 0c                       SHA2-256 SHA3-256]
+0x0064              02           subpkt length
+0x0065                 16        subpkt type: Pref. Compression
+0x0066                    00     Compression: [none]
+0x0067                       02  subpkt length
+0x0068  1b                       subpkt type: Key Flags
+0x0069     03                    Key Flags: {certify, sign}
+0x006a        02                 subpkt length
+0x006b           1e              subpkt type: Features
+0x006c              09           Features: {SEIPDv1, SEIPDv2}
+0x006d                 05        subpkt length
+0x006e                    27     subpkt type: Pref. AEAD Ciphersuites
+0x006f                       09  Ciphersuites:
+0x0070  02 07 02                   [ AES256-OCB, AES128-OCB ]
+0x0073           05              sig version
+0x0074              ff           sentinel octet
+0x0075                 00 00 00  trailer length
+0x0078  00 00 00 00 27
+~~~
+
+The subkey binding signature in {{v5-cert}} is made over the following sequence of data:
+
+~~~
+0x0000  ba 75 96 a6 52 0e 4a fa  salt
+0x0008  c5 df 53 f3 75 ba 6c 13
+      [ primary pubkey begins ]
+0x0010  9a                       v5 pubkey
+0x0011     00 00 00 37           pubkey length
+0x0015                 05        pubkey version
+0x0016                    63 87  creation time
+0x0018  7f e3                      (2022-11-30T16:08:03Z)
+0x001a        16                 key algo: EdDSA
+0x001b           00 00 00 2d     key length
+0x001f                       09  OID length
+0x0020  2b 06 01 04 01 da 47 0f  OID (Ed25519)
+0x0028  01
+0x0029     01 07                 MPI length
+0x002a           40              prefix octet
+0x002b              f9 4d a7 bb  native format of
+0x0030  48 d6 0a 61 e5 67 70 6a    Ed25519 public key
+0x0038  65 87 d0 33 19 99 bb 9d
+0x0040  89 1a 08 24 2e ad 84 54
+0x0048  3d f8 95 a3
+      [ subkey pubkey begins ]
+0x004c              9a           v5 key
+0x004d                 00 00 00  pubkey length
+0x0050  3c
+0x0051     05                    pubkey version
+0x0052        63 87 7f e3        creation time (2022-11-30T16:08:03Z)
+0x0056  12                       key algo: ECDH
+0x0057                       00  key length
+0x0058  00 00 32
+0x0059           0a              OID length
+0x005a              2b 06 01 04  OID (Curve25519)
+0x0060  01 97 55 01 05 01
+0x0066                    01 07  MPI length
+0x0068  40                       prefix octet
+0x0069     fc f7 fc 29 aa ce 01  native format of
+0x0070  48 f4 3e ad bf 3a 0f 96    Curve25519 public key
+0x0078  91 d0 a3 22 a2 43 62 56
+0x0080  27 80 ed 92 5d a8 4e 71
+0x0088  5b
+0x0089     03                    KDF params length
+0x008a        01                 KDF params version
+0x008b           08              KDF params hash algo (SHA2-256)
+0x008c              07           KDF params cipher algo (AES128)
+       [ trailer begins ]
+0x008d                 05        sig version
+0x008e                    18     sig type: Subkey Binding sig
+0x008f                       16  sig algo EdDSA
+0x0090  0a                       hash algo: SHA2-512
+0x0091     00 00 00 09           hashed subpackets length
+0x0095                 05        subpkt length
+0x0096                    02     subpkt type Signature Creation Time
+0x0097                       63  Signature Creation Time
+0x0098  87 7f e3                     (2022-11-30T16:08:03Z)
+0x009b           02              subpkt length
+0x009c              1b           subpkt type: Key Flags
+0x009d                 0c        Key Flags: {EncComms, EncStorage}
+0x009e                    05     sig version
+0x009f                       ff  sentinel octet
+0x00a0  00 00 00 00 00 00 00 11  trailer length
+
+~~~
 
 ## Sample v5 Secret Key (Transferable Secret Key) {#v5-key}
 
