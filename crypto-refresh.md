@@ -4835,7 +4835,7 @@ The same data, broken out by octet and semantics, is:
 0x0073           06              sig version
 0x0074              ff           sentinel octet
 0x0075                 00 00 00  trailer length
-0x0078  00 00 00 00 27
+0x0078  27
 ~~~
 
 The subkey binding signature in {{v6-cert}} is made over the following sequence of data:
@@ -4905,7 +4905,7 @@ The same data, broken out by octet and semantics, is:
 0x009d                 0c        Key Flags: {EncComms, EncStorage}
 0x009e                    06     sig version
 0x009f                       ff  sentinel octet
-0x00a0  00 00 00 00 00 00 00 11  trailer length
+0x00a0  00 00 00 11              trailer length
 
 ~~~
 
