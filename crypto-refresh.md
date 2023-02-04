@@ -536,7 +536,7 @@ The size of an MPI is ((MPI.length + 7) / 8) + 2 octets.
 The length field of an MPI describes the length starting from its most significant non-zero bit.
 Thus, the MPI \[00 02 01\] is not formed correctly.
 It should be \[00 01 01\].
-When parsing an MPI in a v5 Key, Signature, or Public-Key Encrypted Session Key packet, the implementation MUST check that the encoded length matches the length starting from the most significant non-zero bit, and reject the packet as malformed if not.
+When parsing an MPI in a v6 Key or Signature, or a v5 Public-Key Encrypted Session Key packet, the implementation MUST check that the encoded length matches the length starting from the most significant non-zero bit, and reject the packet as malformed if not.
 
 Unused bits of an MPI MUST be zero.
 
@@ -713,9 +713,9 @@ If the "Generate?" column is not "Y", the Secret Key protection details entry is
 
 Each row with "Generate?" marked as "No" is described for backward compatibility, and MUST NOT be generated.
 
-A version 5 secret key that is cryptographically protected is stored with an additional pair of length counts, each of which is one octet wide:
+A version 6 secret key that is cryptographically protected is stored with an additional pair of length counts, each of which is one octet wide:
 
-{: title="Version 5 Secret Key protection details" #v5-secret-key-protection-details}
+{: title="Version 6 Secret Key protection details" #v6-secret-key-protection-details}
 First octet | Encryption parameter fields | Encryption
 ---|--------------------------------------------------|---|---
 0 | - | cleartext secrets \|\| check(secrets)
@@ -983,7 +983,7 @@ The v5 PKESK packet consists of:
 - A one-octet version number with value 5.
 
 - A one octet key version number and N octets of the fingerprint of the public key or subkey to which the session key is encrypted.
-  Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 5 key N is 32.
+  Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 6 key N is 32.
   The key version number may also be zero, and the fingerprint omitted (that is, the length N is zero in this case), for an "anonymous recipient" (see {{pkesk-notes}}).
 
 - A one-octet number giving the public-key algorithm used.
@@ -1030,9 +1030,9 @@ A Signature packet describes a binding between some public key and some data.
 The most common signatures are a signature of a file or a block of text, and a signature that is a certification of a User ID.
 
 Three versions of Signature packets are defined.
-Version 3 provides basic signature information, while versions 4 and 5 provide an expandable format with subpackets that can specify more information about the signature.
+Version 3 provides basic signature information, while versions 4 and 6 provide an expandable format with subpackets that can specify more information about the signature.
 
-An implementation MUST generate a version 5 signature when signing with a version 5 key.
+An implementation MUST generate a version 6 signature when signing with a version 6 key.
 An implementation MUST generate a version 4 signature when signing with a version 4 key.
 Implementations MUST NOT create version 3 signatures; they MAY accept version 3 signatures.
 
@@ -1200,12 +1200,12 @@ DSA signatures MUST use hashes that are equal in size to the number of bits of q
 If the output size of the chosen hash is larger than the number of bits of q, the hash result is truncated to fit by taking the number of leftmost bits equal to the number of bits of q.
 This (possibly truncated) hash function result is treated as a number and used directly in the DSA signature algorithm.
 
-### Version 4 and 5 Signature Packet Formats
+### Version 4 and 6 Signature Packet Formats
 
-The body of a v4 or v5 Signature packet contains:
+The body of a v4 or v6 Signature packet contains:
 
 - One-octet version number.
-  This is 4 for v4 signatures and 5 for v5 signatures.
+  This is 4 for v4 signatures and 6 for v6 signatures.
 
 - One-octet signature type.
 
@@ -1215,21 +1215,21 @@ The body of a v4 or v5 Signature packet contains:
 
 - A scalar octet count for the following hashed subpacket data.
   For a v4 signature, this is a two-octet field.
-  For a v5 signature, this is a four-octet field.
+  For a v6 signature, this is a four-octet field.
   Note that this is the length in octets of all of the hashed subpackets; a pointer incremented by this number will skip over the hashed subpackets.
 
 - Hashed subpacket data set (zero or more subpackets).
 
 - A scalar octet count for the following unhashed subpacket data.
   For a v4 signature, this is a two-octet field.
-  For a v5 signature, this is a four-octet field.
+  For a v6 signature, this is a four-octet field.
   Note that this is the length in octets of all of the unhashed subpackets; a pointer incremented by this number will skip over the unhashed subpackets.
 
 - Unhashed subpacket data set (zero or more subpackets).
 
 - Two-octet field holding the left 16 bits of the signed hash value.
 
-- Only for v5 signatures, a 16 octet field containing random values used as salt.
+- Only for v6 signatures, a 16 octet field containing random values used as salt.
 
 - One or more multiprecision integers comprising the signature.
   This portion is algorithm-specific:
@@ -1280,7 +1280,7 @@ There are two fields consisting of Signature subpackets.
 The first field is hashed with the rest of the signature data, while the second is unhashed.
 The second set of subpackets is not cryptographically protected by the signature and should include only advisory information.
 
-The differences between a v4 and v5 signature are two-fold: first, a v5 signature increases the width of the size indicators for the signed data, making it more capable when signing large keys or messages.
+The differences between a v4 and v6 signature are two-fold: first, a v6 signature increases the width of the size indicators for the signed data, making it more capable when signing large keys or messages.
 Second, the hash is salted with 128 bit of random data (see {{signature-salt-rationale}}).
 
 The algorithms for converting the hash function result to a signature are described in {{computing-signatures}}.
@@ -1288,7 +1288,7 @@ The algorithms for converting the hash function result to a signature are descri
 #### Signature Subpacket Specification {#signature-subpacket}
 
 A subpacket data set consists of zero or more Signature subpackets.
-In Signature packets, the subpacket data set is preceded by a two-octet (for v4 signatures) or four-octet (for v5 signatures) scalar count of the length in octets of all the subpackets.
+In Signature packets, the subpacket data set is preceded by a two-octet (for v4 signatures) or four-octet (for v6 signatures) scalar count of the length in octets of all the subpackets.
 A pointer incremented by this number will skip over the subpacket data set.
 
 Each subpacket consists of a subpacket header and a body.
@@ -1417,8 +1417,8 @@ By convention, a version 4 key stores information about the primary Public-Key (
 Some implementations require at least one User ID with a valid self-signature to be present to use a v4 key.
 For this reason, it is RECOMMENDED to include at least one User ID with a self-signature in v4 keys.
 
-For version 5 keys, it is RECOMMENDED to store information about the primary Public-Key as well as the Transferable Public Key as a whole (key flags, key expiration, features, algorithm preferences, etc.) in a direct-key signature (type 0x1F) over the Public-Key instead of placing that information in a User ID self-signature.
-An implementation MUST ensure that a valid direct-key signature is present before using a v5 key.
+For version 6 keys, it is RECOMMENDED to store information about the primary Public-Key as well as the Transferable Public Key as a whole (key flags, key expiration, features, algorithm preferences, etc.) in a direct-key signature (type 0x1F) over the Public-Key instead of placing that information in a User ID self-signature.
+An implementation MUST ensure that a valid direct-key signature is present before using a v6 key.
 This prevents certain attacks where an adversary strips a self-signature specifying a key expiration time or certain preferences.
 
 An implementation SHOULD NOT require a User ID self-signature to be present in order to consume or use a key, unless the particular use is contingent on the keyholder identifying themselves with the textual label in the User ID.
@@ -1827,7 +1827,7 @@ The OpenPGP Key fingerprint of the key issuing the signature.
 This subpacket SHOULD be included in all signatures.
 If the version of the issuing key is 4 and an Issuer Key ID subpacket ({{issuer-keyid-subpacket}}) is also included in the signature, the key ID of the Issuer Key ID subpacket MUST match the low 64 bits of the fingerprint.
 
-Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 5 key N is 32.
+Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 6 key N is 32.
 Since the version of the signature is bound to the version of the key, the version octet here MUST match the version of the signature.
 If the version octet does not match the signature version, the receiving implementation MUST treat it as a malformed signature (see {{malformed-signatures}}).
 
@@ -1839,7 +1839,7 @@ The OpenPGP Key fingerprint of the intended recipient primary key.
 If one or more subpackets of this type are included in a signature, it SHOULD be considered valid only in an encrypted context, where the key it was encrypted to is one of the indicated primary keys, or one of their subkeys.
 This can be used to prevent forwarding a signature outside of its intended, encrypted context (see {{surreptitious-forwarding}}).
 
-Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 5 key N is 32.
+Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 6 key N is 32.
 
 An implementation SHOULD generate this subpacket when creating a signed and encrypted message.
 
@@ -1847,14 +1847,14 @@ An implementation SHOULD generate this subpacket when creating a signed and encr
 
 All signatures are formed by producing a hash over the signature data, and then using the resulting hash in the signature algorithm.
 
-When a v5 signature is made, the salt is hashed first.
+When a v6 signature is made, the salt is hashed first.
 
 For binary document signatures (type 0x00), the document data is hashed directly.
 For text document signatures (type 0x01), the implementation MUST first canonicalize the document by converting line endings to \<CR>\<LF> and encoding it in UTF-8 (see {{RFC3629}}).
 The resulting UTF-8 bytestream is hashed.
 
 When a v4 signature is made over a key, the hash data starts with the octet 0x99, followed by a two-octet length of the key, and then the body of the key packet.
-When a v5 signature is made over a key, the hash data starts with the octet 0x9a, followed by a four-octet length of the key, and then the body of the key packet.
+When a v6 signature is made over a key, the hash data starts with the octet 0x9a, followed by a four-octet length of the key, and then the body of the key packet.
 
 A subkey binding signature (type 0x18) or primary key binding signature (type 0x19) then hashes the subkey using the same format as the main key (also using 0x99 or 0x9a as the first octet).
 Primary key revocation signatures (type 0x20) hash only the key being revoked.
@@ -1862,7 +1862,7 @@ Subkey revocation signature (type 0x28) hash first the primary key and then the 
 
 A certification signature (type 0x10 through 0x13) hashes the User ID being bound to the key into the hash context after the above data.
 A v3 certification hashes the contents of the User ID or attribute packet packet, without any header.
-A v4 or v5 certification hashes the constant 0xB4 for User ID certifications or the constant 0xD1 for User Attribute certifications, followed by a four-octet number giving the length of the User ID or User Attribute data, and then the User ID or User Attribute data.
+A v4 or v6 certification hashes the constant 0xB4 for User ID certifications or the constant 0xD1 for User Attribute certifications, followed by a four-octet number giving the length of the User ID or User Attribute data, and then the User ID or User Attribute data.
 
 When a signature is made over a Signature packet (type 0x50, "Third-Party Confirmation signature"), the hash data starts with the octet 0x88, followed by the four-octet length of the signature, and then the body of the Signature packet.
 (Note that this is a Legacy packet header for a Signature packet with the length-of-length field set to zero.) The unhashed subpacket data of the Signature packet being hashed is not included in the hash, and the unhashed subpacket data length value is set to zero.
@@ -1873,10 +1873,10 @@ This trailer depends on the version of the signature.
 - A v3 signature hashes five octets of the packet body, starting from the signature type field.
   This data is the signature type, followed by the four-octet signature creation time.
 
-- A v4 or v5 signature hashes the packet body starting from its first field, the version number, through the end of the hashed subpacket data and a final extra trailer.
+- A v4 or v6 signature hashes the packet body starting from its first field, the version number, through the end of the hashed subpacket data and a final extra trailer.
   Thus, the hashed fields are:
 
-  - An octet indicating the signature version (0x04 for v4, 0x05 for v5),
+  - An octet indicating the signature version (0x04 for v4, 0x06 for v6),
 
   - The signature type,
 
@@ -1888,13 +1888,13 @@ This trailer depends on the version of the signature.
 
   - The hashed subpacket body,
 
-  - A second version octet (0x04 for v4, 0x05 for v5)
+  - A second version octet (0x04 for v4, 0x06 for v6)
 
   - A single octet 0xFF,
 
   - A number representing the length of the hashed data from the Signature packet stopping right before the second version octet.
     For a v4 signature, this is a four-octet big-endian number, considered to be an unsigned integer modulo 2\*\*32.
-    For a v5 signature, this is an eight-octet big-endian number, considered to be an unsigned integer modulo 2\*\*64.
+    For a v6 signature, this is an eight-octet big-endian number, considered to be an unsigned integer modulo 2\*\*64.
 
 After all this has been hashed in a single hash context, the resulting hash field is used in the signature algorithm and placed at the end of the Signature packet.
 
@@ -2011,7 +2011,7 @@ It allows the Signature packet to be placed at the end of the message, so that t
 The body of this packet consists of:
 
 - A one-octet version number.
-  The currently defined versions are 3 and 5.
+  The currently defined versions are 3 and 6.
 
 - A one-octet signature type.
   Signature types are described in {{signature-types}}.
@@ -2020,15 +2020,15 @@ The body of this packet consists of:
 
 - A one-octet number describing the public-key algorithm used.
 
-- Only for v5 packets, a 16 octet field containing random values used as salt.
+- Only for v6 packets, a 16 octet field containing random values used as salt.
   The value must match the salt field of the corresponding Signature packet.
 
 - Only for v3 packets, an eight-octet number holding the Key ID of the signing key.
 
-- Only for v5 packets, a one octet key version number and N octets of the fingerprint of the signing key.
-  Note that the length N of the fingerprint for a version 5 key is 32.
-  Since a v5 signature can only be made by a v5 key, the key version number MUST be 5.
-  An application that encounters a v5 One-Pass Signature packet where the key version number is not 5 MUST treat the signature as invalid (see {{malformed-signatures}}).
+- Only for v6 packets, a one octet key version number and N octets of the fingerprint of the signing key.
+  Note that the length N of the fingerprint for a version 6 key is 32.
+  Since a v6 signature can only be made by a v6 key, the key version number MUST be 6.
+  An application that encounters a v6 One-Pass Signature packet where the key version number is not 6 MUST treat the signature as invalid (see {{malformed-signatures}}).
 
 - A one-octet number holding a flag showing whether the signature is nested.
   A zero value indicates that the next packet is another One-Pass Signature packet that describes another signature to be applied to the same message data.
@@ -2039,7 +2039,7 @@ When generating a one-pass signature, the OPS packet version MUST correspond to 
 Signing key version | OPS packet version | Signature packet version
 ---|--------------|--------
 4 | 3 | 4
-5 | 5 | 5
+6 | 6 | 6
 
 Note that if a message contains more than one one-pass signature, then the Signature packets bracket the message; that is, the first Signature packet after the message corresponds to the last one-pass packet and the final Signature packet corresponds to the first one-pass packet.
 
@@ -2073,7 +2073,7 @@ A Secret-Subkey packet (tag 7) is the subkey analog of the Secret Key packet and
 
 There are three versions of key-material packets.
 
-OpenPGP implementations SHOULD create keys with version 5 format.
+OpenPGP implementations SHOULD create keys with version 6 format.
 V4 keys are deprecated; an implementation SHOULD NOT generate a v4 key, but SHOULD accept it.
 V3 keys are deprecated; an implementation MUST NOT generate a v3 key, but MAY accept it.
 V2 keys are deprecated; an implementation MUST NOT generate a v2 key, but MAY accept it.
@@ -2119,13 +2119,13 @@ A version 4 packet contains:
 - A series of values comprising the key material.
   This is algorithm-specific and described in {{algorithm-specific-parts-of-keys}}.
 
-The version 5 format is similar to the version 4 format except for the addition of a count for the key material.
+The version 6 format is similar to the version 4 format except for the addition of a count for the key material.
 This count helps parsing secret key packets (which are an extension of the public key packet format) in the case of an unknown algorithm.
-In addition, fingerprints of version 5 keys are calculated differently from version 4 keys, as described in {{key-ids-fingerprints}}.
+In addition, fingerprints of version 6 keys are calculated differently from version 4 keys, as described in {{key-ids-fingerprints}}.
 
-A version 5 packet contains:
+A version 6 packet contains:
 
-- A one-octet version number (5).
+- A one-octet version number (6).
 
 - A four-octet number denoting the time that the key was created.
 
@@ -2148,15 +2148,15 @@ The packet contains:
   Zero indicates that the secret-key data is not encrypted.
   255, 254, or 253 indicates that a string-to-key specifier is being given.
   Any other value is a symmetric-key encryption algorithm identifier.
-  A version 5 packet MUST NOT use the value 255.
+  A version 6 packet MUST NOT use the value 255.
 
-- Only for a version 5 packet where the secret key material is encrypted (that is, where the previous octet is not zero), a one-octet scalar octet count of the cumulative length of all the following optional string-to-key parameter fields.
+- Only for a version 6 packet where the secret key material is encrypted (that is, where the previous octet is not zero), a one-octet scalar octet count of the cumulative length of all the following optional string-to-key parameter fields.
 
 - \[Optional\] If string-to-key usage octet was 255, 254, or 253, a one-octet symmetric encryption algorithm.
 
 - \[Optional\] If string-to-key usage octet was 253, a one-octet AEAD algorithm.
 
-- \[Optional\] Only for a version 5 packet, and if string-to-key usage octet was 255, 254, or 253, an one-octet count of the following field.
+- \[Optional\] Only for a version 6 packet, and if string-to-key usage octet was 255, 254, or 253, an one-octet count of the following field.
 
 - \[Optional\] If string-to-key usage octet was 255, 254, or 253, a string-to-key (S2K) specifier.
   The length of the string-to-key specifier depends on its type (see {{s2k-types}}).
@@ -2176,7 +2176,7 @@ The packet contains:
 
 The details about storing algorithm-specific secrets above are summarized in {{secret-key-encryption}}.
 
-Note that the version 5 packet format adds two count values to help parsing packets with unknown S2K or public key algorithms.
+Note that the version 6 packet format adds two count values to help parsing packets with unknown S2K or public key algorithms.
 
 Secret MPI values can be encrypted using a passphrase.
 If a string-to-key specifier is given, that describes the algorithm for converting the passphrase to a key, else a simple MD5 hash of the passphrase is used.
@@ -2190,7 +2190,7 @@ With v3 keys, the MPI bit count prefix (that is, the first two octets) is not en
 Only the MPI non-prefix data is encrypted.
 Furthermore, the CFB state is resynchronized at the beginning of each new MPI value, so that the CFB block boundary is aligned with the start of the MPI data.
 
-With v4 and v5 keys, a simpler method is used.
+With v4 and v6 keys, a simpler method is used.
 All secret MPI values are encrypted, including the MPI bitcount prefix.
 
 If the string-to-key usage octet is 253, the key encryption key is derived using HKDF (see {{RFC5869}}) to provide key separation.
@@ -2200,7 +2200,7 @@ Note that no chunks are used and that there is only one authentication tag.
 As additional data, the Packet Tag in OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), followed by the public key packet fields, starting with the packet version number, are passed to the AEAD algorithm.
 For example, the additional data used with a Secret-Key Packet of version 4 consists of the octets 0xC5, 0x04, followed by four octets of creation time, one octet denoting the public-key algorithm, and the algorithm-specific public-key parameters.
 For a Secret-Subkey Packet, the first octet would be 0xC7.
-For a version 5 key packet, the second octet would be 0x05, and the four-octet octet count of the public key material would be included as well (see {{public-key-packet-formats}}).
+For a version 6 key packet, the second octet would be 0x05, and the four-octet octet count of the public key material would be included as well (see {{public-key-packet-formats}}).
 
 The two-octet checksum that follows the algorithm-specific portion is the algebraic sum, mod 65536, of the plaintext of all the algorithm-specific octets (including MPI prefix and data).
 With v3 keys, the checksum is stored in the clear.
@@ -2245,7 +2245,7 @@ e.2) The octets representing a curve OID, defined in {{ec-curves}};
 
 e.3) An MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
 
-A v5 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9A, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
+A v6 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9A, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
 The Key ID is the high-order 64 bits of the fingerprint.
 Here are the fields of the hash material, with the example of an EdDSA key:
 
@@ -2253,7 +2253,7 @@ a.1) 0x9A (1 octet)
 
 a.2) four-octet scalar octet count of (b)-(f)
 
-b) version number = 5 (1 octet);
+b) version number = 6 (1 octet);
 
 c) timestamp of key creation (4 octets);
 
@@ -2274,9 +2274,9 @@ f.3) An MPI of an EC point representing a public key Q in prefixed native form (
 Note that it is possible for there to be collisions of Key IDs --- two different keys with the same Key ID.
 Note that there is a much smaller, but still non-zero, probability that two different keys have the same fingerprint.
 
-Also note that if v3, v4, and v5 format keys share the same RSA key material, they will have different Key IDs as well as different fingerprints.
+Also note that if v3, v4, and v6 format keys share the same RSA key material, they will have different Key IDs as well as different fingerprints.
 
-Finally, the Key ID and fingerprint of a subkey are calculated in the same way as for a primary key, including the 0x99 (v4 key) or 0x9A (v5 key) as the first octet (even though this is not a valid packet ID for a public subkey).
+Finally, the Key ID and fingerprint of a subkey are calculated in the same way as for a primary key, including the 0x99 (v4 key) or 0x9A (v6 key) as the first octet (even though this is not a valid packet ID for a public subkey).
 
 ### Algorithm-specific Parts of Keys
 
@@ -2810,7 +2810,7 @@ Its contents SHOULD be random octets to make the length obfuscation it provides 
 
 An implementation adding padding to an OpenPGP stream SHOULD place such a packet:
 
-- At the end of a v5 Transferable Public Key that is transferred over an encrypted channel (see {{transferable-public-keys}}).
+- At the end of a v6 Transferable Public Key that is transferred over an encrypted channel (see {{transferable-public-keys}}).
 
 - As the last packet of an Optionally Padded Message within a version 2 Symmetrically Encrypted Integrity Protected Data Packet (see {{unwrapping}}).
 
@@ -2845,11 +2845,11 @@ Notably:
 
 - An ASCII-armored Encrypted Message packet sequence that ends in an v2 SEIPD packet MUST NOT contain a CRC24 footer.
 
-- An ASCII-armored sequence of Signature packets that only includes v5 Signature packets MUST NOT contain a CRC24 footer.
+- An ASCII-armored sequence of Signature packets that only includes v6 Signature packets MUST NOT contain a CRC24 footer.
 
-- An ASCII-armored Transferable Public Key packet sequence of a v5 key MUST NOT contain a CRC24 footer.
+- An ASCII-armored Transferable Public Key packet sequence of a v6 key MUST NOT contain a CRC24 footer.
 
-- An ASCII-armored keyring consisting of only v5 keys MUST NOT contain a CRC24 footer.
+- An ASCII-armored keyring consisting of only v6 keys MUST NOT contain a CRC24 footer.
 
 Rationale:
 Previous versions of this document state that the CRC24 footer is optional, but the text was ambiguous.
@@ -2953,7 +2953,7 @@ Currently defined Armor Header Keys are as follows:
   This is used only in cleartext signed messages.
 
 - "SaltedHash", a salt and hash algorithm used in this message.
-  This is used only in cleartext signed messages that are followed by a v5 Signature.
+  This is used only in cleartext signed messages that are followed by a v6 Signature.
 
 - "Charset", a description of the character set that the plaintext is in.
   Please note that OpenPGP defines text to be in UTF-8.
@@ -3081,7 +3081,7 @@ The cleartext signed message consists of:
 
 - If the message is signed using v3 or v4 Signatures, one or more "Hash" Armor Headers,
 
-- If the message is signed using v5 Signatures, one or more "SaltedHash" Armor Headers,
+- If the message is signed using v6 Signatures, one or more "SaltedHash" Armor Headers,
 
 - Exactly one empty line not included into the message digest,
 
@@ -3574,9 +3574,9 @@ When consuming a sequence of OpenPGP packets according to one of the three gramm
 OpenPGP users may transfer public keys.
 This section describes the structure of public keys in transit to ensure interoperability.
 
-### OpenPGP v5 Key Structure
+### OpenPGP v6 Key Structure
 
-The format of an OpenPGP v5 key is as follows.
+The format of an OpenPGP v6 key is as follows.
 Entries in square brackets are optional and ellipses indicate repetition.
 
     Primary Key
@@ -3591,11 +3591,11 @@ Entries in square brackets are optional and ellipses indicate repetition.
 
 In addition to these rules, a marker packet ({{marker-packet}}) can appear anywhere in the sequence.
 
-Note, that a v5 key uses a Direct-Key Signature to store algorithm preferences.
+Note, that a v6 key uses a Direct-Key Signature to store algorithm preferences.
 
-Every subkey for a v5 primary key MUST be a v5 subkey.
+Every subkey for a v6 primary key MUST be a v6 subkey.
 
-When a primary v5 Public Key is revoked, it is sometimes distributed with only the revocation signature:
+When a primary v6 Public Key is revoked, it is sometimes distributed with only the revocation signature:
 
     Primary Key
         Revocation Signature
@@ -3622,7 +3622,7 @@ Subkeys that can issue signatures MUST have a v4 binding signature due to the RE
 Every subkey for a v4 primary key MUST be a v4 subkey.
 
 When a primary v4 Public Key is revoked, the revocation signature is sometimes distributed by itself, without the primary key packet it applies to. This is referred to as a "revocation certificate".
-Instead, a v5 revocation certificate MUST include the primary key packet, as described above.
+Instead, a v6 revocation certificate MUST include the primary key packet, as described above.
 
 ### OpenPGP v3 Key Structure
 
@@ -3666,7 +3666,7 @@ User Attribute packets and User ID packets may be freely intermixed in this sect
 
 After the User ID packet or Attribute packet, there may be zero or more Subkey packets.
 In general, subkeys are provided in cases where the top-level public key is a certification-only key.
-However, any v4 or v5 key may have subkeys, and the subkeys may be encryption keys, signing keys, authentication keys, etc.
+However, any v4 or v6 key may have subkeys, and the subkeys may be encryption keys, signing keys, authentication keys, etc.
 It is good practice to use separate subkeys for every operation (i.e. signature-only, encryption-only, authentication-only keys, etc.).
 
 Each Subkey packet MUST be followed by one Signature packet, which should be a subkey binding signature issued by the top-level key.
@@ -3677,7 +3677,7 @@ Revocation signatures are only accepted if they are issued by the key itself, or
 
 The optional trailing Padding packet is a mechanism to defend against traffic analysis (see {{traffic-analysis}}).
 For maximum interoperability, if the Public-Key packet is a v4 key, the optional Padding packet SHOULD NOT be present unless the recipient has indicated that they are capable of ignoring it successfully.
-An implementation that is capable of receiving a transferable public key with a v5 Public-Key primary key MUST be able to accept (and ignore) the trailing optional Padding packet.
+An implementation that is capable of receiving a transferable public key with a v6 Public-Key primary key MUST be able to accept (and ignore) the trailing optional Padding packet.
 
 Transferable public-key packet sequences may be concatenated to allow transferring multiple public keys in one operation (see {{keyrings}}).
 
@@ -3938,10 +3938,10 @@ The KDF parameters are encoded as a concatenation of the following 5 variable-le
 
 - A variable-length field containing the fingerprint of the recipient encryption subkey identifying the key material that is needed for decryption.
   For version 4 keys, this field is 20 octets.
-  For version 5 keys, this field is 32 octets.
+  For version 6 keys, this field is 32 octets.
 
 The size in octets of the KDF parameters sequence, defined above, for encrypting to a v4 key is either 54 for curve NIST P-256, 51 for curves NIST P-384 and NIST P-521, 55 for curves brainpoolP256r1, brainpoolP384r1 and brainpoolP512r1, 56 for Curve25519, or 49 for X448.
-For encrypting to a v5 key, the size of the sequence is either 66 for curve NIST P-256, 63 for curves NIST P-384 and NIST P-521, 67 for curves brainpoolP256r1, brainpoolP384r1 and brainpoolP512r1, 68 for Curve25519, or 61 for X448.
+For encrypting to a v6 key, the size of the sequence is either 66 for curve NIST P-256, 63 for curves NIST P-384 and NIST P-521, 67 for curves brainpoolP256r1, brainpoolP384r1 and brainpoolP512r1, 68 for Curve25519, or 61 for X448.
 
 The key wrapping method is described in {{RFC3394}}.
 The KDF produces a symmetric key that is used as a key-encryption key (KEK) as specified in {{RFC3394}}.
@@ -3958,7 +3958,7 @@ The octets s0 and s1 above denote the checksum of the session key octets.
 This encoding allows the sender to obfuscate the size of the symmetric encryption key used to encrypt the data.
 For example, assuming that an AES algorithm is used for the session key, the sender MAY use 21, 13, and 5 octets of padding for AES-128, AES-192, and AES-256, respectively, to provide the same number of octets, 40 total, as an input to the key wrapping method.
 
-In a v5 Public-Key Encrypted Session Key packet, the symmetric algorithm is not included, as described in {{pkesk}}.
+In a v6 Public-Key Encrypted Session Key packet, the symmetric algorithm is not included, as described in {{pkesk}}.
 For example, an AES-256 session key would be composed as follows:
 
     k0 k1 ... k31 s0 s1 06 06 06 06 06 06
@@ -4010,9 +4010,9 @@ Note that the recipient obtains the shared secret by calculating
 
 ECDH keys have a hash algorithm parameter for key derivation and a symmetric algorithm for key encapsulation.
 
-For v5 keys, the following algorithms MUST be used depending on the curve.
-An implementation MUST NOT generate a v5 ECDH key over any listed curve that uses different KDF or KEK parameters.
-An implementation MUST NOT encrypt any message to a v5 ECDH key over a listed curve that announces a different KDF or KEK parameter.
+For v6 keys, the following algorithms MUST be used depending on the curve.
+An implementation MUST NOT generate a v6 ECDH key over any listed curve that uses different KDF or KEK parameters.
+An implementation MUST NOT encrypt any message to a v6 ECDH key over a listed curve that announces a different KDF or KEK parameter.
 
 For v4 keys, the following algorithms SHOULD be used depending on the curve.
 An implementation SHOULD only use an AES algorithm as a KEK algorithm.
@@ -4388,8 +4388,8 @@ Some example C code implementing this technique can be found at {{SHA1CD}}.
 
 ## Advantages of Salted Signatures {#signature-salt-rationale}
 
-V5 signatures include a 128 bit salt that is hashed first.
-This makes v5 OpenPGP signatures non-deterministic and protects against a broad class of attacks that depend on creating a signature over a predictable message.
+V6 signatures include a 128 bit salt that is hashed first.
+This makes v6 OpenPGP signatures non-deterministic and protects against a broad class of attacks that depend on creating a signature over a predictable message.
 By selecting a new random salt for each signature made, signatures are not predictable.
 
 When the material to be signed may be attacker-controlled, hashing the salt first means that there is no attacker controlled hashed prefix.
@@ -4444,12 +4444,12 @@ For a version 4 fingerprint, this has typically been done with the fingerprint r
 When a human is actively involved, the result of such a verification is dubious.
 We have little evidence that most humans are good at precise comparison of high-entropy data, particularly when that data is represented in compact textual form like a hexadecimal fingerprint.
 
-The version 5 fingerprint makes the challenge for a human verifier even worse.
-At 256 bits (compared to v4's 160 bit fingerprint), a v5 fingerprint is even harder for a human to successfully compare.
+The version 6 Fingerprint makes the challenge for a human verifier even worse.
+At 256 bits (compared to v4's 160 bit fingerprint), a v6 fingerprint is even harder for a human to successfully compare.
 
 An OpenPGP implementation should prioritize mechanical fingerprint transfer and comparison where possible, and SHOULD NOT promote manual transfer or comparison of full fingerprints by a human unless there is no other way to achieve the desired result.
 
-While this subsection acknowledges existing practice for human-representable v4 fingerprints, this document does not attempt to standardize any specific human-readable form of v5 fingerprint for this discouraged use case.
+While this subsection acknowledges existing practice for human-representable v4 fingerprints, this document does not attempt to standardize any specific human-readable form of v6 fingerprint for this discouraged use case.
 
 NOTE: the topic of interoperable human-in-the-loop key verification needs more work, probably in a separate document.
 
@@ -4494,11 +4494,11 @@ In particular:
 
 - When encrypting to one or more public keys:
 
-  - All recipient keys indicate support for version 2 of the Symmetrically Encrypted Integrity Protected Data packet in their Features subpacket ({{features-subpacket}}), or are v5 keys without a Features subpacket, or the implementation can otherwise infer that all recipients support v2 SEIPD packets, the implementation MUST encrypt using a v2 SEIPD packet.
+  - All recipient keys indicate support for version 2 of the Symmetrically Encrypted Integrity Protected Data packet in their Features subpacket ({{features-subpacket}}), or are v6 keys without a Features subpacket, or the implementation can otherwise infer that all recipients support v2 SEIPD packets, the implementation MUST encrypt using a v2 SEIPD packet.
 
   - If one of the recipients does not support v2 SEIPD packets, then the message generator MAY use a v1 SEIPD packet instead.
 
-- Password-protected secret key material in a v5 Secret Key or v5 Secret Subkey packet SHOULD be protected with AEAD encryption (S2K usage octet 253) unless it will be transferred to an implementation that is known to not support AEAD.
+- Password-protected secret key material in a v6 Secret Key or v6 Secret Subkey packet SHOULD be protected with AEAD encryption (S2K usage octet 253) unless it will be transferred to an implementation that is known to not support AEAD.
   Implementations should be aware that, in scenarios where an attacker has access to encrypted private keys, CFB-encrypted keys (S2K usage octet 254 or 255) are vulnerable to corruption attacks that can cause leakage of secret data when the secret key is used {{KOPENPGP}}, {{KR02}}.
 
 Implementers should implement AEAD (v2 SEIPD and S2K usage octet 253) promptly and encourage its spread.
@@ -4591,13 +4591,13 @@ Thus, this is a non-comprehensive list of potential problems and gotchas for a d
   It is the packet format of the legacy PGP 2 implementation.
   Older RFCs called the current OpenPGP packet format {{openpgp-packet-format}} the "new packet format".
 
-## Constrained Legacy Fingerprint Storage for v5 Keys
+## Constrained Legacy Fingerprint Storage for v6 Keys
 
-Some OpenPGP implementations have fixed length constraints for key fingerprint storage that will not fit all 32 octets of a v5 fingerprint.
+Some OpenPGP implementations have fixed length constraints for key fingerprint storage that will not fit all 32 octets of a v6 fingerprint.
 For example, {{OPENPGPCARD}} reserves 20 octets for each stored fingerprint.
 
-An OpenPGP implementation MUST NOT attempt to map any part of a v5 fingerprint to such a constrained field unless the relevant spec for the constrained environment has explicit guidance for storing a v5 fingerprint that distinguishes it from a v4 fingerprint.
-An implementation interacting with such a constrained field SHOULD directly calculate the v5 fingerprint from public key material and associated metadata instead of relying on the constrained field.
+An OpenPGP implementation MUST NOT attempt to map any part of a v6 fingerprint to such a constrained field unless the relevant spec for the constrained environment has explicit guidance for storing a v6 fingerprint that distinguishes it from a v4 fingerprint.
+An implementation interacting with such a constrained field SHOULD directly calculate the v6 fingerprint from public key material and associated metadata instead of relying on the constrained field.
 
 --- back
 
@@ -4676,16 +4676,16 @@ ftgr9N3lYG4NdWrtM2YBANCcT6EVJ/A44PV/IgHYLy6iyQMyZfps60iehUuuYbQE
 -----END PGP SIGNATURE-----
 ~~~
 
-## Sample v5 Certificate (Transferable Public Key) {#v5-cert}
+## Sample v6 Certificate (Transferable Public Key) {#v5-cert}
 
 Here is a Transferable Public Key consisting of:
 
-- A v5 Ed25519 Public-Key packet
-- A v5 direct key self-signature
-- A v5 Curve25519 Public-Subkey packet
-- A v5 subkey binding signature
+- A v6 Ed25519 Public-Key packet
+- A v6 direct key self-signature
+- A v6 Curve25519 Public-Subkey packet
+- A v6 subkey binding signature
 
-{: sourcecode-name="v5-minimal-cert.key"}
+{: sourcecode-name="v6-minimal-cert.key"}
 ~~~ application/pgp-keys
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 
@@ -4702,17 +4702,17 @@ P2hBxmeHI2hZWqRa+bdUEqbC+5xMveIL
 -----END PGP PUBLIC KEY BLOCK-----
 ~~~
 
-The corresponding Transferable Secret Key can be found in {{v5-key}}.
+The corresponding Transferable Secret Key can be found in {{v6-key}}.
 
 ### Hashed Data Stream for Signature Verification {#sig-hashed-data-example}
 
-The direct key self signature in the certificate in {{v5-cert}} is made over the following sequence of data:
+The direct key self signature in the certificate in {{v6-cert}} is made over the following sequence of data:
 
 ~~~
 0x0000  26 b3 b3 02 ac 8d 0e 7e  salt
 0x0008  9d 62 29 5e 90 c0 61 44
         [ pubkey begins ]
-0x0010  9a                       v5 pubkey
+0x0010  9a                       v6 pubkey
 0x0011     00 00 00 37           pubkey length
 0x0015                 05        pubkey version
 0x0016                    63 87  creation time
@@ -4765,13 +4765,13 @@ The direct key self signature in the certificate in {{v5-cert}} is made over the
 0x0078  00 00 00 00 27
 ~~~
 
-The subkey binding signature in {{v5-cert}} is made over the following sequence of data:
+The subkey binding signature in {{v6-cert}} is made over the following sequence of data:
 
 ~~~
 0x0000  ba 75 96 a6 52 0e 4a fa  salt
 0x0008  c5 df 53 f3 75 ba 6c 13
       [ primary pubkey begins ]
-0x0010  9a                       v5 pubkey
+0x0010  9a                       v6 pubkey
 0x0011     00 00 00 37           pubkey length
 0x0015                 05        pubkey version
 0x0016                    63 87  creation time
@@ -4789,7 +4789,7 @@ The subkey binding signature in {{v5-cert}} is made over the following sequence 
 0x0040  89 1a 08 24 2e ad 84 54
 0x0048  3d f8 95 a3
       [ subkey pubkey begins ]
-0x004c              9a           v5 key
+0x004c              9a           v6 key
 0x004d                 00 00 00  pubkey length
 0x0050  3c
 0x0051     05                    pubkey version
@@ -4830,16 +4830,16 @@ The subkey binding signature in {{v5-cert}} is made over the following sequence 
 
 ~~~
 
-## Sample v5 Secret Key (Transferable Secret Key) {#v5-key}
+## Sample v6 Secret Key (Transferable Secret Key) {#v6-key}
 
 Here is a Transferable Secret Key consisting of:
 
-- A v5 Ed25519 Secret-Key packet
-- A v5 direct key self-signature
-- A v5 Curve25519 Secret-Subkey packet
-- A v5 subkey binding signature
+- A v6 Ed25519 Secret-Key packet
+- A v6 direct key self-signature
+- A v6 Curve25519 Secret-Subkey packet
+- A v6 subkey binding signature
 
-{: sourcecode-name="v5-minimal-secret.key"}
+{: sourcecode-name="v6-minimal-secret.key"}
 ~~~ application/pgp-keys
 -----BEGIN PGP PRIVATE KEY BLOCK-----
 
@@ -4858,7 +4858,7 @@ psL7nEy94gs=
 -----END PGP PRIVATE KEY BLOCK-----
 ~~~
 
-The corresponding Transferable Public Key can be found in {{v5-cert}}.
+The corresponding Transferable Public Key can be found in {{v6-cert}}.
 
 ## Sample AEAD-EAX encryption and decryption
 
