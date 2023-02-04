@@ -1854,9 +1854,9 @@ For text document signatures (type 0x01), the implementation MUST first canonica
 The resulting UTF-8 bytestream is hashed.
 
 When a v4 signature is made over a key, the hash data starts with the octet 0x99, followed by a two-octet length of the key, and then the body of the key packet.
-When a v6 signature is made over a key, the hash data starts with the octet 0x9a, followed by a four-octet length of the key, and then the body of the key packet.
+When a v6 signature is made over a key, the hash data starts with the octet 0x9b, followed by a four-octet length of the key, and then the body of the key packet.
 
-A subkey binding signature (type 0x18) or primary key binding signature (type 0x19) then hashes the subkey using the same format as the main key (also using 0x99 or 0x9a as the first octet).
+A subkey binding signature (type 0x18) or primary key binding signature (type 0x19) then hashes the subkey using the same format as the main key (also using 0x99 or 0x9b as the first octet).
 Primary key revocation signatures (type 0x20) hash only the key being revoked.
 Subkey revocation signature (type 0x28) hash first the primary key and then the subkey being revoked.
 
@@ -2245,11 +2245,11 @@ e.2) The octets representing a curve OID, defined in {{ec-curves}};
 
 e.3) An MPI of an EC point representing a public key Q in prefixed native form (see {{ec-point-prefixed-native}}).
 
-A v6 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9A, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
+A v6 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9b, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
 The Key ID is the high-order 64 bits of the fingerprint.
 Here are the fields of the hash material, with the example of an EdDSA key:
 
-a.1) 0x9A (1 octet)
+a.1) 0x9b (1 octet)
 
 a.2) four-octet scalar octet count of (b)-(f)
 
@@ -2276,7 +2276,7 @@ Note that there is a much smaller, but still non-zero, probability that two diff
 
 Also note that if v3, v4, and v6 format keys share the same RSA key material, they will have different Key IDs as well as different fingerprints.
 
-Finally, the Key ID and fingerprint of a subkey are calculated in the same way as for a primary key, including the 0x99 (v4 key) or 0x9A (v6 key) as the first octet (even though this is not a valid packet ID for a public subkey).
+Finally, the Key ID and fingerprint of a subkey are calculated in the same way as for a primary key, including the 0x99 (v4 key) or 0x9b (v6 key) as the first octet (even though this is not a valid packet ID for a public subkey).
 
 ### Algorithm-specific Parts of Keys
 
@@ -4691,14 +4691,14 @@ Here is a Transferable Public Key consisting of:
 
 xjcGY4d/4xYAAAAtCSsGAQQB2kcPAQEHQPlNp7tI1gph5WdwamWH0DMZmbud
 iRoIJC6thFQ9+JWjwqQGHxYKAAAAHwUCY4d/4wMLCQcFFQoOCAwCFgACGwMC
-HgkFJwkCBwIAAAAjIiEGkzU12VsV05zNWvqrFkNxxCz5KOXc6UAXDzNcddCG
-C/GHRiazswKsjQ5+nWIpXpDAYUQBAP8e+uZKav5//hzdcxj0CpYDbbARSYHT
-qy/N+6/4DO2GAP0aqYAjS2EQghUoCPRYokOa65xUwXLUxXxbxhdyYGbKA848
+HgkFJwkCBwIAAAAjIiEGTq3zCca8h0rgRwJFFUj5P5b6egHQozta99TjeeD5
++O53eyazswKsjQ5+nWIpXpDAYUQBAL6QBixJyTzTFXs7Ckjb9NwW4aNyRWJk
+aPEsU2eLugraAQDQKIora4JeWw/RHt5d1MnovP4JA68a8gYjgmFtjSSDD848
 BmOHf+MSAAAAMgorBgEEAZdVAQUBAQdA/Pf8KarOAUj0Pq2/Og+WkdCjIqJD
-YlYngO2SXahOcVsDAQgHwo4GGBYKAAAACQUCY4d/4wIbDAAAACMiIQaTNTXZ
-WxXTnM1a+qsWQ3HELPko5dzpQBcPM1x10IYL8ZzbunWWplIOSvrF31Pzdbps
-EwEAt80jqpa85vdRTdEYDhup7OgDXe776iJc3tUT2Sr+ickBAJi9XIQjAfzM
-jQ72P2qIunjf0n0QbfvFYG3vikd0TkUI
+YlYngO2SXahOcVsDAQgHwo4GGBYKAAAACQUCY4d/4wIbDAAAACMiIQZOrfMJ
+xryHSuBHAkUVSPk/lvp6AdCjO1r31ON54Pn47sXAunWWplIOSvrF31Pzdbps
+EwEAyCn9Ako+dx2NixuvFRDAtBjgtL4ZFnzXC0MBJFjHldoA/1vnPFbxEo5J
+nmdMR2o2yNzZjFvypzH/SOrKFrg2gE4P
 -----END PGP PUBLIC KEY BLOCK-----
 ~~~
 
@@ -4712,7 +4712,7 @@ The direct key self signature in the certificate in {{v6-cert}} is made over the
 0x0000  26 b3 b3 02 ac 8d 0e 7e  salt
 0x0008  9d 62 29 5e 90 c0 61 44
         [ pubkey begins ]
-0x0010  9a                       v6 pubkey
+0x0010  9b                       v6 pubkey
 0x0011     00 00 00 37           pubkey length
 0x0015                 06        pubkey version
 0x0016                    63 87  creation time
@@ -4771,7 +4771,7 @@ The subkey binding signature in {{v6-cert}} is made over the following sequence 
 0x0000  ba 75 96 a6 52 0e 4a fa  salt
 0x0008  c5 df 53 f3 75 ba 6c 13
       [ primary pubkey begins ]
-0x0010  9a                       v6 pubkey
+0x0010  9b                       v6 pubkey
 0x0011     00 00 00 37           pubkey length
 0x0015                 06        pubkey version
 0x0016                    63 87  creation time
@@ -4789,7 +4789,7 @@ The subkey binding signature in {{v6-cert}} is made over the following sequence 
 0x0040  89 1a 08 24 2e ad 84 54
 0x0048  3d f8 95 a3
       [ subkey pubkey begins ]
-0x004c              9a           v6 key
+0x004c              9b           v6 key
 0x004d                 00 00 00  pubkey length
 0x0050  3c
 0x0051     06                    pubkey version
@@ -4846,15 +4846,15 @@ Here is a Transferable Secret Key consisting of:
 xVwGY4d/4xYAAAAtCSsGAQQB2kcPAQEHQPlNp7tI1gph5WdwamWH0DMZmbud
 iRoIJC6thFQ9+JWjAAD9GXKBexK+cH6NX1hs5hNhIB00TrJmosgv3mg1ditl
 sLcOpMKkBh8WCgAAAB8FAmOHf+MDCwkHBRUKDggMAhYAAhsDAh4JBScJAgcC
-AAAAIyIhBpM1NdlbFdOczVr6qxZDccQs+Sjl3OlAFw8zXHXQhgvxh0Yms7MC
-rI0Ofp1iKV6QwGFEAQD/HvrmSmr+f/4c3XMY9AqWA22wEUmB06svzfuv+Azt
-hgD9GqmAI0thEIIVKAj0WKJDmuucVMFy1MV8W8YXcmBmygPHYQZjh3/jEgAA
+AAAAIyIhBk6t8wnGvIdK4EcCRRVI+T+W+noB0KM7WvfU43ng+fjud3sms7MC
+rI0Ofp1iKV6QwGFEAQC+kAYsSck80xV7OwpI2/TcFuGjckViZGjxLFNni7oK
+2gEA0CiKK2uCXlsP0R7eXdTJ6Lz+CQOvGvIGI4JhbY0kgw/HYQZjh3/jEgAA
 ADIKKwYBBAGXVQEFAQEHQPz3/CmqzgFI9D6tvzoPlpHQoyKiQ2JWJ4Dtkl2o
 TnFbAwEIBwAA/01gCk95TUR3XFeibg/u/tVY6a//1q0NWC1X+yui3O24Eb3C
-jgYYFgoAAAAJBQJjh3/jAhsMAAAAIyIhBpM1NdlbFdOczVr6qxZDccQs+Sjl
-3OlAFw8zXHXQhgvxnNu6dZamUg5K+sXfU/N1umwTAQC3zSOqlrzm91FN0RgO
-G6ns6ANd7vvqIlze1RPZKv6JyQEAmL1chCMB/MyNDvY/aoi6eN/SfRBt+8Vg
-be+KR3RORQg=
+jgYYFgoAAAAJBQJjh3/jAhsMAAAAIyIhBk6t8wnGvIdK4EcCRRVI+T+W+noB
+0KM7WvfU43ng+fjuxcC6dZamUg5K+sXfU/N1umwTAQDIKf0CSj53HY2LG68V
+EMC0GOC0vhkWfNcLQwEkWMeV2gD/W+c8VvESjkmeZ0xHajbI3NmMW/KnMf9I
+6soWuDaATg8=
 -----END PGP PRIVATE KEY BLOCK-----
 ~~~
 
