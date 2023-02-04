@@ -4689,16 +4689,16 @@ Here is a Transferable Public Key consisting of:
 ~~~ application/pgp-keys
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 
-xjcFY4d/4xYAAAAtCSsGAQQB2kcPAQEHQPlNp7tI1gph5WdwamWH0DMZmbud
-iRoIJC6thFQ9+JWjwqQFHxYKAAAAHwUCY4d/4wMLCQcFFQoOCAwCFgACGwMC
-HgkFJwkCBwIAAAAjIiEFF7z4Nm2UNvevN+raFWxklGVuWpdpzy1cs0X4uDQ2
-9lJ5xSazswKsjQ5+nWIpXpDAYUQBAOd3furFHev97PBcR9ZR3rg0qwfLzyjd
-QbdBqyuBH15LAQCYI8kezQu+hTzUgWxiERhpmiT24LQOF2c7aXBhRsJMBc48
-BWOHf+MSAAAAMgorBgEEAZdVAQUBAQdA/Pf8KarOAUj0Pq2/Og+WkdCjIqJD
-YlYngO2SXahOcVsDAQgHwo4FGBYKAAAACQUCY4d/4wIbDAAAACMiIQUXvPg2
-bZQ296836toVbGSUZW5al2nPLVyzRfi4NDb2Uu/EunWWplIOSvrF31Pzdbps
-EwD/SYz1a7Zx47b2E2s2ZnWYQJ/GkS1LRhtaMLZixsAkoesA/2za1huJx31Z
-P2hBxmeHI2hZWqRa+bdUEqbC+5xMveIL
+xjcGY4d/4xYAAAAtCSsGAQQB2kcPAQEHQPlNp7tI1gph5WdwamWH0DMZmbud
+iRoIJC6thFQ9+JWjwqQGHxYKAAAAHwUCY4d/4wMLCQcFFQoOCAwCFgACGwMC
+HgkFJwkCBwIAAAAjIiEGkzU12VsV05zNWvqrFkNxxCz5KOXc6UAXDzNcddCG
+C/GHRiazswKsjQ5+nWIpXpDAYUQBAP8e+uZKav5//hzdcxj0CpYDbbARSYHT
+qy/N+6/4DO2GAP0aqYAjS2EQghUoCPRYokOa65xUwXLUxXxbxhdyYGbKA848
+BmOHf+MSAAAAMgorBgEEAZdVAQUBAQdA/Pf8KarOAUj0Pq2/Og+WkdCjIqJD
+YlYngO2SXahOcVsDAQgHwo4GGBYKAAAACQUCY4d/4wIbDAAAACMiIQaTNTXZ
+WxXTnM1a+qsWQ3HELPko5dzpQBcPM1x10IYL8ZzbunWWplIOSvrF31Pzdbps
+EwEAt80jqpa85vdRTdEYDhup7OgDXe776iJc3tUT2Sr+ickBAJi9XIQjAfzM
+jQ72P2qIunjf0n0QbfvFYG3vikd0TkUI
 -----END PGP PUBLIC KEY BLOCK-----
 ~~~
 
@@ -4714,7 +4714,7 @@ The direct key self signature in the certificate in {{v6-cert}} is made over the
         [ pubkey begins ]
 0x0010  9a                       v6 pubkey
 0x0011     00 00 00 37           pubkey length
-0x0015                 05        pubkey version
+0x0015                 06        pubkey version
 0x0016                    63 87  creation time
 0x0018  7f e3                      (2022-11-30T16:08:03Z)
 0x001a        16                 key algo: EdDSA
@@ -4730,7 +4730,7 @@ The direct key self signature in the certificate in {{v6-cert}} is made over the
 0x0040  89 1a 08 24 2e ad 84 54
 0x0048  3d f8 95 a3
          [ trailer begins ]
-0x004c              05           sig version
+0x004c              06           sig version
 0x004d                 1f        sig type: direct key signature
 0x004e                    16     sig algo: EdDSA
 0x004f                       0a  hash ago: SHA2-512
@@ -4759,7 +4759,7 @@ The direct key self signature in the certificate in {{v6-cert}} is made over the
 0x006e                    27     subpkt type: Pref. AEAD Ciphersuites
 0x006f                       09  Ciphersuites:
 0x0070  02 07 02                   [ AES256-OCB, AES128-OCB ]
-0x0073           05              sig version
+0x0073           06              sig version
 0x0074              ff           sentinel octet
 0x0075                 00 00 00  trailer length
 0x0078  00 00 00 00 27
@@ -4773,7 +4773,7 @@ The subkey binding signature in {{v6-cert}} is made over the following sequence 
       [ primary pubkey begins ]
 0x0010  9a                       v6 pubkey
 0x0011     00 00 00 37           pubkey length
-0x0015                 05        pubkey version
+0x0015                 06        pubkey version
 0x0016                    63 87  creation time
 0x0018  7f e3                      (2022-11-30T16:08:03Z)
 0x001a        16                 key algo: EdDSA
@@ -4792,7 +4792,7 @@ The subkey binding signature in {{v6-cert}} is made over the following sequence 
 0x004c              9a           v6 key
 0x004d                 00 00 00  pubkey length
 0x0050  3c
-0x0051     05                    pubkey version
+0x0051     06                    pubkey version
 0x0052        63 87 7f e3        creation time (2022-11-30T16:08:03Z)
 0x0056  12                       key algo: ECDH
 0x0057                       00  key length
@@ -4812,7 +4812,7 @@ The subkey binding signature in {{v6-cert}} is made over the following sequence 
 0x008b           08              KDF params hash algo (SHA2-256)
 0x008c              07           KDF params cipher algo (AES128)
        [ trailer begins ]
-0x008d                 05        sig version
+0x008d                 06        sig version
 0x008e                    18     sig type: Subkey Binding sig
 0x008f                       16  sig algo EdDSA
 0x0090  0a                       hash algo: SHA2-512
@@ -4824,7 +4824,7 @@ The subkey binding signature in {{v6-cert}} is made over the following sequence 
 0x009b           02              subpkt length
 0x009c              1b           subpkt type: Key Flags
 0x009d                 0c        Key Flags: {EncComms, EncStorage}
-0x009e                    05     sig version
+0x009e                    06     sig version
 0x009f                       ff  sentinel octet
 0x00a0  00 00 00 00 00 00 00 11  trailer length
 
@@ -4843,18 +4843,18 @@ Here is a Transferable Secret Key consisting of:
 ~~~ application/pgp-keys
 -----BEGIN PGP PRIVATE KEY BLOCK-----
 
-xVwFY4d/4xYAAAAtCSsGAQQB2kcPAQEHQPlNp7tI1gph5WdwamWH0DMZmbud
+xVwGY4d/4xYAAAAtCSsGAQQB2kcPAQEHQPlNp7tI1gph5WdwamWH0DMZmbud
 iRoIJC6thFQ9+JWjAAD9GXKBexK+cH6NX1hs5hNhIB00TrJmosgv3mg1ditl
-sLcOpMKkBR8WCgAAAB8FAmOHf+MDCwkHBRUKDggMAhYAAhsDAh4JBScJAgcC
-AAAAIyIhBRe8+DZtlDb3rzfq2hVsZJRlblqXac8tXLNF+Lg0NvZSecUms7MC
-rI0Ofp1iKV6QwGFEAQDnd37qxR3r/ezwXEfWUd64NKsHy88o3UG3QasrgR9e
-SwEAmCPJHs0LvoU81IFsYhEYaZok9uC0DhdnO2lwYUbCTAXHYQVjh3/jEgAA
+sLcOpMKkBh8WCgAAAB8FAmOHf+MDCwkHBRUKDggMAhYAAhsDAh4JBScJAgcC
+AAAAIyIhBpM1NdlbFdOczVr6qxZDccQs+Sjl3OlAFw8zXHXQhgvxh0Yms7MC
+rI0Ofp1iKV6QwGFEAQD/HvrmSmr+f/4c3XMY9AqWA22wEUmB06svzfuv+Azt
+hgD9GqmAI0thEIIVKAj0WKJDmuucVMFy1MV8W8YXcmBmygPHYQZjh3/jEgAA
 ADIKKwYBBAGXVQEFAQEHQPz3/CmqzgFI9D6tvzoPlpHQoyKiQ2JWJ4Dtkl2o
 TnFbAwEIBwAA/01gCk95TUR3XFeibg/u/tVY6a//1q0NWC1X+yui3O24Eb3C
-jgUYFgoAAAAJBQJjh3/jAhsMAAAAIyIhBRe8+DZtlDb3rzfq2hVsZJRlblqX
-ac8tXLNF+Lg0NvZS78S6dZamUg5K+sXfU/N1umwTAP9JjPVrtnHjtvYTazZm
-dZhAn8aRLUtGG1owtmLGwCSh6wD/bNrWG4nHfVk/aEHGZ4cjaFlapFr5t1QS
-psL7nEy94gs=
+jgYYFgoAAAAJBQJjh3/jAhsMAAAAIyIhBpM1NdlbFdOczVr6qxZDccQs+Sjl
+3OlAFw8zXHXQhgvxnNu6dZamUg5K+sXfU/N1umwTAQC3zSOqlrzm91FN0RgO
+G6ns6ANd7vvqIlze1RPZKv6JyQEAmL1chCMB/MyNDvY/aoi6eN/SfRBt+8Vg
+be+KR3RORQg=
 -----END PGP PRIVATE KEY BLOCK-----
 ~~~
 
