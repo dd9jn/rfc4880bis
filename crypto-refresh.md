@@ -1032,6 +1032,8 @@ The most common signatures are a signature of a file or a block of text, and a s
 Three versions of Signature packets are defined.
 Version 3 provides basic signature information, while versions 4 and 6 provide an expandable format with subpackets that can specify more information about the signature.
 
+For historical reasons, versions 1, 2, and 5 of the Signature packet are unspecified.
+
 An implementation MUST generate a version 6 signature when signing with a version 6 key.
 An implementation MUST generate a version 4 signature when signing with a version 4 key.
 Implementations MUST NOT create version 3 signatures; they MAY accept version 3 signatures.
@@ -2046,8 +2048,10 @@ Note that if a message contains more than one one-pass signature, then the Signa
 ## Key Material Packet
 
 A key material packet contains all the information about a public or private key.
-There are four variants of this packet type, and two major versions.
+There are four variants of this packet type, two major versions (versions 4 and 6), and two strongly deprecated versions (versions 2 and 3).
 Consequently, this section is complex.
+
+For historical reasons, versions 1 and 5 of the key packet are unspecified.
 
 ### Key Packet Variants
 
