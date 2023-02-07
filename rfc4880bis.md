@@ -1,7 +1,7 @@
 ---
 title: OpenPGP Message Format
-docname: draft-koch-openpgp-2015-rfc4880bis-00
-date: 2023-01-09
+docname: draft-koch-openpgp-2015-rfc4880bis-01
+date: 2023-02-07
 category: std
 
 obsoletes: 4880, 5581, 6637
@@ -101,14 +101,6 @@ informative:
     author:
      org: Standards for Efficient Cryptography Group
     date: September 2000
- SP800-57:
-    target: "http://csrc.nist.gov/publications/nistpubs/800-57/SP800-57-Part{1,2}.pdf"
-    title: Recommendation on Key Management
-    author:
-     org: NIST
-    date: March 2007
-    seriesinfo:
-     NIST Special Publication: 800-57
 normative:
  AES:
     target: http://csrc.nist.gov/publications/fips/fips197/fips-197.{ps,pdf}
@@ -241,12 +233,6 @@ normative:
     date: March 2007
     seriesinfo:
      NIST Special Publication: 800-56A Revision 1
- SuiteB:
-    target: http://www.nsa.gov/ia/programs/suiteb_cryptography/
-    title: NSA Suite B Cryptography
-    author:
-     org: National Security Agency
-    date: 2010-03-11
  TWOFISH:
     title: The Twofish Encryption Algorithm
     author:
@@ -266,9 +252,10 @@ normative:
 
 --- abstract
 
-{ Work in progress to update the OpenPGP specification from RFC4880 }
+{ Work in progress to update the OpenPGP specification from RFC4880.
+  Editorial notes are enclosed in curly braces. }
 
-{ This version is on the Git head with rfc4880bis-10 before the great
+{ This draft is based on the Git head as pf rfc4880bis-10 before the great
   refactoring.  That refactoring, dubbed crypto-refresh, basically
   started from scratch with lots of re-formatting and switching to a
   Gitlab based approach with merge requests mainly prepared in advance
@@ -276,8 +263,9 @@ normative:
   ready for last call after a long iterative process adding feature by
   feature with rough consent from the WG.
 
-  Due to the IETF submission system the draft has a new name but
-  nevertheless is the direct successor of draft-ietf-openpgp-rfc4880bis-10 }
+  Due to the IETF submission system the draft was renamed but
+  nevertheless is in apostolic succession of
+  draft-ietf-openpgp-rfc4880bis-10 }
 
 This document specifies the message formats used in OpenPGP.  OpenPGP
 provides encryption with public-key or symmetric cryptographic
@@ -295,9 +283,6 @@ flaws.
 --- middle
 
 # Introduction
-
-{ This is work in progress to update OpenPGP.  Editorial notes are
-  enclosed in curly braces. }
 
 This document provides information on the message-exchange packet
 formats used by OpenPGP to provide encryption, decryption, signing,
@@ -327,13 +312,15 @@ cipher) and RFC 6637 (ECC for OpenPGP).
     in the PGP 2 design.  It is referred to here as PGP 5 because that
     software was the first release of the "PGP 3" code base.
 
-  * GnuPG - GNU Privacy Guard, also called GPG.  GnuPG is an OpenPGP
-    implementation that avoids all encumbered algorithms.
-    Consequently, early versions of GnuPG did not include RSA public
-    keys.
+  * GnuPG - GNU Privacy Guard, also called GPG, is the leading Open
+    Source implementation of OpenPGP and has been developed along with
+    the OpenPGP standard since 1997.
 
-"PGP", "Pretty Good", and "Pretty Good Privacy" are trademarks of PGP
-Corporation and are used with permission.  The term "OpenPGP" refers to
+  * RNP - Ribose Network PGP is a newer OpenPGP implemention and
+    prominently used by the mail client Thunderbird.
+
+"PGP" is a trademark of CA, INC.  The use of this, or any other, marks
+is solely for identification purposes.  The term "OpenPGP" refers to
 the protocol described in this and related documents.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
