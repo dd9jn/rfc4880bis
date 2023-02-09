@@ -3294,7 +3294,7 @@ Implementations MAY implement any other algorithm.
 ## Hash Algorithms {#hash-algos}
 
 {: title="Hash algorithm registry" #hash-registry}
-ID | Algorithm | Text Name | Salt octet size
+ID | Algorithm | Text Name | V5 signature salt size
 ---:|----------|-----------| ---------
   1 | MD5 {{HAC}} | "MD5" | 16
   2 | SHA-1 {{!FIPS180=DOI.10.6028/NIST.FIPS.180-4}}, {{sha1cd}} | "SHA1" | 16
