@@ -1231,9 +1231,11 @@ The body of a v4 or v6 Signature packet contains:
 
 - Two-octet field holding the left 16 bits of the signed hash value.
 
-- Only for v6 signatures, a variable-length octet field containing:
-  - a single octet scalar octet count. The value MUST match the value defined for the hash algorithm as specified in table {{hash-registry}}.
-  - a random value used as salt of the specified length.
+- Only for v6 signatures, a variable-length field containing:
+
+  - A one-octet salt size. The value MUST match the value defined for the hash algorithm as specified in table {{hash-registry}}.
+
+  - The salt; a random value value of the specified size.
 
 - One or more multiprecision integers comprising the signature.
   This portion is algorithm-specific:
@@ -2025,9 +2027,11 @@ The body of this packet consists of:
 
 - A one-octet number describing the public-key algorithm used.
 
-- Only for v6 signatures, a variable-length octet field containing:
-  - a single octet scalar octet count. The value MUST match the value defined for the hash algorithm as specified in table {{hash-registry}}.
-  - a random value used as salt of the specified length. The value MUST match the salt field of the corresponding Signature packet.
+- Only for v6 signatures, a variable-length field containing:
+
+  - A one-octet salt size. The value MUST match the value defined for the hash algorithm as specified in table {{hash-registry}}.
+
+  - The salt; a random value value of the specified size. The value MUST match the salt field of the corresponding Signature packet.
 
 - Only for v3 packets, an eight-octet number holding the Key ID of the signing key.
 
