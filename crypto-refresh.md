@@ -2769,7 +2769,7 @@ This allows detection of a truncated ciphertext.
 
 The chunk size octet specifies the size of chunks using the following formula (in C), where c is the chunk size octet:
 
-      chunk_size = ((uint64_t)1 << (c + 6))
+      chunk_size = (uint32_t) 1 << (c + 6)
 
 An implementation MUST accept chunk size octets with values from 0 to 16.
 An implementation MUST NOT create data with a chunk size octet value larger than 16 (4 MiB chunks).
