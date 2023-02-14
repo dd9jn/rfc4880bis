@@ -23,7 +23,7 @@ cmp <("$SOP" extract-cert --no-armor < test-vectors/v6-minimal-secret.key) <("$S
 
 for aead in ocb gcm eax; do
     printf 'Testing password-based decryption with %s\n' ${aead^^}
-    diff -u <(PASS=password "$SOP" decrypt --with-password @ENV:PASS < test-vectors/v5skesk-aes128-$aead.pgp) <(printf 'Hello, world!')
+    diff -u <(PASS=password "$SOP" decrypt --with-password @ENV:PASS < test-vectors/v6skesk-aes128-$aead.pgp) <(printf 'Hello, world!')
 done
 
 for aes in 128 192 256; do
