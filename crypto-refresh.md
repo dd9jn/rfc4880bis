@@ -4762,6 +4762,12 @@ The corresponding Transferable Secret Key can be found in {{v6-key}}.
 The direct key self signature in the certificate in {{v6-cert}} is made over the following sequence of data:
 
 ~~~
+{::include test-vectors/v6-direct-key-sig-hashed-data.txt}
+~~~
+
+The same data, broken out by octet and semantics, is:
+
+~~~
 0x0000  26 b3 b3 02 ac 8d 0e 7e  salt
 0x0008  9d 62 29 5e 90 c0 61 44
         [ pubkey begins ]
@@ -4819,6 +4825,12 @@ The direct key self signature in the certificate in {{v6-cert}} is made over the
 ~~~
 
 The subkey binding signature in {{v6-cert}} is made over the following sequence of data:
+
+~~~
+{::include test-vectors/v6-subkey-binding-sig-hashed-data.txt}
+~~~
+
+The same data, broken out by octet and semantics, is:
 
 ~~~
 0x0000  ba 75 96 a6 52 0e 4a fa  salt
