@@ -4680,7 +4680,7 @@ ftgr9N3lYG4NdWrtM2YBANCcT6EVJ/A44PV/IgHYLy6iyQMyZfps60iehUuuYbQE
 -----END PGP SIGNATURE-----
 ~~~
 
-## Sample v6 Certificate (Transferable Public Key) {#v5-cert}
+## Sample v6 Certificate (Transferable Public Key) {#v6-cert}
 
 Here is a Transferable Public Key consisting of:
 
