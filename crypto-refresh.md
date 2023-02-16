@@ -4891,7 +4891,6 @@ Packet header:
 Version, algorithms, S2K fields:
 
       05 1e 07 01 0b 03 08 a5 ae 57 9d 1f c5 d8 2b ff
-      69 22
 
 Nonce:
 
@@ -5049,7 +5048,6 @@ Packet header:
 Version, algorithms, S2K fields:
 
       05 1d 07 02 0b 03 08 56 a2 98 d2 f5 e3 64 53 ff
-      cf cc
 
 Nonce:
 
@@ -5208,7 +5206,6 @@ Packet header:
 Version, algorithms, S2K fields:
 
       05 1a 07 03 0b 03 08 e9 d3 97 85 b2 07 00 08 ff
-      b4 2e
 
 Nonce:
 
