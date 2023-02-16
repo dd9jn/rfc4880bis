@@ -5393,6 +5393,6 @@ wzcECQS4eJUgIG/3mcaILEJFpmJ8AQQVnZ9l7KtagdClm9UaQ/Z6M/5roklSGpGu
 
 Thanks to the openpgp design team for working on this document to prepare it for working group consumption: Stephen Farrell, Daniel Kahn Gillmor, Daniel Huigens, Jeffrey Lau, Yutaka Niibe, Justus Winter and Paul Wouters.
 
-Thanks to Werner Koch for the early work on rfc4880bis and Andrey Jivsov for [RFC6637].
+Thanks to Werner Koch for the early work on rfc4880bis and Andrey Jivsov for {{?RFC6637}}.
 
 This document also draws on much previous work from a number of other authors, including: Derek Atkins, Charles Breed, Dave Del Torto, Marc Dyksterhouse, Gail Haspert, Gene Hoffman, Paul Hoffman, Ben Laurie, Raph Levien, Colin Plumb, Will Price, David Shaw, William Stallings, Mark Weaver, and Philip R. Zimmermann.
