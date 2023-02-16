@@ -4942,12 +4942,12 @@ The same data, broken out by octet and semantics:
 0x0012        69 22 4f 91 99 93  AEAD nonce
 0x0018  b3 50 6f a3 b5 9a 6a 73
 0x0020  cf f8
-0x0022        da 74 6b 88 e3 57  encrypted session key
-0x0028  e8 ae 54 eb 87 e1 d7 05
-0x0030  75 d7
-0x0032        2f 60 23 29 90 52  AEAD tag
-0x0038  3e 9a 59 09 49 22 40 6b
-0x0040  e1 c3
+0x0022        c5 ef c5 f4 1c 57  encrypted session key
+0x0028  fb 54 e1 c2 26 81 5d 78
+0x0030  28 f5
+0x0032        f9 2c 45 4e b6 5e  AEAD tag
+0x0038  be 00 ab 59 86 c6 8e 6e
+0x0040  7c 55
 ~~~
 
 ### Starting AEAD-EAX decryption of the session key
@@ -4958,15 +4958,15 @@ The derived key is:
 
 HKDF info:
 
-      c3 05 07 01
+      c3 06 07 01
 
 HKDF output:
 
-      74 f0 46 03 63 a7 00 76 db 08 c4 92 ab f2 95 52
+      2f ce 33 1f 39 dd 95 5c c4 1e 95 d8 70 c7 21 39
 
 Authenticated Data:
 
-      c3 05 07 01
+      c3 06 07 01
 
 Nonce:
 
@@ -5103,12 +5103,12 @@ The same data, broken out by octet and semantics:
 0x0012        cf cc 5c 11 66 4e  AEAD nonce
 0x0018  db 9d b4 25 90 d7 dc 46
 0x0020  b0
-0x0021     78 c5 c0 41 9c c5 1b  encrypted session key
-0x0028  3a 46 87 cb 32 e5 b7 03
-0x0030  1c 
-0x0031     e7 c6 69 75 76 5b 5c  AEAD tag
-0x0038  21 d9 2a ef 4c c0 5c 3f
-0x0040  ea
+0x0021     72 41 b6 12 c3 81 2c  encrypted session key
+0x0028  ff fb ea 00 f2 34 7b 25
+0x0030  64
+0x0031     11 23 f8 87 ae 60 d4  AEAD tag
+0x0038  fd 61 4e 08 37 d8 19 d3
+0x0040  6c
 ~~~
 
 
@@ -5120,15 +5120,15 @@ The derived key is:
 
 HKDF info:
 
-      c3 05 07 02
+      c3 06 07 02
 
 HKDF output:
 
-      20 62 fb 76 31 ef be f4 df 81 67 ce d7 f3 a4 64
+      38 a9 b3 45 b5 68 0b b6 1b b6 5d 73 ee c7 ec d9
 
 Authenticated Data:
 
-      c3 05 07 02
+      c3 06 07 02
 
 Nonce:
 
@@ -5267,12 +5267,12 @@ The same data, broken out by octet and semantics:
 0x0011     ff                    S2K iterations (65011712 octets)
 0x0012        b4 2e 7c 48 3e f4  AEAD nonce
 0x0018  88 44 57 cb 37 26 
-0x001e                    0c 0c  encrypted session key
-0x0020  4b f3 f2 cd 6c b7 b6 e3
-0x0028  8b 5b f3 34 67 c1 
-0x002e                    c7 19  AEAD tag
-0x0030  44 dd 59 03 46 66 2f 5a
-0x0038  de 61 ff 84 bc e0
+0x001e                    b9 b3  encrypted session key
+0x0020  db 9f f7 76 e5 f4 d9 a4
+0x0028  09 52 e2 44 72 98
+0x002e                     85 1a  AEAD tag
+0x0030  bf ff 75 26 df 2d d5 54
+0x0038  41 75 79 a7 79 9f
 ~~~
 
 ### Starting AEAD-GCM decryption of the session key
@@ -5283,15 +5283,15 @@ The derived key is:
 
 HKDF info:
 
-      c3 05 07 03
+      c3 06 07 03
 
 HKDF output:
 
-      de ec e5 81 8b c0 aa b9 0f 8a fb 02 fa 00 cd 13
+      7a 6f 9a b7 f9 9f 7e f8 db ef 84 1c 65 08 00 f5
 
 Authenticated Data:
 
-      c3 05 07 03
+      c3 06 07 03
 
 Nonce:
 
