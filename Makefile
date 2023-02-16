@@ -10,7 +10,7 @@ OUTPUT = $(draft).txt $(draft).html $(draft).xml
 
 all: $(OUTPUT)
 
-%.xml: %.md
+%.xml: %.md $(wildcard test-vectors/*)
 	kramdown-rfc2629 --v3 $< > $@.tmp
 	mv $@.tmp $@
 

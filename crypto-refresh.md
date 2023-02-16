@@ -3128,11 +3128,7 @@ No such assurance is possible, however, when the number of octets transmitted wa
 ## Example of an ASCII Armored Message
 
 ~~~
------BEGIN PGP MESSAGE-----
-
-yDgBO22WxBHv7O8X7O/jygAEzol56iUKiXmV+XmpCtmpqQUKiQrFqclFqUDBovzS
-vBSFjNSiVHsuAA==
------END PGP MESSAGE-----
+{::include test-vectors/ascii-armored-message.pgp}
 ~~~
 
 Note that this example has extra indenting; an actual armored message would have no leading whitespace.
@@ -4710,11 +4706,7 @@ The same packet, represented in ASCII-armored form is:
 
 {: sourcecode-name="v4-ed25519-pubkey-packet.key"}
 ~~~ application/pgp-keys
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-xjMEU/NfCxYJKwYBBAHaRw8BAQdAPwmJlL3ZFu1AUxl5NOSofIBzOhKA1i+AEJku
-Q+47JAY=
------END PGP PUBLIC KEY BLOCK-----
+{::include test-vectors/v4-ed25519-pubkey-packet.key}
 ~~~
 
 ## Sample v4 Ed25519Legacy signature
@@ -4746,11 +4738,7 @@ The same packet represented in ASCII-armored form is:
 
 {: sourcecode-name="v4-ed25519-signature-over-OpenPGP.sig"}
 ~~~ application/pgp-signature
------BEGIN PGP SIGNATURE-----
-
-iF4EABYIAAYFAlX5X5UACgkQjP3hIZeWWpr2IgD/VvkMypjiECY3vZg/2xbBMd/S
-ftgr9N3lYG4NdWrtM2YBANCcT6EVJ/A44PV/IgHYLy6iyQMyZfps60iehUuuYbQE
------END PGP SIGNATURE-----
+{::include test-vectors/v4-ed25519-signature-over-OpenPGP.sig}
 ~~~
 
 ## Sample v6 Certificate (Transferable Public Key) {#v6-cert}
@@ -4764,19 +4752,7 @@ Here is a Transferable Public Key consisting of:
 
 {: sourcecode-name="v6-minimal-cert.key"}
 ~~~ application/pgp-keys
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-xjcGY4d/4xYAAAAtCSsGAQQB2kcPAQEHQPlNp7tI1gph5WdwamWH0DMZmbud
-iRoIJC6thFQ9+JWjwqQGHxYKAAAAHwUCY4d/4wMLCQcFFQoOCAwCFgACGwMC
-HgkFJwkCBwIAAAAjIiEGTq3zCca8h0rgRwJFFUj5P5b6egHQozta99TjeeD5
-+O53eyazswKsjQ5+nWIpXpDAYUQBAL6QBixJyTzTFXs7Ckjb9NwW4aNyRWJk
-aPEsU2eLugraAQDQKIora4JeWw/RHt5d1MnovP4JA68a8gYjgmFtjSSDD848
-BmOHf+MSAAAAMgorBgEEAZdVAQUBAQdA/Pf8KarOAUj0Pq2/Og+WkdCjIqJD
-YlYngO2SXahOcVsDAQgHwo4GGBYKAAAACQUCY4d/4wIbDAAAACMiIQZOrfMJ
-xryHSuBHAkUVSPk/lvp6AdCjO1r31ON54Pn47sXAunWWplIOSvrF31Pzdbps
-EwEAyCn9Ako+dx2NixuvFRDAtBjgtL4ZFnzXC0MBJFjHldoA/1vnPFbxEo5J
-nmdMR2o2yNzZjFvypzH/SOrKFrg2gE4P
------END PGP PUBLIC KEY BLOCK-----
+{::include test-vectors/v6-minimal-cert.key}
 ~~~
 
 The corresponding Transferable Secret Key can be found in {{v6-key}}.
@@ -4918,21 +4894,7 @@ Here is a Transferable Secret Key consisting of:
 
 {: sourcecode-name="v6-minimal-secret.key"}
 ~~~ application/pgp-keys
------BEGIN PGP PRIVATE KEY BLOCK-----
-
-xVwGY4d/4xYAAAAtCSsGAQQB2kcPAQEHQPlNp7tI1gph5WdwamWH0DMZmbud
-iRoIJC6thFQ9+JWjAAD9GXKBexK+cH6NX1hs5hNhIB00TrJmosgv3mg1ditl
-sLcOpMKkBh8WCgAAAB8FAmOHf+MDCwkHBRUKDggMAhYAAhsDAh4JBScJAgcC
-AAAAIyIhBk6t8wnGvIdK4EcCRRVI+T+W+noB0KM7WvfU43ng+fjud3sms7MC
-rI0Ofp1iKV6QwGFEAQC+kAYsSck80xV7OwpI2/TcFuGjckViZGjxLFNni7oK
-2gEA0CiKK2uCXlsP0R7eXdTJ6Lz+CQOvGvIGI4JhbY0kgw/HYQZjh3/jEgAA
-ADIKKwYBBAGXVQEFAQEHQPz3/CmqzgFI9D6tvzoPlpHQoyKiQ2JWJ4Dtkl2o
-TnFbAwEIBwAA/01gCk95TUR3XFeibg/u/tVY6a//1q0NWC1X+yui3O24Eb3C
-jgYYFgoAAAAJBQJjh3/jAhsMAAAAIyIhBk6t8wnGvIdK4EcCRRVI+T+W+noB
-0KM7WvfU43ng+fjuxcC6dZamUg5K+sXfU/N1umwTAQDIKf0CSj53HY2LG68V
-EMC0GOC0vhkWfNcLQwEkWMeV2gD/W+c8VvESjkmeZ0xHajbI3NmMW/KnMf9I
-6soWuDaATg8=
------END PGP PRIVATE KEY BLOCK-----
+{::include test-vectors/v6-minimal-secret.key}
 ~~~
 
 The corresponding Transferable Public Key can be found in {{v6-cert}}.
@@ -5085,13 +5047,7 @@ Final additional authenticated data:
 
 {: sourcecode-name="v5skesk-aes128-eax.pgp"}
 ~~~ application/pgp-encrypted
------BEGIN PGP MESSAGE-----
-
-w0AFHgcBCwMIpa5XnR/F2Cv/aSJPkZmTs1Bvo7WaanPP+Np0a4jjV+iuVOuH4dcF
-ddcvYCMpkFI+mlkJSSJAa+HD0mkCBwEGn/kOOzIZZPOkKRPI3MZhkyUBUifvt+rq
-pJ8EwuZ0F11KPSJu1q/LnKmsEiwUcOEcY9TAqyQcapOK1Iv5mlqZuQu6gyXeYQR1
-QCWKt5Wala0FHdqW6xVDHf719eIlXKeCYVRuM5o=
------END PGP MESSAGE-----
+{::include test-vectors/v5skesk-aes128-eax.pgp}
 ~~~
 
 ## Sample AEAD-OCB encryption and decryption
@@ -5243,13 +5199,7 @@ Final additional authenticated data:
 
 {: sourcecode-name="v5skesk-aes128-ocb.pgp"}
 ~~~ application/pgp-encrypted
------BEGIN PGP MESSAGE-----
-
-wz8FHQcCCwMIVqKY0vXjZFP/z8xcEWZO2520JZDX3EaweMXAQZzFGzpGh8sy5bcD
-HOfGaXV2W1wh2SrvTMBcP+rSaQIHAgYgpmH3MfyaMDK1YjMmAn46XY21dI6+/wsM
-WRDQns3WQf+f04VidYA1vEl1TOG/P/+n2tCjuBBPUTPPQqQQCoPu9MobSAGohGv0
-K82nyM6dZeIS8wHLzZj9yt5pSod61CRzI/boVw==
------END PGP MESSAGE-----
+{::include test-vectors/v5skesk-aes128-ocb.pgp}
 ~~~
 
 ## Sample AEAD-GCM encryption and decryption
@@ -5400,13 +5350,7 @@ Final additional authenticated data:
 
 {: sourcecode-name="v5skesk-aes128-gcm.pgp"}
 ~~~ application/pgp-encrypted
------BEGIN PGP MESSAGE-----
-
-wzwFGgcDCwMI6dOXhbIHAAj/tC58SD70iERXyzcmDAxL8/LNbLe244tb8zRnwccZ
-RN1ZA0ZmL1reYf+EvODSaQIHAwb8uUSQvLmLvcnRBsYJAmaUD3LontwhtVlrFXax
-Ae0Pn/xvxtZbv9JNzQeQlm5tHoWjAFN4TLHYtqBpnvEhVaeyrWJYUxtXZR/Xd3kS
-+pXjXZtAIW9ppMJI2yj/QzHxYykHOZ5v+Q==
------END PGP MESSAGE-----
+{::include test-vectors/v5skesk-aes128-gcm.pgp}
 ~~~
 
 ## Sample messages encrypted using Argon2
@@ -5419,44 +5363,21 @@ In all cases, the Argon2 parameters are t = 1, p = 4, and m = 21.
 
 {: sourcecode-name="v4skesk-argon2-aes128.pgp"}
 ~~~ application/pgp-encrypted
------BEGIN PGP MESSAGE-----
-Comment: Encrypted using AES with 128-bit key
-Comment: Session key: 01FE16BBACFD1E7B78EF3B865187374F
-
-wycEBwScUvg8J/leUNU1RA7N/zE2AQQVnlL8rSLPP5VlQsunlO+ECxHSPgGYGKY+
-YJz4u6F+DDlDBOr5NRQXt/KJIf4m4mOlKyC/uqLbpnLJZMnTq3o79GxBTdIdOzhH
-XfA3pqV4mTzF
------END PGP MESSAGE-----
+{::include test-vectors/v4skesk-argon2-aes128.pgp}
 ~~~
 
 ### v4 SKESK using Argon2 with AES-192
 
 {: sourcecode-name="v4skesk-argon2-aes192.pgp"}
 ~~~ application/pgp-encrypted
------BEGIN PGP MESSAGE-----
-Comment: Encrypted using AES with 192-bit key
-Comment: Session key: 27006DAE68E509022CE45A14E569E91001C2955...
-Comment: Session key: ...AF8DFE194
-
-wy8ECAThTKxHFTRZGKli3KNH4UP4AQQVhzLJ2va3FG8/pmpIPd/H/mdoVS5VBLLw
-F9I+AdJ1Sw56PRYiKZjCvHg+2bnq02s33AJJoyBexBI4QKATFRkyez2gldJldRys
-LVg77Mwwfgl2n/d572WciAM=
------END PGP MESSAGE-----
+{::include test-vectors/v4skesk-argon2-aes192.pgp}
 ~~~
 
 ### v4 SKESK using Argon2 with AES-256
 
 {: sourcecode-name="v4skesk-argon2-aes256.pgp"}
 ~~~ application/pgp-encrypted
------BEGIN PGP MESSAGE-----
-Comment: Encrypted using AES with 256-bit key
-Comment: Session key: BBEDA55B9AAE63DAC45D4F49D89DACF4AF37FEF
-Comment: Session key: ...C13BAB2F1F8E18FB74580D8B0
-
-wzcECQS4eJUgIG/3mcaILEJFpmJ8AQQVnZ9l7KtagdClm9UaQ/Z6M/5roklSGpGu
-623YmaXezGj80j4B+Ku1sgTdJo87X1Wrup7l0wJypZls21Uwd67m9koF60eefH/K
-95D1usliXOEm8ayQJQmZrjf6K6v9PWwqMQ==
------END PGP MESSAGE-----
+{::include test-vectors/v4skesk-argon2-aes256.pgp}
 ~~~
 
 # Acknowledgements
