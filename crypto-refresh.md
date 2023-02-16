@@ -3195,7 +3195,7 @@ The table below specifies the exact sequence of octets for each named curve refe
 It also specifies which public key algorithms the curve can be used with, as well as the size of expected elements in octets:
 
 {: title="ECC Curve OID and usage registry" #ecc-oid-usage}
-ASN.1 Object Identifier | OID len | Curve OID octets in hexadecimal representation | Curve name | Usage | Field Size (fsize)
+ASN.1 Object Identifier | OID len | Curve OID octets in hex | Curve name | Usage | Field Size (fsize)
 ------------------------|----|-------------------------------|-------------|-----|-----|-----
 1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256 | ECDSA, ECDH | 32
 1.3.132.0.34            | 5  | 2B 81 04 00 22                | NIST P-384 | ECDSA, ECDH | 48
@@ -3235,7 +3235,7 @@ brainpoolP256r1 | SEC1 | integer | N/A | N/A | N/A
 brainpoolP384r1 | SEC1 | integer | N/A | N/A | N/A
 brainpoolP512r1 | SEC1 | integer | N/A | N/A | N/A
 Ed25519    | N/A | N/A | 32 octets of secret | 32 octets of R | 32 octets of S
-Ed448      | N/A | N/A | prefixed 57 octets of secret | prefixed 114 octets of signature | 0 \[this is an unused placeholder]
+Ed448      | N/A | N/A | prefixed 57 octets of secret | prefixed 114 octets of signature | 0 \[this is an unused place holder]
 Curve25519 | prefixed native | integer (see {{curve25519-secrets}}) | N/A | N/A | N/A
 X448       | prefixed native | prefixed 56 octets of secret (see {{x448-secrets}}) | N/A | N/A | N/A
 
@@ -4744,7 +4744,7 @@ The direct key self signature in the certificate in {{v6-cert}} is made over the
 0x0056                    63 87  Signature Creation Time
 0x0058  7f e3                       (2022-11-30T16:08:03Z)
 0x005a        03                 subpkt length
-0x005b           0b              subpkt type: Pref. Ciphers (v1 SEIPD)
+0x005b           0b              subpkt type: Pref. v1 SEIPD Ciphers
 0x005c              09 07        Ciphers: [AES256 AES128]
 0x005e                    05     subpkt length
 0x005f                       15  subpkt type: Pref. Hash Algorithms
