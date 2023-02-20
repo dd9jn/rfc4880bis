@@ -3208,7 +3208,9 @@ ASN.1 Object Identifier | OID len | Curve OID octets in hex | Curve name | Usage
 1.3.6.1.4.1.3029.1.5.1  | 10 | 2B 06 01 04 01 97 55 01 05 01 | Curve25519 | ECDH        | 32
 1.3.101.111             | 3  | 2B 65 6F                      | X448       | ECDH        | 56
 
-The "Field Size (fsize)" column represents the field size of the group in number of octets, rounded up, such that x or y coordinates for a point on the curve, native point representations, or scalars with high enough entropy for the curve can be represented in that many octets.
+The "Field Size (fsize)" column represents the field size of the group in number of octets, rounded up, such that x or y coordinates for a point on the curve or native point representations for the curve can be represented in that many octets.
+For the curves specified here, also scalars such as the base point order and the private key can be represented in fsize octets.
+Note that, however, there exist curves outside this specification where the representation of scalars requires an additional octet.
 
 The sequence of octets in the third column is the result of applying the Distinguished Encoding Rules (DER) to the ASN.1 Object Identifier with subsequent truncation.
 The truncation removes the two fields of encoded Object Identifier.
