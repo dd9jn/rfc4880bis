@@ -968,10 +968,9 @@ The v3 PKESK packet consists of:
 - A series of values comprising the encrypted session key.
   This is algorithm-specific and described below.
 
-When creating a v3 PKESK packet, the session key is first prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container.
-Then a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, not including the algorithm identifier, modulo 65536.
+When creating a v3 PKESK packet, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container.
 
-The resulting octet string (algorithm identifier, session key, and checksum) is encrypted according to the public-key algorithm used, as described below.
+The resulting octet string (algorithm identifier and session key) is encrypted according to the public-key algorithm used, as described below.
 
 ### v5 PKESK {#v5-pkesk}
 
@@ -992,15 +991,14 @@ The v5 PKESK packet consists of:
   This is algorithm-specific and described below.
 
 When creating a v5 PKESK packet, the symmetric encryption algorithm identifier is not included.
-Before encrypting, a two-octet checksum is appended, which is equal to the sum of the preceding session key octets, modulo 65536.
 
-The resulting octet string (session key and checksum) is encrypted according to the public-key algorithm used, as described below.
+The session key is encrypted according to the public-key algorithm used, as described below.
 
 ### Algorithm-Specific Fields for RSA encryption {#pkesk-rsa}
 
 - Multiprecision integer (MPI) of RSA-encrypted value m\*\*e mod n.
 
-The value "m" in the above formula is the plaintext value described above, encoded in the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC8017}} (see also {{pkcs-encoding}}).
+The value "m" in the above formula is the plaintext value described above, with a two-octet checksum appended (equal to the sum of the preceding octets, modulo 65536), and then encoded in the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC8017}} (see also {{pkcs-encoding}}).
 Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
 
 ### Algorithm-Specific Fields for Elgamal encryption {#pkesk-elgamal}
@@ -1009,7 +1007,7 @@ Note that when an implementation forms several PKESKs with one session key, form
 
 - MPI of Elgamal (Diffie-Hellman) value m * y\*\*k mod p.
 
-The value "m" in the above formula is the plaintext value described above, encoded in the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC8017}} (see also {{pkcs-encoding}}).
+The value "m" in the above formula is the plaintext value described above, with a two-octet checksum appended (equal to the sum of the preceding octets, modulo 65536), and then encoded in the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC8017}} (see also {{pkcs-encoding}}).
 Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
 
 ### Algorithm-Specific Fields for ECDH encryption {#pkesk-ecdh}
@@ -3952,7 +3950,7 @@ The KDF produces a symmetric key that is used as a key-encryption key (KEK) as s
 Refer to {{ecdh-parameters}} for the details regarding the choice of the KEK algorithm, which SHOULD be one of the three AES algorithms.
 Key wrapping and unwrapping is performed with the default initial value of {{RFC3394}}.
 
-The input to the key wrapping method is the plaintext described in {{pkesk}}, "Public-Key Encrypted Session Key Packets (Tag 1)", padded using the method described in {{PKCS5}} to an 8-octet granularity.
+The input to the key wrapping method is the plaintext described in {{pkesk}}, "Public-Key Encrypted Session Key Packets (Tag 1)", with a two-octet checksum appended (equal to the sum of the preceding octets, modulo 65536), and then padded using the method described in {{PKCS5}} to an 8-octet granularity.
 
 For example, in a v3 Public-Key Encrypted Session Key packet, the following AES-256 session key, in which 32 octets are denoted from k0 to k31, is composed to form the following 40 octet sequence:
 
