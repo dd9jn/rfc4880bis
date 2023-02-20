@@ -2372,8 +2372,6 @@ That sequence of random octets is used with a cryptographic digest to produce bo
 See {{RFC8032}} for more details about how to use the native octet strings (section 5.1.5 for Ed25519 and 5.2.5 for Ed448).
 The value stored in an OpenPGP EdDSA secret key packet is the original sequence of random octets.
 
-Note that a ECDH secret key over the equivalent curve instead stores the curve-specific secret scalar itself, rather than the sequence of random octets stored in an EdDSA secret key.
-
 #### Algorithm-Specific Part for ECDH Keys {#key-ecdh}
 
 The public key is this series of values:
