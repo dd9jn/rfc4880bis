@@ -1259,7 +1259,11 @@ The body of a v4 or v6 Signature packet contains:
 
 - Two-octet field holding the left 16 bits of the signed hash value.
 
-- Only for v6 signatures, a 16 octet field containing random values used as salt.
+- Only for v6 signatures, a variable-length field containing:
+
+  - A one-octet salt size. The value MUST match the value defined for the hash algorithm as specified in table {{hash-registry}}.
+
+  - The salt; a random value value of the specified size.
 
 - One or more multiprecision integers comprising the signature.
   This portion is algorithm-specific:
@@ -1969,6 +1973,7 @@ For example, it might encounter any of the following problems (this is not an ex
 - A subpacket with a length that diverges from the expected length
 - A hashed subpacket area with length that exceeds the length of the signature packet itself
 - A known-weak hash algorithm (e.g. MD5)
+- A mismatch between the hash algorithm expected salt length and the actual salt length
 
 When an implementation encounters such a malformed or unknown signature, it MUST ignore the signature for validation purposes.
 It MUST NOT indicate a successful signature validation for such a signature.
@@ -2067,8 +2072,11 @@ The body of this packet consists of:
 
 - A one-octet number describing the public-key algorithm used.
 
-- Only for v6 packets, a 16 octet field containing random values used as salt.
-  The value must match the salt field of the corresponding Signature packet.
+- Only for v6 signatures, a variable-length field containing:
+
+  - A one-octet salt size. The value MUST match the value defined for the hash algorithm as specified in table {{hash-registry}}.
+
+  - The salt; a random value value of the specified size. The value MUST match the salt field of the corresponding Signature packet.
 
 - Only for v3 packets, an eight-octet number holding the Key ID of the signing key.
 
@@ -3173,7 +3181,7 @@ If more than one message digest is used in the signatures, each digest algorithm
 To that end, the "Hash" Armor Header contains a comma-delimited list of used message digests, and the "Hash" Armor Header can be given multiple times.
 
 If the "SaltedHash" Armor Header is given, the specified message digest algorithm and salt are used for a signature.
-The message digest name is followed by a colon (`:`) followed by 22 characters of Radix-64 encoded salt without padding.
+The message digest name is followed by a colon (`:`) followed by a random value encoded in Radix-64 without padding, which decoded length depends on the hash as specified in table {{hash-registry}}.
 Note: The "SaltedHash" Armor Header contains digest algorithm and salt for a single signature; a second signature requires a second "SaltedHash" Armor Header.
 
 If neither a "Hash" nor a "SaltedHash" Armor Header is given, or the message digest algorithms (and salts) used in the signatures do not match the information in the headers, the signature MUST be considered invalid.
@@ -3368,23 +3376,23 @@ Implementations MAY implement any other algorithm.
 
 ## Hash Algorithms {#hash-algos}
 
-{: title="Hash algorithm registry"}
-ID | Algorithm | Text Name
----:|----------|--------------
-  1 | MD5 {{HAC}} | "MD5"
-  2 | SHA-1 {{!FIPS180=DOI.10.6028/NIST.FIPS.180-4}}, {{sha1cd}} | "SHA1"
-  3 | RIPEMD-160 {{HAC}} | "RIPEMD160"
+{: title="Hash algorithm registry" #hash-registry}
+ID | Algorithm | Text Name | V5 signature salt size
+---:|----------|-----------| ---------
+  1 | MD5 {{HAC}} | "MD5" | N/A
+  2 | SHA-1 {{!FIPS180=DOI.10.6028/NIST.FIPS.180-4}}, {{sha1cd}} | "SHA1" | N/A
+  3 | RIPEMD-160 {{HAC}} | "RIPEMD160" | N/A
   4 | Reserved
   5 | Reserved
   6 | Reserved
   7 | Reserved
-  8 | SHA2-256 {{FIPS180}} | "SHA256"
-  9 | SHA2-384 {{FIPS180}} | "SHA384"
- 10 | SHA2-512 {{FIPS180}} | "SHA512"
- 11 | SHA2-224 {{FIPS180}} | "SHA224"
- 12 | SHA3-256 {{!FIPS202=DOI.10.6028/NIST.FIPS.202}} | "SHA3-256"
+  8 | SHA2-256 {{FIPS180}} | "SHA256" | 16
+  9 | SHA2-384 {{FIPS180}} | "SHA384" | 24
+ 10 | SHA2-512 {{FIPS180}} | "SHA512" | 32
+ 11 | SHA2-224 {{FIPS180}} | "SHA224" | 16
+ 12 | SHA3-256 {{!FIPS202=DOI.10.6028/NIST.FIPS.202}} | "SHA3-256" | 16
  13 | Reserved
- 14 | SHA3-512 {{FIPS202}} | "SHA3-512"
+ 14 | SHA3-512 {{FIPS202}} | "SHA3-512" | 32
 100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement SHA2-256.
@@ -4475,12 +4483,14 @@ Some example C code implementing this technique can be found at {{SHA1CD}}.
 
 ## Advantages of Salted Signatures {#signature-salt-rationale}
 
-V6 signatures include a 128 bit salt that is hashed first.
+V6 signatures include a salt that is hashed first, which size depends on the hashing algorithm.
 This makes v6 OpenPGP signatures non-deterministic and protects against a broad class of attacks that depend on creating a signature over a predictable message.
-By selecting a new random salt for each signature made, signatures are not predictable.
+By selecting a new random salt for each signature made, the signed hashes and the signatures are not predictable.
 
 When the material to be signed may be attacker-controlled, hashing the salt first means that there is no attacker controlled hashed prefix.
 An example of this kind of attack is described in the paper SHA-1 Is A Shambles (see {{SHAMBLES}}), which leverages a chosen prefix collision attack against SHA-1.
+This means that an adversary carrying out a chosen-message attack will not be able to control the hash that is being signed, and will need to break second-preimage resistance instead of the simpler collision resistance to create two messages having the same signature.
+The size of the salt is bound to the hash function to match the expected collision resistance level, and at least 16 octets.
 
 In some cases, an attacker may be able to induce a signature to be made, even if they do not control the content of the message.
 In some scenarios, a repeated signature over the exact same message may risk leakage of part or all of the signing key, for example see discussion of hardware faults over EdDSA and deterministic ECDSA in {{PSSLR17}}.
