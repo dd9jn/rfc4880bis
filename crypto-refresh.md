@@ -1138,6 +1138,10 @@ These meanings are as follows:
   Note that we really do mean SHOULD.
   There are plausible uses for this (such as a blind party that only sees the signature, not the key or source document) that cannot include a target subpacket.
 
+0xFF: Reserved.
+: An implementation MUST NOT create any signature with this type, and MUST NOT validate any signature made with this type.
+  See {{sig-computation-notes}} for more details.
+
 ### Version 3 Signature Packet Format {#version-three-sig}
 
 The body of a version 3 Signature Packet contains:
@@ -1313,7 +1317,7 @@ There are two fields consisting of Signature subpackets.
 The first field is hashed with the rest of the signature data, while the second is unhashed.
 The second set of subpackets is not cryptographically protected by the signature and should include only advisory information.
 
-The differences between a v4 and v6 signature are two-fold: first, a v6 signature increases the width of the size indicators for the signed data, making it more capable when signing large keys or messages.
+The differences between a v4 and v6 signature are two-fold: first, a v6 signature increases the width of the fields that indicate the size of the hashed and unhashed subpackets, making it possible to include significantly more data in subpackets.
 Second, the hash is salted with 128 bit of random data (see {{signature-salt-rationale}}).
 
 The algorithms for converting the hash function result to a signature are described in {{computing-signatures}}.
@@ -1925,13 +1929,23 @@ This trailer depends on the version of the signature.
 
   - A single octet 0xFF,
 
-  - A number representing the length of the hashed data from the Signature packet stopping right before the second version octet.
-    For a v4 signature, this is a four-octet big-endian number, considered to be an unsigned integer modulo 2\*\*32.
-    For a v6 signature, this is an eight-octet big-endian number, considered to be an unsigned integer modulo 2\*\*64.
+  - A number representing the length (in octets) of the hashed data from the Signature packet through the hashed subpacket body.
+    This a four-octet big-endian unsigned integer of the length modulo 2\*\*32.
 
 After all this has been hashed in a single hash context, the resulting hash field is used in the signature algorithm and its first two octets are placed in the Signature packet, as described in {{version-four-and-six-sig}}.
 
 For worked examples of the data hashed during a signature, see {{sig-hashed-data-example}}.
+
+#### Notes About Signature Computation {#sig-computation-notes}
+
+The data actually hashed by OpenPGP varies depending on signature version, in order to ensure that a signature made using one version cannot be repurposed as a signature with a different version over subtly different data.
+The hashed data streams differ based on their trailer, most critically in the fifth and sixth octets from the end of the stream.
+In particular:
+
+- A v3 signature uses the fifth octet from the end to store its signature type.
+  This MUST NOT be signature type `0xff`.
+- All signature versions later than v3 always use a literal `0xff` in the fifth octet from the end.
+  For these later signature versions, the sixth octet from the end (the octet before the `0xff`) stores the signature version number.
 
 #### Subpacket Hints
 
@@ -3128,11 +3142,7 @@ No such assurance is possible, however, when the number of octets transmitted wa
 ## Example of an ASCII Armored Message
 
 ~~~
------BEGIN PGP MESSAGE-----
-
-yDgBO22WxBHv7O8X7O/jygAEzol56iUKiXmV+XmpCtmpqQUKiQrFqclFqUDBovzS
-vBSFjNSiVHsuAA==
------END PGP MESSAGE-----
+{::include test-vectors/ascii-armored-message.pgp}
 ~~~
 
 Note that this example has extra indenting; an actual armored message would have no leading whitespace.
@@ -4710,11 +4720,7 @@ The same packet, represented in ASCII-armored form is:
 
 {: sourcecode-name="v4-ed25519-pubkey-packet.key"}
 ~~~ application/pgp-keys
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-xjMEU/NfCxYJKwYBBAHaRw8BAQdAPwmJlL3ZFu1AUxl5NOSofIBzOhKA1i+AEJku
-Q+47JAY=
------END PGP PUBLIC KEY BLOCK-----
+{::include test-vectors/v4-ed25519-pubkey-packet.key}
 ~~~
 
 ## Sample v4 Ed25519Legacy signature
@@ -4746,11 +4752,7 @@ The same packet represented in ASCII-armored form is:
 
 {: sourcecode-name="v4-ed25519-signature-over-OpenPGP.sig"}
 ~~~ application/pgp-signature
------BEGIN PGP SIGNATURE-----
-
-iF4EABYIAAYFAlX5X5UACgkQjP3hIZeWWpr2IgD/VvkMypjiECY3vZg/2xbBMd/S
-ftgr9N3lYG4NdWrtM2YBANCcT6EVJ/A44PV/IgHYLy6iyQMyZfps60iehUuuYbQE
------END PGP SIGNATURE-----
+{::include test-vectors/v4-ed25519-signature-over-OpenPGP.sig}
 ~~~
 
 ## Sample v6 Certificate (Transferable Public Key) {#v6-cert}
@@ -4764,19 +4766,7 @@ Here is a Transferable Public Key consisting of:
 
 {: sourcecode-name="v6-minimal-cert.key"}
 ~~~ application/pgp-keys
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-xjcGY4d/4xYAAAAtCSsGAQQB2kcPAQEHQPlNp7tI1gph5WdwamWH0DMZmbud
-iRoIJC6thFQ9+JWjwqQGHxYKAAAAHwUCY4d/4wMLCQcFFQoOCAwCFgACGwMC
-HgkFJwkCBwIAAAAjIiEGTq3zCca8h0rgRwJFFUj5P5b6egHQozta99TjeeD5
-+O53eyazswKsjQ5+nWIpXpDAYUQBAL6QBixJyTzTFXs7Ckjb9NwW4aNyRWJk
-aPEsU2eLugraAQDQKIora4JeWw/RHt5d1MnovP4JA68a8gYjgmFtjSSDD848
-BmOHf+MSAAAAMgorBgEEAZdVAQUBAQdA/Pf8KarOAUj0Pq2/Og+WkdCjIqJD
-YlYngO2SXahOcVsDAQgHwo4GGBYKAAAACQUCY4d/4wIbDAAAACMiIQZOrfMJ
-xryHSuBHAkUVSPk/lvp6AdCjO1r31ON54Pn47sXAunWWplIOSvrF31Pzdbps
-EwEAyCn9Ako+dx2NixuvFRDAtBjgtL4ZFnzXC0MBJFjHldoA/1vnPFbxEo5J
-nmdMR2o2yNzZjFvypzH/SOrKFrg2gE4P
------END PGP PUBLIC KEY BLOCK-----
+{::include test-vectors/v6-minimal-cert.key}
 ~~~
 
 The corresponding Transferable Secret Key can be found in {{v6-key}}.
@@ -4784,6 +4774,12 @@ The corresponding Transferable Secret Key can be found in {{v6-key}}.
 ### Hashed Data Stream for Signature Verification {#sig-hashed-data-example}
 
 The direct key self signature in the certificate in {{v6-cert}} is made over the following sequence of data:
+
+~~~
+{::include test-vectors/v6-direct-key-sig-hashed-data.txt}
+~~~
+
+The same data, broken out by octet and semantics, is:
 
 ~~~
 0x0000  26 b3 b3 02 ac 8d 0e 7e  salt
@@ -4839,10 +4835,16 @@ The direct key self signature in the certificate in {{v6-cert}} is made over the
 0x0073           06              sig version
 0x0074              ff           sentinel octet
 0x0075                 00 00 00  trailer length
-0x0078  00 00 00 00 27
+0x0078  27
 ~~~
 
 The subkey binding signature in {{v6-cert}} is made over the following sequence of data:
+
+~~~
+{::include test-vectors/v6-subkey-binding-sig-hashed-data.txt}
+~~~
+
+The same data, broken out by octet and semantics, is:
 
 ~~~
 0x0000  ba 75 96 a6 52 0e 4a fa  salt
@@ -4903,7 +4905,7 @@ The subkey binding signature in {{v6-cert}} is made over the following sequence 
 0x009d                 0c        Key Flags: {EncComms, EncStorage}
 0x009e                    06     sig version
 0x009f                       ff  sentinel octet
-0x00a0  00 00 00 00 00 00 00 11  trailer length
+0x00a0  00 00 00 11              trailer length
 
 ~~~
 
@@ -4918,21 +4920,7 @@ Here is a Transferable Secret Key consisting of:
 
 {: sourcecode-name="v6-minimal-secret.key"}
 ~~~ application/pgp-keys
------BEGIN PGP PRIVATE KEY BLOCK-----
-
-xVwGY4d/4xYAAAAtCSsGAQQB2kcPAQEHQPlNp7tI1gph5WdwamWH0DMZmbud
-iRoIJC6thFQ9+JWjAAD9GXKBexK+cH6NX1hs5hNhIB00TrJmosgv3mg1ditl
-sLcOpMKkBh8WCgAAAB8FAmOHf+MDCwkHBRUKDggMAhYAAhsDAh4JBScJAgcC
-AAAAIyIhBk6t8wnGvIdK4EcCRRVI+T+W+noB0KM7WvfU43ng+fjud3sms7MC
-rI0Ofp1iKV6QwGFEAQC+kAYsSck80xV7OwpI2/TcFuGjckViZGjxLFNni7oK
-2gEA0CiKK2uCXlsP0R7eXdTJ6Lz+CQOvGvIGI4JhbY0kgw/HYQZjh3/jEgAA
-ADIKKwYBBAGXVQEFAQEHQPz3/CmqzgFI9D6tvzoPlpHQoyKiQ2JWJ4Dtkl2o
-TnFbAwEIBwAA/01gCk95TUR3XFeibg/u/tVY6a//1q0NWC1X+yui3O24Eb3C
-jgYYFgoAAAAJBQJjh3/jAhsMAAAAIyIhBk6t8wnGvIdK4EcCRRVI+T+W+noB
-0KM7WvfU43ng+fjuxcC6dZamUg5K+sXfU/N1umwTAQDIKf0CSj53HY2LG68V
-EMC0GOC0vhkWfNcLQwEkWMeV2gD/W+c8VvESjkmeZ0xHajbI3NmMW/KnMf9I
-6soWuDaATg8=
------END PGP PRIVATE KEY BLOCK-----
+{::include test-vectors/v6-minimal-secret.key}
 ~~~
 
 The corresponding Transferable Public Key can be found in {{v6-cert}}.
@@ -4941,38 +4929,40 @@ The corresponding Transferable Public Key can be found in {{v6-cert}}.
 
 This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-EAX encryption.
 
-### Sample Parameters
-
-S2K:
-
-      Iterated and Salted S2K
-
-Iterations:
-
-      65011712 (255), SHA2-256
-
-Salt:
-
-      a5 ae 57 9d 1f c5 d8 2b
-
 ### Sample symmetric-key encrypted session key packet (v5)
 
-Packet header:
+This packet contains the following series of octets:
 
-      c3 40
+{: sourcecode-name="v5skesk-aes128-eax.hexdump"}
+~~~
+{::include test-vectors/v5skesk-aes128-eax.hexdump}
+~~~
 
-Version, algorithms, S2K fields:
+The same data, broken out by octet and semantics:
 
-      05 1e 07 01 0b 03 08 a5 ae 57 9d 1f c5 d8 2b ff
-
-Nonce:
-
-      69 22 4f 91 99 93 b3 50 6f a3 b5 9a 6a 73 cf f8
-
-Encrypted session key and AEAD tag:
-
-      da 74 6b 88 e3 57 e8 ae 54 eb 87 e1 d7 05 75 d7
-      2f 60 23 29 90 52 3e 9a 59 09 49 22 40 6b e1 c3
+~~~
+0x0000  c3                       packet tag: SKESK
+0x0001     40                    packet length
+0x0002        05                 SKESK version 5
+0x0003           1e              length through end of AEAD nonce
+0x0004              07           cipher: AES128
+0x0005                 01        AEAD mode: EAX 
+0x0006                    0b     length of S2K
+0x0007                       03  S2K type: iterated+salted
+0x0008  08                       S2K hash: SHA2-256
+0x0009     a5 ae 57 9d 1f c5 d8  S2K salt
+0x0010  2b 
+0x0011     ff                    S2K iterations (65011712 octets)
+0x0012        69 22 4f 91 99 93  AEAD nonce
+0x0018  b3 50 6f a3 b5 9a 6a 73
+0x0020  cf f8
+0x0022        da 74 6b 88 e3 57  encrypted session key
+0x0028  e8 ae 54 eb 87 e1 d7 05
+0x0030  75 d7
+0x0032        2f 60 23 29 90 52  AEAD tag
+0x0038  3e 9a 59 09 49 22 40 6b
+0x0040  e1 c3
+~~~
 
 ### Starting AEAD-EAX decryption of the session key
 
@@ -5002,32 +4992,40 @@ Decrypted session key:
 
 ### Sample v2 SEIPD packet
 
-Packet header:
+This packet contains the following series of octets:
 
-      d2 69
+{: sourcecode-name="v2seipd-aes128-eax.hexdump"}
+~~~
+{::include test-vectors/v2seipd-aes128-eax.hexdump}
+~~~
 
-Version, AES-128, EAX, Chunk size octet:
+The same data, broken out by octet and semantics:
 
-      02 07 01 06
-
-Salt:
-
-      9f f9 0e 3b 32 19 64 f3 a4 29 13 c8 dc c6 61 93
-      25 01 52 27 ef b7 ea ea a4 9f 04 c2 e6 74 17 5d
-
-Chunk #0 encrypted data:
-
-      4a 3d 22 6e d6 af cb 9c a9 ac 12 2c 14 70 e1 1c
-      63 d4 c0 ab 24 1c 6a 93 8a d4 8b f9 9a 5a 99 b9
-      0b ba 83 25 de
-
-Chunk #0 authentication tag:
-
-      61 04 75 40 25 8a b7 95 9a 95 ad 05 1d da 96 eb
-
-Final (zero-sized chunk #1) authentication tag:
-
-      15 43 1d fe f5 f5 e2 25 5c a7 82 61 54 6e 33 9a
+~~~
+0x0000  d2                       packet tag: SEIPD
+0x0001     69                    packet length
+0x0002        02                 SEIPD version 2
+0x0003           07              cipher: AES128
+0x0004              01           AEAD mode: EAX
+0x0005                 06        chunk size (2**12 octets)
+0x0005                    9f f9  salt
+0x0008  0e 3b 32 19 64 f3 a4 29
+0x0010  13 c8 dc c6 61 93 25 01
+0x0018  52 27 ef b7 ea ea a4 9f
+0x0020  04 c2 e6 74 17 5d 
+0x0026                    4a 3d  chunk #0 encrypted data
+0x0028  22 6e d6 af cb 9c a9 ac
+0x0030  12 2c 14 70 e1 1c 63 d4
+0x0038  c0 ab 24 1c 6a 93 8a d4
+0x0040  8b f9 9a 5a 99 b9 0b ba
+0x0048  83 25 de
+0x004b           61 04 75 40 25  chunk #0 AEAD tag
+0x0050  8a b7 95 9a 95 ad 05 1d
+0x0058  da 96 eb 
+0x005b           15 43 1d fe f5  final AEAD tag (#1)
+0x0060  f5 e2 25 5c a7 82 61 54
+0x0068  6e 33 9a
+~~~
 
 ### Decryption of data
 
@@ -5085,51 +5083,48 @@ Final additional authenticated data:
 
 {: sourcecode-name="v5skesk-aes128-eax.pgp"}
 ~~~ application/pgp-encrypted
------BEGIN PGP MESSAGE-----
-
-w0AFHgcBCwMIpa5XnR/F2Cv/aSJPkZmTs1Bvo7WaanPP+Np0a4jjV+iuVOuH4dcF
-ddcvYCMpkFI+mlkJSSJAa+HD0mkCBwEGn/kOOzIZZPOkKRPI3MZhkyUBUifvt+rq
-pJ8EwuZ0F11KPSJu1q/LnKmsEiwUcOEcY9TAqyQcapOK1Iv5mlqZuQu6gyXeYQR1
-QCWKt5Wala0FHdqW6xVDHf719eIlXKeCYVRuM5o=
------END PGP MESSAGE-----
+{::include test-vectors/v5skesk-aes128-eax.pgp}
 ~~~
 
 ## Sample AEAD-OCB encryption and decryption
 
 This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-OCB encryption.
 
-### Sample Parameters
-
-S2K:
-
-      Iterated and Salted S2K
-
-Iterations:
-
-      65011712 (255), SHA2-256
-
-Salt:
-
-      56 a2 98 d2 f5 e3 64 53
-
 ### Sample symmetric-key encrypted session key packet (v5)
 
-Packet header:
+This packet contains the following series of octets:
 
-      c3 3f
+{: sourcecode-name="v5skesk-aes128-ocb.hexdump"}
+~~~
+{::include test-vectors/v5skesk-aes128-ocb.hexdump}
+~~~
 
-Version, algorithms, S2K fields:
+The same data, broken out by octet and semantics:
 
-      05 1d 07 02 0b 03 08 56 a2 98 d2 f5 e3 64 53 ff
+~~~
+0x0000  c3                       packet tag: SKESK
+0x0001     3f                    packet length
+0x0002        05                 SKESK version 5
+0x0003           1d              length through end of AEAD nonce
+0x0004              07           cipher: AES128
+0x0005                 02        AEAD mode: OCB
+0x0006                    0b     length of S2K
+0x0007                       03  S2K type: iterated+salted
+0x0008  08                       S2K hash: SHA2-256
+0x0009     56 a2 98 d2 f5 e3 64  S2K salt
+0x0010  53
+0x0011    ff                     S2K iterations (65011712 octets)
+0x0012        cf cc 5c 11 66 4e  AEAD nonce
+0x0018  db 9d b4 25 90 d7 dc 46
+0x0020  b0
+0x0021     78 c5 c0 41 9c c5 1b  encrypted session key
+0x0028  3a 46 87 cb 32 e5 b7 03
+0x0030  1c 
+0x0031     e7 c6 69 75 76 5b 5c  AEAD tag
+0x0038  21 d9 2a ef 4c c0 5c 3f
+0x0040  ea
+~~~
 
-Nonce:
-
-      cf cc 5c 11 66 4e db 9d b4 25 90 d7 dc 46 b0
-
-Encrypted session key and AEAD tag:
-
-      78 c5 c0 41 9c c5 1b 3a 46 87 cb 32 e5 b7 03 1c
-      e7 c6 69 75 76 5b 5c 21 d9 2a ef 4c c0 5c 3f ea
 
 ### Starting AEAD-OCB decryption of the session key
 
@@ -5159,32 +5154,40 @@ Decrypted session key:
 
 ### Sample v2 SEIPD packet
 
-Packet header:
+This packet contains the following series of octets:
 
-      d2 69
+{: sourcecode-name="v2seipd-aes128-ocb.hexdump"}
+~~~
+{::include test-vectors/v2seipd-aes128-ocb.hexdump}
+~~~
 
-Version, AES-128, OCB, Chunk size octet:
+The same data, broken out by octet and semantics:
 
-      02 07 02 06
-
-Salt:
-
-      20 a6 61 f7 31 fc 9a 30 32 b5 62 33 26 02 7e 3a
-      5d 8d b5 74 8e be ff 0b 0c 59 10 d0 9e cd d6 41
-
-Chunk #0 encrypted data:
-
-      ff 9f d3 85 62 75 80 35 bc 49 75 4c e1 bf 3f ff
-      a7 da d0 a3 b8 10 4f 51 33 cf 42 a4 10 0a 83 ee
-      f4 ca 1b 48 01
-
-Chunk #0 authentication tag:
-
-      a8 84 6b f4 2b cd a7 c8 ce 9d 65 e2 12 f3 01 cb
-
-Final (zero-sized chunk #1) authentication tag:
-
-      cd 98 fd ca de 69 4a 87 7a d4 24 73 23 f6 e8 57
+~~~
+0x0000  d2                       packet tag: SEIPD
+0x0001     69                    packet length
+0x0002        02                 SEIPD version 2
+0x0003           07              cipher: AES128
+0x0004              02           AEAD mode: OCB
+0x0005                 06        chunk size (2**21 octets)
+0x0006                    20 a6  salt
+0x0008  61 f7 31 fc 9a 30 32 b5
+0x0010  62 33 26 02 7e 3a 5d 8d
+0x0018  b5 74 8e be ff 0b 0c 59
+0x0020  10 d0 9e cd d6 41 
+0x0026                    ff 9f  chunk #0 encrypted data
+0x0028  d3 85 62 75 80 35 bc 49
+0x0030  75 4c e1 bf 3f ff a7 da
+0x0038  d0 a3 b8 10 4f 51 33 cf
+0x0040  42 a4 10 0a 83 ee f4 ca
+0x0048  1b 48 01
+0x004b           a8 84 6b f4 2b  chunk #0 authentication tag
+0x0050  cd a7 c8 ce 9d 65 e2 12
+0x0058  f3 01 cb 
+0x005b           cd 98 fd ca de  final AEAD tag (#1)
+0x0060  69 4a 87 7a d4 24 73 23
+0x0068  f6 e8 57
+~~~
 
 ### Decryption of data
 
@@ -5243,51 +5246,48 @@ Final additional authenticated data:
 
 {: sourcecode-name="v5skesk-aes128-ocb.pgp"}
 ~~~ application/pgp-encrypted
------BEGIN PGP MESSAGE-----
-
-wz8FHQcCCwMIVqKY0vXjZFP/z8xcEWZO2520JZDX3EaweMXAQZzFGzpGh8sy5bcD
-HOfGaXV2W1wh2SrvTMBcP+rSaQIHAgYgpmH3MfyaMDK1YjMmAn46XY21dI6+/wsM
-WRDQns3WQf+f04VidYA1vEl1TOG/P/+n2tCjuBBPUTPPQqQQCoPu9MobSAGohGv0
-K82nyM6dZeIS8wHLzZj9yt5pSod61CRzI/boVw==
------END PGP MESSAGE-----
+{::include test-vectors/v5skesk-aes128-ocb.pgp}
 ~~~
 
 ## Sample AEAD-GCM encryption and decryption
 
 This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-GCM encryption.
 
-### Sample Parameters
-
-S2K:
-
-      Iterated and Salted S2K
-
-Iterations:
-
-      65011712 (255), SHA2-256
-
-Salt:
-
-      e9 d3 97 85 b2 07 00 08
+This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-OCB encryption.
 
 ### Sample symmetric-key encrypted session key packet (v5)
 
-Packet header:
+This packet contains the following series of octets:
 
-      c3 3c
+{: sourcecode-name="v5skesk-aes128-gcm.hexdump"}
+~~~
+{::include test-vectors/v5skesk-aes128-gcm.hexdump}
+~~~
 
-Version, algorithms, S2K fields:
+The same data, broken out by octet and semantics:
 
-      05 1a 07 03 0b 03 08 e9 d3 97 85 b2 07 00 08 ff
-
-Nonce:
-
-      b4 2e 7c 48 3e f4 88 44 57 cb 37 26
-
-Encrypted session key and AEAD tag:
-
-      0c 0c 4b f3 f2 cd 6c b7 b6 e3 8b 5b f3 34 67 c1
-      c7 19 44 dd 59 03 46 66 2f 5a de 61 ff 84 bc e0
+~~~
+0x0000  c3                       packet tag: SKESK
+0x0001     3c                    packet length
+0x0002        05                 SKESK version 5
+0x0003           1a              length through end of AEAD nonce
+0x0004              07           cipher: AES128
+0x0005                 03        AEAD mode: GCM
+0x0006                    0b     length of S2K
+0x0007                       03  S2K type: iterated+salted
+0x0008  08                       S2K hash: SHA2-256
+0x0009     e9 d3 97 85 b2 07 00  S2K salt
+0x0010  08
+0x0011     ff                    S2K iterations (65011712 octets)
+0x0012        b4 2e 7c 48 3e f4  AEAD nonce
+0x0018  88 44 57 cb 37 26 
+0x001e                    0c 0c  encrypted session key
+0x0020  4b f3 f2 cd 6c b7 b6 e3
+0x0028  8b 5b f3 34 67 c1 
+0x002e                    c7 19  AEAD tag
+0x0030  44 dd 59 03 46 66 2f 5a
+0x0038  de 61 ff 84 bc e0
+~~~
 
 ### Starting AEAD-GCM decryption of the session key
 
@@ -5317,32 +5317,40 @@ Decrypted session key:
 
 ### Sample v2 SEIPD packet
 
-Packet header:
+This packet contains the following series of octets:
 
-      d2 69
+{: sourcecode-name="v2seipd-aes128-ocb.hexdump"}
+~~~
+{::include test-vectors/v2seipd-aes128-gcm.hexdump}
+~~~
 
-Version, AES-128, GCM, Chunk size octet:
+The same data, broken out by octet and semantics:
 
-      02 07 03 06
-
-Salt:
-
-      fc b9 44 90 bc b9 8b bd c9 d1 06 c6 09 02 66 94
-      0f 72 e8 9e dc 21 b5 59 6b 15 76 b1 01 ed 0f 9f
-
-Chunk #0 encrypted data:
-
-      fc 6f c6 d6 5b bf d2 4d cd 07 90 96 6e 6d 1e 85
-      a3 00 53 78 4c b1 d8 b6 a0 69 9e f1 21 55 a7 b2
-      ad 62 58 53 1b
-
-Chunk #0 authentication tag:
-
-      57 65 1f d7 77 79 12 fa 95 e3 5d 9b 40 21 6f 69
-
-Final (zero-sized chunk #1) authentication tag:
-
-      a4 c2 48 db 28 ff 43 31 f1 63 29 07 39 9e 6f f9
+~~~
+0x0000  d2                       packet tag: SEIPD
+0x0001     69                    packet length
+0x0002        02                 SEIPD version 2
+0x0003           07              cipher: AES128
+0x0004              03           AEAD mode: GCM
+0x0005                 06        chunk size (2**21 octets)
+0x0006                    fc b9  salt
+0x0008  44 90 bc b9 8b bd c9 d1
+0x0010  06 c6 09 02 66 94 0f 72
+0x0018  e8 9e dc 21 b5 59 6b 15
+0x0020  76 b1 01 ed 0f 9f 
+0x0026                    fc 6f  chunk #0 encrypted data
+0x0028  c6 d6 5b bf d2 4d cd 07
+0x0030  90 96 6e 6d 1e 85 a3 00
+0x0038  53 78 4c b1 d8 b6 a0 69
+0x0040  9e f1 21 55 a7 b2 ad 62
+0x0048  58 53 1b 
+0x004b           57 65 1f d7 77  chunk #0 authentication tag
+0x0050  79 12 fa 95 e3 5d 9b 40
+0x0058  21 6f 69 
+0x005b           a4 c2 48 db 28  final AEAD tag (#1)
+0x0060  ff 43 31 f1 63 29 07 39
+0x0068  9e 6f f9
+~~~
 
 ### Decryption of data
 
@@ -5400,13 +5408,7 @@ Final additional authenticated data:
 
 {: sourcecode-name="v5skesk-aes128-gcm.pgp"}
 ~~~ application/pgp-encrypted
------BEGIN PGP MESSAGE-----
-
-wzwFGgcDCwMI6dOXhbIHAAj/tC58SD70iERXyzcmDAxL8/LNbLe244tb8zRnwccZ
-RN1ZA0ZmL1reYf+EvODSaQIHAwb8uUSQvLmLvcnRBsYJAmaUD3LontwhtVlrFXax
-Ae0Pn/xvxtZbv9JNzQeQlm5tHoWjAFN4TLHYtqBpnvEhVaeyrWJYUxtXZR/Xd3kS
-+pXjXZtAIW9ppMJI2yj/QzHxYykHOZ5v+Q==
------END PGP MESSAGE-----
+{::include test-vectors/v5skesk-aes128-gcm.pgp}
 ~~~
 
 ## Sample messages encrypted using Argon2
@@ -5419,44 +5421,21 @@ In all cases, the Argon2 parameters are t = 1, p = 4, and m = 21.
 
 {: sourcecode-name="v4skesk-argon2-aes128.pgp"}
 ~~~ application/pgp-encrypted
------BEGIN PGP MESSAGE-----
-Comment: Encrypted using AES with 128-bit key
-Comment: Session key: 01FE16BBACFD1E7B78EF3B865187374F
-
-wycEBwScUvg8J/leUNU1RA7N/zE2AQQVnlL8rSLPP5VlQsunlO+ECxHSPgGYGKY+
-YJz4u6F+DDlDBOr5NRQXt/KJIf4m4mOlKyC/uqLbpnLJZMnTq3o79GxBTdIdOzhH
-XfA3pqV4mTzF
------END PGP MESSAGE-----
+{::include test-vectors/v4skesk-argon2-aes128.pgp}
 ~~~
 
 ### v4 SKESK using Argon2 with AES-192
 
 {: sourcecode-name="v4skesk-argon2-aes192.pgp"}
 ~~~ application/pgp-encrypted
------BEGIN PGP MESSAGE-----
-Comment: Encrypted using AES with 192-bit key
-Comment: Session key: 27006DAE68E509022CE45A14E569E91001C2955...
-Comment: Session key: ...AF8DFE194
-
-wy8ECAThTKxHFTRZGKli3KNH4UP4AQQVhzLJ2va3FG8/pmpIPd/H/mdoVS5VBLLw
-F9I+AdJ1Sw56PRYiKZjCvHg+2bnq02s33AJJoyBexBI4QKATFRkyez2gldJldRys
-LVg77Mwwfgl2n/d572WciAM=
------END PGP MESSAGE-----
+{::include test-vectors/v4skesk-argon2-aes192.pgp}
 ~~~
 
 ### v4 SKESK using Argon2 with AES-256
 
 {: sourcecode-name="v4skesk-argon2-aes256.pgp"}
 ~~~ application/pgp-encrypted
------BEGIN PGP MESSAGE-----
-Comment: Encrypted using AES with 256-bit key
-Comment: Session key: BBEDA55B9AAE63DAC45D4F49D89DACF4AF37FEF
-Comment: Session key: ...C13BAB2F1F8E18FB74580D8B0
-
-wzcECQS4eJUgIG/3mcaILEJFpmJ8AQQVnZ9l7KtagdClm9UaQ/Z6M/5roklSGpGu
-623YmaXezGj80j4B+Ku1sgTdJo87X1Wrup7l0wJypZls21Uwd67m9koF60eefH/K
-95D1usliXOEm8ayQJQmZrjf6K6v9PWwqMQ==
------END PGP MESSAGE-----
+{::include test-vectors/v4skesk-argon2-aes256.pgp}
 ~~~
 
 # Acknowledgements

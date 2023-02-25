@@ -1,0 +1,32 @@
+#!/bin/bash
+
+## Usage:
+#
+#      ./sop-verify /path/to/implementation/of/sop
+#
+# The purpose of this tool is to allow an implementer to confirm that
+# their sop implementation can at least handle the test vectors in the
+# draft.
+#
+# Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+# Licensed the same as the crypto-refresh draft in this repo.
+
+SOP=${1:-sop}
+
+set -e
+
+"$SOP" version --extended
+
+printf 'Testing extract-cert\n'
+
+cmp <("$SOP" extract-cert --no-armor < test-vectors/v6-minimal-secret.key) <("$SOP" dearmor < test-vectors/v6-minimal-cert.key)
+
+for aead in ocb gcm eax; do
+    printf 'Testing password-based decryption with %s\n' ${aead^^}
+    diff -u <(PASS=password "$SOP" decrypt --with-password @ENV:PASS < test-vectors/v5skesk-aes128-$aead.pgp) <(printf 'Hello, world!')
+done
+
+for aes in 128 192 256; do
+    printf 'Testing Argon2 decryption with AES%s\n' $aes
+    diff -u <(PASS=password "$SOP" decrypt --with-password @ENV:PASS < test-vectors/v4skesk-argon2-aes$aes.pgp) <(printf 'Hello, world!')
+done
