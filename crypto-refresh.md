@@ -536,7 +536,7 @@ The size of an MPI is ((MPI.length + 7) / 8) + 2 octets.
 The length field of an MPI describes the length starting from its most significant non-zero bit.
 Thus, the MPI \[00 02 01\] is not formed correctly.
 It should be \[00 01 01\].
-When parsing an MPI in a v6 Key or Signature, or a v5 Public-Key Encrypted Session Key packet, the implementation MUST check that the encoded length matches the length starting from the most significant non-zero bit, and reject the packet as malformed if not.
+When parsing an MPI in a v6 Key, Signature, or Public-Key Encrypted Session Key packet, the implementation MUST check that the encoded length matches the length starting from the most significant non-zero bit, and reject the packet as malformed if not.
 
 Unused bits of an MPI MUST be zero.
 
@@ -943,7 +943,7 @@ The encryption container is preceded by one Public-Key Encrypted Session Key pac
 The recipient of the message finds a session key that is encrypted to their public key, decrypts the session key, and then uses the session key to decrypt the message.
 
 The body of this packet starts with a one-octet number giving the version number of the packet type.
-The currently defined versions are 3 and 5.
+The currently defined versions are 3 and 6.
 The remainder of the packet depends on the version.
 
 The versions differ in how they identify the recipient key, and in what they encode.
@@ -972,14 +972,14 @@ When creating a v3 PKESK packet, the session key is prefixed with a one-octet al
 
 The resulting octet string (algorithm identifier and session key) is encrypted according to the public-key algorithm used, as described below.
 
-### v5 PKESK {#v5-pkesk}
+### v6 PKESK {#v6-pkesk}
 
-A version 5 Public-Key Encrypted Session Key (PKESK) packet precedes a version 2 Symmetrically Encrypted Integrity Protected Data (v2 SEIPD, see {{version-two-seipd}}) packet.
-A v5 PKESK packet MUST NOT precede a v1 SEIPD packet or a deprecated Symmetrically Encrypted Data packet (see {{encrypted-message-versions}}).
+A version 6 Public-Key Encrypted Session Key (PKESK) packet precedes a version 2 Symmetrically Encrypted Integrity Protected Data (v2 SEIPD, see {{version-two-seipd}}) packet.
+A v6 PKESK packet MUST NOT precede a v1 SEIPD packet or a deprecated Symmetrically Encrypted Data packet (see {{encrypted-message-versions}}).
 
-The v5 PKESK packet consists of:
+The v6 PKESK packet consists of:
 
-- A one-octet version number with value 5.
+- A one-octet version number with value 6.
 
 - A one octet key version number and N octets of the fingerprint of the public key or subkey to which the session key is encrypted.
   Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 6 key N is 32.
@@ -990,7 +990,7 @@ The v5 PKESK packet consists of:
 - A series of values comprising the encrypted session key.
   This is algorithm-specific and described below.
 
-When creating a v5 PKESK packet, the symmetric encryption algorithm identifier is not included.
+When creating a v6 PKESK packet, the symmetric encryption algorithm identifier is not included.
 
 The session key is encrypted according to the public-key algorithm used, as described below.
 
@@ -1987,7 +1987,7 @@ If the encryption container is preceded by one or more Symmetric-Key Encrypted S
 This allows a message to be encrypted to a number of public keys, and also to one or more passphrases.
 
 The body of this packet starts with a one-octet number giving the version number of the packet type.
-The currently defined versions are 4 and 5.
+The currently defined versions are 4 and 6.
 The remainder of the packet depends on the version.
 
 The versions differ in how they encrypt the session key with the password, and in what they encode.
@@ -2018,14 +2018,14 @@ The decryption result consists of a one-octet algorithm identifier that specifie
 Note: because an all-zero IV is used for this decryption, the S2K specifier MUST use a salt value, either a Salted S2K, an Iterated-Salted S2K, or Argon2.
 The salt value will ensure that the decryption key is not repeated even if the passphrase is reused.
 
-### v5 SKESK {#v5-skesk}
+### v6 SKESK {#v6-skesk}
 
-A version 5 Symmetric-Key Encrypted Session Key (SKESK) packet precedes a version 2 Symmetrically Encrypted Integrity Protected Data (v2 SEIPD, see {{version-two-seipd}}) packet.
-A v5 SKESK packet MUST NOT precede a v1 SEIPD packet or a deprecated Symmetrically Encrypted Data packet (see {{encrypted-message-versions}}).
+A version 6 Symmetric-Key Encrypted Session Key (SKESK) packet precedes a version 2 Symmetrically Encrypted Integrity Protected Data (v2 SEIPD, see {{version-two-seipd}}) packet.
+A v6 SKESK packet MUST NOT precede a v1 SEIPD packet or a deprecated Symmetrically Encrypted Data packet (see {{encrypted-message-versions}}).
 
-A version 5 Symmetric-Key Encrypted Session Key packet consists of:
+A version 6 Symmetric-Key Encrypted Session Key packet consists of:
 
-- A one-octet version number with value 5.
+- A one-octet version number with value 6.
 
 - A one-octet scalar octet count of the following 5 fields.
 
@@ -2048,7 +2048,7 @@ HKDF is used with SHA256 as hash algorithm, the key derived from S2K as Initial 
 Then, the session key is encrypted using the resulting key, with the AEAD algorithm specified for version 2 of the Symmetrically Encrypted Integrity Protected Data packet.
 Note that no chunks are used and that there is only one authentication tag.
 The Packet Tag in OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are given as additional data.
-For example, the additional data used with AES-128 with OCB consists of the octets 0xC3, 0x05, 0x07, and 0x02.
+For example, the additional data used with AES-128 with OCB consists of the octets 0xC3, 0x06, 0x07, and 0x02.
 
 ## One-Pass Signature Packets (Tag 4) {#one-pass-sig}
 
@@ -2249,7 +2249,7 @@ Note that no chunks are used and that there is only one authentication tag.
 As additional data, the Packet Tag in OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), followed by the public key packet fields, starting with the packet version number, are passed to the AEAD algorithm.
 For example, the additional data used with a Secret-Key Packet of version 4 consists of the octets 0xC5, 0x04, followed by four octets of creation time, one octet denoting the public-key algorithm, and the algorithm-specific public-key parameters.
 For a Secret-Subkey Packet, the first octet would be 0xC7.
-For a version 6 key packet, the second octet would be 0x05, and the four-octet octet count of the public key material would be included as well (see {{public-key-packet-formats}}).
+For a version 6 key packet, the second octet would be 0x06, and the four-octet octet count of the public key material would be included as well (see {{public-key-packet-formats}}).
 
 The two-octet checksum that follows the algorithm-specific portion is the algebraic sum, mod 65536, of the plaintext of all the algorithm-specific octets (including MPI prefix and data).
 With v3 keys, the checksum is stored in the clear.
@@ -3841,8 +3841,8 @@ The versions of the preceding ESK packets within an Encrypted Message MUST align
 v3 PKESK and v4 SKESK packets both contain in their cleartext the symmetric cipher algorithm identifier in addition to the session key for the subsequent SEIPD packet.
 Since a v1 SEIPD does not contain a symmetric algorithm identifier, all ESK packets preceding a v1 SEIPD payload MUST be either v3 PKESK or v4 SKESK.
 
-On the other hand, the cleartext of the v5 ESK packets (either PKESK or SKESK) do not contain a symmetric cipher algorithm identifier, so they cannot be used in combination with a v1 SEIPD payload.
-The payload following any v5 PKESK or v5 SKESK packet MUST be a v2 SEIPD.
+On the other hand, the cleartext of the v6 ESK packets (either PKESK or SKESK) do not contain a symmetric cipher algorithm identifier, so they cannot be used in combination with a v1 SEIPD payload.
+The payload following any v6 PKESK or v6 SKESK packet MUST be a v2 SEIPD.
 
 Additionally, to avoid potentially conflicting cipher algorithm identifiers, and for simplicity, implementations MUST NOT precede a v2 SEIPD payload with either v3 PKESK or v4 SKESK packets.
 
@@ -3852,7 +3852,7 @@ The acceptable versions of packets in an Encrypted Message are summarized in the
 Version of Encrypted Data payload | Version of preceding Symmetric-Key ESK (if any) | Version of preceding Public-Key ESK (if any)
 ---|---|---
 v1 SEIPD | v4 SKESK | v3 PKESK
-v2 SEIPD | v5 SKESK | v5 PKESK
+v2 SEIPD | v6 SKESK | v6 PKESK
 
 An implementation processing an Encrypted Message MUST discard any preceding ESK packet with a version that does not align with the version of the payload.
 
@@ -4516,7 +4516,7 @@ The number of queries required to carry out an attack can range from thousands t
 
 To make the attack more difficult, an implementation SHOULD implement strict, robust, constant time padding checks.
 
-To prevent the attack, in settings where the attacker does not have access to timing information concerning message decryption, the simplest solution is to report a single error code for all variants of PKESK processing errors as well as SEIPD integrity errors (this includes also session key parsing errors, such as on invalid cipher algorithm for v3 PKESK, or session key size mismatch for v5 PKESK).
+To prevent the attack, in settings where the attacker does not have access to timing information concerning message decryption, the simplest solution is to report a single error code for all variants of PKESK processing errors as well as SEIPD integrity errors (this includes also session key parsing errors, such as on invalid cipher algorithm for v3 PKESK, or session key size mismatch for v6 PKESK).
 If the attacker may have access to timing information, then a constant time solution is also needed.
 This requires careful design, especially for v3 PKESK, where session key size and cipher information is typically not known in advance, as it is part of the PKESK encrypted payload.
 
@@ -4929,13 +4929,13 @@ The corresponding Transferable Public Key can be found in {{v6-cert}}.
 
 This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-EAX encryption.
 
-### Sample symmetric-key encrypted session key packet (v5)
+### Sample symmetric-key encrypted session key packet (v6)
 
 This packet contains the following series of octets:
 
-{: sourcecode-name="v5skesk-aes128-eax.hexdump"}
+{: sourcecode-name="v6skesk-aes128-eax.hexdump"}
 ~~~
-{::include test-vectors/v5skesk-aes128-eax.hexdump}
+{::include test-vectors/v6skesk-aes128-eax.hexdump}
 ~~~
 
 The same data, broken out by octet and semantics:
@@ -4956,12 +4956,12 @@ The same data, broken out by octet and semantics:
 0x0012        69 22 4f 91 99 93  AEAD nonce
 0x0018  b3 50 6f a3 b5 9a 6a 73
 0x0020  cf f8
-0x0022        da 74 6b 88 e3 57  encrypted session key
-0x0028  e8 ae 54 eb 87 e1 d7 05
-0x0030  75 d7
-0x0032        2f 60 23 29 90 52  AEAD tag
-0x0038  3e 9a 59 09 49 22 40 6b
-0x0040  e1 c3
+0x0022        c5 ef c5 f4 1c 57  encrypted session key
+0x0028  fb 54 e1 c2 26 81 5d 78
+0x0030  28 f5
+0x0032        f9 2c 45 4e b6 5e  AEAD tag
+0x0038  be 00 ab 59 86 c6 8e 6e
+0x0040  7c 55
 ~~~
 
 ### Starting AEAD-EAX decryption of the session key
@@ -4972,15 +4972,15 @@ The derived key is:
 
 HKDF info:
 
-      c3 05 07 01
+      c3 06 07 01
 
 HKDF output:
 
-      74 f0 46 03 63 a7 00 76 db 08 c4 92 ab f2 95 52
+      2f ce 33 1f 39 dd 95 5c c4 1e 95 d8 70 c7 21 39
 
 Authenticated Data:
 
-      c3 05 07 01
+      c3 06 07 01
 
 Nonce:
 
@@ -5081,22 +5081,22 @@ Final additional authenticated data:
 
 ### Complete AEAD-EAX encrypted packet sequence
 
-{: sourcecode-name="v5skesk-aes128-eax.pgp"}
+{: sourcecode-name="v6skesk-aes128-eax.pgp"}
 ~~~ application/pgp-encrypted
-{::include test-vectors/v5skesk-aes128-eax.pgp}
+{::include test-vectors/v6skesk-aes128-eax.pgp}
 ~~~
 
 ## Sample AEAD-OCB encryption and decryption
 
 This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-OCB encryption.
 
-### Sample symmetric-key encrypted session key packet (v5)
+### Sample symmetric-key encrypted session key packet (v6)
 
 This packet contains the following series of octets:
 
-{: sourcecode-name="v5skesk-aes128-ocb.hexdump"}
+{: sourcecode-name="v6skesk-aes128-ocb.hexdump"}
 ~~~
-{::include test-vectors/v5skesk-aes128-ocb.hexdump}
+{::include test-vectors/v6skesk-aes128-ocb.hexdump}
 ~~~
 
 The same data, broken out by octet and semantics:
@@ -5117,12 +5117,12 @@ The same data, broken out by octet and semantics:
 0x0012        cf cc 5c 11 66 4e  AEAD nonce
 0x0018  db 9d b4 25 90 d7 dc 46
 0x0020  b0
-0x0021     78 c5 c0 41 9c c5 1b  encrypted session key
-0x0028  3a 46 87 cb 32 e5 b7 03
-0x0030  1c 
-0x0031     e7 c6 69 75 76 5b 5c  AEAD tag
-0x0038  21 d9 2a ef 4c c0 5c 3f
-0x0040  ea
+0x0021     72 41 b6 12 c3 81 2c  encrypted session key
+0x0028  ff fb ea 00 f2 34 7b 25
+0x0030  64
+0x0031     11 23 f8 87 ae 60 d4  AEAD tag
+0x0038  fd 61 4e 08 37 d8 19 d3
+0x0040  6c
 ~~~
 
 
@@ -5134,15 +5134,15 @@ The derived key is:
 
 HKDF info:
 
-      c3 05 07 02
+      c3 06 07 02
 
 HKDF output:
 
-      20 62 fb 76 31 ef be f4 df 81 67 ce d7 f3 a4 64
+      38 a9 b3 45 b5 68 0b b6 1b b6 5d 73 ee c7 ec d9
 
 Authenticated Data:
 
-      c3 05 07 02
+      c3 06 07 02
 
 Nonce:
 
@@ -5244,9 +5244,9 @@ Final additional authenticated data:
 
 ### Complete AEAD-OCB encrypted packet sequence
 
-{: sourcecode-name="v5skesk-aes128-ocb.pgp"}
+{: sourcecode-name="v6skesk-aes128-ocb.pgp"}
 ~~~ application/pgp-encrypted
-{::include test-vectors/v5skesk-aes128-ocb.pgp}
+{::include test-vectors/v6skesk-aes128-ocb.pgp}
 ~~~
 
 ## Sample AEAD-GCM encryption and decryption
@@ -5255,13 +5255,13 @@ This example encrypts the cleartext string `Hello, world!` with the password `pa
 
 This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-OCB encryption.
 
-### Sample symmetric-key encrypted session key packet (v5)
+### Sample symmetric-key encrypted session key packet (v6)
 
 This packet contains the following series of octets:
 
-{: sourcecode-name="v5skesk-aes128-gcm.hexdump"}
+{: sourcecode-name="v6skesk-aes128-gcm.hexdump"}
 ~~~
-{::include test-vectors/v5skesk-aes128-gcm.hexdump}
+{::include test-vectors/v6skesk-aes128-gcm.hexdump}
 ~~~
 
 The same data, broken out by octet and semantics:
@@ -5281,12 +5281,12 @@ The same data, broken out by octet and semantics:
 0x0011     ff                    S2K iterations (65011712 octets)
 0x0012        b4 2e 7c 48 3e f4  AEAD nonce
 0x0018  88 44 57 cb 37 26 
-0x001e                    0c 0c  encrypted session key
-0x0020  4b f3 f2 cd 6c b7 b6 e3
-0x0028  8b 5b f3 34 67 c1 
-0x002e                    c7 19  AEAD tag
-0x0030  44 dd 59 03 46 66 2f 5a
-0x0038  de 61 ff 84 bc e0
+0x001e                    b9 b3  encrypted session key
+0x0020  db 9f f7 76 e5 f4 d9 a4
+0x0028  09 52 e2 44 72 98
+0x002e                     85 1a  AEAD tag
+0x0030  bf ff 75 26 df 2d d5 54
+0x0038  41 75 79 a7 79 9f
 ~~~
 
 ### Starting AEAD-GCM decryption of the session key
@@ -5297,15 +5297,15 @@ The derived key is:
 
 HKDF info:
 
-      c3 05 07 03
+      c3 06 07 03
 
 HKDF output:
 
-      de ec e5 81 8b c0 aa b9 0f 8a fb 02 fa 00 cd 13
+      7a 6f 9a b7 f9 9f 7e f8 db ef 84 1c 65 08 00 f5
 
 Authenticated Data:
 
-      c3 05 07 03
+      c3 06 07 03
 
 Nonce:
 
@@ -5406,9 +5406,9 @@ Final additional authenticated data:
 
 ### Complete AEAD-GCM encrypted packet sequence
 
-{: sourcecode-name="v5skesk-aes128-gcm.pgp"}
+{: sourcecode-name="v6skesk-aes128-gcm.pgp"}
 ~~~ application/pgp-encrypted
-{::include test-vectors/v5skesk-aes128-gcm.pgp}
+{::include test-vectors/v6skesk-aes128-gcm.pgp}
 ~~~
 
 ## Sample messages encrypted using Argon2
