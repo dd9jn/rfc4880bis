@@ -1331,7 +1331,7 @@ The first field is hashed with the rest of the signature data, while the second 
 The second set of subpackets is not cryptographically protected by the signature and should include only advisory information.
 
 The differences between a v4 and v6 signature are two-fold: first, a v6 signature increases the width of the fields that indicate the size of the hashed and unhashed subpackets, making it possible to include significantly more data in subpackets.
-Second, the hash is salted with 128 bit of random data (see {{signature-salt-rationale}}).
+Second, the hash is salted with random data (see {{signature-salt-rationale}}).
 
 The algorithms for converting the hash function result to a signature are described in {{computing-signatures}}.
 
