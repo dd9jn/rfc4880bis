@@ -1325,6 +1325,7 @@ A version 3 signature MUST NOT be created and MUST NOT be used with Ed448.
 The concatenation of the data being signed and the signature data from the version number through the hashed subpacket data (inclusive) is hashed.
 The resulting hash value is what is signed.
 The high 16 bits (first two octets) of the hash are included in the Signature packet to provide a way to reject some invalid signatures without performing a signature verification.
+When verifying a v6 signature, an implementation MUST reject the signature if these octets don't match the first two octets of the computed hash.
 
 There are two fields consisting of Signature subpackets.
 The first field is hashed with the rest of the signature data, while the second is unhashed.
