@@ -1430,6 +1430,16 @@ Note that a key may have more than one User ID, and thus may have more than one 
 A subpacket may be found either in the hashed or unhashed subpacket sections of a signature.
 If a subpacket is not hashed, then the information in it cannot be considered definitive because it is not part of the signature proper.
 
+#### Notes on Subpackets
+
+It is certainly possible for a signature to contain conflicting information in subpackets.
+For example, a signature may contain multiple copies of a preference or multiple expiration times.
+In most cases, an implementation SHOULD use the last subpacket in the signature, but MAY use any conflict resolution scheme that makes more sense.
+Please note that we are intentionally leaving conflict resolution to the implementer; most conflicts are simply syntax errors, and the wishy-washy language here allows a receiver to be generous in what they accept, while putting pressure on a creator to be stingy in what they generate.
+
+Some apparent conflicts may actually make sense --- for example, suppose a keyholder has a v3 key and a v4 key that share the same RSA key material.
+Either of these keys can verify a signature created by the other, and it may be reasonable for a signature to contain an Issuer Key ID subpacket ({{issuer-keyid-subpacket}}) for each key, as a way of explicitly tying those keys to the signature.
+
 #### Notes on Self-Signatures {#self-sigs}
 
 A self-signature is a binding signature made by the key to which the signature refers.
@@ -1959,16 +1969,6 @@ In particular:
   This MUST NOT be signature type `0xff`.
 - All signature versions later than v3 always use a literal `0xff` in the fifth octet from the end.
   For these later signature versions, the sixth octet from the end (the octet before the `0xff`) stores the signature version number.
-
-#### Subpacket Hints
-
-It is certainly possible for a signature to contain conflicting information in subpackets.
-For example, a signature may contain multiple copies of a preference or multiple expiration times.
-In most cases, an implementation SHOULD use the last subpacket in the signature, but MAY use any conflict resolution scheme that makes more sense.
-Please note that we are intentionally leaving conflict resolution to the implementer; most conflicts are simply syntax errors, and the wishy-washy language here allows a receiver to be generous in what they accept, while putting pressure on a creator to be stingy in what they generate.
-
-Some apparent conflicts may actually make sense --- for example, suppose a keyholder has a v3 key and a v4 key that share the same RSA key material.
-Either of these keys can verify a signature created by the other, and it may be reasonable for a signature to contain an Issuer Key ID subpacket ({{issuer-keyid-subpacket}}) for each key, as a way of explicitly tying those keys to the signature.
 
 ### Malformed and Unknown Signatures {#malformed-signatures}
 
