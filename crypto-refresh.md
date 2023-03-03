@@ -3433,7 +3433,15 @@ Implementations MAY implement EAX, GCM and other algorithms.
 Because this document obsoletes {{RFC4880}}, IANA is requested to update all registration information that references {{RFC4880}} to instead reference this RFC.
 
 OpenPGP is highly parameterized, and consequently there are a number of considerations for allocating parameters for extensions.
-This section describes how IANA should look at extensions to the protocol as described in this document.
+
+This section describes the updated IANA registration policies.
+Most of the registries listed below have been moved the SPECIFICATION REQUIRED registration policy, see {{RFC8126}}.
+This policy means that review and approval by a designated expert is required, and that the values and their meanings must be documented in a permanent and readily available public specification, in sufficient detail so that interoperability between independent implementations is possible.
+The designated expert will determine whether the new code points retain the security properties that are expected
+by the base implementation and that these new code points do not cause interoperability issues with existing implementations
+other than not producing or consuming these new code points.
+Code point proposals that fail to meet these criteria should instead be proposed as work items for the OpenPGP working group or its successor.
+
 
 ## New String-to-Key Specifier Types
 
