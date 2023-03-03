@@ -318,7 +318,6 @@ normative:
     date: 1999-03-25
   RFC1950:
   RFC1951:
-  RFC2045:
   RFC2144:
   RFC2822:
   RFC3156:
@@ -326,6 +325,7 @@ normative:
   RFC3629:
   RFC3713:
   RFC4086:
+  RFC4648:
   RFC7253:
   RFC7748:
   RFC8017:
@@ -2921,7 +2921,7 @@ An implementation MUST be able to process padding packets anywhere else in an Op
 
 Policy about how large to make such a packet to defend against traffic analysis is beyond the scope of this document.
 
-# Radix-64 Conversions
+# Radix-64 Conversions {#radix64}
 
 As stated in the introduction, OpenPGP's underlying native representation for objects is a stream of arbitrary octets, and some systems desire these objects to be immune to damage caused by character set translation, data conversions, etc.
 
@@ -2929,7 +2929,9 @@ In principle, any printable encoding scheme that met the requirements of the uns
 The OpenPGP standard specifies one such printable encoding scheme to ensure interoperability.
 
 OpenPGP's Radix-64 encoding is composed of two parts: a base64 encoding of the binary data and an optional checksum.
-The base64 encoding is identical to the MIME base64 content-transfer-encoding {{RFC2045}}.
+The base64 encoding used is described in {{Section 4 of RFC4648}}, and it is wrapped into lines of no more than 76 characters each.
+
+When decoding base64, an OpenPGP implementation must ignore all white space.
 
 ## Optional checksum {#optional-crc24}
 
@@ -3037,7 +3039,7 @@ An OpenPGP implementation may consider improperly formatted Armor Headers to be 
 Unknown keys should be silently ignored, and an OpenPGP implementation SHOULD continue to process the message.
 
 Note that some transport methods are sensitive to line length.
-While there is a limit of 76 characters for the Radix-64 data ({{encoding-binary-radix64}}), there is no limit to the length of Armor Headers.
+While there is a limit of 76 characters for the Radix-64 data ({{radix64}}), there is no limit to the length of Armor Headers.
 Care should be taken that the Armor Headers are short enough to survive transport.
 One way to do this is to repeat an Armor Header Key multiple times with different values for each so that no one line is overly long.
 
@@ -3067,97 +3069,6 @@ Currently defined Armor Header Keys are as follows:
   An implementation MAY implement this key and any translations it cares to; an implementation MAY ignore it and assume all text is UTF-8.
 
 The Armor Tail Line is composed in the same manner as the Armor Header Line, except the string "BEGIN" is replaced by the string "END".
-
-## Encoding Binary in Radix-64 {#encoding-binary-radix64}
-
-The encoding process represents 24-bit groups of input bits as output strings of 4 encoded characters.
-Proceeding from left to right, a 24-bit input group is formed by concatenating three 8-bit input groups.
-These 24 bits are then treated as four concatenated 6-bit groups, each of which is translated into a single digit in the Radix-64 alphabet.
-When encoding a bit stream with the Radix-64 encoding, the bit stream must be presumed to be ordered with the most significant bit first.
-That is, the first bit in the stream will be the high-order bit in the first 8-bit octet, and the eighth bit will be the low-order bit in the first 8-bit octet, and so on.
-
-~~~
-┌──first octet──┬─second octet──┬──third octet──┐
-│7 6 5 4 3 2 1 0│7 6 5 4 3 2 1 0│7 6 5 4 3 2 1 0│
-├───────────┬───┴───────┬───────┴───┬───────────┤
-│5 4 3 2 1 0│5 4 3 2 1 0│5 4 3 2 1 0│5 4 3 2 1 0│
-└──1.index──┴──2.index──┴──3.index──┴──4.index──┘
-~~~
-
-Each 6-bit group is used as an index into an array of 64 printable characters from the table below.
-The character referenced by the index is placed in the output string.
-
-{: title="Encoding for Radix-64"}
-Value | Encoding || Value | Encoding || Value | Encoding || Value | Encoding
----:|---|-|---:|---|-|---:|---|-|---:|---
-0 | A || 17 | R || 34 | i || 51 | z
-1 | B || 18 | S || 35 | j || 52 | 0
-2 | C || 19 | T || 36 | k || 53 | 1
-3 | D || 20 | U || 37 | l || 54 | 2
-4 | E || 21 | V || 38 | m || 55 | 3
-5 | F || 22 | W || 39 | n || 56 | 4
-6 | G || 23 | X || 40 | o || 57 | 5
-7 | H || 24 | Y || 41 | p || 58 | 6
-8 | I || 25 | Z || 42 | q || 59 | 7
-9 | J || 26 | a || 43 | r || 60 | 8
-10 | K || 27 | b || 44 | s || 61 | 9
-11 | L || 28 | c || 45 | t || 62 | +
-12 | M || 29 | d || 46 | u || 63 | /
-13 | N || 30 | e || 47 | v
-14 | O || 31 | f || 48 | w || (pad) | =
-15 | P || 32 | g || 49 | x
-16 | Q || 33 | h || 50 | y
-
-The encoded output stream must be represented in lines of no more than 76 characters each.
-
-Special processing is performed if fewer than 24 bits are available at the end of the data being encoded.
-There are three possibilities:
-
-1. The last data group has 24 bits (3 octets).
-   No special processing is needed.
-
-2. The last data group has 16 bits (2 octets).
-   The first two 6-bit groups are processed as above.
-   The third (incomplete) data group has two zero-value bits added to it, and is processed as above.
-   A pad character (=) is added to the output.
-
-3. The last data group has 8 bits (1 octet).
-   The first 6-bit group is processed as above.
-   The second (incomplete) data group has four zero-value bits added to it, and is processed as above.
-   Two pad characters (=) are added to the output.
-
-## Decoding Radix-64
-
-In Radix-64 data, characters other than those in the table, line breaks, and other white space probably indicate a transmission error, about which a warning message or even a message rejection might be appropriate under some circumstances.
-Decoding software must ignore all white space.
-
-Because it is used only for padding at the end of the data, the occurrence of any "=" characters may be taken as evidence that the end of the data has been reached (without truncation in transit).
-No such assurance is possible, however, when the number of octets transmitted was a multiple of three and no "=" characters are present.
-
-## Examples of Radix-64
-
-    Input data:  0x14FB9C03D97E
-    Hex:     1   4    F   B    9   C     | 0   3    D   9    7   E
-    8-bit:   00010100 11111011 10011100  | 00000011 11011001 01111110
-    6-bit:   000101 001111 101110 011100 | 000000 111101 100101 111110
-    Decimal: 5      15     46     28       0      61     37     62
-    Output:  F      P      u      c        A      9      l      +
-    Input data:  0x14FB9C03D9
-    Hex:     1   4    F   B    9   C     | 0   3    D   9
-    8-bit:   00010100 11111011 10011100  | 00000011 11011001
-                                                    pad with 00
-    6-bit:   000101 001111 101110 011100 | 000000 111101 100100
-    Decimal: 5      15     46     28       0      61     36
-                                                       pad with =
-    Output:  F      P      u      c        A      9      k      =
-    Input data:  0x14FB9C03
-    Hex:     1   4    F   B    9   C     | 0   3
-    8-bit:   00010100 11111011 10011100  | 00000011
-                                           pad with 0000
-    6-bit:   000101 001111 101110 011100 | 000000 110000
-    Decimal: 5      15     46     28       0      48
-                                                pad with =      =
-    Output:  F      P      u      c        A      w      =      =
 
 ## Example of an ASCII Armored Message
 
