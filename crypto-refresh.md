@@ -4926,7 +4926,7 @@ The same data, broken out by octet and semantics:
 ~~~
 0x0000  c3                       packet tag: SKESK
 0x0001     40                    packet length
-0x0002        05                 SKESK version 5
+0x0002        06                 SKESK version 6
 0x0003           1e              length through end of AEAD nonce
 0x0004              07           cipher: AES128
 0x0005                 01        AEAD mode: EAX 
@@ -5087,7 +5087,7 @@ The same data, broken out by octet and semantics:
 ~~~
 0x0000  c3                       packet tag: SKESK
 0x0001     3f                    packet length
-0x0002        05                 SKESK version 5
+0x0002        06                 SKESK version 6
 0x0003           1d              length through end of AEAD nonce
 0x0004              07           cipher: AES128
 0x0005                 02        AEAD mode: OCB
@@ -5252,7 +5252,7 @@ The same data, broken out by octet and semantics:
 ~~~
 0x0000  c3                       packet tag: SKESK
 0x0001     3c                    packet length
-0x0002        05                 SKESK version 5
+0x0002        06                 SKESK version 6
 0x0003           1a              length through end of AEAD nonce
 0x0004              07           cipher: AES128
 0x0005                 03        AEAD mode: GCM
