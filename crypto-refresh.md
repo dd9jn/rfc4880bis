@@ -244,6 +244,13 @@ informative:
     author:
       name: Marc Stevens
     date: June 2013
+  UNIFIED-DIFF:
+    title: Detailed Description of Unified Format
+    date: 2021-01-02
+    author:
+      -
+        org: Free Software Foundation
+    target: https://www.gnu.org/software/diffutils/manual/html_node/Detailed-Unified.html
 normative:
   BLOWFISH:
     target: http://www.counterpane.com/bfsverlag.html
@@ -3114,7 +3121,7 @@ Current message digest names are described with the algorithm IDs in {{hash-algo
 An implementation SHOULD add a line break after the cleartext, but MAY omit it if the cleartext ends with a line break.
 This is for visual clarity.
 
-## Dash-Escaped Text
+## Dash-Escaped Text {#dash-escaping}
 
 The cleartext content of the message must also be dash-escaped.
 
@@ -3129,6 +3136,20 @@ The line ending (that is, the \<CR>\<LF>) before the `-----BEGIN PGP SIGNATURE--
 When reversing dash-escaping, an implementation MUST strip the string `- ` if it occurs at the beginning of a line, and SHOULD warn on `-` and any character other than a space at the beginning of a line.
 
 Also, any trailing whitespace --- spaces (0x20) and tabs (0x09) --- at the end of any line is removed when the cleartext signature is generated.
+
+## Incompatibilities with Cleartext Signature Framework
+
+Since dash-escaping ({{dash-escaping}}) also involves trimming trailing whitespace on every line, the Cleartext Signature Framework will fail to safely round-trip any textual stream that may include semantically meaningful whitespace.
+
+For example, the Unified Diff format {{UNIFIED-DIFF}} contains semantically meaningful whitespace: an empty line of context will consist of a line with a single <u> </u> character, and any line that has trailing whitespace added or removed will represent such a change with semantically meaningful whitespace.
+
+An implementation that knows it is working with such a textual stream SHOULD NOT use the Cleartext Signature Framework.
+Safe alternatives for a semantically meaningful OpenPGP signature over such a file format are:
+
+- A Signed Message or One-Pass Signed Message object, as described in {{openpgp-messages}}.
+- A Detached Signature as described in {{detached-signatures}}.
+
+Either of these alternatives may be ASCII-armored (see {{forming-ascii-armor}}) if they need to be transmitted across a text-only (or 7-bit clean) channel.
 
 # Regular Expressions {#regular-expressions}
 
