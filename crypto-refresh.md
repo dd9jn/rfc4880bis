@@ -3378,7 +3378,7 @@ other than not producing or consuming these new code points.
 Code point proposals that fail to meet these criteria should instead be proposed as work items for the OpenPGP working group or its successor.
 
 
-## New String-to-Key Specifier Types
+## String-to-Key Specifier Types
 
 OpenPGP S2K specifiers contain a mechanism for new algorithms to turn a string into a key.
 This specification creates a registry of S2K specifier types.
@@ -3388,7 +3388,7 @@ Adding a new S2K specifier MUST be done through the SPECIFICATION REQUIRED metho
 
 IANA should add a column "Generate?" to the S2K type registry, with initial values taken from {{s2k-types}}.
 
-## New Packets
+## Packet Types
 
 Major new features of OpenPGP are defined through new packet types.
 This specification creates a registry of packet types.
@@ -3412,7 +3412,7 @@ The registry includes the Image Attribute subpacket type, the name of the Image 
 The initial values for this registry can be found in {{uat-image}}.
 Adding a new Image Attribute subpacket type MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
-### New Signature Subpackets
+### Signature Subpackets
 
 OpenPGP signatures contain a mechanism for signed (or unsigned) data to be added to them for a variety of purposes in the Signature subpackets as discussed in {{signature-subpacket}}.
 This specification creates a registry of Signature subpacket types.
@@ -3472,7 +3472,7 @@ Adding a new feature-implementation flag MUST be done through the SPECIFICATION 
 
 Also see {{meta-considerations-for-expansion}} for more information about when feature flags are needed.
 
-### New Packet Versions
+### Packet Versions
 
 The core OpenPGP packets all have version numbers, and can be revised by introducing a new version of an existing packet.
 This specification creates a registry of packet types.
@@ -3480,7 +3480,7 @@ The registry includes the packet type, the number of the version, and a referenc
 The initial values for this registry can be found in {{packet-types}}.
 Adding a new packet version MUST be done through the RFC REQUIRED method, as described in {{RFC8126}}.
 
-## New Algorithms
+## Algorithms
 
 {{constants}} lists the core algorithms that OpenPGP uses.
 Adding in a new algorithm is usually simple.
