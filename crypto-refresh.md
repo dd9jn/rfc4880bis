@@ -3388,7 +3388,7 @@ Adding a new S2K specifier MUST be done through the SPECIFICATION REQUIRED metho
 
 IANA should add a column "Generate?" to the S2K type registry, with initial values taken from {{s2k-types}}.
 
-## Packet Types {#iana-packet-types}
+## Packet {#iana-packet-types}
 
 Major new features of OpenPGP are defined through new packet types.
 This specification creates a registry of packet types.
@@ -3396,7 +3396,7 @@ The registry includes the packet type, the name of the packet, and a reference t
 The initial values for this registry can be found in {{packet-tags}}.
 Adding a new packet type MUST be done through the RFC REQUIRED method, as described in {{RFC8126}}.
 
-### User Attribute Types
+### User Attribute Subpackets
 
 The User Attribute packet permits an extensible mechanism for other types of certificate identification.
 This specification creates a registry of User Attribute types.
@@ -3404,7 +3404,7 @@ The registry includes the User Attribute type, the name of the User Attribute, a
 The initial values for this registry can be found in {{user-attribute-packet}}.
 Adding a new User Attribute type MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
-#### Image Format Subpacket Types
+#### Image Attribute Formats
 
 Within User Attribute packets, there is an extensible mechanism for other types of image-based User Attributes.
 This specification creates a registry of Image Attribute subpacket types.
