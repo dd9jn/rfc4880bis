@@ -734,7 +734,7 @@ A version 6 secret key that is cryptographically protected is stored with an add
 {: title="Version 6 Secret Key protection details" #v6-secret-key-protection-details}
 First octet | Encryption parameter fields | Encryption
 ---|--------------------------------------------------|---|---
-0 | - | cleartext secrets \|\| check(secrets)
+0 | - | cleartext secrets
 253 | params-length, cipher-algo, AEAD-mode, S2K-specifier-length, S2K-specifier, nonce | AEAD(S2K(password), secrets, pubkey)
 254 | params-length, cipher-algo, S2K-specifier-length, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets))
 
