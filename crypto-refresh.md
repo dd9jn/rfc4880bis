@@ -1,5 +1,5 @@
 ---
-title: OpenPGP Message Format
+title: OpenPGP
 docname: draft-ietf-openpgp-crypto-refresh-08
 category: std
 obsoletes: 4880, 5581, 6637
