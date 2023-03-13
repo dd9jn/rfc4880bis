@@ -1026,6 +1026,8 @@ Note that when an implementation forms several PKESKs with one session key, form
 The value "m" in the above formula is the plaintext value described above, with a two-octet checksum appended (equal to the sum of the preceding octets, modulo 65536), and then encoded in the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC8017}} (see also {{pkcs-encoding}}).
 Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
 
+An implementation MUST NOT generate ElGamal v6 PKESKs.
+
 ### Algorithm-Specific Fields for ECDH encryption {#pkesk-ecdh}
 
 - MPI of an EC point representing an ephemeral public key, in the point format associated with the curve as specified in {{ec-curves}}.
