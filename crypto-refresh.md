@@ -4682,7 +4682,7 @@ Here is a Transferable Public Key consisting of:
 
 - A v6 Ed25519 Public-Key packet
 - A v6 direct key self-signature
-- A v6 Curve25519 Public-Subkey packet
+- A v6 X25519 Public-Subkey packet
 - A v6 subkey binding signature
 
 The primary key has the fingerprint `CB186C4F0609A697E4D52DFA6C722B0C1F1E27C18A56708F6525EC27BAD9ACC9`.
@@ -4837,7 +4837,7 @@ Here is a Transferable Secret Key consisting of:
 
 - A v6 Ed25519 Secret-Key packet
 - A v6 direct key self-signature
-- A v6 Curve25519 Secret-Subkey packet
+- A v6 X25519 Secret-Subkey packet
 - A v6 subkey binding signature
 
 {: sourcecode-name="v6-minimal-secret.key"}
