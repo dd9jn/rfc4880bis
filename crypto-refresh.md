@@ -2248,7 +2248,7 @@ The packet contains:
   If the string-to-key usage octet is 255 or another nonzero value (that is, a symmetric-key encryption algorithm identifier), a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536) is appended to plaintext and encrypted with it.
   (This is deprecated and SHOULD NOT be used, see below.)
 
-- If the string-to-key usage octet is zero, then a two-octet checksum of the algorithm-specific portion (sum of all octets, mod 65536).
+- Only for a version 3 or 4 packet where the string-to-key usage octet is zero, a two-octet checksum of the algorithm-specific portion (sum of all octets, mod 65536).
 
 The details about storing algorithm-specific secrets above are summarized in {{secret-key-encryption}}.
 
