@@ -4725,7 +4725,7 @@ The same data, broken out by octet and semantics, is:
 0x0052        0a                 hash ago: SHA2-512
 0x0053           00 00 00 42     hashed subpackets length
 0x0057                       05  subpkt length
-0x0058  82                       subpkt type: Signature Creation Time
+0x0058  82                       critical subpkt: Sig Creation Time
 0x0059     63 87 7f e3           Signature Creation Time
 0x005d                 03        subpkt length
 0x005e                    0b     subpkt type: Pref. v1 SEIPD Ciphers
@@ -4739,7 +4739,7 @@ The same data, broken out by octet and semantics, is:
 0x0068  16                       subpkt type: Pref. Compression
 0x0069     00                    Compression: [none]
 0x006a        02                 subpkt length
-0x006b           9b              subpkt type: Key Flags
+0x006b           9b              critical subpkt: Key Flags
 0x006c              03           Key Flags: {certify, sign}
 0x006d                 02        subpkt length
 0x006e                    1e     subpkt type: Features
@@ -4795,11 +4795,11 @@ The same data, broken out by octet and semantics, is:
 0x0058  e3
 0x0059     19                    key algo: X25519
 0x005a        00 00 00 20        key length
-0x005e                    40 fc  X25519 public key
-0x0060  f7 fc 29 aa ce 01 48 f4
-0x0068  3e ad bf 3a 0f 96 91 d0
-0x0070  a3 22 a2 43 62 56 27 80
-0x0078  ed 92 5d a8 4e 71
+0x005e                    86 93  X25519 public key
+0x0060  24 83 67 f9 e5 01 5d b9
+0x0068  22 f8 f4 80 95 dd a7 84
+0x0070  98 7f 2d 59 85 b1 2f ba
+0x0078  d1 6c af 5e 44 35
        [ trailer begins ]
 0x007e                    06     sig version
 0x007f                       18  sig type: Subkey Binding sig
@@ -4807,10 +4807,10 @@ The same data, broken out by octet and semantics, is:
 0x0081     0a                    hash algo: SHA2-512
 0x0082        00 00 00 2c        hashed subpackets length
 0x0086                    05     subpkt length
-0x0087                       82  subpkt type Signature Creation Time
+0x0087                       82  critical subpkt: Sig Creation Time
 0x0088  63 87 7f e3              Signature Creation Time
 0x008c              02           subpkt length
-0x008d                 9b        subpkt type: Key Flags
+0x008d                 9b        critical subpkt: Key Flags
 0x008e                    0c     Key Flags: {EncComms, EncStorage}
 0x008f                       22  subpkt length
 0x0090  21                       subpkt type: Issuer Fingerprint
