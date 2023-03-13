@@ -3388,7 +3388,7 @@ Adding a new S2K specifier MUST be done through the SPECIFICATION REQUIRED metho
 
 IANA should add a column "Generate?" to the S2K type registry, with initial values taken from {{s2k-types}}.
 
-## Packet Types
+## Packet Types {#iana-packet-types}
 
 Major new features of OpenPGP are defined through new packet types.
 This specification creates a registry of packet types.
