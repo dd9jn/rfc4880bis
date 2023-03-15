@@ -413,7 +413,7 @@ This document obsoletes: RFC 4880 (OpenPGP), RFC 5581 (Camellia in OpenPGP) and 
 
 ## Terms
 
-- OpenPGP - This is a term for security software that uses PGP 5 as a basis, formalized in this document.
+- OpenPGP - This is a term for the IETF specification of PGP which originates with RFC 2440 (OpenPGP Message Format) which was based on PGP 5, and which has since been maintained by the IETF, of which this document is the latest specification (at the time of writing).
 
 - PGP - Pretty Good Privacy.
   PGP is a family of software systems developed by Philip R. Zimmermann from which OpenPGP is based.
