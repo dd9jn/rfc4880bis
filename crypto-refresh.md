@@ -4340,23 +4340,17 @@ If the proposal contains neither an extension to the Features system nor an expl
 
 # Security Considerations {#security-considerations}
 
-- As with any technology involving cryptography, you should check the current literature to determine if any algorithms used here have been found to be vulnerable to attack.
+- As with any technology involving cryptography, you should check the current literature to determine if any algorithms used here have been found to be vulnerable to an attack.
 
 - This specification uses Public-Key Cryptography technologies.
   It is assumed that the private key portion of a public-private key pair is controlled and secured by the proper party or parties.
 
-- The MD5 hash algorithm has been found to have weaknesses, with collisions found in a number of cases.
-  MD5 is deprecated for use in OpenPGP.
-  Implementations MUST NOT generate new signatures using MD5 as a hash function.
-  They MAY continue to consider old signatures that used MD5 as valid.
-
-- SHA2-224 and SHA2-384 require the same work as SHA2-256 and SHA2-512, respectively.
-  In general, there are few reasons to use them outside of DSS compatibility.
-  You need a situation where one needs more security than smaller hashes, but does not want to have the full 256-bit or 512-bit data length.
+- The MD5 and SHA-1 hash algorithms have been found to have weaknesses, with collisions found in a number of cases.
+  MD5 and SHA-1 are deprecated for use in OpenPGP.
 
 - Many security protocol designers think that it is a bad idea to use a single key for both privacy (encryption) and integrity (signatures).
   In fact, this was one of the motivating forces behind the v4 key format with separate signature and encryption keys.
-  If you as an implementer promote dual-use keys, you should at least be aware of this controversy.
+  Using a single key for encrypting and signing is discouraged.
 
 - The DSA algorithm will work with any hash, but is sensitive to the quality of the hash algorithm.
   Verifiers should be aware that even if the signer used a strong hash, an attacker could have modified the signature to use a weak one.
@@ -4387,7 +4381,7 @@ Asymmetric key size | Hash size | Symmetric key size
   However, the signer would be foolish to use a weak algorithm simply because the recipient requests it.
 
 - Some of the encryption algorithms mentioned in this document have been analyzed less than others.
-  For example, although CAST5 is presently considered strong, it has been analyzed less than TripleDES.
+  For example, although CAST5 is presently considered strong, it has been analyzed less than AES.
   Other algorithms may have other controversies surrounding them.
 
 - In late summer 2002, Jallad, Katz, and Schneier published an interesting attack on older versions of the OpenPGP protocol and some of its implementations {{JKS02}}.
@@ -4395,8 +4389,6 @@ Asymmetric key size | Hash size | Symmetric key size
   The attacker is thus using the user as a decryption oracle, and can often decrypt the message.
   This attack is a particular form of ciphertext malleability.
   See {{ciphertext-malleability}} for information on how to defend against such an attack using more recent versions of OpenPGP.
-
-- Some technologies mentioned here may be subject to government control in some countries.
 
 ## SHA-1 Collision Detection {#sha1cd}
 
