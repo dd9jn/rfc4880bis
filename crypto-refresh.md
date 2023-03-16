@@ -608,7 +608,7 @@ Salted S2K is exactly like Simple S2K, except that the input to the hash functio
 #### Iterated and Salted S2K {#s2k-iter-salted}
 
 This includes both a salt and an octet count.
-The salt is combined with the passphrase and the resulting value is hashed repeatedly.
+The salt is combined with the passphrase and the resulting value is repeated and then hashed.
 This further increases the amount of work an attacker must do to try dictionary attacks.
 
       Octet  0:        0x03
@@ -628,9 +628,9 @@ The total number of octets to be hashed is specified in the encoded count in the
 Note that the resulting count value is an octet count of how many octets will be hashed, not an iteration count.
 
 Initially, one or more hash contexts are set up as with the other S2K algorithms, depending on how many octets of key data are needed.
-Then the salt, followed by the passphrase data, is repeatedly hashed until the number of octets specified by the octet count has been hashed.
+Then the salt, followed by the passphrase data, is repeatedly passed to the hash function until the number of octets specified by the octet count has been hashed.
 The one exception is that if the octet count is less than the size of the salt plus passphrase, the full salt plus passphrase will be hashed even though that is greater than the octet count.
-After the hashing is done, the data is unloaded from the hash context(s) as with the other S2K algorithms.
+After the hashing is done, the key data is produced from the hash digest(s) as with the other S2K algorithms.
 
 #### Argon2 {#s2k-argon2}
 
