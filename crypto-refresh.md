@@ -413,26 +413,6 @@ This document obsoletes: RFC 4880 (OpenPGP), RFC 5581 (Camellia in OpenPGP) and 
 
 ## Terms
 
-- OpenPGP - This is a term for the IETF specification of PGP which originates with RFC 2440 (OpenPGP Message Format) which was based on PGP 5, and which has since been maintained by the IETF, of which this document is the latest specification (at the time of writing).
-
-- PGP - Pretty Good Privacy.
-  PGP is a family of software systems developed by Philip R. Zimmermann from which OpenPGP is based.
-
-- PGP 2 - This version of PGP has many variants; where necessary a more detailed version number is used here.
-  PGP 2 uses only RSA, MD5, and IDEA for its cryptographic transforms.
-  An informational RFC, RFC 1991, was written describing this version of PGP.
-
-- PGP 5 - This version of PGP is formerly known as "PGP 3" in the community.
-  It has new formats and corrects a number of problems in the PGP 2 design.
-  It is referred to here as PGP 5 because that software was the first release of the "PGP 3" code base.
-
-- GnuPG - GNU Privacy Guard, also called GPG.
-  GnuPG is an OpenPGP implementation that avoids all encumbered algorithms.
-  Consequently, early versions of GnuPG did not include RSA public keys.
-
-"PGP", "Pretty Good", and "Pretty Good Privacy" are trademarks of PGP Corporation and are used with permission.
-The term "OpenPGP" refers to the protocol described in this and related documents.
-
 {::boilerplate bcp14-tagged}
 
 The key words "PRIVATE USE", "SPECIFICATION REQUIRED", and "RFC REQUIRED" that appear in this document when used to describe namespace allocation are to be interpreted as described in {{RFC8126}}.
