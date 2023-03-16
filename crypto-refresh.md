@@ -1645,6 +1645,10 @@ Only signatures by the target key on User IDs that match the regular expression 
 The regular expression uses the same syntax as the Henry Spencer's "almost public domain" regular expression {{REGEX}} package.
 A description of the syntax is found in {{regular-expressions}}.
 
+For historical reasons, this subpacket includes a null character (octet with value zero) after the regular expression.
+When an implementation parses a regular expression subpacket, it MUST remove this octet; if it is not present, it MUST reject the subpacket (i.e. ignore the subpacket if it's non-critical and reject the signature if it's critical).
+When an implementation generates a regular expression subpacket, it MUST include the null terminator.
+
 #### Revocation Key {#revocation-key}
 
 (1 octet of class, 1 octet of public-key algorithm ID, 20 octets of v4 fingerprint)
