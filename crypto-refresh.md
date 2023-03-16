@@ -530,7 +530,7 @@ Unused bits of an MPI MUST be zero.
 
 ### Using MPIs to encode other data
 
-Note that MPIs are used in some places used to encode non-integer data, such as an elliptic curve point (see {{ec-point-wire-formats}}, or an octet string of known, fixed length (see {{ec-scalar-wire-formats}}).
+Note that MPIs are in some places used to encode non-integer data, such as an elliptic curve point (see {{ec-point-wire-formats}}, or an octet string of known, fixed length (see {{ec-scalar-wire-formats}}).
 The wire representation is the same: two octets of length in bits counted from the first non-zero bit, followed by the smallest series of octets that can represent the value while stripping off any leading zero octets.
 
 ## Key IDs
@@ -3848,7 +3848,7 @@ Refer to {{FIPS186}}, B.4.1, for the method to generate a uniformly distributed 
 ## Supported ECC Curves
 
 This document references three named prime field curves defined in {{FIPS186}} as "Curve P-256", "Curve P-384", and "Curve P-521"; and three named prime field curves defined in {{RFC5639}} as "brainpoolP256r1", "brainpoolP384r1", and "brainpoolP512r1".
-These three {{FIPS186}} curves and the three {{RFC5639}} curves can be used with ECDSA and ECDH public key algorithms.
+The three {{FIPS186}} curves and the three {{RFC5639}} curves can be used with ECDSA and ECDH public key algorithms.
 They are referenced using a sequence of octets, referred to as the curve OID.
 {{ec-curves}} describes in detail how this sequence of octets is formed.
 
@@ -4216,7 +4216,7 @@ Note further that implementations conforming to previous versions of this standa
 
 An implementation MUST NOT use a symmetric algorithm that is not in the recipient's preference list.
 When encrypting to more than one recipient, the implementation finds a suitable algorithm by taking the intersection of the preferences of the recipients.
-Note that the MUST-implement algorithm, AES-128, ensures that the intersection is not null.
+Note that the MUST-implement algorithm, AES-128, ensures that the intersection is non-empty.
 The implementation may use any mechanism to pick an algorithm in the intersection.
 
 If an implementation can decrypt a message that a keyholder doesn't have in their preferences, the implementation SHOULD decrypt the message anyway, but MUST warn the keyholder that the protocol has been violated.
