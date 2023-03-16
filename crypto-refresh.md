@@ -565,15 +565,15 @@ There are four types of S2K specifiers currently specified, and some reserved va
 {: title="S2K type registry"}
 ID | S2K Type | S2K field size (octets) | Reference | Generate?
 ---:|------------------|-----|-------|--
-  0 | Simple S2K | 2 | {{s2k-simple}} | N
+  0 | Simple S2K | 2 | {{s2k-simple}} | No
   1 | Salted S2K | 10 | {{s2k-salted}} | Only when string is high entropy
-  2 | Reserved value | - | - | N
-  3 | Iterated and Salted S2K | 11 | {{s2k-iter-salted}} | Y
-  4 | Argon2 | 20 | {{s2k-argon2}} | Y
+  2 | Reserved value | - | - | No
+  3 | Iterated and Salted S2K | 11 | {{s2k-iter-salted}} | Yes
+  4 | Argon2 | 20 | {{s2k-argon2}} | Yes
 100 to 110 | Private/Experimental S2K | - | - | As appropriate
 
 These are described in the subsections below.
-If the "Generate?" column is not "Y", the S2K entry is used only for reading in backwards compatibility mode and should not be used to generate new output.
+If the "Generate?" column is not "Yes", the S2K entry is used only for reading in backwards compatibility mode and should not be used to generate new output.
 
 #### Simple S2K {#s2k-simple}
 
@@ -697,7 +697,7 @@ Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password
 254 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Yes
 255 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| check(secrets)) | No
 
-If the "Generate?" column is not "Y", the Secret Key protection details entry is used only for reading in backwards compatibility mode and MUST NOT be used to generate new output.
+If the "Generate?" column is not "Yes", the Secret Key protection details entry is used only for reading in backwards compatibility mode and MUST NOT be used to generate new output.
 
 Each row with "Generate?" marked as "No" is described for backward compatibility, and MUST NOT be generated.
 
