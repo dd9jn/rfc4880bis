@@ -425,8 +425,8 @@ In addition, OpenPGP provides functionality for encoding and transferring keys a
 
 ## Confidentiality via Encryption
 
-OpenPGP combines symmetric-key encryption and public-key encryption to provide confidentiality.
-When made confidential, first the object is encrypted using a symmetric encryption algorithm.
+OpenPGP combines symmetric-key encryption and (optionally) public-key encryption to provide confidentiality.
+When using public keys, first the object is encrypted using a symmetric encryption algorithm.
 Each symmetric key is used only once, for a single object.
 A new "session key" is generated as a random number for each object (sometimes referred to as a session).
 Since it is used only once, the session key is bound to the message and transmitted with it.
@@ -435,24 +435,24 @@ The sequence is as follows:
 
 1. The sender creates a message.
 
-2. The sending OpenPGP generates a random number to be used as a session key for this message only.
+2. The sending OpenPGP implementation generates a random session key for this message only.
 
 3. The session key is encrypted using each recipient's public key.
    These "encrypted session keys" start the message.
 
-4. The sending OpenPGP encrypts the message using the session key, which forms the remainder of the message.
+4. The sending OpenPGP implementation encrypts the message using the session key, which forms the remainder of the message.
 
-5. The receiving OpenPGP decrypts the session key using the recipient's private key.
+5. The receiving OpenPGP implementation decrypts the session key using the recipient's private key.
 
-6. The receiving OpenPGP decrypts the message using the session key.
+6. The receiving OpenPGP implementation decrypts the message using the session key.
    If the message was compressed, it will be decompressed.
 
-With symmetric-key encryption, an object may be encrypted with a symmetric key derived from a passphrase (or other shared secret), or a two-stage mechanism similar to the public-key method described above in which a session key is itself encrypted with a symmetric algorithm keyed from a shared secret.
+When using symmetric-key encryption, a similar process as described above is used, but the session key is encrypted with a symmetric algorithm derived from a shared secret.
 
 Both digital signature and confidentiality services may be applied to the same message.
 First, a signature is generated for the message and attached to the message.
 Then the message plus signature is encrypted using a symmetric session key.
-Finally, the session key is encrypted using public-key encryption and prefixed to the encrypted block.
+Finally, the session key is encrypted and prefixed to the message.
 
 ## Authentication via Digital Signature
 
