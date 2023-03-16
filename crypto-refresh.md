@@ -667,7 +667,8 @@ As an example, with the first recommended option (t=1, p=4, m=2\*\*21), the full
 
 Simple S2K and Salted S2K specifiers can be brute-forced when used with a low-entropy string, such as those typically provided by users.
 In addition, the usage of Simple S2K can lead to key and IV reuse (see {{skesk}}).
-Therefore, when generating S2K specifiers, implementations MUST NOT use Simple S2K, and SHOULD NOT use Salted S2K unless the implementation knows that the string is high-entropy (for example, it generated the string itself using a known-good source of randomness).
+Therefore, when generating an S2K specifier, an implementation MUST NOT use Simple S2K.
+Furthermore, an implementation SHOULD NOT generate a Salted S2K unless unless the implementation knows that the input string is high-entropy (for example, it generated the string itself using a known-good source of randomness).
 
 It is RECOMMENDED that implementations use Argon2.
 If Argon2 is not available, Iterated and Salted S2K MAY be used if care is taken to use a high octet count and a strong passphrase.
