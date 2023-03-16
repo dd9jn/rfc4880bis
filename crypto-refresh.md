@@ -477,14 +477,14 @@ The sequence is as follows:
 If an implementation does not implement compression, its authors should be aware that most OpenPGP messages in the world are compressed.
 Thus, it may even be wise for a space-constrained implementation to implement decompression, but not compression.
 
-## Conversion to Radix-64
+## Conversion to Base64
 
 OpenPGP's underlying native representation for encrypted messages, signature certificates, and keys is a stream of arbitrary octets.
 Some systems only permit the use of blocks consisting of seven-bit, printable text.
 For transporting OpenPGP's native raw binary octets through channels that are not safe to raw binary data, a printable encoding of these binary octets is needed.
-OpenPGP provides the service of converting the raw 8-bit binary octet stream to a stream of printable ASCII characters, called Radix-64 encoding or ASCII Armor.
+OpenPGP allows converting the raw 8-bit binary octet stream to a stream of printable ASCII characters using base64 encoding, in a format called ASCII Armor (see {{base64}}).
 
-Implementations SHOULD provide Radix-64 conversions.
+Implementations SHOULD provide base64 conversions.
 
 ## Signature-Only Applications
 
@@ -2944,23 +2944,23 @@ An implementation MUST be able to process padding packets anywhere else in an Op
 
 Policy about how large to make such a packet to defend against traffic analysis is beyond the scope of this document.
 
-# Radix-64 Conversions {#radix64}
+# Base64 Conversions {#base64}
 
 As stated in the introduction, OpenPGP's underlying native representation for objects is a stream of arbitrary octets, and some systems desire these objects to be immune to damage caused by character set translation, data conversions, etc.
 
 In principle, any printable encoding scheme that met the requirements of the unsafe channel would suffice, since it would not change the underlying binary bit streams of the native OpenPGP data structures.
 The OpenPGP standard specifies one such printable encoding scheme to ensure interoperability.
 
-OpenPGP's Radix-64 encoding is composed of two parts: a base64 encoding of the binary data and an optional checksum.
+The encoding is composed of two parts: a base64 encoding of the binary data and an optional checksum.
 The base64 encoding used is described in {{Section 4 of RFC4648}}, and it is wrapped into lines of no more than 76 characters each.
 
 When decoding base64, an OpenPGP implementation must ignore all white space.
 
 ## Optional checksum {#optional-crc24}
 
-The optional checksum is a 24-bit Cyclic Redundancy Check (CRC) converted to four characters of radix-64 encoding by the same MIME base64 transformation, preceded by an equal sign (=).
+The optional checksum is a 24-bit Cyclic Redundancy Check (CRC) converted to four characters of base64 encoding by the same MIME base64 transformation, preceded by an equal sign (=).
 The CRC is computed by using the generator 0x864CFB and an initialization of 0xB704CE.
-The accumulation is done on the data before it is converted to radix-64, rather than on the converted data.
+The accumulation is done on the data before it is converted to base64, rather than on the converted data.
 A sample implementation of this algorithm is in {{sample-crc24}}.
 
 If present, the checksum with its leading equal sign MUST appear on the next line after the base64 encoded data.
@@ -2968,7 +2968,7 @@ If present, the checksum with its leading equal sign MUST appear on the next lin
 An implementation MUST NOT reject an OpenPGP object when the CRC24 footer is present, missing, malformed, or disagrees with the computed CRC24 sum.
 When forming ASCII Armor, the CRC24 footer SHOULD NOT be generated, unless interoperability with implementations that require the CRC24 footer to be present is a concern.
 
-The CRC24 footer MUST NOT be generated if it can be determined by context or by the OpenPGP object being encoded that the consuming implementation accepts Radix-64 encoded blocks without CRC24 footer.
+The CRC24 footer MUST NOT be generated if it can be determined by context or by the OpenPGP object being encoded that the consuming implementation accepts base64 encoded blocks without CRC24 footer.
 Notably:
 
 - An ASCII-armored Encrypted Message packet sequence that ends in an v2 SEIPD packet MUST NOT contain a CRC24 footer.
@@ -3013,7 +3013,7 @@ crc24 crc_octets(unsigned char *octets, size_t len)
 
 ## Forming ASCII Armor
 
-When OpenPGP encodes data into ASCII Armor, it puts specific headers around the Radix-64 encoded data, so OpenPGP can reconstruct the data later.
+When OpenPGP encodes data into ASCII Armor, it puts specific headers around the base64 encoded data, so OpenPGP can reconstruct the data later.
 An OpenPGP implementation MAY use ASCII armor to protect raw binary data.
 OpenPGP informs the user what kind of data is encoded in the ASCII armor through the use of the headers.
 
@@ -3062,7 +3062,7 @@ An OpenPGP implementation may consider improperly formatted Armor Headers to be 
 Unknown keys should be silently ignored, and an OpenPGP implementation SHOULD continue to process the message.
 
 Note that some transport methods are sensitive to line length.
-While there is a limit of 76 characters for the Radix-64 data ({{radix64}}), there is no limit to the length of Armor Headers.
+While there is a limit of 76 characters for the base64 data ({{base64}}), there is no limit to the length of Armor Headers.
 Care should be taken that the Armor Headers are short enough to survive transport.
 One way to do this is to repeat an Armor Header Key multiple times with different values for each so that no one line is overly long.
 
@@ -3127,7 +3127,7 @@ If more than one message digest is used in the signatures, each digest algorithm
 To that end, the "Hash" Armor Header contains a comma-delimited list of used message digests, and the "Hash" Armor Header can be given multiple times.
 
 If the "SaltedHash" Armor Header is given, the specified message digest algorithm and salt are used for a signature.
-The message digest name is followed by a colon (`:`) followed by a random value encoded in Radix-64 without padding, which decoded length depends on the hash as specified in {{hash-registry}}.
+The message digest name is followed by a colon (`:`) followed by a random value encoded in base64 without padding, which decoded length depends on the hash as specified in {{hash-registry}}.
 Note: The "SaltedHash" Armor Header contains digest algorithm and salt for a single signature; a second signature requires a second "SaltedHash" Armor Header.
 
 If neither a "Hash" nor a "SaltedHash" Armor Header is given, or the message digest algorithms (and salts) used in the signatures do not match the information in the headers, the signature MUST be considered invalid.
