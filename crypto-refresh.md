@@ -456,20 +456,20 @@ Finally, the session key is encrypted and prefixed to the message.
 
 ## Authentication via Digital Signature
 
-The digital signature uses a hash code or message digest algorithm, and a public-key signature algorithm.
+The digital signature uses a cryptographic hash function, and a public-key signature algorithm.
 The sequence is as follows:
 
 1. The sender creates a message.
 
-2. The sending software generates a hash code of the message.
+2. The sending software generates a hash digest of the message.
 
-3. The sending software generates a signature from the hash code using the sender's private key.
+3. The sending software generates a signature from the hash digest using the sender's private key.
 
 4. The binary signature is attached to the message.
 
 5. The receiving software keeps a copy of the message signature.
 
-6. The receiving software generates a new hash code for the received message and verifies it using the message's signature.
+6. The receiving software generates a new hash digest for the received message and verifies it using the message's signature.
    If the verification is successful, the message is accepted as authentic.
 
 ## Compression
