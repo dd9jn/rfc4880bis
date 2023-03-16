@@ -2562,14 +2562,14 @@ The body of this packet consists of:
 
 - Compressed data, which makes up the remainder of the packet.
 
-A Compressed Data Packet's body contains a block that compresses some set of packets.
+A Compressed Data Packet's body contains data that is a compression of a series of OpenPGP packets.
 See {{packet-composition}} for details on how messages are formed.
 
-ZIP-compressed packets are compressed with raw {{RFC1951}} DEFLATE blocks.
+A ZIP-compressed series of packets is compressed into raw {{RFC1951}} DEFLATE blocks.
 
-ZLIB-compressed packets are compressed with {{RFC1950}} ZLIB-style blocks.
+A ZLIB-compressed series of packets is compressed with raw {{RFC1950}} ZLIB-style blocks.
 
-BZip2-compressed packets are compressed using the BZip2 {{BZ2}} algorithm.
+A BZip2-compressed series of packets is compressed using the BZip2 {{BZ2}} algorithm.
 
 An implementation that generates a Compressed Data packet MUST use the non-legacy format for packet framing (see {{openpgp-packet-format}}).
 It MUST NOT generate a Compressed Data packet with Legacy format ({{legacy-packet-format}})
