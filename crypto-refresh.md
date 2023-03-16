@@ -563,14 +563,14 @@ They are used in two places, currently: to encrypt the secret part of private ke
 There are four types of S2K specifiers currently specified, and some reserved values:
 
 {: title="S2K type registry"}
-ID | S2K Type | Generate? | S2K field size (octets) | Reference
+ID | S2K Type | S2K field size (octets) | Reference | Generate?
 ---:|------------------|-----|-------|--
-  0 | Simple S2K | N | 2 | {{s2k-simple}}
-  1 | Salted S2K | Only when string is high entropy | 10 | {{s2k-salted}}
-  2 | Reserved value | N
-  3 | Iterated and Salted S2K | Y | 11 | {{s2k-iter-salted}}
-  4 | Argon2 | Y | 20 | {{s2k-argon2}}
-100 to 110 | Private/Experimental S2K | As appropriate
+  0 | Simple S2K | 2 | {{s2k-simple}} | N
+  1 | Salted S2K | 10 | {{s2k-salted}} | Only when string is high entropy
+  2 | Reserved value | - | - | N
+  3 | Iterated and Salted S2K | 11 | {{s2k-iter-salted}} | Y
+  4 | Argon2 | 20 | {{s2k-argon2}} | Y
+100 to 110 | Private/Experimental S2K | - | - | As appropriate
 
 These are described in the subsections below.
 If the "Generate?" column is not "Y", the S2K entry is used only for reading in backwards compatibility mode and should not be used to generate new output.
