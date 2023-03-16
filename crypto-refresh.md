@@ -528,9 +528,6 @@ When parsing an MPI in a v6 Key, Signature, or Public-Key Encrypted Session Key 
 
 Unused bits of an MPI MUST be zero.
 
-Also note that when an MPI is encrypted, the length refers to the plaintext MPI.
-It may be ill-formed in its ciphertext.
-
 ### Using MPIs to encode other data
 
 Note that MPIs are used in some places used to encode non-integer data, such as an elliptic curve point (see {{ec-point-wire-formats}}, or an octet string of known, fixed length (see {{ec-scalar-wire-formats}}).
