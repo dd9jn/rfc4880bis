@@ -556,7 +556,7 @@ It is beyond the scope of this standard to discuss the details of keyrings or ot
 ## String-to-Key (S2K) Specifiers
 
 A string-to-key (S2K) specifier is used to convert a passphrase string into a symmetric-key encryption/decryption key.
-They are used in two places, currently: to encrypt the secret part of private keys in the private keyring, and to convert passphrases to encryption keys for symmetrically encrypted messages.
+They are used in two places, currently: to encrypt the secret part of private keys, and to convert passphrases to encryption keys for symmetrically encrypted messages.
 
 ### String-to-Key (S2K) Specifier Types {#s2k-types}
 
