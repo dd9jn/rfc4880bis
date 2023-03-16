@@ -1345,7 +1345,8 @@ When verifying a v6 signature, an implementation MUST reject the signature if th
 
 There are two fields consisting of Signature subpackets.
 The first field is hashed with the rest of the signature data, while the second is unhashed.
-The second set of subpackets is not cryptographically protected by the signature and should include only advisory information.
+The second set of subpackets (the "unhashed section") is not cryptographically protected by the signature and should include only advisory information.
+See {{subpacket-section-guidance}} for more information.
 
 The differences between a v4 and v6 signature are two-fold: first, a v6 signature increases the width of the fields that indicate the size of the hashed and unhashed subpackets, making it possible to include significantly more data in subpackets.
 Second, the hash is salted with random data (see {{signature-salt-rationale}}).
@@ -1446,12 +1447,13 @@ Note that a key may have more than one User ID, and thus may have more than one 
 
 A subpacket may be found either in the hashed or unhashed subpacket sections of a signature.
 If a subpacket is not hashed, then the information in it cannot be considered definitive because it is not part of the signature proper.
+See {{subpacket-section-guidance}} for more discussion about hashed and unhashed subpackets.
 
 #### Notes on Subpackets
 
 It is certainly possible for a signature to contain conflicting information in subpackets.
 For example, a signature may contain multiple copies of a preference or multiple expiration times.
-In most cases, an implementation SHOULD use the last subpacket in the signature, but MAY use any conflict resolution scheme that makes more sense.
+In most cases, an implementation SHOULD use the last subpacket in the hashed section of the signature, but MAY use any conflict resolution scheme that makes more sense.
 Please note that we are intentionally leaving conflict resolution to the implementer; most conflicts are simply syntax errors, and the wishy-washy language here allows a receiver to be generous in what they accept, while putting pressure on a creator to be stingy in what they generate.
 
 Some apparent conflicts may actually make sense --- for example, suppose a keyholder has a v3 key and a v4 key that share the same RSA key material.
@@ -4583,6 +4585,19 @@ In both cases, an implementation can adjust the size of the compound structure b
 
 When an attacker obtains a signature for some text, e.g. by receiving a signed message, they may be able to use that signature maliciously by sending a message purporting to come from the original sender, with the same body and signature, to a different recipient.
 To prevent this, implementations SHOULD implement the Intended Recipient Fingerprint signature subpacket ({{intended-recipient-fingerprint}}).
+
+## Hashed vs. Unhashed Subpackets {#subpacket-section-guidance}
+
+Each OpenPGP signature can have subpackets in two different sections.
+The first set of subpackets (the "hashed section") is covered by the signature itself.
+The second set has no cryptographic protections, and is used for advisory material only, including locally-stored annotations about the signature.
+
+For example, consider an implementation working with a specific signature that happens to know that the signature was made by a certain key, even though the signature contains no Issuer Fingerprint subpacket ({{issuer-fingerprint-subpacket}}) in the hashed section.
+That implementation MAY synthesize an Issuer Fingerprint subpacket and store it in the unhashed section so that in the future it will be able to recall which key issued the signature.
+
+Some subpackets are only useful when they are in the hashed section, and implementations SHOULD ignore them when they are found with unknown provenance in the unhashed section.
+For example, a Preferred AEAD Ciphersuites subpacket ({{preferred-v2-seipd}}) in a direct-key self-signature indicates the preferences of the key holder when encrypting SEIPD v2 data to the key.
+An implementation that observes such a subpacket found in the unhashed section would open itself to an attack where the certificate is tampered with to encourage the use of a specific cipher or mode of operation.
 
 # Implementation Nits
 
