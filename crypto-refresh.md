@@ -560,7 +560,7 @@ They are used in two places, currently: to encrypt the secret part of private ke
 
 ### String-to-Key (S2K) Specifier Types {#s2k-types}
 
-There are four types of S2K specifiers currently supported, and some reserved values:
+There are four types of S2K specifiers currently specified, and some reserved values:
 
 {: title="S2K type registry"}
 ID | S2K Type | Generate? | S2K field size (octets) | Reference
@@ -3845,7 +3845,7 @@ A thorough introduction to ECC can be found in {{KOBLITZ}}.
 None of the ECC methods described in this document are allowed with deprecated v3 keys.
 Refer to {{FIPS186}}, B.4.1, for the method to generate a uniformly distributed ECC private key.
 
-## Supported ECC Curves
+## ECC Curves
 
 This document references three named prime field curves defined in {{FIPS186}} as "Curve P-256", "Curve P-384", and "Curve P-521"; and three named prime field curves defined in {{RFC5639}} as "brainpoolP256r1", "brainpoolP384r1", and "brainpoolP512r1".
 The three {{FIPS186}} curves and the three {{RFC5639}} curves can be used with ECDSA and ECDH public key algorithms.
