@@ -419,17 +419,9 @@ The key words "PRIVATE USE", "SPECIFICATION REQUIRED", and "RFC REQUIRED" that a
 
 # General functions
 
-OpenPGP provides data integrity services for messages and data files by using these core technologies:
-
-- digital signatures
-
-- encryption
-
-- compression
-
-- Radix-64 conversion
-
-In addition, OpenPGP provides key management and certificate services, but many of these are beyond the scope of this document.
+OpenPGP provides data confidentiality and integrity for messages and data files by using public-key and/or symmetric encryption, and digital signatures.
+It provides formats for encoding and transferring encrypted and/or signed messages.
+In addition, OpenPGP provides functionality for encoding and transferring keys and certificates, though key storage and management is beyond the scope of this document.
 
 ## Confidentiality via Encryption
 
