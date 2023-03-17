@@ -2093,7 +2093,7 @@ The body of this packet consists of:
 
 - A one-octet number describing the public-key algorithm used.
 
-- Only for v6 signatures, a variable-length field containing:
+- Only for v6 packets, a variable-length field containing:
 
   - A one-octet salt size. The value MUST match the value defined for the hash algorithm as specified in table {{hash-registry}}.
 
