@@ -986,7 +986,7 @@ The v3 PKESK packet consists of:
 
 When creating a v3 PKESK packet, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container.
 
-The resulting octet string (algorithm identifier and session key) is encrypted according to the public-key algorithm used, as described below.
+The resulting octet string (algorithm identifier and session key) is passed to the public-key algorithm used, as described below.
 
 ### v6 PKESK {#v6-pkesk}
 
