@@ -1042,9 +1042,9 @@ An implementation MUST NOT generate ElGamal v6 PKESKs.
 
 See section 6.1 of {{RFC7748}} for more details on the computation of the ephemeral public key and the shared secret.
 The shared secret is passed to HKDF (see {{RFC5869}}) using SHA256, and the UTF-8-encoded string "OpenPGP X25519" as the info parameter.
-The resulting key is used to encrypt the session key with AES-128 keywrap, defined in {{RFC3394}}.
-If the input contains a symmetric algorithm identifier (in the case of v3 PKESK), it is not encrypted, but prepended in plaintext to the ciphertext of the session key, so that the input to AES keywrap is a multiple of 8 octets.
-Note that unlike ECDH, no checksum or padding are appended to the session key before keywrapping.
+The resulting key is used to encrypt the session key with AES-128 key wrap, defined in {{RFC3394}}.
+If the input contains a symmetric algorithm identifier (in the case of v3 PKESK), it is not encrypted, but prepended in plaintext to the ciphertext of the session key, so that the input to AES key wrap is a multiple of 8 octets.
+Note that unlike ECDH, no checksum or padding are appended to the session key before key wrapping.
 Additionally, unlike ECDH, the derived key is not bound to the recipient key.
 Instead, the Intended Recipient Fingerprint subpacket SHOULD be used when creating a signed and encrypted message (see {{intended-recipient-fingerprint}}).
 
@@ -1056,9 +1056,9 @@ Instead, the Intended Recipient Fingerprint subpacket SHOULD be used when creati
 
 See section 6.2 of {{RFC7748}} for more details on the computation of the ephemeral public key and the shared secret.
 The shared secret is passed to HKDF (see {{RFC5869}}) using SHA512, and the UTF-8-encoded string "OpenPGP X448" as the info parameter.
-The resulting key is used to encrypt the session key with AES-256 keywrap, defined in {{RFC3394}}.
-If the input contains a symmetric algorithm identifier (in the case of v3 PKESK), it is not encrypted, but prepended in plaintext to the ciphertext of the session key, so that the input to AES keywrap is a multiple of 8 octets.
-Note that unlike ECDH, no checksum or padding are appended to the session key before keywrapping.
+The resulting key is used to encrypt the session key with AES-256 key wrap, defined in {{RFC3394}}.
+If the input contains a symmetric algorithm identifier (in the case of v3 PKESK), it is not encrypted, but prepended in plaintext to the ciphertext of the session key, so that the input to AES key wrap is a multiple of 8 octets.
+Note that unlike ECDH, no checksum or padding are appended to the session key before key wrapping.
 Additionally, unlike ECDH, the derived key is not bound to the recipient key.
 Instead, the Intended Recipient Fingerprint subpacket SHOULD be used when creating a signed and encrypted message (see {{intended-recipient-fingerprint}}).
 
