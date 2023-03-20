@@ -435,24 +435,25 @@ The sequence is as follows:
 
 1. The sender creates a message.
 
-2. The sending OpenPGP implementation generates a random session key for this message only.
+2. The sending OpenPGP implementation generates a random session key for this message.
 
 3. The session key is encrypted using each recipient's public key.
    These "encrypted session keys" start the message.
 
-4. The sending OpenPGP implementation encrypts the message using the session key, which forms the remainder of the message.
+4. The sending OpenPGP implementation encrypts the message using a message key derived from the session key.
+   The encrypted message forms the remainder of the OpenPGP message.
 
 5. The receiving OpenPGP implementation decrypts the session key using the recipient's private key.
 
-6. The receiving OpenPGP implementation decrypts the message using the session key.
+6. The receiving OpenPGP implementation decrypts the message using the message key derived from the session key.
    If the message was compressed, it will be decompressed.
 
 When using symmetric-key encryption, a similar process as described above is used, but the session key is encrypted with a symmetric algorithm derived from a shared secret.
 
 Both digital signature and confidentiality services may be applied to the same message.
 First, a signature is generated for the message and attached to the message.
-Then the message plus signature is encrypted using a symmetric session key.
-Finally, the session key is encrypted and prefixed to the message.
+Then the message plus signature is encrypted using a symmetric message key derived from the session key.
+Finally, the session key is encrypted using public-key encryption and prefixed to the encrypted block.
 
 ## Authentication via Digital Signature
 
