@@ -984,9 +984,7 @@ The v3 PKESK packet consists of:
 - A series of values comprising the encrypted session key.
   This is algorithm-specific and described below.
 
-When creating a v3 PKESK packet, the session key is prefixed with a one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container.
-
-The resulting octet string (algorithm identifier and session key) is passed to the public-key algorithm used, as described below.
+The session key, and the one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container, are passed to the public-key algorithm used, described below.
 
 ### v6 PKESK {#v6-pkesk}
 
@@ -1006,15 +1004,23 @@ The v6 PKESK packet consists of:
 - A series of values comprising the encrypted session key.
   This is algorithm-specific and described below.
 
-When creating a v6 PKESK packet, the symmetric encryption algorithm identifier is not included.
-
 The session key is encrypted according to the public-key algorithm used, as described below.
+No symmetric encryption algorithm identifier is passed to the public-key algorithm for a v6 PKESK packet, as it is included in the v2 SEIPD packet.
 
 ### Algorithm-Specific Fields for RSA encryption {#pkesk-rsa}
 
 - Multiprecision integer (MPI) of RSA-encrypted value m\*\*e mod n.
 
-The value "m" in the above formula is the plaintext value described above, with a two-octet checksum appended (equal to the sum of the preceding octets, modulo 65536), and then encoded in the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC8017}} (see also {{pkcs-encoding}}).
+To produce the value value "m" in the above formula, first concatenate the following values:
+
+- The one-octet algorithm identifier, if it was passed (in the case of a v3 PKESK packet).
+
+- The session key.
+
+- A two-octet checksum of the session key, equal to the sum of the session key octets, modulo 65536.
+
+Then, the above values are encoded using the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC8017}} (see also {{pkcs-encoding}}).
+
 Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
 
 ### Algorithm-Specific Fields for Elgamal encryption {#pkesk-elgamal}
@@ -1023,7 +1029,16 @@ Note that when an implementation forms several PKESKs with one session key, form
 
 - MPI of Elgamal (Diffie-Hellman) value m * y\*\*k mod p.
 
-The value "m" in the above formula is the plaintext value described above, with a two-octet checksum appended (equal to the sum of the preceding octets, modulo 65536), and then encoded in the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC8017}} (see also {{pkcs-encoding}}).
+To produce the value value "m" in the above formula, first concatenate the following values:
+
+- The one-octet algorithm identifier, if it was passed (in the case of a v3 PKESK packet).
+
+- The session key.
+
+- A two-octet checksum of the session key, equal to the sum of the session key octets, modulo 65536.
+
+Then, the above values are encoded using the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC8017}} (see also {{pkcs-encoding}}).
+
 Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
 
 An implementation MUST NOT generate ElGamal v6 PKESKs.
@@ -1038,33 +1053,43 @@ An implementation MUST NOT generate ElGamal v6 PKESKs.
 
 - 32 octets representing an ephemeral X25519 public key.
 
-- A one-octet size, followed by an encrypted session key.
+- A one-octet size of the following two values.
+
+- The one-octet algorithm identifier, if it was passed (in the case of a v3 PKESK packet).
+
+- The encrypted session key.
 
 See section 6.1 of {{RFC7748}} for more details on the computation of the ephemeral public key and the shared secret.
 The shared secret is passed to HKDF (see {{RFC5869}}) using SHA256, and the UTF-8-encoded string "OpenPGP X25519" as the info parameter.
 The resulting key is used to encrypt the session key with AES-128 key wrap, defined in {{RFC3394}}.
-If the input contains a symmetric algorithm identifier (in the case of v3 PKESK), it is not encrypted, but prepended in plaintext to the ciphertext of the session key, so that the input to AES key wrap is a multiple of 8 octets.
-In this case, the one-octet size listed above refers to both the symmetric algorithm identifier octet and the encrypted session key.
 
 Note that unlike ECDH, no checksum or padding are appended to the session key before key wrapping.
 Additionally, unlike ECDH, the derived key is not bound to the recipient key.
 Instead, the Intended Recipient Fingerprint subpacket SHOULD be used when creating a signed and encrypted message (see {{intended-recipient-fingerprint}}).
+Finally, note that unlike the other algorithms, in the case of a v3 PKESK packet, the algorithm identifier is not encrypted.
+Instead, it is prepended to the encrypted session key in plaintext.
+Since the X25519 algorithm does not offer obfuscation of the session key size, encrypting the algorithm identifier offers little additional value.
 
 ### Algorithm-Specific Fields for X448 encryption {#pkesk-x448}
 
 - 56 octets representing an ephemeral X448 public key.
 
-- A one-octet size, followed by an encrypted session key.
+- A one-octet size of the following two values.
+
+- The one-octet algorithm identifier, if it was passed (in the case of a v3 PKESK packet).
+
+- The encrypted session key.
 
 See section 6.2 of {{RFC7748}} for more details on the computation of the ephemeral public key and the shared secret.
 The shared secret is passed to HKDF (see {{RFC5869}}) using SHA512, and the UTF-8-encoded string "OpenPGP X448" as the info parameter.
 The resulting key is used to encrypt the session key with AES-256 key wrap, defined in {{RFC3394}}.
-If the input contains a symmetric algorithm identifier (in the case of v3 PKESK), it is not encrypted, but prepended in plaintext to the ciphertext of the session key, so that the input to AES key wrap is a multiple of 8 octets.
-In this case, the one-octet size listed above refers to both the symmetric algorithm identifier octet and the encrypted session key.
 
 Note that unlike ECDH, no checksum or padding are appended to the session key before key wrapping.
 Additionally, unlike ECDH, the derived key is not bound to the recipient key.
 Instead, the Intended Recipient Fingerprint subpacket SHOULD be used when creating a signed and encrypted message (see {{intended-recipient-fingerprint}}).
+Finally, note that unlike the other algorithms, in the case of a v3 PKESK packet, the algorithm identifier is not encrypted.
+Instead, it is prepended to the encrypted session key in plaintext.
+Since the X448 algorithm does not offer obfuscation of the session key size, encrypting the algorithm identifier offers little additional value.
 
 ### Notes on PKESK {#pkesk-notes}
 
@@ -4004,13 +4029,21 @@ The KDF produces a symmetric key that is used as a key-encryption key (KEK) as s
 Refer to {{ecdh-parameters}} for the details regarding the choice of the KEK algorithm, which SHOULD be one of the three AES algorithms.
 Key wrapping and unwrapping is performed with the default initial value of {{RFC3394}}.
 
-The input to the key wrapping method is the plaintext described in {{pkesk}}, "Public-Key Encrypted Session Key Packets (Tag 1)", with a two-octet checksum appended (equal to the sum of the preceding octets, modulo 65536), and then padded using the method described in {{PKCS5}} to an 8-octet granularity.
+To produce the input to the key wrapping method, first concatenate the following values:
 
-For example, in a v3 Public-Key Encrypted Session Key packet, the following AES-256 session key, in which 32 octets are denoted from k0 to k31, is composed to form the following 40 octet sequence:
+- The one-octet algorithm identifier, if it was passed (in the case of a v3 PKESK packet).
+
+- The session key.
+
+- A two-octet checksum of the session key, equal to the sum of the session key octets, modulo 65536.
+
+Then, the above values are padded using the method described in {{PKCS5}} to an 8-octet granularity.
+
+For example, in a v3 Public-Key Encrypted Session Key packet, an AES-256 session key is encoded as follows, forming a 40 octet sequence:
 
     09 k0 k1 ... k31 s0 s1 05 05 05 05 05
 
-The octets s0 and s1 above denote the checksum of the session key octets.
+The octets k0 to k31 above denote the session key, and the octets s0 and s1 denote the checksum of the session key octets.
 This encoding allows the sender to obfuscate the size of the symmetric encryption key used to encrypt the data.
 For example, assuming that an AES algorithm is used for the session key, the sender MAY use 21, 13, and 5 octets of padding for AES-128, AES-192, and AES-256, respectively, to provide the same number of octets, 40 total, as an input to the key wrapping method.
 
