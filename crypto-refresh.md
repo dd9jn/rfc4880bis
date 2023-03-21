@@ -474,7 +474,8 @@ The sequence is as follows:
 
 ## Compression
 
-If an implementation does not implement compression, its authors should be aware that most OpenPGP messages in the world are compressed.
+An OpenPGP implementation MAY support the compression of data.
+If an implementation does not implement compression, its authors should be aware that many existing OpenPGP messages are compressed.
 Thus, it may even be wise for a space-constrained implementation to implement decompression, but not compression.
 
 ## Conversion to Base64
