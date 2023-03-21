@@ -465,9 +465,9 @@ The sequence is as follows:
 
 3. The sending software generates a signature from the hash digest using the sender's private key.
 
-4. The binary signature is attached to the message.
+4. The signature is attached to or transmitted alongside the message.
 
-5. The receiving software keeps a copy of the message signature.
+5. The receiving software obtains a copy of the message and the message signature.
 
 6. The receiving software generates a new hash digest for the received message and verifies it using the message's signature.
    If the verification is successful, the message is accepted as authentic.
