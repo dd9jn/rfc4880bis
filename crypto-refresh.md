@@ -984,7 +984,11 @@ The v3 PKESK packet consists of:
 - A series of values comprising the encrypted session key.
   This is algorithm-specific and described below.
 
-The session key, and the one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following encryption container, are passed to the public-key algorithm used, described below.
+The public-key encryption algorithm (described in subsequent sections) is passed two values:
+
+- The session key.
+
+- The one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following v1 SEIPD packet.
 
 ### v6 PKESK {#v6-pkesk}
 
@@ -1053,7 +1057,7 @@ An implementation MUST NOT generate ElGamal v6 PKESKs.
 
 - 32 octets representing an ephemeral X25519 public key.
 
-- A one-octet size of the following two values.
+- A one-octet size of the following fields.
 
 - The one-octet algorithm identifier, if it was passed (in the case of a v3 PKESK packet).
 
@@ -1066,7 +1070,7 @@ The resulting key is used to encrypt the session key with AES-128 key wrap, defi
 Note that unlike ECDH, no checksum or padding are appended to the session key before key wrapping.
 Additionally, unlike ECDH, the derived key is not bound to the recipient key.
 Instead, the Intended Recipient Fingerprint subpacket SHOULD be used when creating a signed and encrypted message (see {{intended-recipient-fingerprint}}).
-Finally, note that unlike the other algorithms, in the case of a v3 PKESK packet, the algorithm identifier is not encrypted.
+Finally, note that unlike the other public-key algorithms, in the case of a v3 PKESK packet, the symmetric algorithm identifier is not encrypted.
 Instead, it is prepended to the encrypted session key in plaintext.
 Since the X25519 algorithm does not offer obfuscation of the session key size, encrypting the algorithm identifier offers little additional value.
 
@@ -1074,7 +1078,7 @@ Since the X25519 algorithm does not offer obfuscation of the session key size, e
 
 - 56 octets representing an ephemeral X448 public key.
 
-- A one-octet size of the following two values.
+- A one-octet size of the following fields.
 
 - The one-octet algorithm identifier, if it was passed (in the case of a v3 PKESK packet).
 
@@ -1087,7 +1091,7 @@ The resulting key is used to encrypt the session key with AES-256 key wrap, defi
 Note that unlike ECDH, no checksum or padding are appended to the session key before key wrapping.
 Additionally, unlike ECDH, the derived key is not bound to the recipient key.
 Instead, the Intended Recipient Fingerprint subpacket SHOULD be used when creating a signed and encrypted message (see {{intended-recipient-fingerprint}}).
-Finally, note that unlike the other algorithms, in the case of a v3 PKESK packet, the algorithm identifier is not encrypted.
+Finally, note that unlike the other public-key algorithms, in the case of a v3 PKESK packet, the symmetric algorithm identifier is not encrypted.
 Instead, it is prepended to the encrypted session key in plaintext.
 Since the X448 algorithm does not offer obfuscation of the session key size, encrypting the algorithm identifier offers little additional value.
 
