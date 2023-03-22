@@ -937,7 +937,7 @@ The remainder of the packet depends on the version.
 The versions differ in how they identify the recipient key, and in what they encode.
 The version of the PKESK packet must align with the version of the SEIPD packet (see {{encrypted-message-versions}}).
 
-### v3 PKESK {#v3-pkesk}
+### Version 3 Public-Key Encrypted Session Key Packet Format {#v3-pkesk}
 
 A version 3 Public-Key Encrypted Session Key (PKESK) packet precedes a version 1 Symmetrically Encrypted Integrity Protected Data (v1 SEIPD, see {{version-one-seipd}}) packet.
 In historic data, it is sometimes found preceding a deprecated Symmetrically Encrypted Data packet (SED, see {{sed}}).
@@ -962,7 +962,7 @@ The public-key encryption algorithm (described in subsequent sections) is passed
 
 - The one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following v1 SEIPD packet.
 
-### v6 PKESK {#v6-pkesk}
+### Version 6 Public-Key Encrypted Session Key Packet Format {#v6-pkesk}
 
 A version 6 Public-Key Encrypted Session Key (PKESK) packet precedes a version 2 Symmetrically Encrypted Integrity Protected Data (v2 SEIPD, see {{version-two-seipd}}) packet.
 A v6 PKESK packet MUST NOT precede a v1 SEIPD packet or a deprecated Symmetrically Encrypted Data packet (see {{encrypted-message-versions}}).
@@ -2027,7 +2027,7 @@ The remainder of the packet depends on the version.
 The versions differ in how they encrypt the session key with the password, and in what they encode.
 The version of the SKESK packet must align with the version of the SEIPD packet (see {{encrypted-message-versions}}).
 
-### v4 SKESK {#v4-skesk}
+### Version 4 Symmetric-Key Encrypted Session Key Packet Format {#v4-skesk}
 
 A version 4 Symmetric-Key Encrypted Session Key (SKESK) packet precedes a version 1 Symmetrically Encrypted Integrity Protected Data (v1 SEIPD, see {{version-one-seipd}}) packet.
 In historic data, it is sometimes found preceding a deprecated Symmetrically Encrypted Data packet (SED, see {{sed}}).
@@ -2052,7 +2052,7 @@ The decryption result consists of a one-octet algorithm identifier that specifie
 Note: because an all-zero IV is used for this decryption, the S2K specifier MUST use a salt value, either a Salted S2K, an Iterated-Salted S2K, or Argon2.
 The salt value will ensure that the decryption key is not repeated even if the passphrase is reused.
 
-### v6 SKESK {#v6-skesk}
+### Version 6 Symmetric-Key Encrypted Session Key Packet Format {#v6-skesk}
 
 A version 6 Symmetric-Key Encrypted Session Key (SKESK) packet precedes a version 2 Symmetrically Encrypted Integrity Protected Data (v2 SEIPD, see {{version-two-seipd}}) packet.
 A v6 SKESK packet MUST NOT precede a v1 SEIPD packet or a deprecated Symmetrically Encrypted Data packet (see {{encrypted-message-versions}}).
@@ -5349,21 +5349,21 @@ These messages are the literal data "Hello, world!" encrypted using v1 SEIPD, wi
 In each example, the choice of symmetric cipher is the same in both the v4 SKESK packet and v1 SEIPD packet.
 In all cases, the Argon2 parameters are t = 1, p = 4, and m = 21.
 
-### v4 SKESK using Argon2 with AES-128
+### Version 4 SKESK using Argon2 with AES-128
 
 {: sourcecode-name="v4skesk-argon2-aes128.pgp"}
 ~~~ application/pgp-encrypted
 {::include test-vectors/v4skesk-argon2-aes128.pgp}
 ~~~
 
-### v4 SKESK using Argon2 with AES-192
+### Version 4 SKESK using Argon2 with AES-192
 
 {: sourcecode-name="v4skesk-argon2-aes192.pgp"}
 ~~~ application/pgp-encrypted
 {::include test-vectors/v4skesk-argon2-aes192.pgp}
 ~~~
 
-### v4 SKESK using Argon2 with AES-256
+### Version 4 SKESK using Argon2 with AES-256
 
 {: sourcecode-name="v4skesk-argon2-aes256.pgp"}
 ~~~ application/pgp-encrypted
