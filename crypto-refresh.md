@@ -1750,8 +1750,7 @@ Note also that since this is a URI, the key server can actually be a copy of the
 (1 octet, Boolean)
 
 This is a flag in a User ID's self-signature that states whether this User ID is the main User ID for this key.
-It is reasonable for an implementation to resolve ambiguities in preferences, etc.
-by referring to the primary User ID.
+It is reasonable for an implementation to resolve ambiguities in preferences, for example, by referring to the primary User ID.
 If this flag is absent, its value is zero.
 If more than one User ID in a key is marked as primary, the implementation may resolve the ambiguity in any way it sees fit, but it is RECOMMENDED that priority be given to the User ID with the most recent self-signature.
 
