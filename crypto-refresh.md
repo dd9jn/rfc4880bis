@@ -2082,7 +2082,11 @@ A version 6 Symmetric-Key Encrypted Session Key packet consists of:
 
 - An authentication tag for the AEAD mode.
 
-HKDF is used with SHA256 as hash algorithm, the key derived from S2K as Initial Keying Material (IKM), no salt, and the Packet Tag in the OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version, and the cipher-algo and AEAD-mode used to encrypt the key material, are used as info parameter.
+A key-encryption key is derived using HKDF (see {{RFC5869}}) with SHA256 as the hash algorithm.
+The Initial Keying Material (IKM) for HKDF is the key derived from S2K.
+No salt is used.
+The info parameter is comprised of the Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version, and the cipher-algo and AEAD-mode used to encrypt the key material.
+
 Then, the session key is encrypted using the resulting key, with the AEAD algorithm specified for version 2 of the Symmetrically Encrypted Integrity Protected Data packet.
 Note that no chunks are used and that there is only one authentication tag.
 The Packet Tag in OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are given as additional data.
@@ -2284,7 +2288,11 @@ With v4 and v6 keys, a simpler method is used.
 All secret MPI values are encrypted, including the MPI bitcount prefix.
 
 If the string-to-key usage octet is 253, the key encryption key is derived using HKDF (see {{RFC5869}}) to provide key separation.
-HKDF is used with SHA256 as hash algorithm, the key derived from S2K as Initial Keying Material (IKM), no salt, and the Packet Tag in OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version, and the cipher-algo and AEAD-mode used to encrypt the key material, are used as info parameter.
+SHA256 is used as the hash algorithm for HKDF.
+The Initial Keying Material (IKM)  for HKDF is the key derived from S2K.
+No salt is used.
+The info parameter is comprised of the Packet Tag in OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version, and the cipher-algo and AEAD-mode used to encrypt the key material.
+
 Then, the encrypted MPI values are encrypted as one combined plaintext using one of the AEAD algorithms specified for version 2 of the Symmetrically Encrypted Integrity Protected Data packet.
 Note that no chunks are used and that there is only one authentication tag.
 As additional data, the Packet Tag in OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), followed by the public key packet fields, starting with the packet version number, are passed to the AEAD algorithm.
