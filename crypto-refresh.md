@@ -3375,7 +3375,7 @@ Implementations SHOULD NOT validate any old signature that depends on MD5, SHA-1
 ## AEAD Algorithms {#aead-algorithms}
 
 {: title="AEAD algorithm registry"}
-ID | Algorithm | IV length (octets) | authentication tag length (octets)
+ID | Algorithm | Nonce length (octets) | authentication tag length (octets)
 ---:|-----------------|---|---
  1 | EAX {{EAX}} | 16 | 16
  2 | OCB {{RFC7253}} | 15 | 16
