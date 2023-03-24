@@ -513,7 +513,7 @@ These octets form a big-endian number; a big-endian number can be made into an M
 
 Examples:
 
-(all numbers are in hexadecimal)
+(all numbers in the octet strings identified by square brackets are in hexadecimal)
 
 The string of octets \[00 00\] forms an MPI with the value 0.
 The string of octets \[00 01 01\] forms an MPI with the value 1.
