@@ -2261,7 +2261,7 @@ The packet contains:
 
 - Plain or encrypted multiprecision integers comprising the secret key data.
   This is algorithm-specific and described in {{algorithm-specific-parts-of-keys}}.
-  If the string-to-key usage octet is 253, then an AEAD authentication tag is part of that data.
+  If the string-to-key usage octet is 253, then an AEAD authentication tag is at the end of that data.
   If the string-to-key usage octet is 254, a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion is appended to plaintext and encrypted with it.
   If the string-to-key usage octet is 255 or another nonzero value (that is, a symmetric-key encryption algorithm identifier), a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536) is appended to plaintext and encrypted with it.
   (This is deprecated and SHOULD NOT be used, see below.)
