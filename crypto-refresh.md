@@ -440,7 +440,7 @@ The sequence is as follows:
 3. The session key is encrypted using each recipient's public key.
    These "encrypted session keys" start the message.
 
-4. The sending OpenPGP implementation encrypts the message using a message key derived from the session key.
+4. The sending OpenPGP implementation optionally compresses the message, and then encrypts it using a message key derived from the session key.
    The encrypted message forms the remainder of the OpenPGP message.
 
 5. The receiving OpenPGP implementation decrypts the session key using the recipient's private key.
