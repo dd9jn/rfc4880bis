@@ -3219,6 +3219,7 @@ See {{notes-on-algorithms}} for more discussion of the algorithms.
 {: title="Public-key algorithm registry"}
 ID | Algorithm | Public Key Format | Secret Key Format | Signature Format | PKESK Format
 ---:|--------------------------|---|---|---|---
+ 0 | Reserved
  1 | RSA (Encrypt or Sign) {{HAC}} | MPI(n), MPI(e) \[{{key-rsa}}] | MPI(d), MPI(p), MPI(q), MPI(u) | MPI(m\**d mod n) \[{{sig-rsa}}] | MPI(m\**e mod n) \[{{pkesk-rsa}}]
  2 | RSA Encrypt-Only {{HAC}} | MPI(n), MPI(e) \[{{key-rsa}}]| MPI(d), MPI(p), MPI(q), MPI(u) | N/A | MPI(m\**e mod n) \[{{pkesk-rsa}}]
  3 | RSA Sign-Only {{HAC}} | MPI(n), MPI(e) \[{{key-rsa}}] | MPI(d), MPI(p), MPI(q), MPI(u) | MPI(m\**d mod n) \[{{sig-rsa}}] | N/A
