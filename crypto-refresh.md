@@ -915,7 +915,7 @@ Tag | Critical | Packet Type
  13 | yes      | User ID Packet
  14 | yes      | Public-Subkey Packet
  17 | yes      | User Attribute Packet
- 18 | yes      | Sym. Encrypted and Integrity Protected Data Packet
+ 18 | yes      | Symmetrically Encrypted and Integrity Protected Data Packet
  19 | yes      | Reserved (formerly Modification Detection Code Packet)
  20 | yes      | Reserved (formerly AEAD Encrypted Data Packet)
  21 | yes      | Padding Packet
@@ -2764,9 +2764,9 @@ As the only currently defined image type is JPEG, the image is encoded in the JP
 
 An implementation MAY try to determine the type of an image by examination of the image data if it is unable to handle a particular version of the image header or if a specified encoding format value is not recognized.
 
-## Sym. Encrypted Integrity Protected Data Packet (Tag 18) {#seipd}
+## Symmetrically Encrypted Integrity Protected Data Packet (Tag 18) {#seipd}
 
-This packet contains integrity protected and encrypted data.
+This packet (the "SEIPD" packet) contains integrity protected and encrypted data.
 When it has been decrypted, it will contain other packets forming an OpenPGP Message (see {{openpgp-messages}}).
 
 The first octet of this packet is always used to indicate the version number, but different versions contain differently-structured ciphertext.
@@ -2777,7 +2777,7 @@ Version 2 of this packet contains data encrypted with an authenticated encryptio
 This offers a more cryptographically rigorous defense against ciphertext malleability, but may not be as widely supported yet.
 See {{ciphertext-malleability}} for more details on choosing between these formats.
 
-### Version 1 Sym. Encrypted Integrity Protected Data Packet Format {#version-one-seipd}
+### Version 1 Symmetrically Encrypted Integrity Protected Data Packet Format {#version-one-seipd}
 
 A version 1 Symmetrically Encrypted Integrity Protected Data packet consists of:
 
@@ -2866,7 +2866,7 @@ Any failure SHOULD be reported to the user.
 >   However, no update will be needed because the MDC has been replaced
 >   by the AEAD encryption described in this document.
 
-### Version 2 Sym. Encrypted Integrity Protected Data Packet Format {#version-two-seipd}
+### Version 2 Symmetrically Encrypted Integrity Protected Data Packet Format {#version-two-seipd}
 
 A version 2 Symmetrically Encrypted Integrity Protected Data packet consists of:
 
