@@ -4092,7 +4092,7 @@ For convenience, the synopsis of the encoding method is given below; however, th
 
 - Obtain the authenticated recipient public key R
 
-- Generate an ephemeral key pair {v, V=vG}
+- Generate an ephemeral, single-use key pair {v, V=vG}
 
 - Compute the shared point S = vR;
 
@@ -4108,15 +4108,16 @@ For convenience, the synopsis of the encoding method is given below; however, th
 
 - Compute C = AESKeyWrap( Z, m ) as per {{RFC3394}}
 
+- Wipe the memory that contained S, v, and Z to avoid leaking ephemeral secrets
+
 - VB = convert point V to the octet string
 
 - Output (MPI(VB) \|\| len(C) \|\| C).
 
 The decryption is the inverse of the method given.
-Note that the recipient obtains the shared secret by calculating
+Note that the recipient with key pair (r,R) obtains the shared secret by calculating:
 
-    S = rV = rvG, where (r,R) is the recipient's key pair.
-
+    S = rV = rvG
 
 ### ECDH Parameters
 
