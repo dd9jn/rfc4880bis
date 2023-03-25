@@ -3424,6 +3424,7 @@ This policy means that review and approval by a designated expert is required, a
 The designated expert will determine whether the new code points retain the security properties that are expected by the base implementation and that these new code points do not cause interoperability issues with existing implementations other than not producing or consuming these new code points.
 Code point proposals that fail to meet these criteria should instead be proposed as work items for the OpenPGP working group or its successor.
 
+The designated expert should also consider {{meta-considerations-for-expansion}} when reviewing proposed additions to any OpenPGP registry.
 
 ## String-to-Key Specifier Types
 
