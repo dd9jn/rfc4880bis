@@ -83,6 +83,14 @@ informative:
         name: Jörg Schwenk
     seriesinfo:
       Proceedings of the 27th USENIX Conference on Security Symposium, August 2018, Pages 549–566
+  HASTAD:
+    title: Solving Simultaneous Modular Equations of Low Degree
+    author:
+      -
+        name: Johan Hastad
+    date: 1988
+    seriesinfo:
+      DOI: 10.1137/0217019
   JKS02:
     title: Implementation of Chosen-Ciphertext Attacks against PGP and GnuPG
     target: http://www.counterpane.com/pgp-attack.html
@@ -1014,6 +1022,7 @@ Then, the above values are encoded using the PKCS#1 block encoding EME-PKCS1-v1_
 When decoding "m" during decryption, an implementation should follow step 3 of {{Section 7.2.2 of RFC8017}} (see also {{eme-pkcs1-v1-5-decode}}).
 
 Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
+This defends against attacks such as those discussed in {{HASTAD}}.
 
 ### Algorithm-Specific Fields for Elgamal encryption {#pkesk-elgamal}
 
@@ -1033,6 +1042,7 @@ Then, the above values are encoded using the PKCS#1 block encoding EME-PKCS1-v1_
 When decoding "m" during decryption, an implementation should follow step 3 of {{Section 7.2.2 of RFC8017}} (see also {{eme-pkcs1-v1-5-decode}}).
 
 Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
+This defends against attacks such as those discussed in {{HASTAD}}.
 
 An implementation MUST NOT generate ElGamal v6 PKESKs.
 
