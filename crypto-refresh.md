@@ -3102,7 +3102,7 @@ Currently defined Armor Header Keys are as follows:
 - "SaltedHash", a salt and hash algorithm used in this message.
   This is used only in cleartext signed messages that are followed by a v6 Signature.
 
-- "Charset", a description of the character set that the plaintext is in.
+- "Charset", a description of the character set that the plaintext is in (see {{?RFC2978}}).
   Please note that OpenPGP defines text to be in UTF-8.
   An implementation will get best results by translating into and out of UTF-8.
   However, there are many instances where this is easier said than done.
