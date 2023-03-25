@@ -1699,7 +1699,7 @@ This packet was intended to authorize the specified key to issue revocation sign
 Class octet must have bit 0x80 set.
 If the bit 0x40 is set, then this means that the revocation information is sensitive.
 Other bits are for future expansion to other kinds of authorizations.
-This is only found on a direct-key self-signature (type 0x1f).
+This is only found on a direct-key self-signature (type 0x1F).
 The use on other types of self-signatures is unspecified.
 
 If the "sensitive" flag is set, the keyholder feels this subpacket contains private trust information that describes a real-world sensitive relationship.
@@ -1963,9 +1963,9 @@ For text document signatures (type 0x01), the implementation MUST first canonica
 The resulting UTF-8 bytestream is hashed.
 
 When a v4 signature is made over a key, the hash data starts with the octet 0x99, followed by a two-octet length of the key, and then the body of the key packet.
-When a v6 signature is made over a key, the hash data starts with the salt, then octet 0x9b, followed by a four-octet length of the key, and then the body of the key packet.
+When a v6 signature is made over a key, the hash data starts with the salt, then octet 0x9B, followed by a four-octet length of the key, and then the body of the key packet.
 
-A subkey binding signature (type 0x18) or primary key binding signature (type 0x19) then hashes the subkey using the same format as the main key (also using 0x99 or 0x9b as the first octet).
+A subkey binding signature (type 0x18) or primary key binding signature (type 0x19) then hashes the subkey using the same format as the main key (also using 0x99 or 0x9B as the first octet).
 Primary key revocation signatures (type 0x20) hash only the key being revoked.
 Subkey revocation signature (type 0x28) hash first the primary key and then the subkey being revoked.
 
@@ -2015,9 +2015,9 @@ The hashed data streams differ based on their trailer, most critically in the fi
 In particular:
 
 - A v3 signature uses the fifth octet from the end to store its signature type.
-  This MUST NOT be signature type `0xff`.
-- All signature versions later than v3 always use a literal `0xff` in the fifth octet from the end.
-  For these later signature versions, the sixth octet from the end (the octet before the `0xff`) stores the signature version number.
+  This MUST NOT be signature type `0xFF`.
+- All signature versions later than v3 always use a literal `0xFF` in the fifth octet from the end.
+  For these later signature versions, the sixth octet from the end (the octet before the `0xFF`) stores the signature version number.
 
 ### Malformed and Unknown Signatures {#malformed-signatures}
 
@@ -2365,11 +2365,11 @@ Algorithm-Specific Fields for Ed25519 keys (example):
 
 e.1) 32 octets representing the public key.
 
-A v6 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9b, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
+A v6 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9B, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
 The Key ID is the high-order 64 bits of the fingerprint.
 Here are the fields of the hash material, with the example of an Ed25519 key:
 
-a.1) 0x9b (1 octet)
+a.1) 0x9B (1 octet)
 
 a.2) four-octet scalar octet count of (b)-(f)
 
@@ -2392,7 +2392,7 @@ Note that there is a much smaller, but still non-zero, probability that two diff
 
 Also note that if v3, v4, and v6 format keys share the same RSA key material, they will have different Key IDs as well as different fingerprints.
 
-Finally, the Key ID and fingerprint of a subkey are calculated in the same way as for a primary key, including the 0x99 (v4 key) or 0x9b (v6 key) as the first octet (even though this is not a valid packet ID for a public subkey).
+Finally, the Key ID and fingerprint of a subkey are calculated in the same way as for a primary key, including the 0x99 (v4 key) or 0x9B (v6 key) as the first octet (even though this is not a valid packet ID for a public subkey).
 
 ### Algorithm-specific Parts of Keys
 
@@ -2522,7 +2522,7 @@ Curve25519Legacy MUST NOT be used in key packets version 6 or above.
 Note that this form is in reverse octet order from the little-endian "native" form found in {{RFC7748}}.
 
 Note also that the integer for a Curve25519Legacy secret key for OpenPGP MUST have the appropriate form: that is, it MUST be divisible by 8, MUST be at least 2\*\*254, and MUST be less than 2\*\*255.
-The length of this MPI in bits is by definition always 255, so the two leading octets of the MPI will always be `00 ff` and reversing the following 32 octets from the wire will produce the "native" form.
+The length of this MPI in bits is by definition always 255, so the two leading octets of the MPI will always be `00 FF` and reversing the following 32 octets from the wire will produce the "native" form.
 
 When generating a new Curve25519Legacy secret key from 32 fully-random octets, the following pseudocode produces the MPI wire format (note the similarity to `decodeScalar25519` from {{RFC7748}}):
 
@@ -2530,7 +2530,7 @@ When generating a new Curve25519Legacy secret key from 32 fully-random octets, t
         octet_list[0] &= 248
         octet_list[31] &= 127
         octet_list[31] |= 64
-        mpi_header = [ 0x00, 0xff ]
+        mpi_header = [ 0x00, 0xFF ]
         return mpi_header || reversed(octet_list)
 
 #### Algorithm-Specific Part for X25519 Keys {#key-x25519}
@@ -3036,7 +3036,7 @@ crc24 crc_octets(unsigned char *octets, size_t len)
         for (i = 0; i < 8; i++) {
             crc <<= 1;
             if (crc & 0x1000000) {
-                crc &= 0xffffff; /* Clear bit 25 to avoid overflow */
+                crc &= 0XFFFFFF; /* Clear bit 25 to avoid overflow */
                 crc ^= CRC24_GENERATOR;
             }
         }
@@ -3960,9 +3960,9 @@ Some opaque strings of octets are represented on the wire as an MPI by simply st
 These strings are of known, fixed length.
 They are represented in this document as `MPI(N octets of X)` where `N` is the expected length in octets of the octet string.
 
-For example, a five-octet opaque string (`MPI(5 octets of X)`) where `X` has the value `00 02 ee 19 00` would be represented on the wire as an MPI like so: `00 1a 02 ee 19 00`.
+For example, a five-octet opaque string (`MPI(5 octets of X)`) where `X` has the value `00 02 EE 19 00` would be represented on the wire as an MPI like so: `00 1A 02 EE 19 00`.
 
-To encode `X` to the wire format, we set the MPI's two-octet bit counter to the value of the highest set bit (bit 26, or 0x001a), and do not transfer the leading all-zero octet to the wire.
+To encode `X` to the wire format, we set the MPI's two-octet bit counter to the value of the highest set bit (bit 26, or 0x001A), and do not transfer the leading all-zero octet to the wire.
 
 To reverse the process, an implementation that knows this value has an expected length of 5 octets can take the following steps:
 
@@ -3978,13 +3978,13 @@ Another way to ensure that a fixed-length bytestring is encoded simply to the wi
 This specification uses 0x40 as the prefix octet.
 This is represented in this standard as `MPI(prefixed N octets of X)`, where `N` is the known bytestring length.
 
-For example, a five-octet opaque string using `MPI(prefixed 5 octets of X)` where `X` has the value `00 02 ee 19 00` would be written to the wire form as: `00 2f 40 00 02 ee 19 00`.
+For example, a five-octet opaque string using `MPI(prefixed 5 octets of X)` where `X` has the value `00 02 EE 19 00` would be written to the wire form as: `00 2F 40 00 02 EE 19 00`.
 
-To encode the string, we prefix it with the octet 0x40 (whose 7th bit is set), then set the MPI's two-octet bit counter to 47 (0x002f, 7 bits for the prefix octet and 40 bits for the string).
+To encode the string, we prefix it with the octet 0x40 (whose 7th bit is set), then set the MPI's two-octet bit counter to 47 (0x002F, 7 bits for the prefix octet and 40 bits for the string).
 
 To decode the string from the wire, an implementation that knows that the variable is formed in this way can:
 
-- Ensure that the first three octets of the MPI (the two bit-count octets plus the prefix octet)  are `00 2f 40`, and
+- Ensure that the first three octets of the MPI (the two bit-count octets plus the prefix octet)  are `00 2F 40`, and
 
 - Use the remainder of the MPI directly off the wire.
 
