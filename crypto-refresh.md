@@ -875,15 +875,15 @@ The meaning of the length-type in Legacy format packets is:
 
 ### Packet Length Examples
 
-These examples show ways that OpenPGP format packets might encode the packet lengths.
+These examples show ways that OpenPGP format packets might encode the packet body lengths.
 
-A packet with length 100 may have its length encoded in one octet: 0x64.
+A packet body with length 100 may have its length encoded in one octet: 0x64.
 This is followed by 100 octets of data.
 
-A packet with length 1723 may have its length encoded in two octets: 0xC5, 0xFB.
+A packet body with length 1723 may have its length encoded in two octets: 0xC5, 0xFB.
 This header is followed by the 1723 octets of data.
 
-A packet with length 100000 may have its length encoded in five octets: 0xFF, 0x00, 0x01, 0x86, 0xA0.
+A packet body with length 100000 may have its length encoded in five octets: 0xFF, 0x00, 0x01, 0x86, 0xA0.
 
 It might also be encoded in the following octet stream: 0xEF, first 32768 octets of data; 0xE1, next two octets of data; 0xE0, next one octet of data; 0xF0, next 65536 octets of data; 0xC5, 0xDD, last 1693 octets of data.
 This is just one possible encoding, and many variations are possible on the size of the Partial Body Length headers, as long as a regular Body Length header encodes the last portion of the data.
