@@ -1772,7 +1772,7 @@ This is found only on a self-signature.
 
 This is a URI of a key server that the key holder prefers be used for updates.
 Note that keys with multiple User IDs can have a preferred key server for each User ID.
-Note also that since this is a URI, the key server can actually be a copy of the key retrieved by ftp, http, finger, etc.
+Note also that since this is a URI, the key server can actually be a copy of the key retrieved by https, ftp, http, etc.
 
 #### Primary User ID
 
