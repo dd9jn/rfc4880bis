@@ -309,7 +309,8 @@ normative:
     title: "Information Technology - Universal Multiple-octet coded Character Set (UCS) - Part 1: Architecture and Basic Multilingual Plane"
     author:
       org: International Organization for Standardization
-    date: May 1993
+    date: 2020
+    target: https://www.iso.org/standard/76835.html
     seriesinfo:
       ISO: Standard 10646-1
   JFIF:
