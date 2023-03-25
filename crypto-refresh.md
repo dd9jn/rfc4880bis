@@ -2259,7 +2259,7 @@ The packet contains:
 
 - \[Optional\] If string-to-key usage octet was 253, a one-octet AEAD algorithm.
 
-- \[Optional\] Only for a version 6 packet, and if string-to-key usage octet was 255, 254, or 253, an one-octet count of the following field.
+- \[Optional\] Only for a version 6 packet, and if string-to-key usage octet was 255, 254, or 253, a one-octet count of the following field.
 
 - \[Optional\] If string-to-key usage octet was 255, 254, or 253, a string-to-key (S2K) specifier.
   The length of the string-to-key specifier depends on its type (see {{s2k-types}}).
