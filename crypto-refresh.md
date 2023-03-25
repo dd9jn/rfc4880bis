@@ -3817,7 +3817,7 @@ In particular:
 
 - Decompressing a Compressed Data packet must also yield a valid OpenPGP Message.
 
-When any unwrapping is performed, the resulting stream of octets is parsed into a series OpenPGP packets like any other stream of octets.
+When any unwrapping is performed, the resulting stream of octets is parsed into a series of OpenPGP packets like any other stream of octets.
 The packet boundaries found in the series of octets are expected to align with the length of the unwrapped octet stream.
 An implementation MUST NOT interpret octets beyond the boundaries of the unwrapped octet stream as part of any OpenPGP packet.
 If an implementation encounters a packet whose header length indicates that it would extend beyond the boundaries of the unwrapped octet stream, the implementation MUST reject that packet as malformed and unusable.
