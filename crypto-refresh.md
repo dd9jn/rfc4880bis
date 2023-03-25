@@ -1700,6 +1700,8 @@ Notation Name | Data Type | Allowed Values | Reference
 
 [comment]: # (kramdown ignores tables without bodies, hence the empty row hack)
 
+This registry is initially empty.
+
 Names in the user namespace consist of a UTF-8 string tag followed by "@" followed by a DNS domain name.
 Note that the tag MUST NOT contain an "@" character.
 For example, the "sample" tag used by Example Corporation could be "sample@example.com".
