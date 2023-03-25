@@ -2018,6 +2018,7 @@ For example, it might encounter any of the following problems (this is not an ex
 - A hashed subpacket area with length that exceeds the length of the signature packet itself
 - A known-weak hash algorithm (e.g. MD5)
 - A mismatch between the hash algorithm expected salt length and the actual salt length
+- A mismatch between the One-Pass Signature version and the Signature version (see {{one-pass-sig}})
 
 When an implementation encounters such a malformed or unknown signature, it MUST ignore the signature for validation purposes.
 It MUST NOT indicate a successful signature validation for such a signature.
@@ -3851,6 +3852,12 @@ v1 SEIPD | v4 SKESK | v3 PKESK
 v2 SEIPD | v6 SKESK | v6 PKESK
 
 An implementation processing an Encrypted Message MUST discard any preceding ESK packet with a version that does not align with the version of the payload.
+
+#### Packet versions in One-Pass Signed Messages {#signed-message-versions}
+
+A One-Pass Signed Message requires the One-Pass Signature packet's version to correspond to the version of the matching Signature packet (see {{one-pass-sig}} for more details).
+
+However, a version mismatch between these packets does not invalidate the packet sequence as a whole, it merely invalidates the signature, as a signature with an unknown version SHOULD be discarded (see {{malformed-signatures}}).
 
 ## Detached Signatures
 
