@@ -590,7 +590,7 @@ See below for how this hashing is done.
       Octet 1:        hash algorithm
 
 Simple S2K hashes the passphrase to produce the session key.
-The manner in which this is done depends on the size of the session key (which will depend on the cipher used) and the size of the hash algorithm's output.
+The manner in which this is done depends on the size of the session key (which depends on the cipher the session key will be used with) and the size of the hash algorithm's output.
 If the hash size is greater than the session key size, the high-order (leftmost) octets of the hash are used as the key.
 
 If the hash size is less than the key size, multiple instances of the hash context are created --- enough to produce the required key data.
@@ -634,8 +634,9 @@ The total number of octets to be hashed is specified in the encoded count in the
 Note that the resulting count value is an octet count of how many octets will be hashed, not an iteration count.
 
 Initially, one or more hash contexts are set up as with the other S2K algorithms, depending on how many octets of key data are needed.
-Then the salt, followed by the passphrase data, is repeatedly passed to the hash function until the number of octets specified by the octet count has been hashed.
-The one exception is that if the octet count is less than the size of the salt plus passphrase, the full salt plus passphrase will be hashed even though that is greater than the octet count.
+Then the salt, followed by the passphrase data, is repeatedly processed as input to each hash context until the number of octets specified by the octet count has been hashed.
+The input is truncated to the octet count, except if the octet count is less than the initial isize of the salt plus passphrase.
+That is, at least one copy of the full salt plus passphrase will be provided as input to each hash context regardless of the octet count.
 After the hashing is done, the key data is produced from the hash digest(s) as with the other S2K algorithms.
 
 #### Argon2 {#s2k-argon2}
