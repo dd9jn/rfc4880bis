@@ -2872,9 +2872,9 @@ A version 2 Symmetrically Encrypted Integrity Protected Data packet consists of:
 
 - A one-octet version number with value 2.
 
-- A one-octet cipher algorithm.
+- A one-octet cipher algorithm identifier.
 
-- A one-octet AEAD algorithm.
+- A one-octet AEAD algorithm identifier.
 
 - A one-octet chunk size.
 
