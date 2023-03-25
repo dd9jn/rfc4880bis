@@ -3774,7 +3774,7 @@ Implementations MAY choose to omit the self-signatures, especially if a transfer
 
 ## OpenPGP Messages
 
-An OpenPGP message is a packet or sequence of packets that corresponds to the following grammatical rules (comma represents sequential composition, and vertical bar separates alternatives):
+An OpenPGP message is a packet or sequence of packets that corresponds to the following grammatical rules (comma (,) represents sequential composition, and vertical bar (\|) separates alternatives):
 
 OpenPGP Message :-
 : Encrypted Message \| Signed Message \| Compressed Message \| Literal Message.
