@@ -1940,14 +1940,14 @@ An implementation SHOULD generate this subpacket when creating a signed and encr
 
 All signatures are formed by producing a hash over the signature data, and then using the resulting hash in the signature algorithm.
 
-When a v6 signature is made, the salt is hashed first.
+When creating or verifying a v6 signature, the salt is the fed into the hash context before any other data.
 
 For binary document signatures (type 0x00), the document data is hashed directly.
 For text document signatures (type 0x01), the implementation MUST first canonicalize the document by converting line endings to \<CR>\<LF> and encoding it in UTF-8 (see {{RFC3629}}).
 The resulting UTF-8 bytestream is hashed.
 
 When a v4 signature is made over a key, the hash data starts with the octet 0x99, followed by a two-octet length of the key, and then the body of the key packet.
-When a v6 signature is made over a key, the hash data starts with the octet 0x9b, followed by a four-octet length of the key, and then the body of the key packet.
+When a v6 signature is made over a key, the hash data starts with the salt, then octet 0x9b, followed by a four-octet length of the key, and then the body of the key packet.
 
 A subkey binding signature (type 0x18) or primary key binding signature (type 0x19) then hashes the subkey using the same format as the main key (also using 0x99 or 0x9b as the first octet).
 Primary key revocation signatures (type 0x20) hash only the key being revoked.
@@ -1957,7 +1957,7 @@ A certification signature (type 0x10 through 0x13) hashes the User ID being boun
 A v3 certification hashes the contents of the User ID or attribute packet packet, without any header.
 A v4 or v6 certification hashes the constant 0xB4 for User ID certifications or the constant 0xD1 for User Attribute certifications, followed by a four-octet number giving the length of the User ID or User Attribute data, and then the User ID or User Attribute data.
 
-When a signature is made over a Signature packet (type 0x50, "Third-Party Confirmation signature"), the hash data starts with the octet 0x88, followed by the four-octet length of the signature, and then the body of the Signature packet.
+When a signature is made over a Signature packet (type 0x50, "Third-Party Confirmation signature"), the hash data starts the salt (v6 signatures only), followed by the octet 0x88, followed by the four-octet length of the signature, and then the body of the Signature packet.
 (Note that this is a Legacy packet header for a Signature packet with the length-of-length field set to zero.) The unhashed subpacket data of the Signature packet being hashed is not included in the hash, and the unhashed subpacket data length value is set to zero.
 
 Once the data body is hashed, then a trailer is hashed.
