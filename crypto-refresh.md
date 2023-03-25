@@ -536,11 +536,14 @@ Unused bits of an MPI MUST be zero.
 Note that MPIs are in some places used to encode non-integer data, such as an elliptic curve point (see {{ec-point-wire-formats}}), or an octet string of known, fixed length (see {{ec-scalar-wire-formats}}).
 The wire representation is the same: two octets of length in bits counted from the first non-zero bit, followed by the smallest series of octets that can represent the value while stripping off any leading zero octets.
 
-## Key IDs
+## Key IDs and Fingerprints
 
 A Key ID is an eight-octet scalar that identifies a key.
 Implementations SHOULD NOT assume that Key IDs are unique.
-{{key-ids-fingerprints}} describes how Key IDs are formed.
+A fingerprint is more likely to be unique than a key ID.
+The fingerprint and key ID of a key are calculated differently according to the version of the key.
+
+{{key-ids-fingerprints}} describes how Key IDs and Fingerprints are formed.
 
 ## Text
 
