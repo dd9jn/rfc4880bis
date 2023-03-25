@@ -314,11 +314,13 @@ normative:
     seriesinfo:
       ISO: Standard 10646-1
   JFIF:
-    title: JPEG File Interchange Format (Version 1.02).
+    title: "Information technology – Digital compression and coding of continuous-tone still images: JPEG File Interchange Format (JFIF)"
+    target: https://www.itu.int/rec/T-REC-T.871-201105-I
     author:
-      org: C-Cube Microsystems
-      name: Eric Hamilton, Milpitas, CA
-    date: September 1996
+      org: International Telecommunication Union
+    date: 2011-05-14
+    seriesinfo:
+      ISO: ISO/IEC 10918-5
   PKCS5:
     title: "PKCS #5 v2.0: Password-Based Cryptography Standard"
     author:
