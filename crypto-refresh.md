@@ -1495,9 +1495,9 @@ There are three types of self-signatures, the certification signatures (types 0x
 A cryptographically-valid self-signature should be accepted from any primary key, regardless of what Key Flags ({{key-flags}}) apply to the primary key.
 In particular, a primary key does not need to have 0x01 set in the first octet of Key Flags order to make a valid self-signature.
 
-For certification self-signatures, each User ID may have a self-signature, and thus different subpackets in those self-signatures.
-For subkey binding signatures, each subkey in fact has a self-signature.
-Subpackets that appear in a certification self-signature apply to the user name, and subpackets that appear in the subkey self-signature apply to the subkey.
+For certification self-signatures, each User ID MAY have a self-signature, and thus different subpackets in those self-signatures.
+For subkey binding signatures, each subkey MUST have a self-signature.
+Subpackets that appear in a certification self-signature apply to the User ID, and subpackets that appear in the subkey self-signature apply to the subkey.
 Lastly, subpackets on the direct-key signature apply to the entire key.
 
 Implementing software should interpret a self-signature's preference subpackets as narrowly as possible.
