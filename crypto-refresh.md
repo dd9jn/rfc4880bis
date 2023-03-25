@@ -1517,7 +1517,8 @@ Please see {{reason-for-revocation}} for more relevant detail.
 
 Since a self-signature contains important information about the key's use, an implementation SHOULD allow the user to rewrite the self-signature, and important information in it, such as preferences and key expiration.
 
-It is good practice to verify that a self-signature imported into an implementation doesn't advertise features that the implementation doesn't support, rewriting the signature as appropriate.
+When an implementation imports a secret key, it SHOULD verify that the key's internal self-signatures do not advertise features or algorithms that the implementation doesn't support.
+If an implementation observes such a mismatch, it SHOULD warn the user and offer to create new self-signatures that advertise the actual set of features and algorithms supported by the implementation.
 
 An implementation that encounters multiple self-signatures on the same object MUST select the most recent valid self-signature, and ignore all other self-signatures.
 
