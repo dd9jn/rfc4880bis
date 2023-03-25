@@ -754,8 +754,8 @@ An implementation MUST NOT interpret octets outside the range indicated in the p
 
 ## Packet Headers
 
-The first octet of the packet header is called the "Packet Tag".
-It determines the format of the header and denotes the packet contents.
+The first octet of the packet header contains the "Packet Tag".
+The first octet determines the format of the header and denotes the packet contents.
 The remainder of the packet header is the length of the packet.
 
 There are two packet formats, the (current) OpenPGP packet format specified by this document and its predecessors and the Legacy packet format as used by legacy implementations.
@@ -771,17 +771,18 @@ A mask for this bit is 0x80 in hexadecimal.
   Bit 6 -- Always one (except for Legacy packet format)
 ~~~~
 
+A zero in bit 6 of the first octet of the packet header indicates a Legacy packet format.
 The Legacy packet format MAY be used when consuming packets to facilitate interoperability with legacy implementations and accessing archived data.
 The Legacy packet format SHOULD NOT be used to generate new data, unless the recipient is known to only support the Legacy packet format.
 
 An implementation that consumes and re-distributes pre-existing OpenPGP data (such as Transferable Public Keys) may encounter packets framed with the Legacy packet format.
 Such an implementation MAY either re-distribute these packets in their Legacy format, or transform them to the current OpenPGP packet format before re-distribution.
 
-The current OpenPGP packet format packets contain:
+The current OpenPGP packet format treats the remaining bits of the first octet as a single field:
 
       Bits 5 to 0 -- packet tag
 
-Legacy packet format packets contain:
+Legacy packet format packets treat the remaining bits of the first octet as two fields:
 
       Bits 5 to 2 -- packet tag
       Bits 1 to 0 -- length-type
@@ -848,6 +849,8 @@ Partial Body Lengths MUST NOT be used for any other packet types.
 
 ### Legacy Format Packet Lengths {#legacy-packet-format}
 
+A zero in bit 6 of the first octet of the packet indicates a Legacy packet format.
+Bits 1 and 0 of the first octet of a Legacy packet are the "length-type" field.
 The meaning of the length-type in Legacy format packets is:
 
 0
