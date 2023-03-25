@@ -1970,7 +1970,7 @@ Primary key revocation signatures (type 0x20) hash only the key being revoked.
 Subkey revocation signature (type 0x28) hash first the primary key and then the subkey being revoked.
 
 A certification signature (type 0x10 through 0x13) hashes the User ID being bound to the key into the hash context after the above data.
-A v3 certification hashes the contents of the User ID or attribute packet packet, without any header.
+A v3 certification hashes the contents of the User ID or User Attribute packet, without the packet header.
 A v4 or v6 certification hashes the constant 0xB4 for User ID certifications or the constant 0xD1 for User Attribute certifications, followed by a four-octet number giving the length of the User ID or User Attribute data, and then the User ID or User Attribute data.
 
 When a signature is made over a Signature packet (type 0x50, "Third-Party Confirmation signature"), the hash data starts the salt (v6 signatures only), followed by the octet 0x88, followed by the four-octet length of the signature, and then the body of the Signature packet.
