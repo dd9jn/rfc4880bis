@@ -4417,7 +4417,7 @@ If the proposal contains neither an extension to the Features system nor an expl
   However, the signer would be foolish to use a weak algorithm simply because the recipient requests it.
 
 - Some of the encryption algorithms mentioned in this document have been analyzed less than others.
-  For example, although CAST5 is presently considered strong, it has been analyzed less than AES.
+  For example, although TWOFISH is presently considered reasonably strong, it has been analyzed much less than AES.
   Other algorithms may have other controversies surrounding them.
 
 - In late summer 2002, Jallad, Katz, and Schneier published an interesting attack on older versions of the OpenPGP protocol and some of its implementations {{JKS02}}.
