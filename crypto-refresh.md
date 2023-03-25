@@ -899,31 +899,33 @@ Note that Legacy format headers can only have tags less than 16, whereas OpenPGP
 The defined tags (in decimal) are as follows:
 
 {: title="Packet type registry" #packet-type-registry}
-Tag | Critical | Packet Type
----:|----------|--------------------------------------------------
+Tag | Critical | Packet Type | Reference | Shorthand 
+---:|----------|-------------|-----------|-----------
   0 | yes      | Reserved - a packet tag MUST NOT have this value
-  1 | yes      | Public-Key Encrypted Session Key Packet
-  2 | yes      | Signature Packet
-  3 | yes      | Symmetric-Key Encrypted Session Key Packet
-  4 | yes      | One-Pass Signature Packet
-  5 | yes      | Secret-Key Packet
-  6 | yes      | Public-Key Packet
-  7 | yes      | Secret-Subkey Packet
-  8 | yes      | Compressed Data Packet
-  9 | yes      | Symmetrically Encrypted Data Packet
- 10 | yes      | Marker Packet
- 11 | yes      | Literal Data Packet
- 12 | yes      | Trust Packet
- 13 | yes      | User ID Packet
- 14 | yes      | Public-Subkey Packet
- 17 | yes      | User Attribute Packet
- 18 | yes      | Symmetrically Encrypted and Integrity Protected Data Packet
- 19 | yes      | Reserved (formerly Modification Detection Code Packet)
+  1 | yes      | Public-Key Encrypted Session Key Packet | {{pkesk}} | PKESK
+  2 | yes      | Signature Packet | {{signature-packet}} | SIG
+  3 | yes      | Symmetric-Key Encrypted Session Key Packet | {{skesk}} | SKESK
+  4 | yes      | One-Pass Signature Packet | {{one-pass-sig}} | OPS
+  5 | yes      | Secret-Key Packet | {{seckey}}| SECKEY
+  6 | yes      | Public-Key Packet | {{pubkey}} | PUBKEY
+  7 | yes      | Secret-Subkey Packet | {{secsubkey}} | SECSUBKEY
+  8 | yes      | Compressed Data Packet | {{compressed-data}} | COMP
+  9 | yes      | Symmetrically Encrypted Data Packet | {{sed}} | SED
+ 10 | yes      | Marker Packet | {{marker-packet}} | MARKER
+ 11 | yes      | Literal Data Packet | {{lit}} |  LIT
+ 12 | yes      | Trust Packet | {{trust}} | TRUST
+ 13 | yes      | User ID Packet | {{uid}} | UID
+ 14 | yes      | Public-Subkey Packet | {{pubsubkey}} | PUBSUBKEY
+ 17 | yes      | User Attribute Packet | {{user-attribute-packet}} | UAT
+ 18 | yes      | Symmetrically Encrypted and Integrity Protected Data Packet | {{seipd}} | SEIPD
+ 19 | yes      | Reserved (formerly Modification Detection Code Packet) | (see {{version-one-seipd}})
  20 | yes      | Reserved (formerly AEAD Encrypted Data Packet)
- 21 | yes      | Padding Packet
+ 21 | yes      | Padding Packet | {{padding-packet}} | PADDING
 22 to 39 | yes | Unassigned Critical Packet
 40 to 59 | no  | Unassigned Non-Critical Packet
 60 to 63 | no  | Private or Experimental Values
+
+The labels in the "Shorthand" column are used for compact reference elsewhere in this draft, and may also be used by implementations that provide debugging or inspection affordances for streams of OpenPGP packets.
 
 ### Packet Criticality
 
@@ -2157,21 +2159,21 @@ For historical reasons, versions 1 and 5 of the key packets are unspecified.
 
 ### Key Packet Variants
 
-#### Public-Key Packet (Tag 6)
+#### Public-Key Packet (Tag 6) {#pubkey}
 
 A Public-Key packet starts a series of packets that forms an OpenPGP key (sometimes called an OpenPGP certificate).
 
-#### Public-Subkey Packet (Tag 14)
+#### Public-Subkey Packet (Tag 14) {#pubsubkey}
 
 A Public-Subkey packet (tag 14) has exactly the same format as a Public-Key packet, but denotes a subkey.
 One or more subkeys may be associated with a top-level key.
 By convention, the top-level key provides signature services, and the subkeys provide encryption services.
 
-#### Secret-Key Packet (Tag 5)
+#### Secret-Key Packet (Tag 5) {#seckey}
 
 A Secret-Key packet contains all the information that is found in a Public-Key packet, including the public-key material, but also includes the secret-key material after all the public-key fields.
 
-#### Secret-Subkey Packet (Tag 7)
+#### Secret-Subkey Packet (Tag 7) {#secsubkey}
 
 A Secret-Subkey packet (tag 7) is the subkey analog of the Secret Key packet and has exactly the same format.
 
@@ -2643,7 +2645,7 @@ The body of this packet consists of:
 
 Such a packet MUST be ignored when received.
 
-## Literal Data Packet (Tag 11)
+## Literal Data Packet (Tag 11) {#lit}
 
 A Literal Data packet contains the body of a message; data that is not to be further interpreted.
 
@@ -2702,7 +2704,7 @@ It cannot be enforced, and the field itself is not covered by any cryptographic 
 
 It is NOT RECOMMENDED to use this special filename in a newly-generated literal data packet.
 
-## Trust Packet (Tag 12)
+## Trust Packet (Tag 12) {#trust}
 
 The Trust packet is used only within keyrings and is not normally exported.
 Trust packets contain data that record the user's specifications of which key holders are trustworthy introducers, along with other information that implementing software uses for trust information.
@@ -2710,7 +2712,7 @@ The format of Trust packets is defined by a given implementation.
 
 Trust packets SHOULD NOT be emitted to output streams that are transferred to other users, and they SHOULD be ignored on any input other than local keyring files.
 
-## User ID Packet (Tag 13)
+## User ID Packet (Tag 13) {#uid}
 
 A User ID packet consists of UTF-8 text that is intended to represent the name and email address of the key holder.
 By convention, it includes an {{RFC2822}} mail name-addr, but there are no restrictions on its content.
