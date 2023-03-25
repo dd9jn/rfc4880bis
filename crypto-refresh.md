@@ -3827,11 +3827,11 @@ In addition to these rules, a marker packet ({{marker-packet}}) can appear anywh
 In addition to the above grammar, certain messages can be "unwrapped" to yield new messages.
 In particular:
 
-- Decrypting a version 2 Symmetrically Encrypted and Integrity Protected Data packet must yield a valid Optionally Padded Message.
+- Decrypting a version 2 Symmetrically Encrypted and Integrity Protected Data packet MUST yield a valid Optionally Padded Message.
 
-- Decrypting a version 1 Symmetrically Encrypted and Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet must yield a valid OpenPGP Message.
+- Decrypting a version 1 Symmetrically Encrypted and Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet MUST yield a valid OpenPGP Message.
 
-- Decompressing a Compressed Data packet must also yield a valid OpenPGP Message.
+- Decompressing a Compressed Data packet MUST also yield a valid OpenPGP Message.
 
 When any unwrapping is performed, the resulting stream of octets is parsed into a series of OpenPGP packets like any other stream of octets.
 The packet boundaries found in the series of octets are expected to align with the length of the unwrapped octet stream.
