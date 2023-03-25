@@ -2509,7 +2509,7 @@ The length of this MPI in bits is by definition always 255, so the two leading o
 
 When generating a new Curve25519Legacy secret key from 32 fully-random octets, the following pseudocode produces the MPI wire format (note the similarity to `decodeScalar25519` from {{RFC7748}}):
 
-    def curve25519_MPI_from_random(octet_list):
+    def curve25519Legacy_MPI_from_random(octet_list):
         octet_list[0] &= 248
         octet_list[31] &= 127
         octet_list[31] |= 64
@@ -4115,7 +4115,7 @@ NIST P-521 | SHA2-512 | AES-256
 brainpoolP256r1 | SHA2-256 | AES-128
 brainpoolP384r1 | SHA2-384 | AES-192
 brainpoolP512r1 | SHA2-512 | AES-256
-Curve25519 | SHA2-256 | AES-128
+Curve25519Legacy | SHA2-256 | AES-128
 
 # Notes on Algorithms {#notes-on-algorithms}
 
