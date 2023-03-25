@@ -1682,9 +1682,9 @@ All undefined flags MUST be zero.
 Defined flags are as follows:
 
 {: title="Signature Notation Data Subpacket Notation Flag registry"}
-Flag | Shorthand | Description | Security Recommended | Interoperability Recommended | Reference
------|-----------|-------------|----------------------|------------------------------|----------
-0x80 0x00 0x00 0x00 | human-readable | Notation value is text. | No | Yes | This document
+Flag Position | Shorthand | Description | Reference
+-----|-----------|-------------|----------------
+0x80000000 (first bit of first octet) | human-readable | Notation value is UTF-8 text. | This document
 
 Notation names are arbitrary strings encoded in UTF-8.
 They reside in two namespaces: The IETF namespace and the user namespace.
@@ -3436,7 +3436,7 @@ Adding a new Signature Notation Data subpacket MUST be done through the SPECIFIC
 #### Signature Notation Data Subpacket Notation Flags
 
 This specification creates a new registry of Signature Notation Data Subpacket Notation Flags.
-The registry includes the columns "Flag", "Shorthand", "Description", "Security Recommended", "Interoperability Recommended", and "Reference".
+The registry includes the columns "Flag", "Shorthand", "Description", and "Reference".
 The initial values for this registry can be found in {{notation-data}}.
 Adding a new item MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
