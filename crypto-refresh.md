@@ -1010,7 +1010,8 @@ To produce the value value "m" in the above formula, first concatenate the follo
 
 - A two-octet checksum of the session key, equal to the sum of the session key octets, modulo 65536.
 
-Then, the above values are encoded using the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC8017}} (see also {{pkcs-encoding}}).
+Then, the above values are encoded using the PKCS#1 block encoding EME-PKCS1-v1_5 described in step 2 of {{Section 7.2.1 of RFC8017}} (see also {{eme-pkcs1-v1-5-encode}}).
+When decoding "m" during decryption, an implementation should follow step 3 of {{Section 7.2.2 of RFC8017}} (see also {{eme-pkcs1-v1-5-decode}}).
 
 Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
 
@@ -1028,7 +1029,8 @@ To produce the value value "m" in the above formula, first concatenate the follo
 
 - A two-octet checksum of the session key, equal to the sum of the session key octets, modulo 65536.
 
-Then, the above values are encoded using the PKCS#1 block encoding EME-PKCS1-v1_5 described in Section 7.2.1 of {{RFC8017}} (see also {{pkcs-encoding}}).
+Then, the above values are encoded using the PKCS#1 block encoding EME-PKCS1-v1_5 described in step 2 of {{Section 7.2.1 of RFC8017}} (see also {{eme-pkcs1-v1-5-encode}}).
+When decoding "m" during decryption, an implementation should follow step 3 of {{Section 7.2.2 of RFC8017}} (see also {{eme-pkcs1-v1-5-decode}}).
 
 Note that when an implementation forms several PKESKs with one session key, forming a message that can be decrypted by several keys, the implementation MUST make a new PKCS#1 encoding for each key.
 
@@ -1223,7 +1225,7 @@ Algorithm-Specific Fields for DSA signatures:
 The signature calculation is based on a hash of the signed data, as described above.
 The details of the calculation are different for DSA signatures than for RSA signatures.
 
-With RSA signatures, the hash value is encoded using PKCS#1 encoding type EMSA-PKCS1-v1_5 as described in Section 9.2 of {{RFC8017}}.
+With RSA signatures, the hash value is encoded using PKCS#1 encoding type EMSA-PKCS1-v1_5 as described in {{Section 9.2 of RFC8017}} (see also {{emsa-pkcs1-v1-5}}).
 This requires inserting the hash value as an octet string into an ASN.1 structure.
 The object identifier for the type of hash being used is included in the structure.
 The hexadecimal representations for the currently defined hash algorithms are as follows:
@@ -4139,7 +4141,7 @@ To avoid potential confusion and interoperability problems, we are including loc
 {{RFC8017}} should be treated as the ultimate authority on PKCS#1 for OpenPGP.
 Nonetheless, we believe that there is value in having a self-contained document that avoids problems in the future with needed changes in the conventions.
 
-### EME-PKCS1-v1_5-ENCODE
+### EME-PKCS1-v1_5-ENCODE {#eme-pkcs1-v1-5-encode}
 
 Input:
 
@@ -4167,7 +4169,7 @@ Error: "message too long".
 
 4. Output EM.
 
-### EME-PKCS1-v1_5-DECODE
+### EME-PKCS1-v1_5-DECODE {#eme-pkcs1-v1-5-decode}
 
 Input:
 
@@ -4188,7 +4190,7 @@ To decode an EME-PKCS1_v1_5 message, separate the encoded message EM into an oct
 If the first octet of EM does not have hexadecimal value 0x00, if the second octet of EM does not have hexadecimal value 0x02, if there is no octet with hexadecimal value 0x00 to separate PS from M, or if the length of PS is less than 8 octets, output "decryption error" and stop.
 See also {{pkcs1-errors}} regarding differences in reporting between a decryption error and a padding error.
 
-### EMSA-PKCS1-v1_5
+### EMSA-PKCS1-v1_5 {#emsa-pkcs1-v1-5}
 
 This encoding method is deterministic and only has an encoding operation.
 
