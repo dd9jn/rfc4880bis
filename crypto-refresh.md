@@ -2174,7 +2174,7 @@ A Secret-Subkey packet (tag 7) is the subkey analog of the Secret Key packet and
 
 ### Public-Key Packet Formats {#public-key-packet-formats}
 
-There are three versions of key-material packets.
+There are four versions of key-material packets, two of which are strongly deprecated.
 
 OpenPGP implementations SHOULD create keys with version 6 format.
 V4 keys are deprecated; an implementation SHOULD NOT generate a v4 key, but SHOULD accept it.
