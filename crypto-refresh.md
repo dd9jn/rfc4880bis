@@ -228,13 +228,14 @@ informative:
         name: Thomas Peyrin
     date: 2020
   SP800-57:
-    target: "http://csrc.nist.gov/publications/nistpubs/800-57/SP800-57-Part{1,2}.pdf"
-    title: Recommendation on Key Management
+    target: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r5.pdf
+    title: "Recommendation on Key Management: Part 1 - General"
     author:
       org: NIST
-    date: March 2007
+    date: May 2020
     seriesinfo:
-      NIST Special Publication: 800-57
+      NIST Special Publication: 800-57 Part 1 Rev. 5
+      DOI: 10.6028/NIST.SP.800-57pt1r5
   SP800-131A:
     target: "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-131Ar2.pdf"
     title: Transitioning the Use of Cryptographic Algorithms and Key Lengths
@@ -4401,16 +4402,7 @@ If the proposal contains neither an extension to the Features system nor an expl
   Only signatures using acceptably strong hash algorithms should be accepted as valid.
 
 - As OpenPGP combines many different asymmetric, symmetric, and hash algorithms, each with different measures of strength, care should be taken that the weakest element of an OpenPGP message is still sufficiently strong for the purpose at hand.
-  While consensus about the strength of a given algorithm may evolve, NIST Special Publication 800-57 {{SP800-57}} recommends the following list of equivalent strengths:
-
-{: title="Key length equivalences"}
-Asymmetric key size | Hash size | Symmetric key size
--------------------:|-----------|-------------------
- 1024 | 160 |  80
- 2048 | 224 | 112
- 3072 | 256 | 128
- 7680 | 384 | 192
-15360 | 512 | 256
+  While consensus about the strength of a given algorithm may evolve, NIST Special Publication 800-57 {{SP800-57}} contains recommendations current at the time of this publication about equivalent security levels of different algorithms.
 
 - There is a somewhat-related potential security problem in signatures.
   If an attacker can find a message that hashes to the same hash with a different algorithm, a bogus signature structure can be constructed that evaluates correctly.
