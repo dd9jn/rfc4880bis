@@ -1317,7 +1317,7 @@ The body of a v4 or v6 Signature packet contains:
 
 - Only for v6 signatures, a variable-length field containing:
 
-  - A one-octet salt size. The value MUST match the value defined for the hash algorithm as specified in table {{hash-registry}}.
+  - A one-octet salt size. The value MUST match the value defined for the hash algorithm as specified in {{hash-registry}}.
 
   - The salt; a random value value of the specified size.
 
@@ -2135,7 +2135,7 @@ The body of this packet consists of:
 
 - Only for v6 packets, a variable-length field containing:
 
-  - A one-octet salt size. The value MUST match the value defined for the hash algorithm as specified in table {{hash-registry}}.
+  - A one-octet salt size. The value MUST match the value defined for the hash algorithm as specified in {{hash-registry}}.
 
   - The salt; a random value value of the specified size. The value MUST match the salt field of the corresponding Signature packet.
 
@@ -2629,7 +2629,7 @@ The symmetric cipher used may be specified in a Public-Key or Symmetric-Key Encr
 In that case, the cipher algorithm octet is prefixed to the session key before it is encrypted.
 If no packets of these types precede the encrypted data, the IDEA algorithm is used with the session key calculated as the MD5 hash of the passphrase, though this use is deprecated.
 
-The data is encrypted in CFB mode (see {#cfb-mode}).
+The data is encrypted in CFB mode (see {{cfb-mode}}).
 For the random prefix, the Initial Vector (IV) is specified as all zeros.
 Instead of using an IV, a string of length equal to the block size of the cipher plus two is encrypted.
 The first block-size octets (for example, 8 octets for a 64-bit block length) are random, and the following two octets are copies of the last two octets of the IV.
@@ -2799,7 +2799,7 @@ A version 1 Symmetrically Encrypted Integrity Protected Data packet consists of:
 The symmetric cipher used MUST be specified in a Public-Key or Symmetric-Key Encrypted Session Key packet that precedes the Symmetrically Encrypted Integrity Protected Data packet.
 In either case, the cipher algorithm octet is prefixed to the session key before it is encrypted.
 
-The data is encrypted in CFB mode (see {#cfb-mode}).
+The data is encrypted in CFB mode (see {{cfb-mode}}).
 The Initial Vector (IV) is specified as all zeros.
 Instead of using an IV, OpenPGP prefixes an octet string to the data before it is encrypted.
 The length of the octet string equals the block size of the cipher in octets, plus two.
@@ -3155,7 +3155,7 @@ If more than one message digest is used in the signatures, each digest algorithm
 To that end, the "Hash" Armor Header contains a comma-delimited list of used message digests, and the "Hash" Armor Header can be given multiple times.
 
 If the "SaltedHash" Armor Header is given, the specified message digest algorithm and salt are used for a signature.
-The message digest name is followed by a colon (`:`) followed by a random value encoded in Radix-64 without padding, which decoded length depends on the hash as specified in table {{hash-registry}}.
+The message digest name is followed by a colon (`:`) followed by a random value encoded in Radix-64 without padding, which decoded length depends on the hash as specified in {{hash-registry}}.
 Note: The "SaltedHash" Armor Header contains digest algorithm and salt for a single signature; a second signature requires a second "SaltedHash" Armor Header.
 
 If neither a "Hash" nor a "SaltedHash" Armor Header is given, or the message digest algorithms (and salts) used in the signatures do not match the information in the headers, the signature MUST be considered invalid.
@@ -3242,10 +3242,10 @@ ID | Algorithm | Public Key Format | Secret Key Format | Signature Format | PKES
  22 | EdDSALegacy (deprecated) | OID, MPI(point in prefixed native format) \[see {{ec-point-prefixed-native}}, {{key-eddsa-legacy}}] | MPI(value in curve-specific format) \[see {{curve-specific-formats}}] | MPI, MPI \[see {{curve-specific-formats}}, {{sig-eddsa-legacy}}] | N/A
  23 | Reserved (AEDH)
  24 | Reserved (AEDSA)
- 25 | X25519 | 32 octets | 32 octets | N/A | 32 octets, size octet, encoded key
- 26 | X448 | 56 octets | 56 octets | N/A | 56 octets, size octet, encoded key
- 27 | Ed25519 | 32 octets | 32 octets | 64 octets
- 28 | Ed448 | 57 octets | 57 octets | 114 octets
+ 25 | X25519 | 32 octets \[see {{key-x25519}}] | 32 octets | N/A | 32 octets, size octet, encoded key \[see {{pkesk-x25519}}]
+ 26 | X448 | 56 octets \[see {{key-x448}}] | 56 octets | N/A | 56 octets, size octet, encoded key \[see {{pkesk-x448}}]
+ 27 | Ed25519 | 32 octets \[see {{key-ed25519}}] | 32 octets | 64 octets \[see {{sig-ed25519}}]
+ 28 | Ed448 | 57 octets \[see {{key-ed448}}] | 57 octets | 114 octets \[see {{sig-ed448}}]
 100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement Ed25519 (27) for signatures, and X25519 (25) for encryption.
