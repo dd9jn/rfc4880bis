@@ -676,7 +676,7 @@ However, this method does not provide memory-hardness, unlike Argon2.
 #### Secret-Key Encryption {#secret-key-encryption}
 
 An S2K specifier can be stored in the secret keyring to specify how to convert the passphrase to a key that unlocks the secret data.
-Older versions of PGP just stored a symmetric cipher algorithm octet preceding the secret data or a zero to indicate that the secret data was unencrypted.
+Legacy implementations just stored a symmetric cipher algorithm octet preceding the secret data or a zero to indicate that the secret data was unencrypted.
 The MD5 hash function was always used to convert the passphrase to a key for the specified cipher algorithm.
 
 For compatibility, when an S2K specifier is used, the special value 253, 254, or 255 is stored in the position where the cipher algorithm octet would have been in the old data structure.
@@ -718,7 +718,7 @@ OpenPGP can create a Symmetric-key Encrypted Session Key (ESK) packet at the fro
 This is used to allow S2K specifiers to be used for the passphrase conversion or to create messages with a mix of symmetric-key ESKs and public-key ESKs.
 This allows a message to be decrypted either with a passphrase or a public-key pair.
 
-PGP 2 always used IDEA with Simple string-to-key conversion when encrypting a message with a symmetric algorithm.
+Legacy implementations always used IDEA with Simple string-to-key conversion when encrypting a message with a symmetric algorithm.
 See {{sed}}.
 This MUST NOT be generated, but MAY be consumed for backward-compatibility.
 
@@ -750,7 +750,7 @@ The first octet of the packet header is called the "Packet Tag".
 It determines the format of the header and denotes the packet contents.
 The remainder of the packet header is the length of the packet.
 
-There are two packet formats, the (current) OpenPGP packet format specified by this document and its predecessors and the Legacy packet format as used by PGP 2.x implementations.
+There are two packet formats, the (current) OpenPGP packet format specified by this document and its predecessors and the Legacy packet format as used by legacy implementations.
 
 Note that the most significant bit is the leftmost bit, called bit 7.
 A mask for this bit is 0x80 in hexadecimal.
@@ -2635,7 +2635,7 @@ The body of this packet consists of:
   An implementation that receives a literal data packet with this value in the format field SHOULD interpret the packet data as UTF-8 encoded text, unless reliable (not attacker-controlled) context indicates a specific alternate text encoding.
   This mode is deprecated due to its ambiguity.
 
-  Early versions of PGP also defined a value of `l` as a 'local' mode for machine-local conversions.
+  Some legacy implementations also defined a value of `l` as a 'local' mode for machine-local conversions.
   {{RFC1991}} incorrectly stated this local mode flag as `1` (ASCII numeral one).
   Both of these local modes are deprecated.
 
@@ -4606,7 +4606,7 @@ Thus, this is a non-comprehensive list of potential problems and gotchas for a d
   Moreover, implementations of OpenPGP-MIME {{RFC3156}} already have a requirement for ASCII armor so those implementations will necessarily have support.
 
 - What this document calls Legacy packet format {{legacy-packet-format}} is what older documents called the "old packet format".
-  It is the packet format of the legacy PGP 2 implementation.
+  It is the packet format used by legacy implementations.
   Older RFCs called the current OpenPGP packet format {{openpgp-packet-format}} the "new packet format".
 
 ## Constrained Legacy Fingerprint Storage for v6 Keys
