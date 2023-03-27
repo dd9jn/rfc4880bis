@@ -2127,13 +2127,13 @@ Signing key version | OPS packet version | Signature packet version
 
 Note that if a message contains more than one one-pass signature, then the Signature packets bracket the message; that is, the first Signature packet after the message corresponds to the last one-pass packet and the final Signature packet corresponds to the first one-pass packet.
 
-## Key Material Packet
+## Key Material Packets
 
 A key material packet contains all the information about a public or private key.
 There are four variants of this packet type, two major versions (versions 4 and 6), and two strongly deprecated versions (versions 2 and 3).
 Consequently, this section is complex.
 
-For historical reasons, versions 1 and 5 of the key packet are unspecified.
+For historical reasons, versions 1 and 5 of the key packets are unspecified.
 
 ### Key Packet Variants
 
