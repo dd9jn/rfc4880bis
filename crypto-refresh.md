@@ -923,7 +923,7 @@ Packet Tags from 40 to 63 are non-critical.
 
 # Packet Types {#packet-types}
 
-## Public-Key Encrypted Session Key Packets (Tag 1) {#pkesk}
+## Public-Key Encrypted Session Key Packet (Tag 1) {#pkesk}
 
 Zero or more Public-Key Encrypted Session Key (PKESK) packets and/or Symmetric-Key Encrypted Session Key packets ({{skesk}}) may precede an encryption container (that is, a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet), which holds an encrypted message.
 The message is encrypted with the session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet(s).
@@ -2011,7 +2011,7 @@ At the same time, it MUST NOT halt processing on the packet stream or reject oth
 This requirement is necessary for forward-compatibility.
 Producing an output that indicates that no successful signatures were found is preferable to aborting processing entirely.
 
-## Symmetric-Key Encrypted Session Key Packets (Tag 3) {#skesk}
+## Symmetric-Key Encrypted Session Key Packet (Tag 3) {#skesk}
 
 The Symmetric-Key Encrypted Session Key (SKESK) packet holds the symmetric-key encryption of a session key used to encrypt a message.
 Zero or more Public-Key Encrypted Session Key packets ({{pkesk}}) and/or Symmetric-Key Encrypted Session Key packets may precede an encryption container (that is, a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet) that holds an encrypted message.
@@ -2084,7 +2084,7 @@ Note that no chunks are used and that there is only one authentication tag.
 The Packet Tag in OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are given as additional data.
 For example, the additional data used with AES-128 with OCB consists of the octets 0xC3, 0x06, 0x07, and 0x02.
 
-## One-Pass Signature Packets (Tag 4) {#one-pass-sig}
+## One-Pass Signature Packet (Tag 4) {#one-pass-sig}
 
 The One-Pass Signature packet precedes the signed data and contains enough information to allow the receiver to begin calculating any hashes needed to verify the signature.
 It allows the Signature packet to be placed at the end of the message, so that the signer can compute the entire signed message in one pass.
