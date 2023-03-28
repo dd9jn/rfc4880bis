@@ -2271,20 +2271,22 @@ The packet contains:
   Any other value is a symmetric-key encryption algorithm identifier.
   A version 6 packet MUST NOT use the value 255.
 
-- Only for a version 6 packet where the secret key material is encrypted (that is, where the previous octet is not zero), a one-octet scalar octet count of the cumulative length of all the following optional string-to-key parameter fields.
+- Only for a version 6 packet where the secret key material is encrypted (that is, where the previous octet is not zero), a one-octet scalar octet count of the cumulative length of all the following conditionally included string-to-key parameter fields.
 
-- \[Optional\] If string-to-key usage octet was 255, 254, or 253, a one-octet symmetric encryption algorithm.
+- Conditionally included string-to-key parameter fields:
 
-- \[Optional\] If string-to-key usage octet was 253, a one-octet AEAD algorithm.
+  - If string-to-key usage octet was 255, 254, or 253, a one-octet symmetric encryption algorithm.
 
-- \[Optional\] Only for a version 6 packet, and if string-to-key usage octet was 255, 254, or 253, a one-octet count of the following field.
+  - If string-to-key usage octet was 253, a one-octet AEAD algorithm.
 
-- \[Optional\] If string-to-key usage octet was 255, 254, or 253, a string-to-key (S2K) specifier.
-  The length of the string-to-key specifier depends on its type (see {{s2k-types}}).
+  - Only for a version 6 packet, and if string-to-key usage octet was 255, 254, or 253, a one-octet count of the following field.
 
-- \[Optional\] If string-to-key usage octet was 253 (that is, the secret data is AEAD-encrypted), an initialization vector (IV) of size specified by the AEAD algorithm (see {{version-two-seipd}}), which is used as the nonce for the AEAD algorithm.
+  - If string-to-key usage octet was 255, 254, or 253, a string-to-key (S2K) specifier.
+    The length of the string-to-key specifier depends on its type (see {{s2k-types}}).
 
-- \[Optional\] If string-to-key usage octet was 255, 254, or a cipher algorithm identifier (that is, the secret data is CFB-encrypted), an initialization vector (IV) of the same length as the cipher's block size.
+  - If string-to-key usage octet was 253 (that is, the secret data is AEAD-encrypted), an initialization vector (IV) of size specified by the AEAD algorithm (see {{version-two-seipd}}), which is used as the nonce for the AEAD algorithm.
+
+  - If string-to-key usage octet was 255, 254, or a cipher algorithm identifier (that is, the secret data is CFB-encrypted), an initialization vector (IV) of the same length as the cipher's block size.
 
 - Plain or encrypted multiprecision integers comprising the secret key data.
   This is algorithm-specific and described in {{algorithm-specific-parts-of-keys}}.
@@ -2295,7 +2297,7 @@ The packet contains:
 
 - Only for a version 3 or 4 packet where the string-to-key usage octet is zero, a two-octet checksum of the algorithm-specific portion (sum of all octets, mod 65536).
 
-The details about storing algorithm-specific secrets above are summarized in {{secret-key-encryption}}.
+The details about storing algorithm-specific secrets above are summarized in {{v4-secret-key-protection-details}} and {{v6-secret-key-protection-details}} in {{secret-key-encryption}}.
 
 Note that the version 6 packet format adds two count values to help parsing packets with unknown S2K or public key algorithms.
 
