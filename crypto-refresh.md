@@ -671,7 +671,7 @@ Note that memory-hardness size is indicated in kibibytes (KiB), not octets.
 
 Argon2 is invoked with the passphrase as P, the salt as S, the values of t, p and m as described above, the required key size as the tag length T, 0x13 as the version v, and Argon2id as the type.
 
-For the recommended values of t, p and m, see Section 4 of {{RFC9106}}.
+For the recommended values of t, p and m, see {{Section 4 of RFC9106}}.
 If the recommended value of m for a given application is not a power of 2, it is RECOMMENDED to round up to the next power of 2 if the resulting performance would be acceptable, and round down otherwise (keeping in mind that m must be at least 8*p).
 
 As an example, with the first recommended option (t=1, p=4, m=2\*\*21), the full S2K specifier would be:
@@ -4013,7 +4013,7 @@ However, {{SP800-56A}} is the normative source of the definition.
     MB = Hash ( 00 || 00 || 00 || 01 || ZB || Param );
     return oBits leftmost bits of MB.
 
-Note that ZB in the KDF description above is the compact representation of X as defined in Section 4.2 of {{RFC6090}}.
+Note that ZB in the KDF description above is the compact representation of X as defined in {{Section 4.2 of RFC6090}}.
 
 ## EC DH Algorithm (ECDH) {#ecdh}
 
