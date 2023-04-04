@@ -1073,9 +1073,10 @@ The resulting key is used to encrypt the session key with AES-128 key wrap, defi
 Note that unlike ECDH, no checksum or padding are appended to the session key before key wrapping.
 Additionally, unlike ECDH, the derived key is not bound to the recipient key.
 Instead, the Intended Recipient Fingerprint subpacket SHOULD be used when creating a signed and encrypted message (see {{intended-recipient-fingerprint}}).
+
 Finally, note that unlike the other public-key algorithms, in the case of a v3 PKESK packet, the symmetric algorithm identifier is not encrypted.
 Instead, it is prepended to the encrypted session key in plaintext.
-Since the X25519 algorithm does not offer obfuscation of the session key size, encrypting the algorithm identifier offers little additional value.
+In this case, the symmetric algorithm used MUST be AES-128, AES-192 or AES-256 (algorithm ID 7, 8 or 9).
 
 ### Algorithm-Specific Fields for X448 encryption {#pkesk-x448}
 
@@ -1094,9 +1095,10 @@ The resulting key is used to encrypt the session key with AES-256 key wrap, defi
 Note that unlike ECDH, no checksum or padding are appended to the session key before key wrapping.
 Additionally, unlike ECDH, the derived key is not bound to the recipient key.
 Instead, the Intended Recipient Fingerprint subpacket SHOULD be used when creating a signed and encrypted message (see {{intended-recipient-fingerprint}}).
+
 Finally, note that unlike the other public-key algorithms, in the case of a v3 PKESK packet, the symmetric algorithm identifier is not encrypted.
 Instead, it is prepended to the encrypted session key in plaintext.
-Since the X448 algorithm does not offer obfuscation of the session key size, encrypting the algorithm identifier offers little additional value.
+In this case, the symmetric algorithm used MUST be AES-128, AES-192 or AES-256 (algorithm ID 7, 8 or 9).
 
 ### Notes on PKESK {#pkesk-notes}
 
