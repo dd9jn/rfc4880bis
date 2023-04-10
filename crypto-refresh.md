@@ -413,48 +413,20 @@ This document obsoletes: RFC 4880 (OpenPGP), RFC 5581 (Camellia in OpenPGP) and 
 
 ## Terms
 
-- OpenPGP - This is a term for the IETF specification of PGP which originates with RFC 2440 (OpenPGP Message Format) which was based on PGP 5, and which has since been maintained by the IETF, of which this document is the latest specification (at the time of writing).
-
-- PGP - Pretty Good Privacy.
-  PGP is a family of software systems developed by Philip R. Zimmermann from which OpenPGP is based.
-
-- PGP 2 - This version of PGP has many variants; where necessary a more detailed version number is used here.
-  PGP 2 uses only RSA, MD5, and IDEA for its cryptographic transforms.
-  An informational RFC, RFC 1991, was written describing this version of PGP.
-
-- PGP 5 - This version of PGP is formerly known as "PGP 3" in the community.
-  It has new formats and corrects a number of problems in the PGP 2 design.
-  It is referred to here as PGP 5 because that software was the first release of the "PGP 3" code base.
-
-- GnuPG - GNU Privacy Guard, also called GPG.
-  GnuPG is an OpenPGP implementation that avoids all encumbered algorithms.
-  Consequently, early versions of GnuPG did not include RSA public keys.
-
-"PGP", "Pretty Good", and "Pretty Good Privacy" are trademarks of PGP Corporation and are used with permission.
-The term "OpenPGP" refers to the protocol described in this and related documents.
-
 {::boilerplate bcp14-tagged}
 
 The key words "PRIVATE USE", "SPECIFICATION REQUIRED", and "RFC REQUIRED" that appear in this document when used to describe namespace allocation are to be interpreted as described in {{RFC8126}}.
 
 # General functions
 
-OpenPGP provides data integrity services for messages and data files by using these core technologies:
-
-- digital signatures
-
-- encryption
-
-- compression
-
-- Radix-64 conversion
-
-In addition, OpenPGP provides key management and certificate services, but many of these are beyond the scope of this document.
+OpenPGP provides data confidentiality and integrity for messages and data files by using public-key and/or symmetric encryption, and digital signatures.
+It provides formats for encoding and transferring encrypted and/or signed messages.
+In addition, OpenPGP provides functionality for encoding and transferring keys and certificates, though key storage and management is beyond the scope of this document.
 
 ## Confidentiality via Encryption
 
-OpenPGP combines symmetric-key encryption and public-key encryption to provide confidentiality.
-When made confidential, first the object is encrypted using a symmetric encryption algorithm.
+OpenPGP combines symmetric-key encryption and (optionally) public-key encryption to provide confidentiality.
+When using public keys, first the object is encrypted using a symmetric encryption algorithm.
 Each symmetric key is used only once, for a single object.
 A new "session key" is generated as a random number for each object (sometimes referred to as a session).
 Since it is used only once, the session key is bound to the message and transmitted with it.
@@ -463,41 +435,41 @@ The sequence is as follows:
 
 1. The sender creates a message.
 
-2. The sending OpenPGP generates a random number to be used as a session key for this message only.
+2. The sending OpenPGP implementation generates a random session key for this message only.
 
 3. The session key is encrypted using each recipient's public key.
    These "encrypted session keys" start the message.
 
-4. The sending OpenPGP encrypts the message using the session key, which forms the remainder of the message.
+4. The sending OpenPGP implementation encrypts the message using the session key, which forms the remainder of the message.
 
-5. The receiving OpenPGP decrypts the session key using the recipient's private key.
+5. The receiving OpenPGP implementation decrypts the session key using the recipient's private key.
 
-6. The receiving OpenPGP decrypts the message using the session key.
+6. The receiving OpenPGP implementation decrypts the message using the session key.
    If the message was compressed, it will be decompressed.
 
-With symmetric-key encryption, an object may be encrypted with a symmetric key derived from a passphrase (or other shared secret), or a two-stage mechanism similar to the public-key method described above in which a session key is itself encrypted with a symmetric algorithm keyed from a shared secret.
+When using symmetric-key encryption, a similar process as described above is used, but the session key is encrypted with a symmetric algorithm derived from a shared secret.
 
 Both digital signature and confidentiality services may be applied to the same message.
 First, a signature is generated for the message and attached to the message.
 Then the message plus signature is encrypted using a symmetric session key.
-Finally, the session key is encrypted using public-key encryption and prefixed to the encrypted block.
+Finally, the session key is encrypted and prefixed to the message.
 
 ## Authentication via Digital Signature
 
-The digital signature uses a hash code or message digest algorithm, and a public-key signature algorithm.
+The digital signature uses a cryptographic hash function, and a public-key signature algorithm.
 The sequence is as follows:
 
 1. The sender creates a message.
 
-2. The sending software generates a hash code of the message.
+2. The sending software generates a hash digest of the message.
 
-3. The sending software generates a signature from the hash code using the sender's private key.
+3. The sending software generates a signature from the hash digest using the sender's private key.
 
 4. The binary signature is attached to the message.
 
 5. The receiving software keeps a copy of the message signature.
 
-6. The receiving software generates a new hash code for the received message and verifies it using the message's signature.
+6. The receiving software generates a new hash digest for the received message and verifies it using the message's signature.
    If the verification is successful, the message is accepted as authentic.
 
 ## Compression
@@ -505,14 +477,14 @@ The sequence is as follows:
 If an implementation does not implement compression, its authors should be aware that most OpenPGP messages in the world are compressed.
 Thus, it may even be wise for a space-constrained implementation to implement decompression, but not compression.
 
-## Conversion to Radix-64
+## Conversion to Base64
 
 OpenPGP's underlying native representation for encrypted messages, signature certificates, and keys is a stream of arbitrary octets.
 Some systems only permit the use of blocks consisting of seven-bit, printable text.
 For transporting OpenPGP's native raw binary octets through channels that are not safe to raw binary data, a printable encoding of these binary octets is needed.
-OpenPGP provides the service of converting the raw 8-bit binary octet stream to a stream of printable ASCII characters, called Radix-64 encoding or ASCII Armor.
+OpenPGP allows converting the raw 8-bit binary octet stream to a stream of printable ASCII characters using base64 encoding, in a format called ASCII Armor (see {{base64}}).
 
-Implementations SHOULD provide Radix-64 conversions.
+Implementations SHOULD provide base64 conversions.
 
 ## Signature-Only Applications
 
@@ -556,12 +528,9 @@ When parsing an MPI in a v6 Key, Signature, or Public-Key Encrypted Session Key 
 
 Unused bits of an MPI MUST be zero.
 
-Also note that when an MPI is encrypted, the length refers to the plaintext MPI.
-It may be ill-formed in its ciphertext.
-
 ### Using MPIs to encode other data
 
-Note that MPIs are used in some places used to encode non-integer data, such as an elliptic curve point (see {{ec-point-wire-formats}}, or an octet string of known, fixed length (see {{ec-scalar-wire-formats}}).
+Note that MPIs are in some places used to encode non-integer data, such as an elliptic curve point (see {{ec-point-wire-formats}}, or an octet string of known, fixed length (see {{ec-scalar-wire-formats}}).
 The wire representation is the same: two octets of length in bits counted from the first non-zero bit, followed by the smallest series of octets that can represent the value while stripping off any leading zero octets.
 
 ## Key IDs
@@ -587,24 +556,24 @@ It is beyond the scope of this standard to discuss the details of keyrings or ot
 ## String-to-Key (S2K) Specifiers
 
 A string-to-key (S2K) specifier is used to convert a passphrase string into a symmetric-key encryption/decryption key.
-They are used in two places, currently: to encrypt the secret part of private keys in the private keyring, and to convert passphrases to encryption keys for symmetrically encrypted messages.
+They are used in two places, currently: to encrypt the secret part of private keys, and to convert passphrases to encryption keys for symmetrically encrypted messages.
 
 ### String-to-Key (S2K) Specifier Types {#s2k-types}
 
-There are four types of S2K specifiers currently supported, and some reserved values:
+There are four types of S2K specifiers currently specified, and some reserved values:
 
 {: title="S2K type registry"}
-ID | S2K Type | Generate? | S2K field size (octets) | Reference
+ID | S2K Type | S2K field size (octets) | Reference | Generate?
 ---:|------------------|-----|-------|--
-  0 | Simple S2K | N | 2 | {{s2k-simple}}
-  1 | Salted S2K | Only when string is high entropy | 10 | {{s2k-salted}}
-  2 | Reserved value | N
-  3 | Iterated and Salted S2K | Y | 11 | {{s2k-iter-salted}}
-  4 | Argon2 | Y | 20 | {{s2k-argon2}}
-100 to 110 | Private/Experimental S2K | As appropriate
+  0 | Simple S2K | 2 | {{s2k-simple}} | No
+  1 | Salted S2K | 10 | {{s2k-salted}} | Only when string is high entropy
+  2 | Reserved value | - | - | No
+  3 | Iterated and Salted S2K | 11 | {{s2k-iter-salted}} | Yes
+  4 | Argon2 | 20 | {{s2k-argon2}} | Yes
+100 to 110 | Private/Experimental S2K | - | - | As appropriate
 
 These are described in the subsections below.
-If the "Generate?" column is not "Y", the S2K entry is used only for reading in backwards compatibility mode and should not be used to generate new output.
+If the "Generate?" column is not "Yes", the S2K entry is used only for reading in backwards compatibility mode and should not be used to generate new output.
 
 #### Simple S2K {#s2k-simple}
 
@@ -639,7 +608,7 @@ Salted S2K is exactly like Simple S2K, except that the input to the hash functio
 #### Iterated and Salted S2K {#s2k-iter-salted}
 
 This includes both a salt and an octet count.
-The salt is combined with the passphrase and the resulting value is hashed repeatedly.
+The salt is combined with the passphrase and the resulting value is repeated and then hashed.
 This further increases the amount of work an attacker must do to try dictionary attacks.
 
       Octet  0:        0x03
@@ -659,9 +628,9 @@ The total number of octets to be hashed is specified in the encoded count in the
 Note that the resulting count value is an octet count of how many octets will be hashed, not an iteration count.
 
 Initially, one or more hash contexts are set up as with the other S2K algorithms, depending on how many octets of key data are needed.
-Then the salt, followed by the passphrase data, is repeatedly hashed until the number of octets specified by the octet count has been hashed.
+Then the salt, followed by the passphrase data, is repeatedly passed to the hash function until the number of octets specified by the octet count has been hashed.
 The one exception is that if the octet count is less than the size of the salt plus passphrase, the full salt plus passphrase will be hashed even though that is greater than the octet count.
-After the hashing is done, the data is unloaded from the hash context(s) as with the other S2K algorithms.
+After the hashing is done, the key data is produced from the hash digest(s) as with the other S2K algorithms.
 
 #### Argon2 {#s2k-argon2}
 
@@ -707,7 +676,7 @@ However, this method does not provide memory-hardness, unlike Argon2.
 #### Secret-Key Encryption {#secret-key-encryption}
 
 An S2K specifier can be stored in the secret keyring to specify how to convert the passphrase to a key that unlocks the secret data.
-Older versions of PGP just stored a symmetric cipher algorithm octet preceding the secret data or a zero to indicate that the secret data was unencrypted.
+Legacy implementations just stored a symmetric cipher algorithm octet preceding the secret data or a zero to indicate that the secret data was unencrypted.
 The MD5 hash function was always used to convert the passphrase to a key for the specified cipher algorithm.
 
 For compatibility, when an S2K specifier is used, the special value 253, 254, or 255 is stored in the position where the cipher algorithm octet would have been in the old data structure.
@@ -728,7 +697,7 @@ Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password
 254 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Yes
 255 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| check(secrets)) | No
 
-If the "Generate?" column is not "Y", the Secret Key protection details entry is used only for reading in backwards compatibility mode and MUST NOT be used to generate new output.
+If the "Generate?" column is not "Yes", the Secret Key protection details entry is used only for reading in backwards compatibility mode and MUST NOT be used to generate new output.
 
 Each row with "Generate?" marked as "No" is described for backward compatibility, and MUST NOT be generated.
 
@@ -749,7 +718,7 @@ OpenPGP can create a Symmetric-key Encrypted Session Key (ESK) packet at the fro
 This is used to allow S2K specifiers to be used for the passphrase conversion or to create messages with a mix of symmetric-key ESKs and public-key ESKs.
 This allows a message to be decrypted either with a passphrase or a public-key pair.
 
-PGP 2 always used IDEA with Simple string-to-key conversion when encrypting a message with a symmetric algorithm.
+Legacy implementations always used IDEA with Simple string-to-key conversion when encrypting a message with a symmetric algorithm.
 See {{sed}}.
 This MUST NOT be generated, but MAY be consumed for backward-compatibility.
 
@@ -781,7 +750,7 @@ The first octet of the packet header is called the "Packet Tag".
 It determines the format of the header and denotes the packet contents.
 The remainder of the packet header is the length of the packet.
 
-There are two packet formats, the (current) OpenPGP packet format specified by this document and its predecessors and the Legacy packet format as used by PGP 2.x implementations.
+There are two packet formats, the (current) OpenPGP packet format specified by this document and its predecessors and the Legacy packet format as used by legacy implementations.
 
 Note that the most significant bit is the leftmost bit, called bit 7.
 A mask for this bit is 0x80 in hexadecimal.
@@ -954,7 +923,7 @@ Packet Tags from 40 to 63 are non-critical.
 
 # Packet Types {#packet-types}
 
-## Public-Key Encrypted Session Key Packets (Tag 1) {#pkesk}
+## Public-Key Encrypted Session Key Packet (Tag 1) {#pkesk}
 
 Zero or more Public-Key Encrypted Session Key (PKESK) packets and/or Symmetric-Key Encrypted Session Key packets ({{skesk}}) may precede an encryption container (that is, a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet), which holds an encrypted message.
 The message is encrypted with the session key, and the session key is itself encrypted and stored in the Encrypted Session Key packet(s).
@@ -968,7 +937,7 @@ The remainder of the packet depends on the version.
 The versions differ in how they identify the recipient key, and in what they encode.
 The version of the PKESK packet must align with the version of the SEIPD packet (see {{encrypted-message-versions}}).
 
-### v3 PKESK {#v3-pkesk}
+### Version 3 Public-Key Encrypted Session Key Packet Format {#v3-pkesk}
 
 A version 3 Public-Key Encrypted Session Key (PKESK) packet precedes a version 1 Symmetrically Encrypted Integrity Protected Data (v1 SEIPD, see {{version-one-seipd}}) packet.
 In historic data, it is sometimes found preceding a deprecated Symmetrically Encrypted Data packet (SED, see {{sed}}).
@@ -993,7 +962,7 @@ The public-key encryption algorithm (described in subsequent sections) is passed
 
 - The one-octet algorithm identifier that specifies the symmetric encryption algorithm used to encrypt the following v1 SEIPD packet.
 
-### v6 PKESK {#v6-pkesk}
+### Version 6 Public-Key Encrypted Session Key Packet Format {#v6-pkesk}
 
 A version 6 Public-Key Encrypted Session Key (PKESK) packet precedes a version 2 Symmetrically Encrypted Integrity Protected Data (v2 SEIPD, see {{version-two-seipd}}) packet.
 A v6 PKESK packet MUST NOT precede a v1 SEIPD packet or a deprecated Symmetrically Encrypted Data packet (see {{encrypted-message-versions}}).
@@ -1784,8 +1753,7 @@ Note also that since this is a URI, the key server can actually be a copy of the
 (1 octet, Boolean)
 
 This is a flag in a User ID's self-signature that states whether this User ID is the main User ID for this key.
-It is reasonable for an implementation to resolve ambiguities in preferences, etc.
-by referring to the primary User ID.
+It is reasonable for an implementation to resolve ambiguities in preferences, for example, by referring to the primary User ID.
 If this flag is absent, its value is zero.
 If more than one User ID in a key is marked as primary, the implementation may resolve the ambiguity in any way it sees fit, but it is RECOMMENDED that priority be given to the User ID with the most recent self-signature.
 
@@ -2046,7 +2014,7 @@ At the same time, it MUST NOT halt processing on the packet stream or reject oth
 This requirement is necessary for forward-compatibility.
 Producing an output that indicates that no successful signatures were found is preferable to aborting processing entirely.
 
-## Symmetric-Key Encrypted Session Key Packets (Tag 3) {#skesk}
+## Symmetric-Key Encrypted Session Key Packet (Tag 3) {#skesk}
 
 The Symmetric-Key Encrypted Session Key (SKESK) packet holds the symmetric-key encryption of a session key used to encrypt a message.
 Zero or more Public-Key Encrypted Session Key packets ({{pkesk}}) and/or Symmetric-Key Encrypted Session Key packets may precede an encryption container (that is, a Symmetrically Encrypted Integrity Protected Data packet or --- for historic data --- a Symmetrically Encrypted Data packet) that holds an encrypted message.
@@ -2062,7 +2030,7 @@ The remainder of the packet depends on the version.
 The versions differ in how they encrypt the session key with the password, and in what they encode.
 The version of the SKESK packet must align with the version of the SEIPD packet (see {{encrypted-message-versions}}).
 
-### v4 SKESK {#v4-skesk}
+### Version 4 Symmetric-Key Encrypted Session Key Packet Format {#v4-skesk}
 
 A version 4 Symmetric-Key Encrypted Session Key (SKESK) packet precedes a version 1 Symmetrically Encrypted Integrity Protected Data (v1 SEIPD, see {{version-one-seipd}}) packet.
 In historic data, it is sometimes found preceding a deprecated Symmetrically Encrypted Data packet (SED, see {{sed}}).
@@ -2087,7 +2055,7 @@ The decryption result consists of a one-octet algorithm identifier that specifie
 Note: because an all-zero IV is used for this decryption, the S2K specifier MUST use a salt value, either a Salted S2K, an Iterated-Salted S2K, or Argon2.
 The salt value will ensure that the decryption key is not repeated even if the passphrase is reused.
 
-### v6 SKESK {#v6-skesk}
+### Version 6 Symmetric-Key Encrypted Session Key Packet Format {#v6-skesk}
 
 A version 6 Symmetric-Key Encrypted Session Key (SKESK) packet precedes a version 2 Symmetrically Encrypted Integrity Protected Data (v2 SEIPD, see {{version-two-seipd}}) packet.
 A v6 SKESK packet MUST NOT precede a v1 SEIPD packet or a deprecated Symmetrically Encrypted Data packet (see {{encrypted-message-versions}}).
@@ -2119,7 +2087,7 @@ Note that no chunks are used and that there is only one authentication tag.
 The Packet Tag in OpenPGP format encoding (bits 7 and 6 set, bits 5-0 carry the packet tag), the packet version number, the cipher algorithm octet, and the AEAD algorithm octet are given as additional data.
 For example, the additional data used with AES-128 with OCB consists of the octets 0xC3, 0x06, 0x07, and 0x02.
 
-## One-Pass Signature Packets (Tag 4) {#one-pass-sig}
+## One-Pass Signature Packet (Tag 4) {#one-pass-sig}
 
 The One-Pass Signature packet precedes the signed data and contains enough information to allow the receiver to begin calculating any hashes needed to verify the signature.
 It allows the Signature packet to be placed at the end of the message, so that the signer can compute the entire signed message in one pass.
@@ -2162,13 +2130,13 @@ Signing key version | OPS packet version | Signature packet version
 
 Note that if a message contains more than one one-pass signature, then the Signature packets bracket the message; that is, the first Signature packet after the message corresponds to the last one-pass packet and the final Signature packet corresponds to the first one-pass packet.
 
-## Key Material Packet
+## Key Material Packets
 
 A key material packet contains all the information about a public or private key.
 There are four variants of this packet type, two major versions (versions 4 and 6), and two strongly deprecated versions (versions 2 and 3).
 Consequently, this section is complex.
 
-For historical reasons, versions 1 and 5 of the key packet are unspecified.
+For historical reasons, versions 1 and 5 of the key packets are unspecified.
 
 ### Key Packet Variants
 
@@ -2670,7 +2638,7 @@ The body of this packet consists of:
   An implementation that receives a literal data packet with this value in the format field SHOULD interpret the packet data as UTF-8 encoded text, unless reliable (not attacker-controlled) context indicates a specific alternate text encoding.
   This mode is deprecated due to its ambiguity.
 
-  Early versions of PGP also defined a value of `l` as a 'local' mode for machine-local conversions.
+  Some legacy implementations also defined a value of `l` as a 'local' mode for machine-local conversions.
   {{RFC1991}} incorrectly stated this local mode flag as `1` (ASCII numeral one).
   Both of these local modes are deprecated.
 
@@ -2975,23 +2943,23 @@ An implementation MUST be able to process padding packets anywhere else in an Op
 
 Policy about how large to make such a packet to defend against traffic analysis is beyond the scope of this document.
 
-# Radix-64 Conversions {#radix64}
+# Base64 Conversions {#base64}
 
 As stated in the introduction, OpenPGP's underlying native representation for objects is a stream of arbitrary octets, and some systems desire these objects to be immune to damage caused by character set translation, data conversions, etc.
 
 In principle, any printable encoding scheme that met the requirements of the unsafe channel would suffice, since it would not change the underlying binary bit streams of the native OpenPGP data structures.
 The OpenPGP standard specifies one such printable encoding scheme to ensure interoperability.
 
-OpenPGP's Radix-64 encoding is composed of two parts: a base64 encoding of the binary data and an optional checksum.
+The encoding is composed of two parts: a base64 encoding of the binary data and an optional checksum.
 The base64 encoding used is described in {{Section 4 of RFC4648}}, and it is wrapped into lines of no more than 76 characters each.
 
 When decoding base64, an OpenPGP implementation must ignore all white space.
 
 ## Optional checksum {#optional-crc24}
 
-The optional checksum is a 24-bit Cyclic Redundancy Check (CRC) converted to four characters of radix-64 encoding by the same MIME base64 transformation, preceded by an equal sign (=).
+The optional checksum is a 24-bit Cyclic Redundancy Check (CRC) converted to four characters of base64 encoding by the same MIME base64 transformation, preceded by an equal sign (=).
 The CRC is computed by using the generator 0x864CFB and an initialization of 0xB704CE.
-The accumulation is done on the data before it is converted to radix-64, rather than on the converted data.
+The accumulation is done on the data before it is converted to base64, rather than on the converted data.
 A sample implementation of this algorithm is in {{sample-crc24}}.
 
 If present, the checksum with its leading equal sign MUST appear on the next line after the base64 encoded data.
@@ -2999,7 +2967,7 @@ If present, the checksum with its leading equal sign MUST appear on the next lin
 An implementation MUST NOT reject an OpenPGP object when the CRC24 footer is present, missing, malformed, or disagrees with the computed CRC24 sum.
 When forming ASCII Armor, the CRC24 footer SHOULD NOT be generated, unless interoperability with implementations that require the CRC24 footer to be present is a concern.
 
-The CRC24 footer MUST NOT be generated if it can be determined by context or by the OpenPGP object being encoded that the consuming implementation accepts Radix-64 encoded blocks without CRC24 footer.
+The CRC24 footer MUST NOT be generated if it can be determined by context or by the OpenPGP object being encoded that the consuming implementation accepts base64 encoded blocks without CRC24 footer.
 Notably:
 
 - An ASCII-armored Encrypted Message packet sequence that ends in an v2 SEIPD packet MUST NOT contain a CRC24 footer.
@@ -3044,7 +3012,7 @@ crc24 crc_octets(unsigned char *octets, size_t len)
 
 ## Forming ASCII Armor
 
-When OpenPGP encodes data into ASCII Armor, it puts specific headers around the Radix-64 encoded data, so OpenPGP can reconstruct the data later.
+When OpenPGP encodes data into ASCII Armor, it puts specific headers around the base64 encoded data, so OpenPGP can reconstruct the data later.
 An OpenPGP implementation MAY use ASCII armor to protect raw binary data.
 OpenPGP informs the user what kind of data is encoded in the ASCII armor through the use of the headers.
 
@@ -3093,7 +3061,7 @@ An OpenPGP implementation may consider improperly formatted Armor Headers to be 
 Unknown keys should be silently ignored, and an OpenPGP implementation SHOULD continue to process the message.
 
 Note that some transport methods are sensitive to line length.
-While there is a limit of 76 characters for the Radix-64 data ({{radix64}}), there is no limit to the length of Armor Headers.
+While there is a limit of 76 characters for the base64 data ({{base64}}), there is no limit to the length of Armor Headers.
 Care should be taken that the Armor Headers are short enough to survive transport.
 One way to do this is to repeat an Armor Header Key multiple times with different values for each so that no one line is overly long.
 
@@ -3158,7 +3126,7 @@ If more than one message digest is used in the signatures, each digest algorithm
 To that end, the "Hash" Armor Header contains a comma-delimited list of used message digests, and the "Hash" Armor Header can be given multiple times.
 
 If the "SaltedHash" Armor Header is given, the specified message digest algorithm and salt are used for a signature.
-The message digest name is followed by a colon (`:`) followed by a random value encoded in Radix-64 without padding, which decoded length depends on the hash as specified in {{hash-registry}}.
+The message digest name is followed by a colon (`:`) followed by a random value encoded in base64 without padding, which decoded length depends on the hash as specified in {{hash-registry}}.
 Note: The "SaltedHash" Armor Header contains digest algorithm and salt for a single signature; a second signature requires a second "SaltedHash" Armor Header.
 
 If neither a "Hash" nor a "SaltedHash" Armor Header is given, or the message digest algorithms (and salts) used in the signatures do not match the information in the headers, the signature MUST be considered invalid.
@@ -3879,10 +3847,10 @@ A thorough introduction to ECC can be found in {{KOBLITZ}}.
 None of the ECC methods described in this document are allowed with deprecated v3 keys.
 Refer to {{FIPS186}}, B.4.1, for the method to generate a uniformly distributed ECC private key.
 
-## Supported ECC Curves
+## ECC Curves
 
 This document references three named prime field curves defined in {{FIPS186}} as "Curve P-256", "Curve P-384", and "Curve P-521"; and three named prime field curves defined in {{RFC5639}} as "brainpoolP256r1", "brainpoolP384r1", and "brainpoolP512r1".
-These three {{FIPS186}} curves and the three {{RFC5639}} curves can be used with ECDSA and ECDH public key algorithms.
+The three {{FIPS186}} curves and the three {{RFC5639}} curves can be used with ECDSA and ECDH public key algorithms.
 They are referenced using a sequence of octets, referred to as the curve OID.
 {{ec-curves}} describes in detail how this sequence of octets is formed.
 
@@ -4250,7 +4218,7 @@ Note further that implementations conforming to previous versions of this standa
 
 An implementation MUST NOT use a symmetric algorithm that is not in the recipient's preference list.
 When encrypting to more than one recipient, the implementation finds a suitable algorithm by taking the intersection of the preferences of the recipients.
-Note that the MUST-implement algorithm, AES-128, ensures that the intersection is not null.
+Note that the MUST-implement algorithm, AES-128, ensures that the intersection is non-empty.
 The implementation may use any mechanism to pick an algorithm in the intersection.
 
 If an implementation can decrypt a message that a keyholder doesn't have in their preferences, the implementation SHOULD decrypt the message anyway, but MUST warn the keyholder that the protocol has been violated.
@@ -4374,23 +4342,17 @@ If the proposal contains neither an extension to the Features system nor an expl
 
 # Security Considerations {#security-considerations}
 
-- As with any technology involving cryptography, you should check the current literature to determine if any algorithms used here have been found to be vulnerable to attack.
+- As with any technology involving cryptography, you should check the current literature to determine if any algorithms used here have been found to be vulnerable to an attack.
 
 - This specification uses Public-Key Cryptography technologies.
   It is assumed that the private key portion of a public-private key pair is controlled and secured by the proper party or parties.
 
-- The MD5 hash algorithm has been found to have weaknesses, with collisions found in a number of cases.
-  MD5 is deprecated for use in OpenPGP.
-  Implementations MUST NOT generate new signatures using MD5 as a hash function.
-  They MAY continue to consider old signatures that used MD5 as valid.
-
-- SHA2-224 and SHA2-384 require the same work as SHA2-256 and SHA2-512, respectively.
-  In general, there are few reasons to use them outside of DSS compatibility.
-  You need a situation where one needs more security than smaller hashes, but does not want to have the full 256-bit or 512-bit data length.
+- The MD5 and SHA-1 hash algorithms have been found to have weaknesses, with collisions found in a number of cases.
+  MD5 and SHA-1 are deprecated for use in OpenPGP.
 
 - Many security protocol designers think that it is a bad idea to use a single key for both privacy (encryption) and integrity (signatures).
   In fact, this was one of the motivating forces behind the v4 key format with separate signature and encryption keys.
-  If you as an implementer promote dual-use keys, you should at least be aware of this controversy.
+  Using a single key for encrypting and signing is discouraged.
 
 - The DSA algorithm will work with any hash, but is sensitive to the quality of the hash algorithm.
   Verifiers should be aware that even if the signer used a strong hash, an attacker could have modified the signature to use a weak one.
@@ -4421,7 +4383,7 @@ Asymmetric key size | Hash size | Symmetric key size
   However, the signer would be foolish to use a weak algorithm simply because the recipient requests it.
 
 - Some of the encryption algorithms mentioned in this document have been analyzed less than others.
-  For example, although CAST5 is presently considered strong, it has been analyzed less than TripleDES.
+  For example, although CAST5 is presently considered strong, it has been analyzed less than AES.
   Other algorithms may have other controversies surrounding them.
 
 - In late summer 2002, Jallad, Katz, and Schneier published an interesting attack on older versions of the OpenPGP protocol and some of its implementations {{JKS02}}.
@@ -4429,8 +4391,6 @@ Asymmetric key size | Hash size | Symmetric key size
   The attacker is thus using the user as a decryption oracle, and can often decrypt the message.
   This attack is a particular form of ciphertext malleability.
   See {{ciphertext-malleability}} for information on how to defend against such an attack using more recent versions of OpenPGP.
-
-- Some technologies mentioned here may be subject to government control in some countries.
 
 ## SHA-1 Collision Detection {#sha1cd}
 
@@ -4649,7 +4609,7 @@ Thus, this is a non-comprehensive list of potential problems and gotchas for a d
   Moreover, implementations of OpenPGP-MIME {{RFC3156}} already have a requirement for ASCII armor so those implementations will necessarily have support.
 
 - What this document calls Legacy packet format {{legacy-packet-format}} is what older documents called the "old packet format".
-  It is the packet format of the legacy PGP 2 implementation.
+  It is the packet format used by legacy implementations.
   Older RFCs called the current OpenPGP packet format {{openpgp-packet-format}} the "new packet format".
 
 ## Constrained Legacy Fingerprint Storage for v6 Keys
@@ -5392,21 +5352,21 @@ These messages are the literal data "Hello, world!" encrypted using v1 SEIPD, wi
 In each example, the choice of symmetric cipher is the same in both the v4 SKESK packet and v1 SEIPD packet.
 In all cases, the Argon2 parameters are t = 1, p = 4, and m = 21.
 
-### v4 SKESK using Argon2 with AES-128
+### Version 4 SKESK using Argon2 with AES-128
 
 {: sourcecode-name="v4skesk-argon2-aes128.pgp"}
 ~~~ application/pgp-encrypted
 {::include test-vectors/v4skesk-argon2-aes128.pgp}
 ~~~
 
-### v4 SKESK using Argon2 with AES-192
+### Version 4 SKESK using Argon2 with AES-192
 
 {: sourcecode-name="v4skesk-argon2-aes192.pgp"}
 ~~~ application/pgp-encrypted
 {::include test-vectors/v4skesk-argon2-aes192.pgp}
 ~~~
 
-### v4 SKESK using Argon2 with AES-256
+### Version 4 SKESK using Argon2 with AES-256
 
 {: sourcecode-name="v4skesk-argon2-aes256.pgp"}
 ~~~ application/pgp-encrypted
