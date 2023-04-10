@@ -1495,9 +1495,9 @@ There are three types of self-signatures, the certification signatures (types 0x
 A cryptographically-valid self-signature should be accepted from any primary key, regardless of what Key Flags ({{key-flags}}) apply to the primary key.
 In particular, a primary key does not need to have 0x01 set in the first octet of Key Flags order to make a valid self-signature.
 
-For certification self-signatures, each User ID may have a self-signature, and thus different subpackets in those self-signatures.
-For subkey binding signatures, each subkey in fact has a self-signature.
-Subpackets that appear in a certification self-signature apply to the user name, and subpackets that appear in the subkey self-signature apply to the subkey.
+For certification self-signatures, each User ID MAY have a self-signature, and thus different subpackets in those self-signatures.
+For subkey binding signatures, each subkey MUST have a self-signature.
+Subpackets that appear in a certification self-signature apply to the User ID, and subpackets that appear in the subkey self-signature apply to the subkey.
 Lastly, subpackets on the direct-key signature apply to the entire key.
 
 Implementing software should interpret a self-signature's preference subpackets as narrowly as possible.
@@ -1517,7 +1517,8 @@ Please see {{reason-for-revocation}} for more relevant detail.
 
 Since a self-signature contains important information about the key's use, an implementation SHOULD allow the user to rewrite the self-signature, and important information in it, such as preferences and key expiration.
 
-It is good practice to verify that a self-signature imported into an implementation doesn't advertise features that the implementation doesn't support, rewriting the signature as appropriate.
+When an implementation imports a secret key, it SHOULD verify that the key's internal self-signatures do not advertise features or algorithms that the implementation doesn't support.
+If an implementation observes such a mismatch, it SHOULD warn the user and offer to create new self-signatures that advertise the actual set of features and algorithms supported by the implementation.
 
 An implementation that encounters multiple self-signatures on the same object MUST select the most recent valid self-signature, and ignore all other self-signatures.
 
