@@ -1063,7 +1063,7 @@ An implementation MUST NOT generate ElGamal v6 PKESKs.
 
 - The encrypted session key.
 
-See section 6.1 of {{RFC7748}} for more details on the computation of the ephemeral public key and the shared secret.
+See {{Section 6.1 of RFC7748}} for more details on the computation of the ephemeral public key and the shared secret.
 The shared secret is passed to HKDF (see {{RFC5869}}) using SHA256, and the UTF-8-encoded string "OpenPGP X25519" as the info parameter.
 The resulting key is used to encrypt the session key with AES-128 key wrap, defined in {{RFC3394}}.
 
@@ -1084,7 +1084,7 @@ Since the X25519 algorithm does not offer obfuscation of the session key size, e
 
 - The encrypted session key.
 
-See section 6.2 of {{RFC7748}} for more details on the computation of the ephemeral public key and the shared secret.
+See {{Section 6.2 of RFC7748}} for more details on the computation of the ephemeral public key and the shared secret.
 The shared secret is passed to HKDF (see {{RFC5869}}) using SHA512, and the UTF-8-encoded string "OpenPGP X448" as the info parameter.
 The resulting key is used to encrypt the session key with AES-256 key wrap, defined in {{RFC3394}}.
 
@@ -2546,7 +2546,7 @@ The secret key is this single value:
 
 - 32 octets of the native secret key.
 
-See section 6.1 of {{RFC7748}} for more details about how to use the native octet strings.
+See {{Section 6.1 of RFC7748}} for more details about how to use the native octet strings.
 The value stored in an OpenPGP X25519 secret key packet is the original sequence of random octets.
 The value stored in an OpenPGP X25519 public key packet is the value X25519(secretKey, 9).
 
@@ -2560,7 +2560,7 @@ The secret key is this single value:
 
 - 56 octets of the native secret key.
 
-See section 6.2 of {{RFC7748}} for more details about how to use the native octet strings.
+See {{Section 6.2 of RFC7748}} for more details about how to use the native octet strings.
 The value stored in an OpenPGP X448 secret key packet is the original sequence of random octets.
 The value stored in an OpenPGP X448 public key packet is the value X448(secretKey, 5).
 
@@ -2574,7 +2574,7 @@ The secret key is this single value:
 
 - 32 octets of the native secret key.
 
-See section 5.1.5 of {{RFC8032}} for more details about how to use the native octet strings.
+See {{Section 5.1.5 of RFC8032}} for more details about how to use the native octet strings.
 The value stored in an OpenPGP Ed25519 secret key packet is the original sequence of random octets.
 
 #### Algorithm-Specific Part for Ed448 Keys {#key-ed448}
@@ -2587,7 +2587,7 @@ The secret key is this single value:
 
 - 57 octets of the native secret key.
 
-See section 5.2.5 of {{RFC8032}} for more details about how to use the native octet strings.
+See {{Section 5.2.5 of RFC8032}} for more details about how to use the native octet strings.
 The value stored in an OpenPGP Ed448 secret key packet is the original sequence of random octets.
 
 ## Compressed Data Packet (Tag 8) {#compressed-data}
