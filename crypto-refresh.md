@@ -3747,7 +3747,8 @@ V3 keys MUST NOT have subkeys.
 
 The Public-Key packet occurs first.
 
-In order to create self-signatures (see {{self-sigs}}), the primary key MUST be an algorithm capable of making signatures (that is, not an encryption-only algorithm).
+The primary key MUST be an algorithm capable of making signatures (that is, not an encryption-only algorithm).
+This is because the primary key needs to be able to create self-signatures (see {{self-sigs}}).
 The subkeys may be keys of any type.
 For example, there may be a single-key RSA key, an Ed25519 primary key with an RSA encryption key, or an Ed25519 primary key with an X25519 subkey, etc.
 
