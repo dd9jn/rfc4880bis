@@ -1893,7 +1893,7 @@ The flags are single bits that indicate that a given feature is supported.
 
 This subpacket is similar to a preferences subpacket, and only appears in a self-signature.
 
-An implementation SHOULD NOT use a feature listed when sending to a user who does not state that they can use it.
+An implementation SHOULD NOT use a feature listed when sending to a user who does not state that they can use it, unless the implementation can infer support for the feature from another implementation-dependent mechanism.
 
 Defined features are as follows:
 
@@ -1908,8 +1908,6 @@ Feature | Definition | Reference
 0x08 | Symmetrically Encrypted Integrity Protected Data packet version 2 | {{version-two-seipd}}
 
 If an implementation implements any of the defined features, it SHOULD implement the Features subpacket, too.
-
-An implementation may freely infer features from other suitable implementation-dependent mechanisms.
 
 See {{ciphertext-malleability}} for details about how to use the Features subpacket when generating encryption data.
 
