@@ -2485,8 +2485,10 @@ The secret key is this single multiprecision integer:
 
 Note that the native form for an EdDSA secret key is a fixed-width sequence of unstructured random octets, with size corresponding to the specific curve.
 That sequence of random octets is used with a cryptographic digest to produce both a curve-specific secret scalar and a prefix used when making a signature.
-See {{RFC8032}} for more details about how to use the native octet strings (section 5.1.5 for Ed25519 and 5.2.5 for Ed448).
+See {{Section 5.1.5 of RFC8032}} for more details about how to use the native octet strings for Ed25519Legacy.
 The value stored in an OpenPGP EdDSALegacy secret key packet is the original sequence of random octets.
+
+Note that the only curve defined for use with EdDSALegacy is the Ed25519Legacy OID.
 
 #### Algorithm-Specific Part for ECDH Keys {#key-ecdh}
 
@@ -3325,8 +3327,8 @@ brainpoolP512r1 | SEC1 | integer | N/A | N/A | N/A
 Ed25519Legacy | N/A | N/A | 32 octets of secret | 32 octets of R | 32 octets of S
 Curve25519Legacy | prefixed native | integer (see {{curve25519-secrets}}) | N/A | N/A | N/A
 
-For the native octet-string forms of EdDSA values, see {{RFC8032}}.
-For the native octet-string forms of ECDH secret scalars and points, see {{RFC7748}}.
+For the native octet-string forms of Ed25519Legacy values, see {{RFC8032}}.
+For the native octet-string forms of Curve25519Legacy secret scalars and points, see {{RFC7748}}.
 
 ## Symmetric-Key Algorithms {#symmetric-algos}
 
