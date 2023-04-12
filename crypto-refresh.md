@@ -3406,11 +3406,11 @@ Implementations SHOULD NOT validate any old signature that depends on MD5, SHA-1
 ## AEAD Algorithms {#aead-algorithms}
 
 {: title="AEAD algorithm registry"}
-ID | Algorithm | Nonce length (octets) | authentication tag length (octets)
----:|-----------------|---|---
- 1 | EAX {{EAX}} | 16 | 16
- 2 | OCB {{RFC7253}} | 15 | 16
- 3 | GCM {{SP800-38D}} | 12 | 16
+ID | Name | Reference | Nonce length (octets) | authentication tag length (octets)
+---:|-----|-----------|---|---
+ 1 | EAX | {{EAX}} | 16 | 16
+ 2 | OCB | {{RFC7253}} | 15 | 16
+ 3 | GCM | {{SP800-38D}} | 12 | 16
 100 to 110 | Private/Experimental algorithm
 
 Implementations MUST implement OCB.
