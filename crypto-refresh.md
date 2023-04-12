@@ -701,34 +701,32 @@ The MD5 hash function was always used to convert the passphrase to a key for the
 For compatibility, when an S2K specifier is used, the special value 253, 254, or 255 is stored in the position where the cipher algorithm octet would have been in the old data structure.
 This is then followed immediately by a one-octet algorithm identifier, and other fields relevant to the type of encryption used.
 
-Therefore, the first octet of the secret key material describes how the secret key data is presented.
+Therefore, the first octet of the secret key material (the "S2K usage octet") describes how the secret key data is presented.
 The structures differ based on the version of the enclosing OpenPGP packet.
-The tables below summarize the details described in {{secret-key-packet-formats}}.
+The table below, indexed by key version and S2K usage octet, summarizes the specifics described in {{secret-key-packet-formats}}.
 
-In the tables below, `check(x)` means the "2-octet checksum" meaning the sum of all octets in x mod 65536.
+In the table below, `check(x)` means the "2-octet checksum" meaning the sum of all octets in x mod 65536.
+The `info` and `packetprefix` parameters are described in detail in {{secret-key-packet-formats}}.
 
-{: title="Version 4 Secret Key protection details" #v4-secret-key-protection-details}
-First octet | Encryption parameter fields | Encryption | Generate?
----|--------------------------------------------------|---|---|---
-0 | - | cleartext secrets \|\| check(secrets) | Yes
-Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password), secrets \|\| check(secrets)) | No
-253 | cipher-algo, AEAD-mode, S2K-specifier, nonce | AEAD(HKDF(S2K(password), info), secrets, packetprefix) | Yes
-254 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Yes
-255 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| check(secrets)) | No
+{: title="Secret Key Encryption registry" #secret-key-protection-summary}
+Key Version | S2K usage octet | Encryption parameter fields | Encryption | Generate?
+--|---|--------------------------------------------------|---|---|---
+4 | 0 | - | cleartext secrets \|\| check(secrets) | Yes
+6 | 0 | - | cleartext secrets | Yes
+4 | Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password), secrets \|\| check(secrets)) | No
+4 | 253 | cipher-algo, AEAD-mode, S2K-specifier, nonce | AEAD(HKDF(S2K(password), info), secrets, packetprefix) | Yes
+6 | 253 | params-length, cipher-algo, AEAD-mode, S2K-specifier-length, S2K-specifier, nonce | AEAD(HKDF(S2K(password), info), secrets, packetprefix) | Yes
+4 | 254 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Yes
+6 | 254 | params-length, cipher-algo, S2K-specifier-length, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Yes
+4 | 255 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| check(secrets)) | No
 
 If the "Generate?" column is not "Yes", the Secret Key protection details entry is used only for reading in backwards compatibility mode and MUST NOT be used to generate new output.
 
 Each row with "Generate?" marked as "No" is described for backward compatibility, and MUST NOT be generated.
 
-A version 6 secret key that is cryptographically protected is stored with an additional pair of length counts, each of which is one octet wide:
+Note that compared to version 4 secret key, a version 6 secret key that is cryptographically protected is stored with an additional pair of length counts, each of which is one octet wide.
 
-{: title="Version 6 Secret Key protection details" #v6-secret-key-protection-details}
-First octet | Encryption parameter fields | Encryption
----|--------------------------------------------------|---|---
-0 | - | cleartext secrets
-253 | params-length, cipher-algo, AEAD-mode, S2K-specifier-length, S2K-specifier, nonce | AEAD(HKDF(S2K(password), info), secrets, packetprefix)
-254 | params-length, cipher-algo, S2K-specifier-length, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets))
-
+Argon2 is only used with S2K usage octet 253.
 An implementation MUST NOT create and MUST reject as malformed a secret key packet where the S2K usage octet is anything but 253 and the S2K specifier type is Argon2.
 
 #### Symmetric-Key Message Encryption
@@ -2298,7 +2296,7 @@ The packet contains:
 
 - Only for a version 3 or 4 packet where the string-to-key usage octet is zero, a two-octet checksum of the algorithm-specific portion (sum of all octets, mod 65536).
 
-The details about storing algorithm-specific secrets above are summarized in {{v4-secret-key-protection-details}} and {{v6-secret-key-protection-details}} in {{secret-key-encryption}}.
+The details about storing algorithm-specific secrets above are summarized in {{secret-key-protection-summary}}.
 
 Note that the version 6 packet format adds two count values to help parsing packets with unknown S2K or public key algorithms.
 
@@ -3348,7 +3346,7 @@ ID | Algorithm
  12 | Camellia with 192-bit key
  13 | Camellia with 256-bit key
 100 to 110 | Private/Experimental algorithm
-253, 254 and 255 | Reserved to avoid collision with Secret Key Encryption (see {{secret-key-encryption}} and {{secret-key-packet-formats}})
+253, 254 and 255 | Reserved to avoid collision with Secret Key Encryption (see {{secret-key-protection-summary}} and {{secret-key-packet-formats}})
 
 Implementations MUST implement AES-128.
 Implementations SHOULD implement AES-256.
