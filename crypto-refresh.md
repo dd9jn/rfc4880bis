@@ -3549,20 +3549,6 @@ The registry includes the algorithm name, its key sizes and parameters, and a re
 The initial values for this registry can be found in {{pubkey-algos}}.
 Adding a new public-key algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
-This document requests IANA register the following new public-key algorithms:
-
-{: title="New public-Key algorithms registered"}
-ID | Algorithm | Reference
----:|----------|----------
- 22 | EdDSALegacy | This doc, {{eddsa-notes}}
- 25 | X25519 | This doc, {{key-x25519}}
- 26 | X448 | This doc, {{key-x448}}
- 27 | Ed25519 | This doc, {{key-ed25519}}
- 28 | Ed448 | This doc, {{key-ed448}}
-
-   \[ Note to RFC-Editor: Please remove the table above on publication.
-\]
-
 #### Elliptic Curve Algorithms
 
 Some public key algorithms use Elliptic Curves.
@@ -3584,19 +3570,6 @@ This specification creates a registry of hash algorithm identifiers.
 The registry includes the algorithm name, a text representation of that name, its block size, an OID hash prefix, and a reference to the defining specification.
 The initial values for this registry can be found in {{hash-algos}} for the algorithm identifiers and text names, and {{version-three-sig}} for the OIDs and expanded signature prefixes.
 Adding a new hash algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
-This document requests IANA register the following hash algorithms:
-
-{: title="New hash algorithms registered"}
-ID | Algorithm | Reference
----:|----------|----------
- 12 | SHA3-256 | This doc
- 13 | Reserved
- 14 | SHA3-512 | This doc
-
-   \[Notes to RFC-Editor: Please remove the table above on publication.
-    It is desirable not to reuse old or reserved algorithms because some existing tools might print a wrong description.
-    The ID 13 has been reserved so that the SHA3 algorithm IDs align nicely with their SHA2 counterparts.\]
 
 ### Compression Algorithms
 
