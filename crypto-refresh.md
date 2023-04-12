@@ -3105,28 +3105,47 @@ One way to do this is to repeat an Armor Header Key multiple times with differen
 
 Currently defined Armor Header Keys are as follows:
 
-- "Version", which states the OpenPGP implementation and version used to encode the message.
-  To minimize metadata, implementations SHOULD NOT emit this key and its corresponding value except for debugging purposes with explicit user consent.
+{: title="Armor Header Key registry"}
+Key | Summary | Reference
+-----|---------|----------
+`Version` | Implementation information | {{armor-header-key-version}}
+`Comment` | Arbitrary text | {{armor-header-key-comment}}
+`Hash` | Hash algorithms used in v4 cleartext signed messages | {{armor-header-key-hash}}
+`SaltedHash` | Hash algorithm and salt used in v6 cleartext signed messages | {{armor-header-key-saltedhash}}
+`Charset` | Character set | {{armor-header-key-charset}}
 
-- "Comment", a user-defined comment.
-  OpenPGP defines all text to be in UTF-8.
-  A comment may be any UTF-8 string.
-  However, the whole point of armoring is to provide seven-bit-clean data.
-  Consequently, if a comment has characters that are outside the US-ASCII range of UTF, they may very well not survive transport.
+#### "Version" Armor Header {#armor-header-key-version}
 
-- "Hash", a comma-separated list of hash algorithms used in this message.
-  This is used only in cleartext signed messages.
+The armor header key `Version` describes the OpenPGP implementation and version used to encode the message.
+To minimize metadata, implementations SHOULD NOT emit this key and its corresponding value except for debugging purposes with explicit user consent.
 
-- "SaltedHash", a salt and hash algorithm used in this message.
-  This is used only in cleartext signed messages that are followed by a v6 Signature.
+#### "Comment" Armor Header {#armor-header-key-comment}
 
-- "Charset", a description of the character set that the plaintext is in (see {{?RFC2978}}).
-  Please note that OpenPGP defines text to be in UTF-8.
-  An implementation will get best results by translating into and out of UTF-8.
-  However, there are many instances where this is easier said than done.
-  Also, there are communities of users who have no need for UTF-8 because they are all happy with a character set like ISO Latin-5 or a Japanese character set.
-  In such instances, an implementation MAY override the UTF-8 default by using this header key.
-  An implementation MAY implement this key and any translations it cares to; an implementation MAY ignore it and assume all text is UTF-8.
+The armor header key `Comment` supplies a user-defined comment.
+OpenPGP defines all text to be in UTF-8.
+A comment may be any UTF-8 string.
+However, the whole point of armoring is to provide seven-bit-clean data.
+Consequently, if a comment has characters that are outside the US-ASCII range of UTF, they may very well not survive transport.
+
+#### "Hash" Armor Header {#armor-header-key-hash}
+
+The armor header key `Hash` contains a comma-separated list of hash algorithms used in this message.
+This is used only in cleartext signed messages that are followed by a v4 Signature.
+
+#### "SaltedHash" Armor Header {#armor-header-key-saltedhash}
+
+The armor header key `SaltedHash` contains a salt and hash algorithm used in this message.
+This is used only in cleartext signed messages that are followed by a v6 Signature.
+
+#### "Charset" Armor Header {#armor-header-key-charset}
+
+The armor header key `Charset` contains a description of the character set that the plaintext is in (see {{?RFC2978}}).
+Please note that OpenPGP defines text to be in UTF-8.
+An implementation will get best results by translating into and out of UTF-8.
+However, there are many instances where this is easier said than done.
+Also, there are communities of users who have no need for UTF-8 because they are all happy with a character set like ISO Latin-5 or a Japanese character set.
+In such instances, an implementation MAY override the UTF-8 default by using this header key.
+An implementation MAY implement this key and any translations it cares to; an implementation MAY ignore it and assume all text is UTF-8.
 
 ### Armor Tail Line
 
