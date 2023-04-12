@@ -3069,6 +3069,8 @@ Concatenating the following data creates ASCII Armor:
 
 - The Armor Tail, which depends on the Armor Header Line
 
+### Armor Header Line
+
 An Armor Header Line consists of the appropriate header line text surrounded by five (5) dashes (`-`, 0x2D) on either side of the header line text.
 The header line text is chosen based upon the type of data that is being encoded in Armor, and how it is being encoded.
 Header line texts include the following strings:
@@ -3085,6 +3087,8 @@ Note that all these Armor Header Lines are to consist of a complete line.
 The header lines, therefore, MUST start at the beginning of a line, and MUST NOT have text other than whitespace following them on the same line.
 These line endings are considered a part of the Armor Header Line for the purposes of determining the content they delimit.
 This is particularly important when computing a cleartext signature (see {{cleartext-signature}}).
+
+### Armor Headers
 
 The Armor Headers are pairs of strings that can give the user or the receiving OpenPGP implementation some information about how to decode or use the message.
 The Armor Headers are a part of the armor, not a part of the message, and hence are not protected by any signatures applied to the message.
@@ -3123,6 +3127,8 @@ Currently defined Armor Header Keys are as follows:
   Also, there are communities of users who have no need for UTF-8 because they are all happy with a character set like ISO Latin-5 or a Japanese character set.
   In such instances, an implementation MAY override the UTF-8 default by using this header key.
   An implementation MAY implement this key and any translations it cares to; an implementation MAY ignore it and assume all text is UTF-8.
+
+### Armor Tail Line
 
 The Armor Tail Line is composed in the same manner as the Armor Header Line, except the string "BEGIN" is replaced by the string "END".
 
