@@ -3073,18 +3073,13 @@ An Armor Header Line consists of the appropriate header line text surrounded by 
 The header line text is chosen based upon the type of data that is being encoded in Armor, and how it is being encoded.
 Header line texts include the following strings:
 
-{: vspace="0"}
-BEGIN PGP MESSAGE
-: Used for signed, encrypted, or compressed files.
-
-BEGIN PGP PUBLIC KEY BLOCK
-: Used for armoring public keys.
-
-BEGIN PGP PRIVATE KEY BLOCK
-: Used for armoring private keys.
-
-BEGIN PGP SIGNATURE
-: Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures.
+{: title="Armor Header Line registry"}
+Armor Header | Use
+----|-------
+`BEGIN PGP MESSAGE` | Used for signed, encrypted, or compressed files.
+`BEGIN PGP PUBLIC KEY BLOCK` | Used for armoring public keys.
+`BEGIN PGP PRIVATE KEY BLOCK` | Used for armoring private keys.
+`BEGIN PGP SIGNATURE` | Used for detached signatures, OpenPGP/MIME signatures, and cleartext signatures.
 
 Note that all these Armor Header Lines are to consist of a complete line.
 The header lines, therefore, MUST start at the beginning of a line, and MUST NOT have text other than whitespace following them on the same line.
