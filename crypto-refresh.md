@@ -712,7 +712,7 @@ First octet | Encryption parameter fields | Encryption | Generate?
 ---|--------------------------------------------------|---|---|---
 0 | - | cleartext secrets \|\| check(secrets) | Yes
 Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password), secrets \|\| check(secrets)) | No
-253 | cipher-algo, AEAD-mode, S2K-specifier, nonce | AEAD(S2K(password), secrets, pubkey) | Yes
+253 | cipher-algo, AEAD-mode, S2K-specifier, nonce | AEAD(HKDF(S2K(password), info), secrets, packetprefix) | Yes
 254 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Yes
 255 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| check(secrets)) | No
 
@@ -726,7 +726,7 @@ A version 6 secret key that is cryptographically protected is stored with an add
 First octet | Encryption parameter fields | Encryption
 ---|--------------------------------------------------|---|---
 0 | - | cleartext secrets
-253 | params-length, cipher-algo, AEAD-mode, S2K-specifier-length, S2K-specifier, nonce | AEAD(S2K(password), secrets, pubkey)
+253 | params-length, cipher-algo, AEAD-mode, S2K-specifier-length, S2K-specifier, nonce | AEAD(HKDF(S2K(password), info), secrets, packetprefix)
 254 | params-length, cipher-algo, S2K-specifier-length, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets))
 
 An implementation MUST NOT create and MUST reject as malformed a secret key packet where the S2K usage octet is anything but 253 and the S2K specifier type is Argon2.
