@@ -2775,10 +2775,21 @@ The image header length is followed by a single octet for the image header versi
 The only currently defined version of the image header is 1, which is a 16-octet image header.
 The first three octets of a version 1 image header are thus 0x10, 0x00, 0x01.
 
+{: title="Image Attribute Version registry}
+Version | Reference
+---:|-----
+1 | {{uat-image}}
+
 The fourth octet of a version 1 image header designates the encoding format of the image.
 The only currently defined encoding format is the value 1 to indicate JPEG.
 Image format types 100 through 110 are reserved for private or experimental use.
 The rest of the version 1 image header is made up of 12 reserved octets, all of which MUST be set to 0.
+
+{: title="Image Attribute Encoding Format registry"}
+Value | Encoding | Reference
+--:|----|----
+1 | JPEG | JPEG File Interchange Format ({{JFIF}})
+100-110 | Private/Experimental use
 
 The rest of the image subpacket contains the image itself.
 As the only currently defined image type is JPEG, the image is encoded in the JPEG File Interchange Format (JFIF), a standard file format for JPEG images {{JFIF}}.
