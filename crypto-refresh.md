@@ -1452,43 +1452,43 @@ That is:
 The value of the subpacket type octet may be:
 
 {: title="Subpacket type registry"}
-Type | Description
----:|---------------------------------------
+Type | Description | Reference
+---:|--------------|----------
   0 | Reserved
   1 | Reserved
-  2 | Signature Creation Time
-  3 | Signature Expiration Time
-  4 | Exportable Certification
-  5 | Trust Signature
-  6 | Regular Expression
-  7 | Revocable
+  2 | Signature Creation Time | {{signature-creation-subpacket}}
+  3 | Signature Expiration Time | {{signature-expiration-subpacket}}
+  4 | Exportable Certification | {{exportable-certification-subpacket}}
+  5 | Trust Signature | {{trust-signature-subpacket}}
+  6 | Regular Expression | {{regex-subpacket}}
+  7 | Revocable | {{revocable-subpacket}}
   8 | Reserved
-  9 | Key Expiration Time
+  9 | Key Expiration Time | {{key-expiration-subpacket}}
  10 | Placeholder for backward compatibility
- 11 | Preferred Symmetric Ciphers for v1 SEIPD
- 12 | Revocation Key (deprecated)
+ 11 | Preferred Symmetric Ciphers for v1 SEIPD | {{preferred-v1-seipd}}
+ 12 | Revocation Key (deprecated) | {{revocation-key}}
 13 to 15 | Reserved
- 16 | Issuer Key ID
+ 16 | Issuer Key ID {{issuer-keyid-subpacket}}
 17 to 19 | Reserved
- 20 | Notation Data
- 21 | Preferred Hash Algorithms
- 22 | Preferred Compression Algorithms
- 23 | Key Server Preferences
- 24 | Preferred Key Server
- 25 | Primary User ID
- 26 | Policy URI
- 27 | Key Flags
- 28 | Signer's User ID
- 29 | Reason for Revocation
- 30 | Features
- 31 | Signature Target
- 32 | Embedded Signature
- 33 | Issuer Fingerprint
+ 20 | Notation Data | {{notation-data}}
+ 21 | Preferred Hash Algorithms | {{preferred-hashes-subpacket}}
+ 22 | Preferred Compression Algorithms | {{preferred-compression-subpacket}}
+ 23 | Key Server Preferences | {{key-server-preferences}}
+ 24 | Preferred Key Server | {{preferred-key-server-subpacket}}
+ 25 | Primary User ID | {{primary-user-id-subpacket}}
+ 26 | Policy URI | {{policy-uri-subpacket}}
+ 27 | Key Flags | {{key-flags}}
+ 28 | Signer's User ID | {{signers-user-id-subpacket}}
+ 29 | Reason for Revocation | {{reason-for-revocation}}
+ 30 | Features | {{features-subpacket}}
+ 31 | Signature Target | {{signature-target-subpacket}}
+ 32 | Embedded Signature | {{embedded-signature-subpacket}}
+ 33 | Issuer Fingerprint | {{issuer-fingerprint-subpacket}}
  34 | Reserved
- 35 | Intended Recipient Fingerprint
+ 35 | Intended Recipient Fingerprint | {{intended-recipient-fingerprint}}
  37 | Reserved (Attested Certifications)
  38 | Reserved (Key Block)
- 39 | Preferred AEAD Ciphersuites
+ 39 | Preferred AEAD Ciphersuites | {{preferred-v2-seipd}}
 100 to 110 | Private or experimental
 
 An implementation SHOULD ignore any subpacket of a type that it does not recognize.
@@ -1572,7 +1572,7 @@ An implementation SHOULD NOT require a User ID self-signature to be present in o
 For example, when refreshing a key to learn about changes in expiration, advertised features, algorithm preferences, revocation, subkey rotation, and so forth, there is no need to require a User ID self-signature.
 On the other hand, when verifying a signature over an e-mail message, an implementation MAY choose to only accept a signature from a key that has a valid self-signature over a User ID that matches the message's From: header, as a way to avoid a signature transplant attack.
 
-#### Signature Creation Time
+#### Signature Creation Time {#signature-creation-subpacket}
 
 (4-octet time field)
 
@@ -1592,7 +1592,7 @@ For these keys, consider the Issuer Fingerprint subpacket ({{issuer-fingerprint-
 
 Note: in previous versions of this specification, this subpacket was simply known as the "Issuer" subpacket.
 
-#### Key Expiration Time
+#### Key Expiration Time {#key-expiration-subpacket}
 
 (4-octet time field)
 
@@ -1646,7 +1646,7 @@ This subpacket is only found on a self-signature.
 When generating a v1 SEIPD packet, this preference list is not relevant.
 See {{preferred-v1-seipd}} instead.
 
-#### Preferred Hash Algorithms
+#### Preferred Hash Algorithms {#preferred-hashes-subpacket}
 
 (array of one-octet values)
 
@@ -1655,7 +1655,7 @@ Like the preferred AEAD ciphersuites, the list is ordered.
 Algorithm numbers are in {{hash-algos}}.
 This is only found on a self-signature.
 
-#### Preferred Compression Algorithms
+#### Preferred Compression Algorithms {#preferred-compression-subpacket}
 
 (array of one-octet values)
 
@@ -1665,7 +1665,7 @@ Algorithm numbers are in {{compression-algos}}.
 A zero, or the absence of this subpacket, denotes that uncompressed data is preferred; the key holder's software might have no compression software in that implementation.
 This is only found on a self-signature.
 
-#### Signature Expiration Time
+#### Signature Expiration Time {#signature-expiration-subpacket}
 
 (4-octet time field)
 
@@ -1675,7 +1675,7 @@ If this is not present or has a value of zero, it never expires.
 
 When an implementation generates this subpacket, it SHOULD be marked as critical.
 
-#### Exportable Certification
+#### Exportable Certification {#exportable-certification-subpacket}
 
 (1 octet of exportability, 0 for not, 1 for exportable)
 
@@ -1697,7 +1697,7 @@ Such implementations always trim local certifications from any key they handle.
 
 When an implementation generates this subpacket and denotes the signature as non-exportable, the subpacket MUST be marked as critical.
 
-#### Revocable
+#### Revocable {#revocable-subpacket}
 
 (1 octet of revocability, 0 for not, 1 for revocable)
 
@@ -1707,7 +1707,7 @@ Signatures that are not revocable have any later revocation signatures ignored.
 They represent a commitment by the signer that he cannot revoke his signature for the life of his key.
 If this packet is not present, the signature is revocable.
 
-#### Trust Signature
+#### Trust Signature {#trust-signature-subpacket}
 
 (1 octet "level" (depth), 1 octet of trust amount)
 
@@ -1719,7 +1719,7 @@ Generally, a level n trust signature asserts that a key is trusted to issue leve
 The trust amount is in a range from 0-255, interpreted such that values less than 120 indicate partial trust and values of 120 or greater indicate complete trust.
 Implementations SHOULD emit values of 60 for partial trust and 120 for complete trust.
 
-#### Regular Expression
+#### Regular Expression {#regex-subpacket}
 
 (null-terminated regular expression)
 
@@ -1817,7 +1817,7 @@ Flag | Shorthand | Definition
 
 This is found only on a self-signature.
 
-#### Preferred Key Server
+#### Preferred Key Server {#preferred-key-server-subpacket}
 
 (String)
 
@@ -1825,7 +1825,7 @@ This is a URI of a key server that the key holder prefers be used for updates.
 Note that keys with multiple User IDs can have a preferred key server for each User ID.
 Note also that since this is a URI, the key server can actually be a copy of the key retrieved by https, ftp, http, etc.
 
-#### Primary User ID
+#### Primary User ID {#primary-user-id-subpacket}
 
 (1 octet, Boolean)
 
@@ -1838,7 +1838,7 @@ When appearing on a self-signature on a User ID packet, this subpacket applies o
 When appearing on a self-signature on a User Attribute packet, this subpacket applies only to User Attribute packets.
 That is to say, there are two different and independent "primaries" --- one for User IDs, and one for User Attributes.
 
-#### Policy URI
+#### Policy URI {#policy-uri-subpacket}
 
 (String)
 
@@ -1880,7 +1880,7 @@ They SHOULD be placed only on a direct-key signature (type 0x1F) or a subkey sig
 
 When an implementation generates this subpacket, it SHOULD be marked as critical.
 
-#### Signer's User ID
+#### Signer's User ID {#signers-user-id-subpacket}
 
 (String)
 
@@ -1952,7 +1952,7 @@ If an implementation implements any of the defined features, it SHOULD implement
 
 See {{ciphertext-malleability}} for details about how to use the Features subpacket when generating encryption data.
 
-#### Signature Target
+#### Signature Target {#signature-target-subpacket}
 
 (1 octet public-key algorithm, 1 octet hash algorithm, N octets hash)
 
@@ -1964,7 +1964,7 @@ All arguments are an identifier of that target signature.
 The N octets of hash data MUST be the size of the hash of the signature.
 For example, a target signature with a SHA-1 hash MUST have 20 octets of hash data.
 
-#### Embedded Signature
+#### Embedded Signature {#embedded-signature-subpacket}
 
 (1 signature packet body)
 
