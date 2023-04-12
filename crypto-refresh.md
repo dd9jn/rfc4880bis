@@ -4911,6 +4911,62 @@ Here is a Transferable Secret Key consisting of:
 
 The corresponding Transferable Public Key can be found in {{v6-cert}}.
 
+## Sample locked v6 Secret Key (Transferable Secret Key) {#v6-locked-key}
+
+Here is the same secret key as in {{v6-key}}, but the secret key material is locked with a passphrase using AEAD and Argon2.
+
+The passphrase is the ASCII string:
+
+    correct horse battery staple
+
+{: sourcecode-name="v6-minimal-secret-locked.key"}
+~~~ application/pgp-keys
+{::include test-vectors/v6-minimal-secret-locked.key}
+~~~
+
+### Intermediate Data for Locked Primary Key
+
+The S2K-derived material for the primary key is:
+
+~~~
+832bd2662a5c2b251ee3fc82aec349a766ca539015880133002e5a21960b3bcf
+~~~
+
+After HKDF, the symmetric key used for AEAD encryption of the primary key is:
+
+~~~
+9e37cb26787f37e18db172795c4c297550d39ac82511d9af4c8706db6a77fd51
+~~~
+
+The additional data for AEAD for the primary key is:
+
+~~~
+c50663877fe31b00000020f94da7bb48d60a61e567706a6587d0331999bb9d89
+1a08242ead84543df895a3
+~~~
+
+### Intermediate Data for Locked Subkey
+
+The S2K-derived key material for the subkey is:
+
+~~~
+f74a6ce873a089ef13a3da9ac059777bb22340d15eaa6c9dc0f8ef09035c67cd
+~~~
+
+After HKDF, the symmetric key used for AEAD encryption of the subkey is:
+
+~~~
+3c60cb63285f62f4c3de49835786f011cf6f4c069f61232cd7013ff5fd31e603
+~~~
+
+The additional data for AEAD for the subkey is:
+
+~~~
+c70663877fe319000000208693248367f9e5015db922f8f48095dda784987f2d
+5985b12fbad16caf5e4435
+~~~
+
+
 ## Sample AEAD-EAX encryption and decryption
 
 This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-EAX encryption.
