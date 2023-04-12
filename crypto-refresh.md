@@ -3387,7 +3387,7 @@ Some Elliptic Curve Public Key Algorithms use different conventions for specific
 Each field is always formatted as an MPI, but with a curve-specific framing.
 This table summarizes those distinctions.
 
-{: title="Curve-specific wire formats" #ecc-wire-formats}
+{: title="ECC Curve-specific Wire Formats registry" #ecc-wire-formats}
 Curve | ECDH Point Format | ECDH Secret Key MPI | EdDSA Secret Key MPI | EdDSA Signature first MPI | EdDSA Signature second MPI
 ------|-----------------|------------------|---------------------------|---------------------------
 NIST P-256 | SEC1 | integer | N/A | N/A | N/A
@@ -3922,7 +3922,7 @@ A point on an elliptic curve will always be represented on the wire as an MPI.
 Each curve uses a specific point format for the data within the MPI itself.
 Each format uses a designated prefix octet to ensure that the high octet has at least one bit set to make the MPI a constant size.
 
-{: title="Elliptic Curve Point Wire Formats"}
+{: title="Elliptic Curve Point Wire Formats registry"}
 Name | Wire Format | Reference
 ------:|-----------|-------------------
 SEC1 | 0x04 \|\| x \|\| y | {{ec-point-sec1}}
@@ -3964,7 +3964,7 @@ Some non-curve values in elliptic curve cryptography (for example, secret keys a
 Because of different patterns of deployment, some curves treat these values as opaque bit strings with the high bit set, while others are treated as actual integers, encoded in the standard OpenPGP big-endian form.
 The choice of encoding is specific to the public key algorithm in use.
 
-{: title="Elliptic Curve Scalar Encodings"}
+{: title="Elliptic Curve Scalar Encodings registry"}
 Type | Description | Reference
 -----|-------------|-----------
 integer | An integer, big-endian encoded as a standard OpenPGP MPI | {{mpi}}
@@ -4148,7 +4148,7 @@ An implementation MUST NOT encrypt any message to a v6 ECDH key over a listed cu
 For v4 keys, the following algorithms SHOULD be used depending on the curve.
 An implementation SHOULD only use an AES algorithm as a KEK algorithm.
 
-{: title="ECDH KDF and KEK parameters" #ecdh-kdf-kek-parameters}
+{: title="ECDH KDF and KEK parameters registry" #ecdh-kdf-kek-parameters}
 Curve | Hash algorithm | Symmetric algorithm
 ------|----------------|--------------------
 NIST P-256 | SHA2-256 | AES-128
