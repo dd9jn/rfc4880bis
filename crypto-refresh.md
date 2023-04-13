@@ -3488,12 +3488,26 @@ Because this document obsoletes {{RFC4880}}, IANA is requested to update all reg
 OpenPGP is highly parameterized, and consequently there are a number of considerations for allocating parameters for extensions.
 
 This section describes the updated IANA registration policies.
-Most of the registries listed below have been moved the SPECIFICATION REQUIRED registration policy, see {{RFC8126}}.
+Aside from the few registries identified in {{rfc-required-registries}}, the registries have all been moved the SPECIFICATION REQUIRED registration policy, see {{RFC8126}}.
 This policy means that review and approval by a designated expert is required, and that the values and their meanings must be documented in a permanent and readily available public specification, in sufficient detail so that interoperability between independent implementations is possible.
 The designated expert will determine whether the new code points retain the security properties that are expected by the base implementation and that these new code points do not cause interoperability issues with existing implementations other than not producing or consuming these new code points.
 Code point proposals that fail to meet these criteria should instead be proposed as work items for the OpenPGP working group or its successor.
 
 The designated expert should also consider {{meta-considerations-for-expansion}} when reviewing proposed additions to any OpenPGP registry.
+
+## Registries that are RFC REQUIRED {#rfc-required-registries}
+
+The following registries use the RFC REQUIRED registration policy, as described in RFC 8126:
+
+- Packet Type registry ({{packet-type-registry}})
+- Key and Signature Versions registry ({{signed-packet-versions-registry}})
+- Encrypted Message Packet Versions registry ({{encrypted-packet-versions-registry}})
+
+## Registries to be Removed {#removed-registries}
+
+The current IANA OpenPGP registries include an empty registry called "New Packet Versions".
+That registry has never been used, and it is unclear how it would be used.
+That registry should be removed; new versions of the relevant packets should be registered in the registries defined by {{signed-packet-versions-registry}} and {{encrypted-packet-versions-registry}}.
 
 ## String-to-Key Specifier Types
 
@@ -3504,14 +3518,6 @@ The initial values for this registry can be found in {{s2k-types}}.
 Adding a new S2K specifier MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 IANA should add a column "Generate?" to the S2K type registry, with initial values taken from {{s2k-types}}.
-
-## Packet {#iana-packet-types}
-
-Major new features of OpenPGP are defined through new packet types.
-This specification creates a registry of packet types.
-The registry includes the packet type, the name of the packet, and a reference to the defining specification.
-The initial values for this registry can be found in {{packet-tags}}.
-Adding a new packet type MUST be done through the RFC REQUIRED method, as described in {{RFC8126}}.
 
 ### User Attribute Subpackets
 
@@ -3538,14 +3544,6 @@ This specification creates a new registry of Signature Notation Data Subpacket N
 The registry includes the columns "Flag", "Shorthand", "Description", and "Reference".
 The initial values for this registry can be found in {{notation-data}}.
 Adding a new item MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
-### Packet Versions
-
-The core OpenPGP packets all have version numbers, and can be revised by introducing a new version of an existing packet.
-This specification creates a registry of packet types.
-The registry includes the packet type, the number of the version, and a reference to the defining specification.
-The initial values for this registry can be found in {{packet-types}}.
-Adding a new packet version MUST be done through the RFC REQUIRED method, as described in {{RFC8126}}.
 
 ## Algorithms
 
