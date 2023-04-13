@@ -3480,22 +3480,6 @@ The registry includes the columns "Flag", "Shorthand", "Description", and "Refer
 The initial values for this registry can be found in {{notation-data}}.
 Adding a new item MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
-#### Key Server Preference Extensions
-
-OpenPGP signatures contain a mechanism for preferences to be specified about key servers.
-This specification creates a registry of key server preferences.
-The registry includes the key server preference, the name of the preference, and a reference to the defining specification.
-The initial values for this registry can be found in {{key-server-preferences}}.
-Adding a new key server preference MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
-#### Key Flags Extensions
-
-OpenPGP signatures contain a mechanism for flags to be specified about key usage.
-This specification creates a registry of key usage flags.
-The registry includes the key flags value, the name of the flag, and a reference to the defining specification.
-The initial values for this registry can be found in {{key-flags}}.
-Adding a new key usage flag MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
 #### Reason for Revocation Extensions
 
 OpenPGP signatures contain a mechanism for flags to be specified about why a key was revoked.
@@ -3503,16 +3487,6 @@ This specification creates a registry of "Reason for Revocation" flags.
 The registry includes the "Reason for Revocation" flags value, the name of the flag, and a reference to the defining specification.
 The initial values for this registry can be found in {{reason-for-revocation}}.
 Adding a new feature flag MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
-#### Implementation Features
-
-OpenPGP signatures contain a mechanism for flags to be specified stating which optional features an implementation supports.
-This specification creates a registry of feature-implementation flags.
-The registry includes the feature-implementation flags value, the name of the flag, and a reference to the defining specification.
-The initial values for this registry can be found in {{features-subpacket}}.
-Adding a new feature-implementation flag MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
-Also see {{meta-considerations-for-expansion}} for more information about when feature flags are needed.
 
 ### Packet Versions
 
