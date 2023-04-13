@@ -3530,14 +3530,6 @@ The registry includes the User Attribute type, the name of the User Attribute, a
 The initial values for this registry can be found in {{user-attribute-packet}}.
 Adding a new User Attribute type MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
-### Signature Subpackets
-
-OpenPGP signatures contain a mechanism for signed (or unsigned) data to be added to them for a variety of purposes in the Signature subpackets as discussed in {{signature-subpacket}}.
-This specification creates a registry of Signature subpacket types.
-The registry includes the Signature subpacket type, the name of the subpacket, and a reference to the defining specification.
-The initial values for this registry can be found in {{signature-subpacket}}.
-Adding a new Signature subpacket MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
 #### Signature Notation Data Subpackets
 
 OpenPGP signatures further contain a mechanism for extensions in signatures.
