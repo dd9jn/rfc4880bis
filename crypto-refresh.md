@@ -3467,14 +3467,6 @@ The registry includes the User Attribute type, the name of the User Attribute, a
 The initial values for this registry can be found in {{user-attribute-packet}}.
 Adding a new User Attribute type MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
-#### Image Attribute Formats
-
-Within User Attribute packets, there is an extensible mechanism for other types of image-based User Attributes.
-This specification creates a registry of Image Attribute subpacket types.
-The registry includes the Image Attribute subpacket type, the name of the Image Attribute subpacket, and a reference to the defining specification.
-The initial values for this registry can be found in {{uat-image}}.
-Adding a new Image Attribute subpacket type MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
 ### Signature Subpackets
 
 OpenPGP signatures contain a mechanism for signed (or unsigned) data to be added to them for a variety of purposes in the Signature subpackets as discussed in {{signature-subpacket}}.
