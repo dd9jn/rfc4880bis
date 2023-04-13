@@ -1116,10 +1116,12 @@ Three versions of Signature packets are defined.
 Version 3 provides basic signature information, while versions 4 and 6 provide an expandable format with subpackets that can specify more information about the signature.
 
 For historical reasons, versions 1, 2, and 5 of the Signature packet are unspecified.
+Any new Signature packet version should be registered in the registry established in {{signed-message-versions}}.
 
 An implementation MUST generate a version 6 signature when signing with a version 6 key.
 An implementation MUST generate a version 4 signature when signing with a version 4 key.
 Implementations MUST NOT create version 3 signatures; they MAY accept version 3 signatures.
+See {{signed-message-versions}} for more details about packet version correspondence between keys and signatures.
 
 ### Signature Types {#signature-types}
 
@@ -2043,7 +2045,7 @@ For example, it might encounter any of the following problems (this is not an ex
 - A hashed subpacket area with length that exceeds the length of the signature packet itself
 - A known-weak hash algorithm (e.g. MD5)
 - A mismatch between the hash algorithm expected salt length and the actual salt length
-- A mismatch between the One-Pass Signature version and the Signature version (see {{one-pass-sig}})
+- A mismatch between the One-Pass Signature version and the Signature version (see {{signed-message-versions}})
 
 When an implementation encounters such a malformed or unknown signature, it MUST ignore the signature for validation purposes.
 It MUST NOT indicate a successful signature validation for such a signature.
@@ -2138,6 +2140,7 @@ The body of this packet consists of:
 
 - A one-octet version number.
   The currently defined versions are 3 and 6.
+  Any new One-Pass Signature packet version should be registered in the registry established in {{signed-message-versions}}.
 
 - A one-octet signature type.
   Signature types are described in {{signature-types}}.
@@ -2162,13 +2165,8 @@ The body of this packet consists of:
 - A one-octet number holding a flag showing whether the signature is nested.
   A zero value indicates that the next packet is another One-Pass Signature packet that describes another signature to be applied to the same message data.
 
-When generating a one-pass signature, the OPS packet version MUST correspond to the version of the associated signature packet, except for the historical accident that v4 keys use a v3 one-pass signature packet (there is no v4 OPS):
-
-{: title="Versions of packets used in a one-pass signature"}
-Signing key version | OPS packet version | Signature packet version
----|--------------|--------
-4 | 3 | 4
-6 | 6 | 6
+When generating a one-pass signature, the OPS packet version MUST correspond to the version of the associated signature packet, except for the historical accident that v4 keys use a v3 one-pass signature packet (there is no v4 OPS).
+See {{signed-message-versions}} for the full correspondence of versions between Keys, Signatures, and One-Pass Signatures.
 
 Note that if a message contains more than one one-pass signature, then the Signature packets bracket the message; that is, the first Signature packet after the message corresponds to the last one-pass packet and the final Signature packet corresponds to the first one-pass packet.
 
@@ -2208,6 +2206,8 @@ OpenPGP implementations SHOULD create keys with version 6 format.
 V4 keys are deprecated; an implementation SHOULD NOT generate a v4 key, but SHOULD accept it.
 V3 keys are deprecated; an implementation MUST NOT generate a v3 key, but MAY accept it.
 V2 keys are deprecated; an implementation MUST NOT generate a v2 key, but MAY accept it.
+
+Any new Key version should be registered in the registry established in {{signed-message-versions}}.
 
 #### Version 3 Public Keys {#v3-pubkeys}
 
@@ -3836,11 +3836,24 @@ v2 SEIPD ({{version-two-seipd}}) | v6 SKESK ({{v6-skesk}}) | v6 PKESK ({{v6-pkes
 
 An implementation processing an Encrypted Message MUST discard any preceding ESK packet with a version that does not align with the version of the payload.
 
-#### Packet versions in One-Pass Signed Messages {#signed-message-versions}
+#### Packet Versions in Signed Messages {#signed-message-versions}
 
-A One-Pass Signed Message requires the One-Pass Signature packet's version to correspond to the version of the matching Signature packet (see {{one-pass-sig}} for more details).
+OpenPGP key packets and signature packets are also versioned.
+The version of a Signature typically matches the version of the signing key.
+When a message is signed or verified using the one-pass construction, the version of the One-Pass Signature packet ({{one-pass-sig}}) should also be aligned to the other versions.
 
-However, a version mismatch between these packets does not invalidate the packet sequence as a whole, it merely invalidates the signature, as a signature with an unknown version SHOULD be discarded (see {{malformed-signatures}}).
+Some legacy implementations have produced unaligned signature versions for older key material, which are also described in the table below for purpose of historic interoperability.
+A conforming implementation MUST only generate signature packets with version numbers matching rows with "Yes" in the "Generate?" column.
+
+{: title="Key and Signature Versions registry" #signed-packet-versions-registry}
+Signing key version | OPS packet version | Signature packet version | Generate?
+---|--------------|--------|----
+3 ({{v3-pubkeys}}) | 3 {{one-pass-sig}} | 3 ({{version-three-sig}}) | No
+4 ({{v4-pubkeys}}) | 3 {{one-pass-sig}} | 3 ({{version-three-sig}}) | No
+4 ({{v4-pubkeys}}) | 3 {{one-pass-sig}} | 4 ({{version-four-and-six-sig}}) | Yes
+6 ({{v6-pubkeys}}) | 6 {{one-pass-sig}} | 6 ({{version-four-and-six-sig}}) | Yes
+
+Note, however, that a version mismatch between these packets does not invalidate the packet sequence as a whole, it merely invalidates the signature, as a signature with an unknown version SHOULD be discarded (see {{malformed-signatures}}).
 
 ## Detached Signatures
 
