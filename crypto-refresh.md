@@ -3821,13 +3821,18 @@ The payload following any v6 PKESK or v6 SKESK packet MUST be a v2 SEIPD.
 
 Additionally, to avoid potentially conflicting cipher algorithm identifiers, and for simplicity, implementations MUST NOT precede a v2 SEIPD payload with either v3 PKESK or v4 SKESK packets.
 
-The acceptable versions of packets in an Encrypted Message are summarized in the following table:
+The versions of packets found in an Encrypted Message are summarized in the following table.
+An implementation MUST only generate an Encrypted Message using packet versions that match a row with "Yes" in the "Generate?" column.
+Other rows are provided for the purpose of historic interoperability.
+A conforming implementation MUST only generate an Encrypted Message using packets whose versions correspond to a single row.
 
-{: title="Encrypted Message Packet Version Alignment"}
-Version of Encrypted Data payload | Version of preceding Symmetric-Key ESK (if any) | Version of preceding Public-Key ESK (if any)
----|---|---
-v1 SEIPD | v4 SKESK | v3 PKESK
-v2 SEIPD | v6 SKESK | v6 PKESK
+{: title="Encrypted Message Packet Versions registry" #encrypted-packet-versions-registry}
+Version of Encrypted Data payload | Version of preceding Symmetric-Key ESK (if any) | Version of preceding Public-Key ESK (if any) | Generate?
+---|---|---|---
+SED ({{sed}}) | - | v2 PKESK ({{?RFC2440}}) | No
+SED ({{sed}}) | v4 SKESK ({{v4-skesk}}) | v3 PKESK ({{v3-pkesk}}) | No
+v1 SEIPD ({{version-one-seipd}}) | v4 SKESK ({{v4-skesk}}) | v3 PKESK ({{v3-pkesk}}) | Yes
+v2 SEIPD ({{version-two-seipd}}) | v6 SKESK ({{v6-skesk}}) | v6 PKESK ({{v6-pkesk}}) | Yes
 
 An implementation processing an Encrypted Message MUST discard any preceding ESK packet with a version that does not align with the version of the payload.
 
