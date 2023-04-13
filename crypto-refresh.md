@@ -3556,14 +3556,6 @@ The registry includes the columns "Flag", "Shorthand", "Description", and "Refer
 The initial values for this registry can be found in {{notation-data}}.
 Adding a new item MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
-#### Reason for Revocation Extensions
-
-OpenPGP signatures contain a mechanism for flags to be specified about why a key was revoked.
-This specification creates a registry of "Reason for Revocation" flags.
-The registry includes the "Reason for Revocation" flags value, the name of the flag, and a reference to the defining specification.
-The initial values for this registry can be found in {{reason-for-revocation}}.
-Adding a new feature flag MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
 ### Packet Versions
 
 The core OpenPGP packets all have version numbers, and can be revised by introducing a new version of an existing packet.
