@@ -958,6 +958,7 @@ The remainder of the packet depends on the version.
 
 The versions differ in how they identify the recipient key, and in what they encode.
 The version of the PKESK packet must align with the version of the SEIPD packet (see {{encrypted-message-versions}}).
+Any new version of the PKESK packet should be registered in the registry established in {{encrypted-message-versions}}.
 
 ### Version 3 Public-Key Encrypted Session Key Packet Format {#v3-pkesk}
 
@@ -2069,6 +2070,7 @@ The remainder of the packet depends on the version.
 
 The versions differ in how they encrypt the session key with the passphrase, and in what they encode.
 The version of the SKESK packet must align with the version of the SEIPD packet (see {{encrypted-message-versions}}).
+Any new version of the SKESK packet should be registered in the registry established in {{encrypted-message-versions}}.
 
 ### Version 4 Symmetric-Key Encrypted Session Key Packet Format {#v4-skesk}
 
@@ -2825,6 +2827,8 @@ This is a legacy OpenPGP mechanism that offers some protections against cipherte
 Version 2 of this packet contains data encrypted with an authenticated encryption and additional data (AEAD) construction.
 This offers a more cryptographically rigorous defense against ciphertext malleability, but may not be as widely supported yet.
 See {{ciphertext-malleability}} for more details on choosing between these formats.
+
+Any new version of the SEIPD packet should be registered in the registry established in {{encrypted-message-versions}}.
 
 ### Version 1 Symmetrically Encrypted Integrity Protected Data Packet Format {#version-one-seipd}
 
