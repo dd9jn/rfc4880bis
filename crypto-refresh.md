@@ -2209,6 +2209,8 @@ V4 keys are deprecated; an implementation SHOULD NOT generate a v4 key, but SHOU
 V3 keys are deprecated; an implementation MUST NOT generate a v3 key, but MAY accept it.
 V2 keys are deprecated; an implementation MUST NOT generate a v2 key, but MAY accept it.
 
+#### Version 3 Public Keys {#v3-pubkeys}
+
 A version 3 public key or public-subkey packet contains:
 
 - A one-octet version number (3).
@@ -2235,6 +2237,8 @@ See {{key-ids-fingerprints}} for a fuller discussion of Key IDs and fingerprints
 
 V2 keys are identical to the deprecated v3 keys except for the version number.
 
+#### Version 4 Public Keys {#v4-pubkeys}
+
 The version 4 format is similar to the version 3 format except for the absence of a validity period.
 This has been moved to the Signature packet.
 In addition, fingerprints of version 4 keys are calculated differently from version 3 keys, as described in {{key-ids-fingerprints}}.
@@ -2249,6 +2253,8 @@ A version 4 packet contains:
 
 - A series of values comprising the key material.
   This is algorithm-specific and described in {{algorithm-specific-parts-of-keys}}.
+
+#### Version 6 Public Keys {#v6-pubkeys}
 
 The version 6 format is similar to the version 4 format except for the addition of a count for the key material.
 This count helps parsing secret key packets (which are an extension of the public key packet format) in the case of an unknown algorithm.
