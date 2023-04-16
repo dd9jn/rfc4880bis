@@ -694,15 +694,19 @@ However, this method does not provide memory-hardness, unlike Argon2.
 
 #### Secret-Key Encryption {#secret-key-encryption}
 
-An S2K specifier can be stored in the secret keyring to specify how to convert the passphrase to a key that unlocks the secret data.
-Legacy implementations just stored a symmetric cipher algorithm octet preceding the secret data or a zero to indicate that the secret data was unencrypted.
-The MD5 hash function was always used to convert the passphrase to a key for the specified cipher algorithm.
+The first octet following the public key material in a secret key packet ({{secret-key-packet-formats}}) indicates whether and how the secret key material is passphrase-protected.
+This first octet is known as the "S2K usage octet".
 
-For compatibility, when an S2K specifier is used, the special value 253, 254, or 255 is stored in the position where the cipher algorithm octet would have been in the old data structure.
-This is then followed immediately by a one-octet algorithm identifier, and other fields relevant to the type of encryption used.
+If S2K usage octet is zero, the secret key data is unprotected.
+If it is non-zero, it describes how to use a passphrase to unlock the secret key.
 
-Therefore, the first octet of the secret key material (the "S2K usage octet") describes how the secret key data is presented.
-The structures differ based on the version of the enclosing OpenPGP packet.
+Legacy implementations indicated a protected key by storing a symmetric cipher algorithm ID (see {{hash-algos}}) in the S2K usage octet.
+In this case, The MD5 hash function was always used to convert the passphrase to a key for the specified cipher algorithm.
+
+Modern implementations indicate a protected secret key by storing a special value 253, 254, or 255 in the S2K usage octet.
+The S2K usage octet is then followed immediately a set of fields that describe how to convert a password to a symmetric key that can unlock the secret material, plus other parameters relevant to the type of encryption used.
+
+The wire format fields also differ based on the version of the enclosing OpenPGP packet.
 The table below, indexed by key version and S2K usage octet, summarizes the specifics described in {{secret-key-packet-formats}}.
 
 In the table below, `check(x)` means the "2-octet checksum" meaning the sum of all octets in x mod 65536.
@@ -720,9 +724,8 @@ Key Version | S2K usage octet | Encryption parameter fields | Encryption | Gener
 6 | 254 | params-length, cipher-algo, S2K-specifier-length, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Yes
 4 | 255 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| check(secrets)) | No
 
-If the "Generate?" column is not "Yes", the Secret Key protection details entry is used only for reading in backwards compatibility mode and MUST NOT be used to generate new output.
-
-Each row with "Generate?" marked as "No" is described for backward compatibility, and MUST NOT be generated.
+When emitting a secret key (with or without passphrase-protection) an implementation MUST only produce data from a row with "Generate?" marked as "Yes".
+Each row with "Generate?" marked as "No" is described for backward compatibility (for reading only), and MUST NOT be generated.
 
 Note that compared to version 4 secret key, a version 6 secret key that is cryptographically protected is stored with an additional pair of length counts, each of which is one octet wide.
 
