@@ -715,7 +715,7 @@ The `info` and `packetprefix` parameters are described in detail in {{secret-key
 {: title="Secret Key Encryption (S2K Usage Octet) registry" #secret-key-protection-summary}
 S2K usage octet | Shorthand | Encryption parameter fields | Encryption | Generate?
 --|---|--------------------------------------------------|---|---|---
-0 | Unprotected | - | **v4 keys:** \[cleartext secrets \|\| check(secrets)\] <br/> **v6 keys:** \[cleartext secrets\] | Yes
+0 | Unprotected | - | **v3 or v4 keys:** \[cleartext secrets \|\| check(secrets)\] <br/> **v6 keys:** \[cleartext secrets\] | Yes
 Known symmetric cipher algo ID (see {{symmetric-algos}}) | LegacyCFB | IV | CFB(MD5(passphrase), secrets \|\| check(secrets)) | No
 253 | AEAD | params-length (**v6-only**), cipher-algo, AEAD-mode, S2K-specifier-length (**v6-only**), S2K-specifier, nonce | AEAD(HKDF(S2K(passphrase), info), secrets, packetprefix) | Yes
 254 | CFB | params-length (**v6-only**), cipher-algo, S2K-specifier-length (**v6-only**), S2K-specifier, IV | CFB(S2K(passphrase), secrets \|\| SHA1(secrets)) | Yes
