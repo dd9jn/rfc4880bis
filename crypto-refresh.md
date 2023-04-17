@@ -1236,10 +1236,6 @@ Algorithm-Specific Fields for DSA signatures:
 The signature calculation is based on a hash of the signed data, as described above.
 The details of the calculation are different for DSA signatures than for RSA signatures.
 
-With RSA signatures, the hash value is encoded using PKCS#1 encoding type EMSA-PKCS1-v1_5 as described in {{Section 9.2 of RFC8017}} (see also {{emsa-pkcs1-v1-5}}).
-This requires inserting the hash value as an octet string into an ASN.1 structure.
-The object identifier for the type of hash being used is included in the structure.
-
 ### Version 4 and 6 Signature Packet Formats {#version-four-and-six-sig}
 
 The body of a v4 or v6 Signature packet contains:
@@ -1281,6 +1277,10 @@ The body of a v4 or v6 Signature packet contains:
 #### Algorithm-Specific Fields for RSA signatures {#sig-rsa}
 
 - Multiprecision integer (MPI) of RSA signature value m\*\*d mod n.
+
+With RSA signatures, the hash value is encoded using PKCS#1 encoding type EMSA-PKCS1-v1_5 as described in {{Section 9.2 of RFC8017}} (see also {{emsa-pkcs1-v1-5}}).
+This requires inserting the hash value as an octet string into an ASN.1 structure.
+The object identifier (OID) for the hash algorithm itself is also included in the structure, see the OIDs in {{emsa-hash-oids}}.
 
 #### Algorithm-Specific Fields for DSA or ECDSA signatures {#sig-dsa}
 
