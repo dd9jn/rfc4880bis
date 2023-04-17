@@ -712,17 +712,17 @@ The table below, indexed by key version and S2K usage octet, summarizes the spec
 In the table below, `check(x)` means the "2-octet checksum" meaning the sum of all octets in x mod 65536.
 The `info` and `packetprefix` parameters are described in detail in {{secret-key-packet-formats}}.
 
-{: title="Secret Key Encryption registry" #secret-key-protection-summary}
-Key Version | S2K usage octet | Encryption parameter fields | Encryption | Generate?
+{: title="Secret Key Encryption (S2K Usage Octet) registry" #secret-key-protection-summary}
+S2K usage octet | Key Version | Encryption parameter fields | Encryption | Generate?
 --|---|--------------------------------------------------|---|---|---
-4 | 0 | - | cleartext secrets \|\| check(secrets) | Yes
-6 | 0 | - | cleartext secrets | Yes
-4 | Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password), secrets \|\| check(secrets)) | No
-4 | 253 | cipher-algo, AEAD-mode, S2K-specifier, nonce | AEAD(HKDF(S2K(password), info), secrets, packetprefix) | Yes
-6 | 253 | params-length, cipher-algo, AEAD-mode, S2K-specifier-length, S2K-specifier, nonce | AEAD(HKDF(S2K(password), info), secrets, packetprefix) | Yes
-4 | 254 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Yes
-6 | 254 | params-length, cipher-algo, S2K-specifier-length, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Yes
-4 | 255 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| check(secrets)) | No
+0 | 4 | - | cleartext secrets \|\| check(secrets) | Yes
+0 | 6 | - | cleartext secrets | Yes
+Known symmetric cipher algo ID (see {{symmetric-algos}}) | 4 | IV | CFB(MD5(password), secrets \|\| check(secrets)) | No
+253 | 4 | cipher-algo, AEAD-mode, S2K-specifier, nonce | AEAD(HKDF(S2K(password), info), secrets, packetprefix) | Yes
+253 | 6 | params-length, cipher-algo, AEAD-mode, S2K-specifier-length, S2K-specifier, nonce | AEAD(HKDF(S2K(password), info), secrets, packetprefix) | Yes
+254 | 4 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Yes
+254 | 6 | params-length, cipher-algo, S2K-specifier-length, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Yes
+255 | 4 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| check(secrets)) | No
 
 When emitting a secret key (with or without passphrase-protection) an implementation MUST only produce data from a row with "Generate?" marked as "Yes".
 Each row with "Generate?" marked as "No" is described for backward compatibility (for reading only), and MUST NOT be generated.
