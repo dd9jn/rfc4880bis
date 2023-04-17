@@ -1234,7 +1234,7 @@ Algorithm-Specific Fields for DSA signatures:
 - MPI of DSA value s.
 
 The signature calculation is based on a hash of the signed data, as described above.
-The details of the calculation are different for DSA signatures than for RSA signatures.
+The details of the calculation are different for DSA signatures than for RSA signatures, see {{sig-rsa}} and {{sig-dsa}}.
 
 ### Version 4 and 6 Signature Packet Formats {#version-four-and-six-sig}
 
