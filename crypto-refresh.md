@@ -661,7 +661,7 @@ This provides memory-hardness, further protecting the passphrase against brute-f
       Octet  18:       one-octet degree of parallelism p
       Octet  19:       one-octet exponent indicating the memory size m
 
-The salt SHOULD be unique for each password.
+The salt SHOULD be unique for each passphrase.
 
 The number of passes t and the degree of parallelism p MUST be non-zero.
 
@@ -704,7 +704,7 @@ Legacy implementations indicated a protected key by storing a symmetric cipher a
 In this case, the MD5 hash function was always used to convert the passphrase to a key for the specified cipher algorithm.
 
 Modern implementations indicate a protected secret key by storing a special value 253 (AEAD), 254 (CFB), or 255 (MalleableCFB) in the S2K usage octet.
-The S2K usage octet is then followed immediately a set of fields that describe how to convert a password to a symmetric key that can unlock the secret material, plus other parameters relevant to the type of encryption used.
+The S2K usage octet is then followed immediately a set of fields that describe how to convert a passphrase to a symmetric key that can unlock the secret material, plus other parameters relevant to the type of encryption used.
 
 The wire format fields also differ based on the version of the enclosing OpenPGP packet.
 The table below, indexed by S2K usage octet, summarizes the specifics described in {{secret-key-packet-formats}}.
@@ -716,10 +716,10 @@ The `info` and `packetprefix` parameters are described in detail in {{secret-key
 S2K usage octet | Shorthand | Encryption parameter fields | Encryption | Generate?
 --|---|--------------------------------------------------|---|---|---
 0 | Unprotected | - | **v4 keys:** \[cleartext secrets \|\| check(secrets)\] <br/> **v6 keys:** \[cleartext secrets\] | Yes
-Known symmetric cipher algo ID (see {{symmetric-algos}}) | LegacyCFB | IV | CFB(MD5(password), secrets \|\| check(secrets)) | No
-253 | AEAD | params-length (**v6-only**), cipher-algo, AEAD-mode, S2K-specifier-length (**v6-only**), S2K-specifier, nonce | AEAD(HKDF(S2K(password), info), secrets, packetprefix) | Yes
-254 | CFB | params-length (**v6-only**), cipher-algo, S2K-specifier-length (**v6-only**), S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Yes
-255 | MalleableCFB | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| check(secrets)) | No
+Known symmetric cipher algo ID (see {{symmetric-algos}}) | LegacyCFB | IV | CFB(MD5(passphrase), secrets \|\| check(secrets)) | No
+253 | AEAD | params-length (**v6-only**), cipher-algo, AEAD-mode, S2K-specifier-length (**v6-only**), S2K-specifier, nonce | AEAD(HKDF(S2K(passphrase), info), secrets, packetprefix) | Yes
+254 | CFB | params-length (**v6-only**), cipher-algo, S2K-specifier-length (**v6-only**), S2K-specifier, IV | CFB(S2K(passphrase), secrets \|\| SHA1(secrets)) | Yes
+255 | MalleableCFB | cipher-algo, S2K-specifier, IV | CFB(S2K(passphrase), secrets \|\| check(secrets)) | No
 
 When emitting a secret key (with or without passphrase-protection) an implementation MUST only produce data from a row with "Generate?" marked as "Yes".
 Each row with "Generate?" marked as "No" is described for backward compatibility (for reading only), and MUST NOT be generated.
@@ -2054,7 +2054,7 @@ The body of this packet starts with a one-octet number giving the version number
 The currently defined versions are 4 and 6.
 The remainder of the packet depends on the version.
 
-The versions differ in how they encrypt the session key with the password, and in what they encode.
+The versions differ in how they encrypt the session key with the passphrase, and in what they encode.
 The version of the SKESK packet must align with the version of the SEIPD packet (see {{encrypted-message-versions}}).
 
 ### Version 4 Symmetric-Key Encrypted Session Key Packet Format {#v4-skesk}
@@ -4555,7 +4555,7 @@ In particular:
 
   - If one of the recipients does not support v2 SEIPD packets, then the message generator MAY use a v1 SEIPD packet instead.
 
-- Password-protected secret key material in a v6 Secret Key or v6 Secret Subkey packet SHOULD be protected with AEAD encryption (S2K usage octet 253) unless it will be transferred to an implementation that is known to not support AEAD.
+- Passphrase-protected secret key material in a v6 Secret Key or v6 Secret Subkey packet SHOULD be protected with AEAD encryption (S2K usage octet 253) unless it will be transferred to an implementation that is known to not support AEAD.
   Implementations should be aware that, in scenarios where an attacker has access to encrypted private keys, CFB-encrypted keys (S2K usage octet 254 or 255) are vulnerable to corruption attacks that can cause leakage of secret data when the secret key is used {{KOPENPGP}}, {{KR02}}.
 
 Implementers should implement AEAD (v2 SEIPD and S2K usage octet 253) promptly and encourage its spread.
@@ -4967,7 +4967,7 @@ c70663877fe319000000208693248367f9e5015db922f8f48095dda784987f2d
 
 ## Sample AEAD-EAX encryption and decryption
 
-This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-EAX encryption.
+This example encrypts the cleartext string `Hello, world!` with the passphrase `password`, using AES-128 with AEAD-EAX encryption.
 
 ### Sample symmetric-key encrypted session key packet (v6)
 
@@ -5128,7 +5128,7 @@ Final additional authenticated data:
 
 ## Sample AEAD-OCB encryption and decryption
 
-This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-OCB encryption.
+This example encrypts the cleartext string `Hello, world!` with the passphrase `password`, using AES-128 with AEAD-OCB encryption.
 
 ### Sample symmetric-key encrypted session key packet (v6)
 
@@ -5291,9 +5291,9 @@ Final additional authenticated data:
 
 ## Sample AEAD-GCM encryption and decryption
 
-This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-GCM encryption.
+This example encrypts the cleartext string `Hello, world!` with the passphrase `password`, using AES-128 with AEAD-GCM encryption.
 
-This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-OCB encryption.
+This example encrypts the cleartext string `Hello, world!` with the passphrase `password`, using AES-128 with AEAD-OCB encryption.
 
 ### Sample symmetric-key encrypted session key packet (v6)
 
