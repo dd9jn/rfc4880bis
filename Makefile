@@ -50,7 +50,7 @@ docker-shell:
 clean:
 	-rm -rf $(OUTPUT) *.tmp $(draft).txt.diff $(draft).md.reflowed
 
-check: codespell check-reflow
+check: codespell check-reflow trailing-whitespace
 
 check-reflow:
 	./reflow < $(draft).md > $(draft).md.reflowed
@@ -58,5 +58,8 @@ check-reflow:
 
 codespell:
 	codespell crypto-refresh.md
+
+trailing-whitespace:
+	! grep -n '[[:space:]]$$' crypto-refresh.md
 
 .PHONY: clean all check codespell check-reflow
