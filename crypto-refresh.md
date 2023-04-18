@@ -908,7 +908,7 @@ Note that Legacy format headers can only have tags less than 16, whereas OpenPGP
 The defined tags (in decimal) are as follows:
 
 {: title="Packet type registry" #packet-type-registry}
-Tag | Critical | Packet Type | Reference | Shorthand 
+Tag | Critical | Packet Type | Reference | Shorthand
 ---:|----------|-------------|-----------|-----------
   0 | yes      | Reserved - a packet tag MUST NOT have this value
   1 | yes      | Public-Key Encrypted Session Key Packet | {{pkesk}} | PKESK
@@ -4988,12 +4988,12 @@ The same data, broken out by octet and semantics:
 0x0002        06                 SKESK version 6
 0x0003           1e              length through end of AEAD nonce
 0x0004              07           cipher: AES128
-0x0005                 01        AEAD mode: EAX 
+0x0005                 01        AEAD mode: EAX
 0x0006                    0b     length of S2K
 0x0007                       03  S2K type: iterated+salted
 0x0008  08                       S2K hash: SHA2-256
 0x0009     a5 ae 57 9d 1f c5 d8  S2K salt
-0x0010  2b 
+0x0010  2b
 0x0011     ff                    S2K iterations (65011712 octets)
 0x0012        69 22 4f 91 99 93  AEAD nonce
 0x0018  b3 50 6f a3 b5 9a 6a 73
@@ -5054,7 +5054,7 @@ The same data, broken out by octet and semantics:
 0x0008  0e 3b 32 19 64 f3 a4 29
 0x0010  13 c8 dc c6 61 93 25 01
 0x0018  52 27 ef b7 ea ea a4 9f
-0x0020  04 c2 e6 74 17 5d 
+0x0020  04 c2 e6 74 17 5d
 0x0026                    4a 3d  chunk #0 encrypted data
 0x0028  22 6e d6 af cb 9c a9 ac
 0x0030  12 2c 14 70 e1 1c 63 d4
@@ -5063,7 +5063,7 @@ The same data, broken out by octet and semantics:
 0x0048  83 25 de
 0x004b           61 04 75 40 25  chunk #0 AEAD tag
 0x0050  8a b7 95 9a 95 ad 05 1d
-0x0058  da 96 eb 
+0x0058  da 96 eb
 0x005b           15 43 1d fe f5  final AEAD tag (#1)
 0x0060  f5 e2 25 5c a7 82 61 54
 0x0068  6e 33 9a
@@ -5216,7 +5216,7 @@ The same data, broken out by octet and semantics:
 0x0008  61 f7 31 fc 9a 30 32 b5
 0x0010  62 33 26 02 7e 3a 5d 8d
 0x0018  b5 74 8e be ff 0b 0c 59
-0x0020  10 d0 9e cd d6 41 
+0x0020  10 d0 9e cd d6 41
 0x0026                    ff 9f  chunk #0 encrypted data
 0x0028  d3 85 62 75 80 35 bc 49
 0x0030  75 4c e1 bf 3f ff a7 da
@@ -5225,7 +5225,7 @@ The same data, broken out by octet and semantics:
 0x0048  1b 48 01
 0x004b           a8 84 6b f4 2b  chunk #0 authentication tag
 0x0050  cd a7 c8 ce 9d 65 e2 12
-0x0058  f3 01 cb 
+0x0058  f3 01 cb
 0x005b           cd 98 fd ca de  final AEAD tag (#1)
 0x0060  69 4a 87 7a d4 24 73 23
 0x0068  f6 e8 57
@@ -5322,7 +5322,7 @@ The same data, broken out by octet and semantics:
 0x0010  08
 0x0011     ff                    S2K iterations (65011712 octets)
 0x0012        b4 2e 7c 48 3e f4  AEAD nonce
-0x0018  88 44 57 cb 37 26 
+0x0018  88 44 57 cb 37 26
 0x001e                    b9 b3  encrypted session key
 0x0020  db 9f f7 76 e5 f4 d9 a4
 0x0028  09 52 e2 44 72 98
@@ -5379,16 +5379,16 @@ The same data, broken out by octet and semantics:
 0x0008  44 90 bc b9 8b bd c9 d1
 0x0010  06 c6 09 02 66 94 0f 72
 0x0018  e8 9e dc 21 b5 59 6b 15
-0x0020  76 b1 01 ed 0f 9f 
+0x0020  76 b1 01 ed 0f 9f
 0x0026                    fc 6f  chunk #0 encrypted data
 0x0028  c6 d6 5b bf d2 4d cd 07
 0x0030  90 96 6e 6d 1e 85 a3 00
 0x0038  53 78 4c b1 d8 b6 a0 69
 0x0040  9e f1 21 55 a7 b2 ad 62
-0x0048  58 53 1b 
+0x0048  58 53 1b
 0x004b           57 65 1f d7 77  chunk #0 authentication tag
 0x0050  79 12 fa 95 e3 5d 9b 40
-0x0058  21 6f 69 
+0x0058  21 6f 69
 0x005b           a4 c2 48 db 28  final AEAD tag (#1)
 0x0060  ff 43 31 f1 63 29 07 39
 0x0068  9e 6f f9
