@@ -3488,7 +3488,7 @@ Because this document obsoletes {{RFC4880}}, IANA is requested to update all reg
 OpenPGP is highly parameterized, and consequently there are a number of considerations for allocating parameters for extensions.
 
 This section describes the updated IANA registration policies.
-Aside from the few registries identified in {{rfc-required-registries}}, the registries have all been moved the SPECIFICATION REQUIRED registration policy, see {{RFC8126}}.
+Aside from the few registries identified in {{rfc-required-registries}}, the registries all now use the SPECIFICATION REQUIRED registration policy, see {{Section 4.6 of RFC8126}}.
 This policy means that review and approval by a designated expert is required, and that the values and their meanings must be documented in a permanent and readily available public specification, in sufficient detail so that interoperability between independent implementations is possible.
 The designated expert will determine whether the new code points retain the security properties that are expected by the base implementation and that these new code points do not cause interoperability issues with existing implementations other than not producing or consuming these new code points.
 Code point proposals that fail to meet these criteria should instead be proposed as work items for the OpenPGP working group or its successor.
@@ -3497,7 +3497,7 @@ The designated expert should also consider {{meta-considerations-for-expansion}}
 
 ## Registries that are RFC REQUIRED {#rfc-required-registries}
 
-The following registries use the RFC REQUIRED registration policy, as described in RFC 8126:
+The following registries use the RFC REQUIRED registration policy, as described in {{Section 4.7 of RFC8126}}:
 
 - Packet Type registry ({{packet-type-registry}})
 - Key and Signature Versions registry ({{signed-packet-versions-registry}})
