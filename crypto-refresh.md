@@ -1539,7 +1539,9 @@ On the other hand, when verifying a signature over an e-mail message, an impleme
 
 The time the signature was made.
 
-MUST be present in the hashed area.
+This subpacket MUST be present in the hashed area.
+
+When generating this subpacket, it SHOULD be marked as critical.
 
 #### Issuer Key ID {#issuer-keyid-subpacket}
 
@@ -1561,6 +1563,8 @@ For a direct or certification self-signature, the key creation time is that of t
 For a subkey binding signature, the key creation time is that of the subkey.
 If this is not present or has a value of zero, the key never expires.
 This is found only on a self-signature.
+
+When an implementation generates this subpacket, it SHOULD be marked as critical.
 
 #### Preferred Symmetric Ciphers for v1 SEIPD {#preferred-v1-seipd}
 
@@ -1630,6 +1634,8 @@ The validity period of the signature.
 This is the number of seconds after the signature creation time that the signature expires.
 If this is not present or has a value of zero, it never expires.
 
+When an implementation generates this subpacket, it SHOULD be marked as critical.
+
 #### Exportable Certification
 
 (1 octet of exportability, 0 for not, 1 for exportable)
@@ -1649,6 +1655,8 @@ For example, if an implementation allows keys to be imported from a key database
 
 Some implementations do not represent the interest of a single user (for example, a key server).
 Such implementations always trim local certifications from any key they handle.
+
+When an implementation generates this subpacket and denotes the signature as non-exportable, the subpacket MUST be marked as critical.
 
 #### Revocable
 
@@ -1684,6 +1692,8 @@ A description of the syntax is found in {{regular-expressions}}.
 For historical reasons, this subpacket includes a null character (octet with value zero) after the regular expression.
 When an implementation parses a regular expression subpacket, it MUST remove this octet; if it is not present, it MUST reject the subpacket (i.e. ignore the subpacket if it's non-critical and reject the signature if it's critical).
 When an implementation generates a regular expression subpacket, it MUST include the null terminator.
+
+When generating this subpacket, it SHOULD be marked as critical.
 
 #### Revocation Key {#revocation-key}
 
@@ -1839,6 +1849,8 @@ This decision is left wholly up to the implementation; the authors of this docum
 The "split key" (0x10) and "group key" (0x80) flags are placed on a self-signature only; they are meaningless on a certification signature.
 They SHOULD be placed only on a direct-key signature (type 0x1F) or a subkey signature (type 0x18), one that refers to the key the flag applies to.
 
+When an implementation generates this subpacket, it SHOULD be marked as critical.
+
 #### Signer's User ID
 
 (String)
@@ -1953,6 +1965,8 @@ This can be used to prevent forwarding a signature outside of its intended, encr
 Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 6 key N is 32.
 
 An implementation SHOULD generate this subpacket when creating a signed and encrypted message.
+
+When generating this subpacket in a v6 signature, it SHOULD be marked as critical.
 
 ### Computing Signatures {#computing-signatures}
 
