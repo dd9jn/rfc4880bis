@@ -1463,8 +1463,10 @@ If a subpacket is encountered that is marked critical but is unknown to the eval
 An evaluator may "recognize" a subpacket, but not implement it.
 The purpose of the critical bit is to allow the signer to tell an evaluator that it would prefer a new, unknown feature to generate an error rather than being ignored.
 
-Implementations SHOULD implement the four preferred algorithm subpackets (11, 21, 22, and 39), as well as the "Reason for Revocation" subpacket.
-Note, however, that if an implementation chooses not to implement some of the preferences, it is required to behave in a polite manner to respect the wishes of those users who do implement these preferences.
+Implementations SHOULD implement the four preferred algorithm subpackets (11, 21, 22, and 39), as well as the "Features" subpacket and the "Reason for Revocation" subpacket.
+To avoid surreptitious forwarding (see {{surreptitious-forwarding}}), implementations SHOULD also implement the "Intended Recipients" subpacket.
+Note that if an implementation chooses not to implement some of the preferences subpackets, it MUST default to the mandatory-to-implement algorithms to ensure interoperability.
+An encrypting implementation that does not implement the "Features" subpacket SHOULD select the type of encrypted data format based instead on the versions of the recipient keys or external inference (see {{ciphertext-malleability}} for more details).
 
 #### Signature Subpacket Types
 
