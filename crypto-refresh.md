@@ -1124,78 +1124,113 @@ Please note that the vagueness of these meanings is not a flaw, but a feature of
 Because OpenPGP places final authority for validity upon the receiver of a signature, it may be that one signer's casual act might be more rigorous than some other authority's positive act.
 See {{computing-signatures}} for detailed information on how to compute and verify signatures of each type.
 
-These meanings are as follows:
+{: title="Signature type registry"}
+Sigtype | Name | Reference
+---|------|-----------
+0x00 | Binary Signature | {{sigtype-binary}}
+0x01 | Text Signature | {{sigtype-text}}
+0x02 | Standalone Signature | {{sigtype-standalone}}
+0x10 | Generic Certification | {{sigtype-generic-cert}}
+0x11 | Persona Certification | {{sigtype-persona-cert}}
+0x12 | Casual Certification | {{sigtype-casual-cert}}
+0x13 | Positive Certification | {{sigtype-positive-cert}}
+0x18 | Subkey Binding Signature | {{sigtype-subkey-binding}}
+0x19 | Primary Key Binding Signature | {{sigtype-primary-binding}}
+0x1F | Direct Key Signature | {{sigtype-direct-key}}
+0x20 | Key Revocation | {{sigtype-key-revocation}}
+0x28 | Subkey Revocation | {{sigtype-subkey-revocation}}
+0x30 | Certification Revocation | {{sigtype-certification-revocation}}
+0x40 | Timestamp Signature | {{sigtype-timestamp}}
+0x50 | Third-Party Confirmation | {{sigtype-third-party-confirmation}} 
+0xFF | Reserved | {{sigtype-reserved}}
 
-{: vspace="0"}
-0x00: Signature of a binary document.
-: This means the signer owns it, created it, or certifies that it has not been modified.
+These meanings of each signature type are described in the subsections below.
 
-0x01: Signature of a canonical text document.
-: This means the signer owns it, created it, or certifies that it has not been modified.
-  The signature is calculated over the text data with its line endings converted to \<CR>\<LF>.
+#### Signature of a binary document (sigtype 0x00) {#sigtype-binary}
 
-0x02: Standalone signature.
-: This signature is a signature of only its own subpacket contents.
-  It is calculated identically to a signature over a zero-length binary document.
-  V3 standalone signatures MUST NOT be generated and MUST be ignored.
+This means the signer owns it, created it, or certifies that it has not been modified.
 
-0x10: Generic certification of a User ID and Public-Key packet.
-: The issuer of this certification does not make any particular assertion as to how well the certifier has checked that the owner of the key is in fact the person described by the User ID.
+#### Signature of a canonical text document (sigtype 0x01) {#sigtype-text}
 
-0x11: Persona certification of a User ID and Public-Key packet.
-: The issuer of this certification has not done any verification of the claim that the owner of this key is the User ID specified.
+This means the signer owns it, created it, or certifies that it has not been modified.
+The signature is calculated over the text data with its line endings converted to \<CR>\<LF>.
 
-0x12: Casual certification of a User ID and Public-Key packet.
-: The issuer of this certification has done some casual verification of the claim of identity.
+#### Standalone signature (sigtype 0x02) {#sigtype-standalone}
 
-0x13: Positive certification of a User ID and Public-Key packet.
-: The issuer of this certification has done substantial verification of the claim of identity.
+This signature is a signature of only its own subpacket contents.
+It is calculated identically to a signature over a zero-length binary document.
+ V3 standalone signatures MUST NOT be generated and MUST be ignored.
 
-  Most OpenPGP implementations make their "key signatures" as 0x10 certifications.
-  Some implementations can issue 0x11-0x13 certifications, but few differentiate between the types.
+#### Generic certification of a User ID and Public-Key packet (sigtype 0x10) {#sigtype-generic-cert}
 
-0x18: Subkey Binding Signature.
-: This signature is a statement by the top-level signing key that indicates that it owns the subkey.
-  This signature is calculated directly on the primary key and subkey, and not on any User ID or other packets.
-  A signature that binds a signing subkey MUST have an Embedded Signature subpacket in this binding signature that contains a 0x19 signature made by the signing subkey on the primary key and subkey.
+The issuer of this certification does not make any particular assertion as to how well the certifier has checked that the owner of the key is in fact the person described by the User ID.
 
-0x19: Primary Key Binding Signature.
-: This signature is a statement by a signing subkey, indicating that it is owned by the primary key and subkey.
-  This signature is calculated the same way as a 0x18 signature: directly on the primary key and subkey, and not on any User ID or other packets.
+#### Persona certification of a User ID and Public-Key packet (sigtype 0x11) {#sigtype-persona-cert}
 
-0x1F: Signature directly on a key.
-: This signature is calculated directly on a key.
-  It binds the information in the Signature subpackets to the key, and is appropriate to be used for subpackets that provide information about the key, such as the Key Flags subpacket or (deprecated) Revocation Key.
-  It is also appropriate for statements that non-self certifiers want to make about the key itself, rather than the binding between a key and a name.
+The issuer of this certification has not done any verification of the claim that the owner of this key is the User ID specified.
 
-0x20: Key revocation signature.
-: The signature is calculated directly on the key being revoked.
-  A revoked key is not to be used.
-  Only revocation signatures by the key being revoked, or by a (deprecated) Revocation Key, should be considered valid revocation signatures.
+#### Casual certification of a User ID and Public-Key packet (sigtype 0x12) {#sigtype-casual-cert}
 
-0x28: Subkey revocation signature.
-: The signature is calculated directly on the subkey being revoked.
-  A revoked subkey is not to be used.
-  Only revocation signatures by the top-level signature key that is bound to this subkey, or by a (deprecated) Revocation Key, should be considered valid revocation signatures.
+The issuer of this certification has done some casual verification of the claim of identity.
 
-0x30: Certification revocation signature.
-: This signature revokes an earlier User ID certification signature (signature class 0x10 through 0x13) or direct-key signature (0x1F).
-  It should be issued by the same key that issued the revoked signature or by a (deprecated) Revocation Key.
-  The signature is computed over the same data as the certificate that it revokes, and should have a later creation date than that certificate.
+#### Positive certification of a User ID and Public-Key packet (sigtype 0x13) {#sigtype-positive-cert}
 
-0x40: Timestamp signature.
-: This signature is only meaningful for the timestamp contained in it.
+The issuer of this certification has done substantial verification of the claim of identity.
 
-0x50: Third-Party Confirmation signature.
-: This signature is a signature over some other OpenPGP Signature packet(s).
-  It is analogous to a notary seal on the signed data.
-  A third-party signature SHOULD include Signature Target subpacket(s) to give easy identification.
-  Note that we really do mean SHOULD.
-  There are plausible uses for this (such as a blind party that only sees the signature, not the key or source document) that cannot include a target subpacket.
+Most OpenPGP implementations make their "key signatures" as generic (sigtype 0x10) certifications.
+Some implementations can issue 0x11-0x13 certifications, but few differentiate between the types.
 
-0xFF: Reserved.
-: An implementation MUST NOT create any signature with this type, and MUST NOT validate any signature made with this type.
-  See {{sig-computation-notes}} for more details.
+#### Subkey Binding Signature (sigtype 0x18) {#sigtype-subkey-binding}
+
+This signature is a statement by the top-level signing key that indicates that it owns the subkey.
+This signature is calculated directly on the primary key and subkey, and not on any User ID or other packets.
+A signature that binds a signing subkey MUST have an Embedded Signature subpacket in this binding signature that contains a 0x19 signature made by the signing subkey on the primary key and subkey.
+
+#### Primary Key Binding Signature (sigtype 0x19) {#sigtype-primary-binding}
+
+This signature is a statement by a signing subkey, indicating that it is owned by the primary key and subkey.
+This signature is calculated the same way as a subkey binding signature (0x18): directly on the primary key and subkey, and not on any User ID or other packets.
+
+#### Signature directly on a key (sigtype 0x1F) {#sigtype-direct-key}
+
+This signature is calculated directly on a key.
+It binds the information in the Signature subpackets to the key, and is appropriate to be used for subpackets that provide information about the key, such as the Key Flags subpacket or (deprecated) Revocation Key.
+It is also appropriate for statements that non-self certifiers want to make about the key itself, rather than the binding between a key and a name.
+
+#### Key revocation signature (sigtype 0x20) {#sigtype-key-revocation}
+
+The signature is calculated directly on the key being revoked.
+A revoked key is not to be used.
+Only revocation signatures by the key being revoked, or by a (deprecated) Revocation Key, should be considered valid revocation signatures.
+
+#### Subkey revocation signature (sigtype 0x28) {#sigtype-subkey-revocation}
+
+The signature is calculated directly on the subkey being revoked.
+A revoked subkey is not to be used.
+Only revocation signatures by the top-level signature key that is bound to this subkey, or by a (deprecated) Revocation Key, should be considered valid revocation signatures.
+
+#### Certification revocation signature (sigtype 0x30) {#sigtype-certification-revocation}
+
+This signature revokes an earlier User ID certification signature (signature class 0x10 through 0x13) or direct-key signature (0x1F).
+It should be issued by the same key that issued the revoked signature or by a (deprecated) Revocation Key.
+The signature is computed over the same data as the certificate that it revokes, and should have a later creation date than that certificate.
+
+#### Timestamp signature (sigtype 0x40) {#sigtype-timestamp}
+
+This signature is only meaningful for the timestamp contained in it.
+
+#### Third-Party Confirmation signature (sigtype 0x50) {#sigtype-third-party-confirmation}
+
+This signature is a signature over some other OpenPGP Signature packet(s).
+It is analogous to a notary seal on the signed data.
+A third-party signature SHOULD include Signature Target subpacket(s) to give easy identification.
+Note that we really do mean SHOULD.
+There are plausible uses for this (such as a blind party that only sees the signature, not the key or source document) that cannot include a target subpacket.
+
+#### Reserved (sigtype 0xFF) {#sigtype-reserved}
+
+An implementation MUST NOT create any signature with this type, and MUST NOT validate any signature made with this type.
+See {{sig-computation-notes}} for more details.
 
 ### Version 3 Signature Packet Format {#version-three-sig}
 
