@@ -1810,12 +1810,10 @@ If there is a critical notation, the criticality applies to that specific notati
 This is a list of one-bit flags that indicate preferences that the key holder has about how the key is handled on a key server.
 All undefined flags MUST be zero.
 
-First octet:
-
-{: title="Key server preferences flag registry (first octet)"}
-flag | shorthand | definition
+{: title="Key server preferences flag registry"}
+Flag | Shorthand | Definition
 ---|---|---
-0x80 | No-modify | The key holder requests that this key only be modified or updated by the key holder or an administrator of the key server.
+0x80... | No-modify | The key holder requests that this key only be modified or updated by the key holder or an administrator of the key server.
 
 This is found only on a self-signature.
 
@@ -1856,26 +1854,18 @@ This is so it can grow over time.
 If a list is shorter than an implementation expects, the unstated flags are considered to be zero.
 The defined flags are as follows:
 
-First octet:
-
-{: title="Key flags registry (first octet)"}
-flag | definition
+{: title="Key flags registry"}
+Flag | Definition
 ---|-------------
-0x01 | This key may be used to make User ID certifications (signature types 0x10-0x13) or direct-key signatures (signature type 0x1F) over other keys.
-0x02 | This key may be used to sign data.
-0x04 | This key may be used to encrypt communications.
-0x08 | This key may be used to encrypt storage.
-0x10 | The private component of this key may have been split by a secret-sharing mechanism.
-0x20 | This key may be used for authentication.
-0x80 | The private component of this key may be in the possession of more than one person.
-
-Second octet:
-
-{: title="Key flags registry (second octet)"}
-flag | definition
----|-------------
-0x04 | Reserved (ADSK).
-0x08 | Reserved (timestamping).
+0x01... | This key may be used to make User ID certifications (signature types 0x10-0x13) or direct-key signatures (signature type 0x1F) over other keys.
+0x02... | This key may be used to sign data.
+0x04... | This key may be used to encrypt communications.
+0x08... | This key may be used to encrypt storage.
+0x10... | The private component of this key may have been split by a secret-sharing mechanism.
+0x20... | This key may be used for authentication.
+0x80... | The private component of this key may be in the possession of more than one person.
+0x0004... | Reserved (ADSK).
+0x0008... | Reserved (timestamping).
 
 Usage notes:
 
@@ -1950,13 +1940,13 @@ Defined features are as follows:
 
 First octet:
 
-{: title="Features registry"}
+{: title="Features flag registry"}
 Feature | Definition | Reference
 ---|--------------|--------
-0x01 | Symmetrically Encrypted Integrity Protected Data packet version 1 | {{version-one-seipd}}
-0x02 | Reserved
-0x04 | Reserved
-0x08 | Symmetrically Encrypted Integrity Protected Data packet version 2 | {{version-two-seipd}}
+0x01... | Symmetrically Encrypted Integrity Protected Data packet version 1 | {{version-one-seipd}}
+0x02... | Reserved
+0x04... | Reserved
+0x08... | Symmetrically Encrypted Integrity Protected Data packet version 2 | {{version-two-seipd}}
 
 If an implementation implements any of the defined features, it SHOULD implement the Features subpacket, too.
 
@@ -3543,22 +3533,6 @@ The registry includes the columns "Flag", "Shorthand", "Description", and "Refer
 The initial values for this registry can be found in {{notation-data}}.
 Adding a new item MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
-#### Key Server Preference Extensions
-
-OpenPGP signatures contain a mechanism for preferences to be specified about key servers.
-This specification creates a registry of key server preferences.
-The registry includes the key server preference, the name of the preference, and a reference to the defining specification.
-The initial values for this registry can be found in {{key-server-preferences}}.
-Adding a new key server preference MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
-#### Key Flags Extensions
-
-OpenPGP signatures contain a mechanism for flags to be specified about key usage.
-This specification creates a registry of key usage flags.
-The registry includes the key flags value, the name of the flag, and a reference to the defining specification.
-The initial values for this registry can be found in {{key-flags}}.
-Adding a new key usage flag MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
 #### Reason for Revocation Extensions
 
 OpenPGP signatures contain a mechanism for flags to be specified about why a key was revoked.
@@ -3566,16 +3540,6 @@ This specification creates a registry of "Reason for Revocation" flags.
 The registry includes the "Reason for Revocation" flags value, the name of the flag, and a reference to the defining specification.
 The initial values for this registry can be found in {{reason-for-revocation}}.
 Adding a new feature flag MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
-#### Implementation Features
-
-OpenPGP signatures contain a mechanism for flags to be specified stating which optional features an implementation supports.
-This specification creates a registry of feature-implementation flags.
-The registry includes the feature-implementation flags value, the name of the flag, and a reference to the defining specification.
-The initial values for this registry can be found in {{features-subpacket}}.
-Adding a new feature-implementation flag MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
-Also see {{meta-considerations-for-expansion}} for more information about when feature flags are needed.
 
 ### Packet Versions
 
