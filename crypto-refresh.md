@@ -2818,10 +2818,21 @@ The image header length is followed by a single octet for the image header versi
 The only currently defined version of the image header is 1, which is a 16-octet image header.
 The first three octets of a version 1 image header are thus 0x10, 0x00, 0x01.
 
+{: title="Image Attribute Version registry}
+Version | Reference
+---:|-----
+1 | {{uat-image}}
+
 The fourth octet of a version 1 image header designates the encoding format of the image.
 The only currently defined encoding format is the value 1 to indicate JPEG.
 Image format types 100 through 110 are reserved for private or experimental use.
 The rest of the version 1 image header is made up of 12 reserved octets, all of which MUST be set to 0.
+
+{: title="Image Attribute Encoding Format registry"}
+Value | Encoding | Reference
+--:|----|----
+1 | JPEG | JPEG File Interchange Format ({{JFIF}})
+100-110 | Private/Experimental use
 
 The rest of the image subpacket contains the image itself.
 As the only currently defined image type is JPEG, the image is encoded in the JPEG File Interchange Format (JFIF), a standard file format for JPEG images {{JFIF}}.
@@ -3518,14 +3529,6 @@ This specification creates a registry of User Attribute types.
 The registry includes the User Attribute type, the name of the User Attribute, and a reference to the defining specification.
 The initial values for this registry can be found in {{user-attribute-packet}}.
 Adding a new User Attribute type MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
-#### Image Attribute Formats
-
-Within User Attribute packets, there is an extensible mechanism for other types of image-based User Attributes.
-This specification creates a registry of Image Attribute subpacket types.
-The registry includes the Image Attribute subpacket type, the name of the Image Attribute subpacket, and a reference to the defining specification.
-The initial values for this registry can be found in {{uat-image}}.
-Adding a new Image Attribute subpacket type MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 ### Signature Subpackets
 
