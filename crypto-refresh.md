@@ -723,6 +723,7 @@ Known symmetric cipher algo ID (see {{symmetric-algos}}) | LegacyCFB | IV | CFB(
 
 When emitting a secret key (with or without passphrase-protection) an implementation MUST only produce data from a row with "Generate?" marked as "Yes".
 Each row with "Generate?" marked as "No" is described for backward compatibility (for reading only), and MUST NOT be generated.
+Version 6 secret keys using these formats MUST be rejected.
 
 Note that compared to a version 4 secret key, the parameters of a passphrase-protected version 6 secret key are stored with an additional pair of length counts, each of which is one octet wide.
 
