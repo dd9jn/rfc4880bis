@@ -4982,6 +4982,114 @@ c70663877fe319000000208693248367f9e5015db922f8f48095dda784987f2d
 5985b12fbad16caf5e4435
 ~~~
 
+## Sample Cleartext Signed Message
+
+Here is a signed message that uses the cleartext signature framework ({{cleartext-signature}}).
+It can be verified with the certificate from ({{v6-cert}}).
+
+Note that this message makes use of dash-escaping ({{dash-escaping}}) due to its contents.
+
+{: sourcecode-name="cleartext-signed-message.txt"}
+~~~ text/plain
+{::include test-vectors/cleartext-signed-message.txt}
+~~~
+
+The signature packet here is:
+
+~~~
+
+0x0000  c2                       packet tag: Signature
+0x0001     98                    packet length
+0x0002        06                 signature version 6
+0x0003           01              signature type: canonical text
+0x0004              1b           pubkey algorithm: Ed25519
+0x0005                 0a        hash algorithm used: SHA2-512
+0x0006                    00 00  hashed subpackets length: 41
+0x0008  00 29
+0x000a        05                 subpkt length
+0x000b           82              critical subpkt: Sig Creation Time
+0x000c              63 98 a3 63   (2022-12-13T16:08:03Z)
+0x0010  22                       subpkt length
+0x0011     21                    subpkt type: issuer fingerprint
+0x0012        06                 key version
+0x0013           cb 18 6c 4f 06  v6 fingerprint
+0x001a  09 a6 97 e4 d5 2d fa 6c
+0x0020  72 2b 0c 1f 1e 27 c1 8a
+0x0028  56 70 8f 65 25 ec 27 ba
+0x0030  d9 ac c9
+0x0033           00 00 00 00     unhashed subpackets length: 0
+0x0037                       69  left 16 bits of signed hash
+0x0038  36
+0x0039     20                    salt length
+0x003a        76 49 5f 50 21 88  salt
+0x0040  90 f7 f5 e2 ee 3c 18 22
+0x0048  51 4f 70 50 0f 55 1d 86
+0x0050  e5 c9 21 e4 04 e3 4a 53
+0x0058  fb ac
+0x005a        27 d0 6f b8 0a a8  Ed25519 signature
+0x0060  fc 5b cb 16 e1 96 31 b2
+0x0068  80 74 0f 9e a6 ae d5 e0
+0x0070  73 ad 00 f9 41 5a 65 3c
+0x0078  40 e7 7a 6a e7 7e 69 2b
+0x0080  a7 1d 06 9a 10 9f a2 4c
+0x0088  58 cf d8 e3 16 d0 a0 6b
+0x0090  34 ad 9a cb 8e 5c 5f 52
+0x0098  15 01
+~~~
+
+The signature is made over the following data:
+
+~~~
+{::include test-vectors/cleartext-signed-message-hashed-data.txt}
+~~~
+
+The same data, broken out by octet and semantics, is:
+
+~~~
+0x0000  76 49 5f 50 21 88 90 f7  salt
+0x0008  f5 e2 ee 3c 18 22 51 4f
+0x0010  70 50 0f 55 1d 86 e5 c9
+0x0018  21 e4 04 e3 4a 53 fb ac
+      [ message begins ]
+0x0020  57 68 61 74 20 77 65 20  canonicalized message
+0x0028  6e 65 65 64 20 66 72 6f
+0x0030  6d 20 74 68 65 20 67 72
+0x0038  6f 63 65 72 79 20 73 74
+0x0040  6f 72 65 3a 0d 0a 0d 0a
+0x0048  2d 20 74 6f 66 75 0d 0a
+0x0050  2d 20 76 65 67 65 74 61
+0x0058  62 6c 65 73 0d 0a 2d 20
+0x0060  6e 6f 6f 64 6c 65 73 0d
+0x0068  0a
+      [ trailer begins ]
+0x0069     06                    sig version
+0x006a        01                 sigtype: canonical text
+0x006b           1b              pubkey algorithm: Ed25519
+0x006c              0a           hash algorithm: SHA2-512
+0x006d                 00 00 00  hashed subpackets length
+0x0070  29
+0x0071     05                    subpacket length
+0x0072        82                 critical subpkt: Sig Creation Time
+0x0073           63 98 a3 63       (2022-12-13T16:08:03Z)
+0x0077                       22  subpkt length
+0x0078  21                       subpkt type: issuer fingerprint
+0x0079     06                    key version
+0x007a        cb 18 6c 4f 06 09  v6 fingerprint
+0x0080  a6 97 e4 d5 2d fa 6c 72
+0x0088  2b 0c 1f 1e 27 c1 8a 56
+0x0090  70 8f 65 25 ec 27 ba d9
+0x0098  ac c9
+0x009a        06                 sig version
+0x009b           ff              sentinel octet
+0x009c              00 00 00 31  trailer length
+~~~
+
+The calculated SHA2-512 hash digest over this data is:
+
+~~~
+69365bf44a97af1f0844f1f6ab83fdf6b36f26692efaa621a8aac91c4e29ea07
+e894cabc6e2f20eedfce6c03b89141a2cc7cbe245e6e7a5654addbec5000b89b
+~~~
 
 ## Sample AEAD-EAX encryption and decryption
 
