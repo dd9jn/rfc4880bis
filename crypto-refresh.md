@@ -1064,13 +1064,16 @@ An implementation MUST NOT generate ElGamal v6 PKESKs.
 - The encrypted session key.
 
 See {{Section 6.1 of RFC7748}} for more details on the computation of the ephemeral public key and the shared secret.
-The shared secret is passed to HKDF (see {{RFC5869}}) using SHA256, and the UTF-8-encoded string "OpenPGP X25519" as the info parameter.
-The resulting key is used to encrypt the session key with AES-128 key wrap, defined in {{RFC3394}}.
+HKDF (see {{RFC5869}}) is then used with SHA256 and an info parameter of "OpenPGP X25519".
+The input of HKDF is the concatenation of the following three values:
+
+- 32 octets of the ephemeral X25519 public key from this packet.
+- 32 octets of the recipient public key material.
+- 32 octets of the shared secret.
+
+The key produced from HKDF is used to encrypt the session key with AES-128 key wrap, as defined in {{RFC3394}}.
 
 Note that unlike ECDH, no checksum or padding are appended to the session key before key wrapping.
-Additionally, unlike ECDH, the derived key is not bound to the recipient key.
-Instead, the Intended Recipient Fingerprint subpacket SHOULD be used when creating a signed and encrypted message (see {{intended-recipient-fingerprint}}).
-
 Finally, note that unlike the other public-key algorithms, in the case of a v3 PKESK packet, the symmetric algorithm identifier is not encrypted.
 Instead, it is prepended to the encrypted session key in plaintext.
 In this case, the symmetric algorithm used MUST be AES-128, AES-192 or AES-256 (algorithm ID 7, 8 or 9).
@@ -1086,13 +1089,16 @@ In this case, the symmetric algorithm used MUST be AES-128, AES-192 or AES-256 (
 - The encrypted session key.
 
 See {{Section 6.2 of RFC7748}} for more details on the computation of the ephemeral public key and the shared secret.
-The shared secret is passed to HKDF (see {{RFC5869}}) using SHA512, and the UTF-8-encoded string "OpenPGP X448" as the info parameter.
-The resulting key is used to encrypt the session key with AES-256 key wrap, defined in {{RFC3394}}.
+HKDF (see {{RFC5869}}) is then used with SHA512 and an info parameter of "OpenPGP X448".
+The input of HKDF is the concatenation of the following three values:
+
+- 56 octets of the ephemeral X448 public key from this packet.
+- 56 octets of the recipient public key material.
+- 56 octets of the shared secret.
+
+The key produced from HKDF is used to encrypt the session key with AES-256 key wrap, as defined in {{RFC3394}}.
 
 Note that unlike ECDH, no checksum or padding are appended to the session key before key wrapping.
-Additionally, unlike ECDH, the derived key is not bound to the recipient key.
-Instead, the Intended Recipient Fingerprint subpacket SHOULD be used when creating a signed and encrypted message (see {{intended-recipient-fingerprint}}).
-
 Finally, note that unlike the other public-key algorithms, in the case of a v3 PKESK packet, the symmetric algorithm identifier is not encrypted.
 Instead, it is prepended to the encrypted session key in plaintext.
 In this case, the symmetric algorithm used MUST be AES-128, AES-192 or AES-256 (algorithm ID 7, 8 or 9).
