@@ -3391,7 +3391,7 @@ Some Elliptic Curve Public Key Algorithms use different conventions for specific
 Each field is always formatted as an MPI, but with a curve-specific framing.
 This table summarizes those distinctions.
 
-{: title="Curve-specific wire formats" #ecc-wire-formats}
+{: title="ECC Curve-specific Wire Formats registry" #ecc-wire-formats}
 Curve | ECDH Point Format | ECDH Secret Key MPI | EdDSA Secret Key MPI | EdDSA Signature first MPI | EdDSA Signature second MPI
 ------|-----------------|------------------|---------------------------|---------------------------
 NIST P-256 | SEC1 | integer | N/A | N/A | N/A
@@ -3590,6 +3590,7 @@ Adding a new public-key algorithm MUST be done through the SPECIFICATION REQUIRE
 Some public key algorithms use Elliptic Curves.
 In particular, ECDH/ECDSA/EdDSALegacy public key algorithms all allow specific curves to be used, as indicated by OID.
 To register a new elliptic curve for use with OpenPGP, its OID needs to be registered in {{ecc-oid-usage}}, its wire format needs to be documented in {{ecc-wire-formats}}, and if used for ECDH, its KDF and KEK parameters must be populated in {{ecdh-kdf-kek-parameters}}.
+If the wire format(s) used are not already defined in {{ec-point-wire-formats-registry}} or {{ec-scalar-wire-formats-registry}}, they should be defined there as well.
 
 ### Symmetric-Key Algorithms
 
@@ -3614,29 +3615,6 @@ This specification creates a registry of compression algorithm identifiers.
 The registry includes the algorithm name and a reference to the defining specification.
 The initial values for this registry can be found in {{compression-algos}}.
 Adding a new compression key algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
-### Elliptic Curve Algorithms
-
-This document requests IANA add a registry of elliptic curves for use in OpenPGP.
-
-Each curve is identified on the wire by OID, and is acceptable for use in certain OpenPGP public key algorithms.
-The table's initial headings and values can be found in {{ec-curves}}.
-Adding a new elliptic curve algorithm to OpenPGP MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-If the new curve can be used for ECDH, it must also be added to the "Curve-specific wire formats" table described in {{curve-specific-formats}}.
-
-## Elliptic Curve Point and Scalar Wire Formats
-
-This document requests IANA add a registry of wire formats that represent elliptic curve points.
-The table's initial headings and values can be found in {{ec-point-wire-formats}}.
-Adding a new EC point wire format MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
-This document also requests IANA add a registry of wire formats that represent scalars for use with elliptic curve cryptography.
-The table's initial headings and values can be found in {{ec-scalar-wire-formats}}.
-Adding a new EC scalar wire format MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
-This document also requests that IANA add a registry mapping curve-specific MPI octet-string encoding conventions for ECDH and EdDSALegacy.
-The table's initial headings and values can be found in {{curve-specific-formats}}.
-Adding a new elliptic curve algorithm to OpenPGP MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}, and requires adding an entry to this table if the curve is to be used with ECDH.
 
 ## Changes to existing registries
 
@@ -3918,7 +3896,7 @@ A point on an elliptic curve will always be represented on the wire as an MPI.
 Each curve uses a specific point format for the data within the MPI itself.
 Each format uses a designated prefix octet to ensure that the high octet has at least one bit set to make the MPI a constant size.
 
-{: title="Elliptic Curve Point Wire Formats"}
+{: title="Elliptic Curve Point Wire Formats registry" #ec-point-wire-formats-registry}
 Name | Wire Format | Reference
 ------:|-----------|-------------------
 SEC1 | 0x04 \|\| x \|\| y | {{ec-point-sec1}}
@@ -3960,7 +3938,7 @@ Some non-curve values in elliptic curve cryptography (for example, secret keys a
 Because of different patterns of deployment, some curves treat these values as opaque bit strings with the high bit set, while others are treated as actual integers, encoded in the standard OpenPGP big-endian form.
 The choice of encoding is specific to the public key algorithm in use.
 
-{: title="Elliptic Curve Scalar Encodings"}
+{: title="Elliptic Curve Scalar Encodings registry" #ec-scalar-wire-formats-registry}
 Type | Description | Reference
 -----|-------------|-----------
 integer | An integer, big-endian encoded as a standard OpenPGP MPI | {{mpi}}
@@ -4144,7 +4122,7 @@ An implementation MUST NOT encrypt any message to a v6 ECDH key over a listed cu
 For v4 keys, the following algorithms SHOULD be used depending on the curve.
 An implementation SHOULD only use an AES algorithm as a KEK algorithm.
 
-{: title="ECDH KDF and KEK parameters" #ecdh-kdf-kek-parameters}
+{: title="ECDH KDF and KEK parameters registry" #ecdh-kdf-kek-parameters}
 Curve | Hash algorithm | Symmetric algorithm
 ------|----------------|--------------------
 NIST P-256 | SHA2-256 | AES-128
