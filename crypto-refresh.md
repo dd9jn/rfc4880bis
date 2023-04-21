@@ -661,7 +661,7 @@ This provides memory-hardness, further protecting the passphrase against brute-f
       Octet  18:       one-octet degree of parallelism p
       Octet  19:       one-octet exponent indicating the memory size m
 
-The salt SHOULD be unique for each password.
+The salt SHOULD be unique for each passphrase.
 
 The number of passes t and the degree of parallelism p MUST be non-zero.
 
@@ -694,42 +694,40 @@ However, this method does not provide memory-hardness, unlike Argon2.
 
 #### Secret-Key Encryption {#secret-key-encryption}
 
-An S2K specifier can be stored in the secret keyring to specify how to convert the passphrase to a key that unlocks the secret data.
-Legacy implementations just stored a symmetric cipher algorithm octet preceding the secret data or a zero to indicate that the secret data was unencrypted.
-The MD5 hash function was always used to convert the passphrase to a key for the specified cipher algorithm.
+The first octet following the public key material in a secret key packet ({{secret-key-packet-formats}}) indicates whether and how the secret key material is passphrase-protected.
+This first octet is known as the "S2K usage octet".
 
-For compatibility, when an S2K specifier is used, the special value 253, 254, or 255 is stored in the position where the cipher algorithm octet would have been in the old data structure.
-This is then followed immediately by a one-octet algorithm identifier, and other fields relevant to the type of encryption used.
+If S2K usage octet is zero, the secret key data is unprotected.
+If it is non-zero, it describes how to use a passphrase to unlock the secret key.
 
-Therefore, the first octet of the secret key material describes how the secret key data is presented.
-The structures differ based on the version of the enclosing OpenPGP packet.
-The tables below summarize the details described in {{secret-key-packet-formats}}.
+Legacy implementations indicated a protected key by storing a symmetric cipher algorithm ID (see {{symmetric-algos}}) in the S2K usage octet.
+In this case, the MD5 hash function was always used to convert the passphrase to a key for the specified cipher algorithm.
 
-In the tables below, `check(x)` means the "2-octet checksum" meaning the sum of all octets in x mod 65536.
+Modern implementations indicate a protected secret key by storing a special value 253 (AEAD), 254 (CFB), or 255 (MalleableCFB) in the S2K usage octet.
+The S2K usage octet is then followed immediately a set of fields that describe how to convert a passphrase to a symmetric key that can unlock the secret material, plus other parameters relevant to the type of encryption used.
 
-{: title="Version 4 Secret Key protection details" #v4-secret-key-protection-details}
-First octet | Encryption parameter fields | Encryption | Generate?
----|--------------------------------------------------|---|---|---
-0 | - | cleartext secrets \|\| check(secrets) | Yes
-Known symmetric cipher algo ID (see {{symmetric-algos}}) | IV | CFB(MD5(password), secrets \|\| check(secrets)) | No
-253 | cipher-algo, AEAD-mode, S2K-specifier, nonce | AEAD(HKDF(S2K(password), info), secrets, packetprefix) | Yes
-254 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets)) | Yes
-255 | cipher-algo, S2K-specifier, IV | CFB(S2K(password), secrets \|\| check(secrets)) | No
+The wire format fields also differ based on the version of the enclosing OpenPGP packet.
+The table below, indexed by S2K usage octet, summarizes the specifics described in {{secret-key-packet-formats}}.
 
-If the "Generate?" column is not "Yes", the Secret Key protection details entry is used only for reading in backwards compatibility mode and MUST NOT be used to generate new output.
+In the table below, `check(x)` means the "2-octet checksum" meaning the sum of all octets in x mod 65536.
+The `info` and `packetprefix` parameters are described in detail in {{secret-key-packet-formats}}.
 
-Each row with "Generate?" marked as "No" is described for backward compatibility, and MUST NOT be generated.
+{: title="Secret Key Encryption (S2K Usage Octet) registry" #secret-key-protection-summary}
+S2K usage octet | Shorthand | Encryption parameter fields | Encryption | Generate?
+--|---|--------------------------------------------------|---|---|---
+0 | Unprotected | - | **v3 or v4 keys:** \[cleartext secrets \|\| check(secrets)\] <br/> **v6 keys:** \[cleartext secrets\] | Yes
+Known symmetric cipher algo ID (see {{symmetric-algos}}) | LegacyCFB | IV | CFB(MD5(passphrase), secrets \|\| check(secrets)) | No
+253 | AEAD | params-length (**v6-only**), cipher-algo, AEAD-mode, S2K-specifier-length (**v6-only**), S2K-specifier, nonce | AEAD(HKDF(S2K(passphrase), info), secrets, packetprefix) | Yes
+254 | CFB | params-length (**v6-only**), cipher-algo, S2K-specifier-length (**v6-only**), S2K-specifier, IV | CFB(S2K(passphrase), secrets \|\| SHA1(secrets)) | Yes
+255 | MalleableCFB | cipher-algo, S2K-specifier, IV | CFB(S2K(passphrase), secrets \|\| check(secrets)) | No
 
-A version 6 secret key that is cryptographically protected is stored with an additional pair of length counts, each of which is one octet wide:
+When emitting a secret key (with or without passphrase-protection) an implementation MUST only produce data from a row with "Generate?" marked as "Yes".
+Each row with "Generate?" marked as "No" is described for backward compatibility (for reading only), and MUST NOT be generated.
 
-{: title="Version 6 Secret Key protection details" #v6-secret-key-protection-details}
-First octet | Encryption parameter fields | Encryption
----|--------------------------------------------------|---|---
-0 | - | cleartext secrets
-253 | params-length, cipher-algo, AEAD-mode, S2K-specifier-length, S2K-specifier, nonce | AEAD(HKDF(S2K(password), info), secrets, packetprefix)
-254 | params-length, cipher-algo, S2K-specifier-length, S2K-specifier, IV | CFB(S2K(password), secrets \|\| SHA1(secrets))
+Note that compared to a version 4 secret key, the parameters of a passphrase-protected version 6 secret key are stored with an additional pair of length counts, each of which is one octet wide.
 
-An implementation MUST NOT create and MUST reject as malformed a secret key packet where the S2K usage octet is anything but 253 and the S2K specifier type is Argon2.
+Argon2 is only used with AEAD (S2K usage octet 253).
+An implementation MUST NOT create and MUST reject as malformed a secret key packet where the S2K usage octet is anything but AEAD (253) and the S2K specifier type is Argon2.
 
 #### Symmetric-Key Message Encryption
 
@@ -2105,7 +2103,7 @@ The body of this packet starts with a one-octet number giving the version number
 The currently defined versions are 4 and 6.
 The remainder of the packet depends on the version.
 
-The versions differ in how they encrypt the session key with the password, and in what they encode.
+The versions differ in how they encrypt the session key with the passphrase, and in what they encode.
 The version of the SKESK packet must align with the version of the SEIPD packet (see {{encrypted-message-versions}}).
 
 ### Version 4 Symmetric-Key Encrypted Session Key Packet Format {#v4-skesk}
@@ -2315,11 +2313,11 @@ The packet contains:
 
 - The fields of a Public-Key or Public-Subkey packet, as described above.
 
-- One octet indicating string-to-key usage conventions.
+- One octet (the "S2K usage octet") indicating whether and how the secret key material is protected by a passphrase.
   Zero indicates that the secret-key data is not encrypted.
-  255, 254, or 253 indicates that a string-to-key specifier is being given.
+  255 (MalleableCFB), 254 (CFB), or 253 (AEAD) indicates that a string-to-key specifier and other parameters will follow.
   Any other value is a symmetric-key encryption algorithm identifier.
-  A version 6 packet MUST NOT use the value 255.
+  A version 6 packet MUST NOT use the value 255 (MalleableCFB).
 
 - Only for a version 6 packet where the secret key material is encrypted (that is, where the previous octet is not zero), a one-octet scalar octet count of the cumulative length of all the following conditionally included string-to-key parameter fields.
 
@@ -2327,27 +2325,27 @@ The packet contains:
 
   - If string-to-key usage octet was 255, 254, or 253, a one-octet symmetric encryption algorithm.
 
-  - If string-to-key usage octet was 253, a one-octet AEAD algorithm.
+  - If string-to-key usage octet was 253 (AEAD), a one-octet AEAD algorithm.
 
   - Only for a version 6 packet, and if string-to-key usage octet was 255, 254, or 253, a one-octet count of the following field.
 
   - If string-to-key usage octet was 255, 254, or 253, a string-to-key (S2K) specifier.
     The length of the string-to-key specifier depends on its type (see {{s2k-types}}).
 
-  - If string-to-key usage octet was 253 (that is, the secret data is AEAD-encrypted), an initialization vector (IV) of size specified by the AEAD algorithm (see {{version-two-seipd}}), which is used as the nonce for the AEAD algorithm.
+  - If string-to-key usage octet was 253 (AEAD), an initialization vector (IV) of size specified by the AEAD algorithm (see {{version-two-seipd}}), which is used as the nonce for the AEAD algorithm.
 
-  - If string-to-key usage octet was 255, 254, or a cipher algorithm identifier (that is, the secret data is CFB-encrypted), an initialization vector (IV) of the same length as the cipher's block size.
+  - If string-to-key usage octet was 255, 254, or a cipher algorithm identifier (that is, the secret data uses some form of CFB encryption), an initialization vector (IV) of the same length as the cipher's block size.
 
 - Plain or encrypted multiprecision integers comprising the secret key data.
   This is algorithm-specific and described in {{algorithm-specific-parts-of-keys}}.
-  If the string-to-key usage octet is 253, then an AEAD authentication tag is at the end of that data.
-  If the string-to-key usage octet is 254, a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion is appended to plaintext and encrypted with it.
-  If the string-to-key usage octet is 255 or another nonzero value (that is, a symmetric-key encryption algorithm identifier), a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536) is appended to plaintext and encrypted with it.
+  If the string-to-key usage octet is 253 (AEAD), then an AEAD authentication tag is at the end of that data.
+  If the string-to-key usage octet is 254 (CFB), a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion is appended to plaintext and encrypted with it.
+  If the string-to-key usage octet is 255 (MalleableCFB) or another nonzero value (that is, a symmetric-key encryption algorithm identifier), a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536) is appended to plaintext and encrypted with it.
   (This is deprecated and SHOULD NOT be used, see below.)
 
 - Only for a version 3 or 4 packet where the string-to-key usage octet is zero, a two-octet checksum of the algorithm-specific portion (sum of all octets, mod 65536).
 
-The details about storing algorithm-specific secrets above are summarized in {{v4-secret-key-protection-details}} and {{v6-secret-key-protection-details}} in {{secret-key-encryption}}.
+The details about storing algorithm-specific secrets above are summarized in {{secret-key-protection-summary}}.
 
 Note that the version 6 packet format adds two count values to help parsing packets with unknown S2K or public key algorithms.
 
@@ -3428,7 +3426,7 @@ ID | Algorithm
  12 | Camellia with 192-bit key
  13 | Camellia with 256-bit key
 100 to 110 | Private/Experimental algorithm
-253, 254 and 255 | Reserved to avoid collision with Secret Key Encryption (see {{secret-key-encryption}} and {{secret-key-packet-formats}})
+253, 254 and 255 | Reserved to avoid collision with Secret Key Encryption (see {{secret-key-protection-summary}} and {{secret-key-packet-formats}})
 
 Implementations MUST implement AES-128.
 Implementations SHOULD implement AES-256.
@@ -4551,11 +4549,11 @@ Any of the following OpenPGP data elements indicate that malleable ciphertext is
 
 - Any Secret Key packet with encrypted secret key material ({{secret-key-encryption}}) where there is an integrity failure, based on the value of the secret key protection octet:
 
-  - Value 255 or raw cipher algorithm: where the trailing 2-octet checksum does not match.
+  - Value 255 (MalleableCFB) or raw cipher algorithm: where the trailing 2-octet checksum does not match.
 
-  - Value 254: where the SHA1 checksum is mismatched.
+  - Value 254 (CFB): where the SHA1 checksum is mismatched.
 
-  - Value 253: where the AEAD authentication tag is invalid.
+  - Value 253 (AEAD): where the AEAD authentication tag is invalid.
 
 To avoid these circumstances, an implementation that generates OpenPGP encrypted data SHOULD select the encrypted container format with the most robust protections that can be handled by the intended recipients.
 In particular:
@@ -4568,7 +4566,7 @@ In particular:
 
   - If one of the recipients does not support v2 SEIPD packets, then the message generator MAY use a v1 SEIPD packet instead.
 
-- Password-protected secret key material in a v6 Secret Key or v6 Secret Subkey packet SHOULD be protected with AEAD encryption (S2K usage octet 253) unless it will be transferred to an implementation that is known to not support AEAD.
+- Passphrase-protected secret key material in a v6 Secret Key or v6 Secret Subkey packet SHOULD be protected with AEAD encryption (S2K usage octet 253) unless it will be transferred to an implementation that is known to not support AEAD.
   Implementations should be aware that, in scenarios where an attacker has access to encrypted private keys, CFB-encrypted keys (S2K usage octet 254 or 255) are vulnerable to corruption attacks that can cause leakage of secret data when the secret key is used {{KOPENPGP}}, {{KR02}}.
 
 Implementers should implement AEAD (v2 SEIPD and S2K usage octet 253) promptly and encourage its spread.
@@ -5088,7 +5086,7 @@ e894cabc6e2f20eedfce6c03b89141a2cc7cbe245e6e7a5654addbec5000b89b
 
 ## Sample AEAD-EAX encryption and decryption
 
-This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-EAX encryption.
+This example encrypts the cleartext string `Hello, world!` with the passphrase `password`, using AES-128 with AEAD-EAX encryption.
 
 ### Sample symmetric-key encrypted session key packet (v6)
 
@@ -5249,7 +5247,7 @@ Final additional authenticated data:
 
 ## Sample AEAD-OCB encryption and decryption
 
-This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-OCB encryption.
+This example encrypts the cleartext string `Hello, world!` with the passphrase `password`, using AES-128 with AEAD-OCB encryption.
 
 ### Sample symmetric-key encrypted session key packet (v6)
 
@@ -5412,9 +5410,9 @@ Final additional authenticated data:
 
 ## Sample AEAD-GCM encryption and decryption
 
-This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-GCM encryption.
+This example encrypts the cleartext string `Hello, world!` with the passphrase `password`, using AES-128 with AEAD-GCM encryption.
 
-This example encrypts the cleartext string `Hello, world!` with the password `password`, using AES-128 with AEAD-OCB encryption.
+This example encrypts the cleartext string `Hello, world!` with the passphrase `password`, using AES-128 with AEAD-OCB encryption.
 
 ### Sample symmetric-key encrypted session key packet (v6)
 
