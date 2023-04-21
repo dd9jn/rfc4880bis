@@ -1905,7 +1905,7 @@ It describes the reason why the key or certificate was revoked.
 
 The first octet contains a machine-readable code that denotes the reason for the revocation:
 
-{: title="Reasons for revocation"}
+{: title="Reason for Revocation registry"}
 Code | Reason
 ---:|------------------------------------------------------------
   0 | No reason specified (key revocations or cert revocations)
@@ -1924,7 +1924,7 @@ There are important semantic differences between the reasons, and there are thus
 If a key has been revoked because of a compromise, all signatures created by that key are suspect.
 However, if it was merely superseded or retired, old signatures are still valid.
 If the revoked signature is the self-signature for certifying a User ID, a revocation denotes that that user name is no longer in use.
-Such a revocation SHOULD include a 0x20 code.
+Such a signature revocation SHOULD include a Reason for Revocation subpacket containing code 32.
 
 Note that any signature may be revoked, including a certification on some other person's key.
 There are many good reasons for revoking a certification signature, such as the case where the keyholder leaves the employ of a business with an email address.
@@ -3561,14 +3561,6 @@ This specification creates a new registry of Signature Notation Data Subpacket N
 The registry includes the columns "Flag", "Shorthand", "Description", and "Reference".
 The initial values for this registry can be found in {{notation-data}}.
 Adding a new item MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
-#### Reason for Revocation Extensions
-
-OpenPGP signatures contain a mechanism for flags to be specified about why a key was revoked.
-This specification creates a registry of "Reason for Revocation" flags.
-The registry includes the "Reason for Revocation" flags value, the name of the flag, and a reference to the defining specification.
-The initial values for this registry can be found in {{reason-for-revocation}}.
-Adding a new feature flag MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 ### Packet Versions
 
