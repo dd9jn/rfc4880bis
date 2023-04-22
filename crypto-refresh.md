@@ -958,6 +958,7 @@ The remainder of the packet depends on the version.
 
 The versions differ in how they identify the recipient key, and in what they encode.
 The version of the PKESK packet must align with the version of the SEIPD packet (see {{encrypted-message-versions}}).
+Any new version of the PKESK packet should be registered in the registry established in {{encrypted-message-versions}}.
 
 ### Version 3 Public-Key Encrypted Session Key Packet Format {#v3-pkesk}
 
@@ -1116,10 +1117,12 @@ Three versions of Signature packets are defined.
 Version 3 provides basic signature information, while versions 4 and 6 provide an expandable format with subpackets that can specify more information about the signature.
 
 For historical reasons, versions 1, 2, and 5 of the Signature packet are unspecified.
+Any new Signature packet version should be registered in the registry established in {{signed-message-versions}}.
 
 An implementation MUST generate a version 6 signature when signing with a version 6 key.
 An implementation MUST generate a version 4 signature when signing with a version 4 key.
 Implementations MUST NOT create version 3 signatures; they MAY accept version 3 signatures.
+See {{signed-message-versions}} for more details about packet version correspondence between keys and signatures.
 
 ### Signature Types {#signature-types}
 
@@ -2043,7 +2046,7 @@ For example, it might encounter any of the following problems (this is not an ex
 - A hashed subpacket area with length that exceeds the length of the signature packet itself
 - A known-weak hash algorithm (e.g. MD5)
 - A mismatch between the hash algorithm expected salt length and the actual salt length
-- A mismatch between the One-Pass Signature version and the Signature version (see {{one-pass-sig}})
+- A mismatch between the One-Pass Signature version and the Signature version (see {{signed-message-versions}})
 
 When an implementation encounters such a malformed or unknown signature, it MUST ignore the signature for validation purposes.
 It MUST NOT indicate a successful signature validation for such a signature.
@@ -2067,6 +2070,7 @@ The remainder of the packet depends on the version.
 
 The versions differ in how they encrypt the session key with the passphrase, and in what they encode.
 The version of the SKESK packet must align with the version of the SEIPD packet (see {{encrypted-message-versions}}).
+Any new version of the SKESK packet should be registered in the registry established in {{encrypted-message-versions}}.
 
 ### Version 4 Symmetric-Key Encrypted Session Key Packet Format {#v4-skesk}
 
@@ -2138,6 +2142,7 @@ The body of this packet consists of:
 
 - A one-octet version number.
   The currently defined versions are 3 and 6.
+  Any new One-Pass Signature packet version should be registered in the registry established in {{signed-message-versions}}.
 
 - A one-octet signature type.
   Signature types are described in {{signature-types}}.
@@ -2162,13 +2167,8 @@ The body of this packet consists of:
 - A one-octet number holding a flag showing whether the signature is nested.
   A zero value indicates that the next packet is another One-Pass Signature packet that describes another signature to be applied to the same message data.
 
-When generating a one-pass signature, the OPS packet version MUST correspond to the version of the associated signature packet, except for the historical accident that v4 keys use a v3 one-pass signature packet (there is no v4 OPS):
-
-{: title="Versions of packets used in a one-pass signature"}
-Signing key version | OPS packet version | Signature packet version
----|--------------|--------
-4 | 3 | 4
-6 | 6 | 6
+When generating a one-pass signature, the OPS packet version MUST correspond to the version of the associated signature packet, except for the historical accident that v4 keys use a v3 one-pass signature packet (there is no v4 OPS).
+See {{signed-message-versions}} for the full correspondence of versions between Keys, Signatures, and One-Pass Signatures.
 
 Note that if a message contains more than one one-pass signature, then the Signature packets bracket the message; that is, the first Signature packet after the message corresponds to the last one-pass packet and the final Signature packet corresponds to the first one-pass packet.
 
@@ -2209,6 +2209,10 @@ V4 keys are deprecated; an implementation SHOULD NOT generate a v4 key, but SHOU
 V3 keys are deprecated; an implementation MUST NOT generate a v3 key, but MAY accept it.
 V2 keys are deprecated; an implementation MUST NOT generate a v2 key, but MAY accept it.
 
+Any new Key version should be registered in the registry established in {{signed-message-versions}}.
+
+#### Version 3 Public Keys {#v3-pubkeys}
+
 A version 3 public key or public-subkey packet contains:
 
 - A one-octet version number (3).
@@ -2235,6 +2239,8 @@ See {{key-ids-fingerprints}} for a fuller discussion of Key IDs and fingerprints
 
 V2 keys are identical to the deprecated v3 keys except for the version number.
 
+#### Version 4 Public Keys {#v4-pubkeys}
+
 The version 4 format is similar to the version 3 format except for the absence of a validity period.
 This has been moved to the Signature packet.
 In addition, fingerprints of version 4 keys are calculated differently from version 3 keys, as described in {{key-ids-fingerprints}}.
@@ -2249,6 +2255,8 @@ A version 4 packet contains:
 
 - A series of values comprising the key material.
   This is algorithm-specific and described in {{algorithm-specific-parts-of-keys}}.
+
+#### Version 6 Public Keys {#v6-pubkeys}
 
 The version 6 format is similar to the version 4 format except for the addition of a count for the key material.
 This count helps parsing secret key packets (which are an extension of the public key packet format) in the case of an unknown algorithm.
@@ -2819,6 +2827,8 @@ This is a legacy OpenPGP mechanism that offers some protections against cipherte
 Version 2 of this packet contains data encrypted with an authenticated encryption and additional data (AEAD) construction.
 This offers a more cryptographically rigorous defense against ciphertext malleability, but may not be as widely supported yet.
 See {{ciphertext-malleability}} for more details on choosing between these formats.
+
+Any new version of the SEIPD packet should be registered in the registry established in {{encrypted-message-versions}}.
 
 ### Version 1 Symmetrically Encrypted Integrity Protected Data Packet Format {#version-one-seipd}
 
@@ -3478,12 +3488,26 @@ Because this document obsoletes {{RFC4880}}, IANA is requested to update all reg
 OpenPGP is highly parameterized, and consequently there are a number of considerations for allocating parameters for extensions.
 
 This section describes the updated IANA registration policies.
-Most of the registries listed below have been moved the SPECIFICATION REQUIRED registration policy, see {{RFC8126}}.
+Aside from the few registries identified in {{rfc-required-registries}}, the registries all now use the SPECIFICATION REQUIRED registration policy, see {{Section 4.6 of RFC8126}}.
 This policy means that review and approval by a designated expert is required, and that the values and their meanings must be documented in a permanent and readily available public specification, in sufficient detail so that interoperability between independent implementations is possible.
 The designated expert will determine whether the new code points retain the security properties that are expected by the base implementation and that these new code points do not cause interoperability issues with existing implementations other than not producing or consuming these new code points.
 Code point proposals that fail to meet these criteria should instead be proposed as work items for the OpenPGP working group or its successor.
 
 The designated expert should also consider {{meta-considerations-for-expansion}} when reviewing proposed additions to any OpenPGP registry.
+
+## Registries that are RFC REQUIRED {#rfc-required-registries}
+
+The following registries use the RFC REQUIRED registration policy, as described in {{Section 4.7 of RFC8126}}:
+
+- Packet Type registry ({{packet-type-registry}})
+- Key and Signature Versions registry ({{signed-packet-versions-registry}})
+- Encrypted Message Packet Versions registry ({{encrypted-packet-versions-registry}})
+
+## Registries to be Removed {#removed-registries}
+
+The current IANA OpenPGP registries include an empty registry called "New Packet Versions".
+That registry has never been used, and it is unclear how it would be used.
+That registry should be removed; new versions of the relevant packets should be registered in the registries defined by {{signed-packet-versions-registry}} and {{encrypted-packet-versions-registry}}.
 
 ## String-to-Key Specifier Types
 
@@ -3494,14 +3518,6 @@ The initial values for this registry can be found in {{s2k-types}}.
 Adding a new S2K specifier MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 IANA should add a column "Generate?" to the S2K type registry, with initial values taken from {{s2k-types}}.
-
-## Packet {#iana-packet-types}
-
-Major new features of OpenPGP are defined through new packet types.
-This specification creates a registry of packet types.
-The registry includes the packet type, the name of the packet, and a reference to the defining specification.
-The initial values for this registry can be found in {{packet-tags}}.
-Adding a new packet type MUST be done through the RFC REQUIRED method, as described in {{RFC8126}}.
 
 ### User Attribute Subpackets
 
@@ -3528,14 +3544,6 @@ This specification creates a new registry of Signature Notation Data Subpacket N
 The registry includes the columns "Flag", "Shorthand", "Description", and "Reference".
 The initial values for this registry can be found in {{notation-data}}.
 Adding a new item MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
-### Packet Versions
-
-The core OpenPGP packets all have version numbers, and can be revised by introducing a new version of an existing packet.
-This specification creates a registry of packet types.
-The registry includes the packet type, the number of the version, and a reference to the defining specification.
-The initial values for this registry can be found in {{packet-types}}.
-Adding a new packet version MUST be done through the RFC REQUIRED method, as described in {{RFC8126}}.
 
 ## Algorithms
 
@@ -3815,21 +3823,39 @@ The payload following any v6 PKESK or v6 SKESK packet MUST be a v2 SEIPD.
 
 Additionally, to avoid potentially conflicting cipher algorithm identifiers, and for simplicity, implementations MUST NOT precede a v2 SEIPD payload with either v3 PKESK or v4 SKESK packets.
 
-The acceptable versions of packets in an Encrypted Message are summarized in the following table:
+The versions of packets found in an Encrypted Message are summarized in the following table.
+An implementation MUST only generate an Encrypted Message using packet versions that match a row with "Yes" in the "Generate?" column.
+Other rows are provided for the purpose of historic interoperability.
+A conforming implementation MUST only generate an Encrypted Message using packets whose versions correspond to a single row.
 
-{: title="Encrypted Message Packet Version Alignment"}
-Version of Encrypted Data payload | Version of preceding Symmetric-Key ESK (if any) | Version of preceding Public-Key ESK (if any)
----|---|---
-v1 SEIPD | v4 SKESK | v3 PKESK
-v2 SEIPD | v6 SKESK | v6 PKESK
+{: title="Encrypted Message Packet Versions registry" #encrypted-packet-versions-registry}
+Version of Encrypted Data payload | Version of preceding Symmetric-Key ESK (if any) | Version of preceding Public-Key ESK (if any) | Generate?
+---|---|---|---
+SED ({{sed}}) | - | v2 PKESK ({{?RFC2440}}) | No
+SED ({{sed}}) | v4 SKESK ({{v4-skesk}}) | v3 PKESK ({{v3-pkesk}}) | No
+v1 SEIPD ({{version-one-seipd}}) | v4 SKESK ({{v4-skesk}}) | v3 PKESK ({{v3-pkesk}}) | Yes
+v2 SEIPD ({{version-two-seipd}}) | v6 SKESK ({{v6-skesk}}) | v6 PKESK ({{v6-pkesk}}) | Yes
 
 An implementation processing an Encrypted Message MUST discard any preceding ESK packet with a version that does not align with the version of the payload.
 
-#### Packet versions in One-Pass Signed Messages {#signed-message-versions}
+#### Packet Versions in Signed Messages {#signed-message-versions}
 
-A One-Pass Signed Message requires the One-Pass Signature packet's version to correspond to the version of the matching Signature packet (see {{one-pass-sig}} for more details).
+OpenPGP key packets and signature packets are also versioned.
+The version of a Signature typically matches the version of the signing key.
+When a message is signed or verified using the one-pass construction, the version of the One-Pass Signature packet ({{one-pass-sig}}) should also be aligned to the other versions.
 
-However, a version mismatch between these packets does not invalidate the packet sequence as a whole, it merely invalidates the signature, as a signature with an unknown version SHOULD be discarded (see {{malformed-signatures}}).
+Some legacy implementations have produced unaligned signature versions for older key material, which are also described in the table below for purpose of historic interoperability.
+A conforming implementation MUST only generate signature packets with version numbers matching rows with "Yes" in the "Generate?" column.
+
+{: title="Key and Signature Versions registry" #signed-packet-versions-registry}
+Signing key version | OPS packet version | Signature packet version | Generate?
+---|--------------|--------|----
+3 ({{v3-pubkeys}}) | 3 {{one-pass-sig}} | 3 ({{version-three-sig}}) | No
+4 ({{v4-pubkeys}}) | 3 {{one-pass-sig}} | 3 ({{version-three-sig}}) | No
+4 ({{v4-pubkeys}}) | 3 {{one-pass-sig}} | 4 ({{version-four-and-six-sig}}) | Yes
+6 ({{v6-pubkeys}}) | 6 {{one-pass-sig}} | 6 ({{version-four-and-six-sig}}) | Yes
+
+Note, however, that a version mismatch between these packets does not invalidate the packet sequence as a whole, it merely invalidates the signature, as a signature with an unknown version SHOULD be discarded (see {{malformed-signatures}}).
 
 ## Detached Signatures
 
