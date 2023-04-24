@@ -3510,42 +3510,6 @@ The current IANA OpenPGP registries include an empty registry called "New Packet
 That registry has never been used, and it is unclear how it would be used.
 That registry should be removed; new versions of the relevant packets should be registered in the registries defined by {{signed-packet-versions-registry}} and {{encrypted-packet-versions-registry}}.
 
-## String-to-Key Specifier Types
-
-OpenPGP S2K specifiers contain a mechanism for new algorithms to turn a string into a key.
-This specification creates a registry of S2K specifier types.
-The registry includes the S2K type, the name of the S2K, and a reference to the defining specification.
-The initial values for this registry can be found in {{s2k-types}}.
-Adding a new S2K specifier MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
-IANA should add a column "Generate?" to the S2K type registry, with initial values taken from {{s2k-types}}.
-
-### User Attribute Subpackets
-
-The User Attribute packet permits an extensible mechanism for other types of certificate identification.
-This specification creates a registry of User Attribute types.
-The registry includes the User Attribute type, the name of the User Attribute, and a reference to the defining specification.
-The initial values for this registry can be found in {{user-attribute-packet}}.
-Adding a new User Attribute type MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
-#### Signature Notation Data Subpackets
-
-OpenPGP signatures further contain a mechanism for extensions in signatures.
-These are the Notation Data subpackets, which contain a key/value pair.
-Notations contain a user space that is completely unmanaged and an IETF space.
-
-This specification creates a registry of Signature Notation Data types.
-The registry includes the name of the Signature Notation Data, the Signature Notation Data type, its allowed values, and a reference to the defining specification.
-The initial values for this registry can be found in {{notation-data}}.
-Adding a new Signature Notation Data subpacket MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
-#### Signature Notation Data Subpacket Notation Flags
-
-This specification creates a new registry of Signature Notation Data Subpacket Notation Flags.
-The registry includes the columns "Flag", "Shorthand", "Description", and "Reference".
-The initial values for this registry can be found in {{notation-data}}.
-Adding a new item MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
 ## Algorithms
 
 {{constants}} lists the core algorithms that OpenPGP uses.
@@ -3554,14 +3518,6 @@ For example, adding in a new symmetric cipher usually would not need anything mo
 If that cipher had other than a 64-bit or 128-bit block size, there might need to be additional documentation describing how the use of CFB mode would be adjusted.
 Similarly, when DSA was expanded from a maximum of 1024-bit public keys to 3072-bit public keys, the revision of FIPS 186 contained enough information itself to allow implementation.
 Changes to this document were made mainly for emphasis.
-
-### Public-Key Algorithms
-
-OpenPGP specifies a number of public-key algorithms.
-This specification creates a registry of public-key algorithm identifiers.
-The registry includes the algorithm name, its key sizes and parameters, and a reference to the defining specification.
-The initial values for this registry can be found in {{pubkey-algos}}.
-Adding a new public-key algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
 
 #### Elliptic Curve Algorithms
 
@@ -3583,28 +3539,6 @@ Adding a new symmetric-key algorithm MUST be done through the SPECIFICATION REQU
 OpenPGP specifies a number of hash algorithms.
 To register a new hash algorithm for use with OpenPGP, it needs to registered in {{hash-registry}}.
 If the new hash algorithm is also to be used with RSA signing schemes, it must also have an entry in {{emsa-hash-oids}}.
-
-### Compression Algorithms
-
-OpenPGP specifies a number of compression algorithms.
-This specification creates a registry of compression algorithm identifiers.
-The registry includes the algorithm name and a reference to the defining specification.
-The initial values for this registry can be found in {{compression-algos}}.
-Adding a new compression key algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
-
-## Changes to existing registries
-
-This document requests IANA add the following wire format columns to the OpenPGP public-key algorithm registry:
-
-- Public Key Format
-
-- Secret Key Format
-
-- Signature Format
-
-- PKESK Format
-
-And populate them with the values found in {{pubkey-algos}}.
 
 # Packet Composition {#packet-composition}
 
