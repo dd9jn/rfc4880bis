@@ -3486,6 +3486,7 @@ Implementations MAY implement EAX, GCM and other algorithms.
 Because this document obsoletes {{RFC4880}}, IANA is requested to update all registration information that references {{RFC4880}} to instead reference this RFC.
 
 OpenPGP is highly parameterized, and consequently there are a number of considerations for allocating parameters for extensions.
+Every table in this document with a name that ends in "registry" describes the current state of an OpenPGP registry.
 
 This section describes the updated IANA registration policies.
 Aside from the few registries identified in {{rfc-required-registries}}, the registries all now use the SPECIFICATION REQUIRED registration policy, see {{Section 4.6 of RFC8126}}.
