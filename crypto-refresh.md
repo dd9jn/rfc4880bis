@@ -3534,9 +3534,7 @@ Adding a new symmetric-key algorithm MUST be done through the SPECIFICATION REQU
 
 ### Hash Algorithms
 
-OpenPGP specifies a number of hash algorithms.
-To register a new hash algorithm for use with OpenPGP, it needs to registered in {{hash-registry}}.
-If the new hash algorithm is also to be used with RSA signing schemes, it must also have an entry in {{emsa-hash-oids}}.
+When registering a new hash algorithm (in {{hash-registry}}), if the algorithm is also to be used with RSA signing schemes, it must also have an entry in {{emsa-hash-oids}}.
 
 # Packet Composition {#packet-composition}
 
