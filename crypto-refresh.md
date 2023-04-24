@@ -3519,10 +3519,8 @@ If that cipher had other than a 64-bit or 128-bit block size, there might need t
 Similarly, when DSA was expanded from a maximum of 1024-bit public keys to 3072-bit public keys, the revision of FIPS 186 contained enough information itself to allow implementation.
 Changes to this document were made mainly for emphasis.
 
-#### Elliptic Curve Algorithms
+### Elliptic Curve Algorithms
 
-Some public key algorithms use Elliptic Curves.
-In particular, ECDH/ECDSA/EdDSALegacy public key algorithms all allow specific curves to be used, as indicated by OID.
 To register a new elliptic curve for use with OpenPGP, its OID needs to be registered in {{ecc-oid-usage}}, its wire format needs to be documented in {{ecc-wire-formats}}, and if used for ECDH, its KDF and KEK parameters must be populated in {{ecdh-kdf-kek-parameters}}.
 If the wire format(s) used are not already defined in {{ec-point-wire-formats-registry}} or {{ec-scalar-wire-formats-registry}}, they should be defined there as well.
 
