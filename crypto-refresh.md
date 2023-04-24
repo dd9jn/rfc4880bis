@@ -3512,12 +3512,9 @@ That registry should be removed; new versions of the relevant packets should be 
 
 ## Algorithms
 
-{{constants}} lists the core algorithms that OpenPGP uses.
-Adding in a new algorithm is usually simple.
-For example, adding in a new symmetric cipher usually would not need anything more than allocating a constant for that cipher.
-If that cipher had other than a 64-bit or 128-bit block size, there might need to be additional documentation describing how the use of CFB mode would be adjusted.
-Similarly, when DSA was expanded from a maximum of 1024-bit public keys to 3072-bit public keys, the revision of FIPS 186 contained enough information itself to allow implementation.
-Changes to this document were made mainly for emphasis.
+{{constants}} lists the cryptographic and compression algorithms that OpenPGP uses.
+Adding in a new algorithm is usually simple, in some cases as little as allocating a codepoint and pointing to a reference.
+But some algorithm registries need some subtle additional details when a new algorithm is introduced.
 
 ### Elliptic Curve Algorithms
 
@@ -3526,11 +3523,9 @@ If the wire format(s) used are not already defined in {{ec-point-wire-formats-re
 
 ### Symmetric-Key Algorithms
 
-OpenPGP specifies a number of symmetric-key algorithms.
-This specification creates a registry of symmetric-key algorithm identifiers.
-The registry includes the algorithm name, its key sizes and block size, and a reference to the defining specification.
-The initial values for this registry can be found in {{symmetric-algos}}.
-Adding a new symmetric-key algorithm MUST be done through the SPECIFICATION REQUIRED method, as described in {{RFC8126}}.
+When registering a new symmetric cipher with a block size of 64 or 128 bits, no new considerations are needed.
+
+If the new cipher has a different block size, there needs to be additional documentation describing how to use the cipher in CFB mode.
 
 ### Hash Algorithms
 
