@@ -3831,7 +3831,7 @@ A conforming implementation MUST only generate an Encrypted Message using packet
 {: title="Encrypted Message Packet Versions registry" #encrypted-packet-versions-registry}
 Version of Encrypted Data payload | Version of preceding Symmetric-Key ESK (if any) | Version of preceding Public-Key ESK (if any) | Generate?
 ---|---|---|---
-SED ({{sed}}) | - | v2 PKESK ({{?RFC2440}}) | No
+SED ({{sed}}) | - | v2 PKESK ({{RFC2440}}) | No
 SED ({{sed}}) | v4 SKESK ({{v4-skesk}}) | v3 PKESK ({{v3-pkesk}}) | No
 v1 SEIPD ({{version-one-seipd}}) | v4 SKESK ({{v4-skesk}}) | v3 PKESK ({{v3-pkesk}}) | Yes
 v2 SEIPD ({{version-two-seipd}}) | v6 SKESK ({{v6-skesk}}) | v6 PKESK ({{v6-pkesk}}) | Yes
