@@ -1148,7 +1148,7 @@ Sigtype | Name | Reference
 0x28 | Subkey Revocation | {{sigtype-subkey-revocation}}
 0x30 | Certification Revocation | {{sigtype-certification-revocation}}
 0x40 | Timestamp Signature | {{sigtype-timestamp}}
-0x50 | Third-Party Confirmation | {{sigtype-third-party-confirmation}} 
+0x50 | Third-Party Confirmation | {{sigtype-third-party-confirmation}}
 0xFF | Reserved | {{sigtype-reserved}}
 
 These meanings of each signature type are described in the subsections below.
