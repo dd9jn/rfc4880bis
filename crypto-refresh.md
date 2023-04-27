@@ -5017,6 +5017,177 @@ The hashed data is exactly the same, and all intermediate values and annotated h
 {::include test-vectors/inline-signed-message.pgp}
 ~~~
 
+## Sample X25519-AEAD-OCB encryption and decryption
+
+This example encrypts the cleartext string `Hello, world!` for the sample cert (see {{v6-cert}}), using AES-128 with AEAD-OCB encryption.
+
+### Sample public-key encrypted session key packet (v6)
+
+This packet contains the following series of octets:
+
+{: sourcecode-name="v6pkesk-x25519.hexdump"}
+~~~
+{::include test-vectors/v6pkesk-x25519.hexdump}
+~~~
+
+The same data, broken out by octet and semantics:
+
+~~~
+0x0000  c1                       packet tag: PKESK
+0x0001     5c                    packet length
+0x0002        06                 PKESK version 6
+0x0003           06              Key version 6
+0x0004              12 c8 3f 1e  Key fingerprint
+0x0008  70 6f 63 08 fe 15 1a 41
+0x0010  77 43 a1 f0 33 79 0e 93
+0x0018  e9 97 84 88 d1 db 37 8d
+0x0020  a9 93 08 85
+0x0024              19           algorithm: X25519
+0x0025                 cc 5f b0  Ephemeral key
+0x0028  7d bb df f5 97 d6 f6 3e
+0x0030  d4 0a 78 7e a5 3d 22 d6
+0x0038  bf 24 89 48 0e 20 7a a0
+0x0040  f5 ea 77 39 40
+0x0045                 18        ESK length
+0x0046                    d0 4f  ESK
+0x0048  26 36 56 17 a4 b5 55 b7
+0x0050  96 06 e5 a0 b8 76 ca a4
+0x0058  0c 44 ee 18 ec 81
+~~~
+
+### Starting X25519 decryption of the session key
+
+Ephemeral key:
+
+      cc 5f b0 7d bb df f5 97 d6 f6 3e d4 0a 78 7e a5
+      3d 22 d6 bf 24 89 48 0e 20 7a a0 f5 ea 77 39 40
+
+Public key:
+
+      86 93 24 83 67 f9 e5 01 5d b9 22 f8 f4 80 95 dd
+      a7 84 98 7f 2d 59 85 b1 2f ba d1 6c af 5e 44 35
+
+Secret key:
+
+      4d 60 0a 4f 79 4d 44 77 5c 57 a2 6e 0f ee fe d5
+      58 e9 af ff d6 ad 0d 58 2d 57 fb 2b a2 dc ed b8
+
+Shared point:
+
+      44 23 8e 70 97 e5 96 d8 a7 ed ee a9 2e 71 e2 ac
+      80 fc 56 90 b5 0d cb b7 3d a1 d5 96 17 c5 d3 50
+
+HKDF output:
+
+      42 30 29 e4 73 b9 15 1a 59 57 ad fe 14 4e fe 8c
+
+Decrypted session key:
+
+      dd 70 8f 6f a1 ed 65 11 4d 68 d2 34 3e 7c 2f 1d
+
+### Sample v2 SEIPD packet
+
+This packet contains the following series of octets:
+
+{: sourcecode-name="x25519-v2seipd-aes128-ocb.hexdump"}
+~~~
+{::include test-vectors/x25519-v2seipd-aes128-ocb.hexdump}
+~~~
+
+The same data, broken out by octet and semantics:
+
+~~~
+0x0000  d2                       packet tag: SEIPD
+0x0001     69                    packet length
+0x0002        02                 SEIPD version 2
+0x0003           07              cipher: AES128
+0x0004              02           AEAD mode: OCB
+0x0005                 06        chunk size (2**12 octets)
+0x0006                    61 64  salt
+0x0008  16 53 5b e0 b0 71 6d 60
+0x0010  e0 52 a5 6c 4c 40 7f 9e
+0x0018  b3 6b 0e fa fe 9a d0 a0
+0x0020  df 9b 03 3c 69 a2
+0x0026                    1b a9  chunk #0 encrypted data
+0x0028  eb d2 c0 ec 95 bf 56 9d
+0x0030  25 c9 99 ee 4a 3d e1 70
+0x0038  58 f4 0d fa 8b 4c 68 2b
+0x0040  e3 fb bb d7 b2 7e b0 f5
+0x0048  9b b5 00
+0x004b           5f 80 c7 c6 f4  chunk #0 AEAD tag
+0x0050  03 88 c3 0a d4 06 ab 05
+0x0058  13 dc d6
+0x005b           f9 fd 73 76 56  final AEAD tag (#1)
+0x0060  28 6e 11 77 d0 0f 88 8a
+0x0068  db 31 c4
+~~~
+
+### Decryption of data
+
+Starting AEAD-OCB decryption of data, using the session key.
+
+HKDF info:
+
+      d2 02 07 02 06
+
+HKDF output:
+
+      45 12 f7 14 9d 86 33 41 52 7c 65 67 d5 bf fc 42
+      5f af 32 50 21 2f f9
+
+Message key:
+
+      45 12 f7 14 9d 86 33 41 52 7c 65 67 d5 bf fc 42
+
+Initialization vector:
+
+      5f af 32 50 21 2f f9
+
+Chunk #0:
+
+Nonce:
+
+      5f af 32 50 21 2f f9 00 00 00 00 00 00 00 00
+
+Additional authenticated data:
+
+      d2 02 07 02 06
+
+Encrypted data chunk:
+
+      1b a9 eb d2 c0 ec 95 bf 56 9d 25 c9 99 ee 4a 3d
+      e1 70 58 f4 0d fa 8b 4c 68 2b e3 fb bb d7 b2 7e
+      b0 f5 9b b5 00 5f 80 c7 c6 f4 03 88 c3 0a d4 06
+      ab 05 13 dc d6
+
+Decrypted chunk #0.
+
+Literal data packet with the string contents `Hello, world!`:
+
+      cb 13 62 00 00 00 00 00 48 65 6c 6c 6f 2c 20 77
+      6f 72 6c 64 21
+
+Padding packet:
+
+      d5 0e c5 a2 93 07 29 91 62 81 47 d7 2c 8f 86 b7
+
+Authenticating final tag:
+
+Final nonce:
+
+      5f af 32 50 21 2f f9 00 00 00 00 00 00 00 01
+
+Final additional authenticated data:
+
+      d2 02 07 02 06 00 00 00 00 00 00 00 25
+
+### Complete X25519-AEAD-OCB encrypted packet sequence
+
+{: sourcecode-name="v6pkesk-aes128-ocb.pgp"}
+~~~ application/pgp-encrypted
+{::include test-vectors/v6pkesk-aes128-ocb.pgp}
+~~~
+
 ## Sample AEAD-EAX encryption and decryption
 
 This example encrypts the cleartext string `Hello, world!` with the passphrase `password`, using AES-128 with AEAD-EAX encryption.
