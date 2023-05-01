@@ -5043,43 +5043,48 @@ The same data, broken out by octet and semantics:
 0x0018  e9 97 84 88 d1 db 37 8d
 0x0020  a9 93 08 85
 0x0024              19           algorithm: X25519
-0x0025                 cc 5f b0  Ephemeral key
-0x0028  7d bb df f5 97 d6 f6 3e
-0x0030  d4 0a 78 7e a5 3d 22 d6
-0x0038  bf 24 89 48 0e 20 7a a0
-0x0040  f5 ea 77 39 40
+0x0025                 87 cf 18  Ephemeral key
+0x0028  d5 f1 b5 3f 81 7c ce 5a
+0x0030  00 4c f3 93 cc 89 58 bd
+0x0038  dc 06 5f 25 f8 4a f5 09
+0x0040  b1 7d d3 67 64
 0x0045                 18        ESK length
-0x0046                    d0 4f  ESK
-0x0048  26 36 56 17 a4 b5 55 b7
-0x0050  96 06 e5 a0 b8 76 ca a4
-0x0058  0c 44 ee 18 ec 81
+0x0046                    de a3  ESK
+0x0048  55 43 79 56 61 79 01 e0
+0x0050  69 57 fb ca 8a 6a 47 a5
+0x0058  b5 15 3e 8d 3a b7
 ~~~
 
-### Starting X25519 decryption of the session key
+### X25519 encryption/decryption of the session key
 
 Ephemeral key:
 
-      cc 5f b0 7d bb df f5 97 d6 f6 3e d4 0a 78 7e a5
-      3d 22 d6 bf 24 89 48 0e 20 7a a0 f5 ea 77 39 40
+      87 cf 18 d5 f1 b5 3f 81 7c ce 5a 00 4c f3 93 cc
+      89 58 bd dc 06 5f 25 f8 4a f5 09 b1 7d d3 67 64
 
-Public key:
+This ephemeral key is derived from the following ephemeral secret key material, which is never placed on the wire:
+
+      af 1e 43 c0 d1 23 ef e8 93 a7 d4 d3 90 f3 a7 61
+      e3 fa c3 3d fc 7f 3e da a8 30 c9 01 13 52 c7 79
+
+Public key from target certificate (see {{v6-cert}}):
 
       86 93 24 83 67 f9 e5 01 5d b9 22 f8 f4 80 95 dd
       a7 84 98 7f 2d 59 85 b1 2f ba d1 6c af 5e 44 35
 
-Secret key:
+The corresponding long-lived X25519 private key material (see {{v6-key}}):
 
       4d 60 0a 4f 79 4d 44 77 5c 57 a2 6e 0f ee fe d5
       58 e9 af ff d6 ad 0d 58 2d 57 fb 2b a2 dc ed b8
 
 Shared point:
 
-      44 23 8e 70 97 e5 96 d8 a7 ed ee a9 2e 71 e2 ac
-      80 fc 56 90 b5 0d cb b7 3d a1 d5 96 17 c5 d3 50
+      67 e3 0e 69 cd c7 ba b2 a2 68 0d 78 ac a4 6a 2f
+      8b 6e 2a e4 4d 39 8b dc 6f 92 c5 ad 4a 49 25 14
 
 HKDF output:
 
-      42 30 29 e4 73 b9 15 1a 59 57 ad fe 14 4e fe 8c
+      f6 6d ad cf f6 45 92 23 9b 25 45 39 b6 4f f6 07
 
 Decrypted session key:
 
