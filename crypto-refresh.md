@@ -2363,7 +2363,7 @@ Furthermore, an implementation MUST reject as unusable any secret key material w
 ### Key IDs and Fingerprints {#key-ids-fingerprints}
 
 Every OpenPGP key has a fingerprint and a key ID.
-These values differ based on the key version.
+The computation of these values differs based on the key version.
 The fingerprint length varies with the key version, but the key ID (which is only used in v3 PKESK packets, see {{v3-pkesk}}) is always 64 bits.
 The following registry summarizes the subsections below:
 
@@ -2371,8 +2371,8 @@ The following registry summarizes the subsections below:
 Key Version | Fingerprint | Fingerprint Length (bits) | Key ID | Reference
 ---|---|---|---|---
 3 | MD5(MPIs without length octets) | 128 | low 64 bits of RSA modulus | {{v3-key-id-fingerprint}}
-4 | SHA1(normalized pubkey packet) | 160 | low 64 bits of fingerprint | {{v4-key-id-fingerprint}}
-6 | SHA256(normalized pubkey packet) | 256 | high 64 bits of fingerprint | {{v6-key-id-fingerprint}}
+4 | SHA1(normalized pubkey packet) | 160 | last 64 bits of fingerprint | {{v4-key-id-fingerprint}}
+6 | SHA256(normalized pubkey packet) | 256 | first 64 bits of fingerprint | {{v6-key-id-fingerprint}}
 
 #### Version 3 Key ID and Fingerprint {#v3-key-id-fingerprint}
 
