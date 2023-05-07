@@ -4461,7 +4461,7 @@ In particular:
 
 - When encrypting to one or more public keys:
 
-  - All recipient keys indicate support for version 2 of the Symmetrically Encrypted Integrity Protected Data packet in their Features subpacket ({{features-subpacket}}), or are v6 keys without a Features subpacket, or the implementation can otherwise infer that all recipients support v2 SEIPD packets, the implementation MUST encrypt using a v2 SEIPD packet.
+  - If all recipient keys indicate support for version 2 of the Symmetrically Encrypted Integrity Protected Data packet in their Features subpacket ({{features-subpacket}}), or are v6 keys without a Features subpacket, or the implementation can otherwise infer that all recipients support v2 SEIPD packets, the implementation SHOULD encrypt using a v2 SEIPD packet.
 
   - If one of the recipients does not support v2 SEIPD packets, then the message generator MAY use a v1 SEIPD packet instead.
 
