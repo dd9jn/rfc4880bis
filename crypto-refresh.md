@@ -3523,9 +3523,11 @@ If the wire format(s) used are not already defined in {{ec-point-wire-formats-re
 
 ### Symmetric-Key Algorithms
 
-When registering a new symmetric cipher with a block size of 64 or 128 bits, no new considerations are needed.
+When registering a new symmetric cipher with a block size of 64 or 128 bits and a key size that is a multiple of 64 bits, no new considerations are needed.
 
 If the new cipher has a different block size, there needs to be additional documentation describing how to use the cipher in CFB mode.
+
+If the new cipher has an unusual key size, then padding needs to be considered for X25519 and X448 keywrap, which currently needs no padding.
 
 ### Hash Algorithms
 
