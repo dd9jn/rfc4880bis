@@ -2365,7 +2365,7 @@ Furthermore, an implementation MUST reject as unusable any secret key material w
 Every OpenPGP key has a fingerprint and a key ID.
 The computation of these values differs based on the key version.
 The fingerprint length varies with the key version, but the key ID (which is only used in v3 PKESK packets, see {{v3-pkesk}}) is always 64 bits.
-The following registry summarizes the subsections below:
+The following registry represents the subsections below:
 
 {: title="Key ID and Fingerprint registry" #key-id-fingerprint-registry}
 Key Version | Fingerprint | Fingerprint Length (bits) | Key ID | Reference
