@@ -5038,25 +5038,26 @@ The same data, broken out by octet and semantics:
 
 ~~~
 0x0000  c1                       packet tag: PKESK
-0x0001     5c                    packet length
+0x0001     5d                    packet length
 0x0002        06                 PKESK version 6
-0x0003           06              Key version 6
-0x0004              12 c8 3f 1e  Key fingerprint
-0x0008  70 6f 63 08 fe 15 1a 41
-0x0010  77 43 a1 f0 33 79 0e 93
-0x0018  e9 97 84 88 d1 db 37 8d
-0x0020  a9 93 08 85
-0x0024              19           algorithm: X25519
-0x0025                 87 cf 18  Ephemeral key
-0x0028  d5 f1 b5 3f 81 7c ce 5a
-0x0030  00 4c f3 93 cc 89 58 bd
-0x0038  dc 06 5f 25 f8 4a f5 09
-0x0040  b1 7d d3 67 64
-0x0045                 18        ESK length
-0x0046                    de a3  ESK
-0x0048  55 43 79 56 61 79 01 e0
-0x0050  69 57 fb ca 8a 6a 47 a5
-0x0058  b5 15 3e 8d 3a b7
+0x0003           21              length of fingerprint
+0x0004              06           Key version 6
+0x0005                 12 c8 3f  Key fingerprint
+0x0008  1e 70 6f 63 08 fe 15 1a
+0x0010  41 77 43 a1 f0 33 79 0e
+0x0018  93 e9 97 84 88 d1 db 37
+0x0020  8d a9 93 08 85
+0x0025                 19        algorithm: X25519
+0x0026                    87 cf  Ephemeral key
+0x0028  18 d5 f1 b5 3f 81 7c ce
+0x0030  5a 00 4c f3 93 cc 89 58
+0x0038  bd dc 06 5f 25 f8 4a f5
+0x0040  09 b1 7d d3 67 64
+0x0046                    18     ESK length
+0x0047                       de  ESK
+0x0048  a3 55 43 79 56 61 79 01
+0x0050  e0 69 57 fb ca 8a 6a 47
+0x0058  a5 b5 15 3e 8d 3a b7
 ~~~
 
 ### X25519 encryption/decryption of the session key
