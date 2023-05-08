@@ -995,9 +995,13 @@ The v6 PKESK packet consists of:
 
 - A one-octet version number with value 6.
 
-- A one octet key version number and N octets of the fingerprint of the public key or subkey to which the session key is encrypted.
+- A one-octet size of the following two fields.
+  The size may also be zero, and the key version and fingerprint omitted for an "anonymous recipient" (see {{pkesk-notes}}).
+
+- A one octet key version number.
+
+- The fingerprint of the public key or subkey to which the session key is encrypted.
   Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 6 key N is 32.
-  The key version number may also be zero, and the fingerprint omitted (that is, the length N is zero in this case), for an "anonymous recipient" (see {{pkesk-notes}}).
 
 - A one-octet number giving the public-key algorithm used.
 
@@ -1105,7 +1109,7 @@ In this case, the symmetric algorithm used MUST be AES-128, AES-192 or AES-256 (
 
 ### Notes on PKESK {#pkesk-notes}
 
-An implementation MAY accept or use a Key ID of all zeros, or a key version of zero and no key fingerprint, to hide the intended decryption key.
+An implementation MAY accept or use a Key ID of all zeros, or an omitted key fingerprint, to hide the intended decryption key.
 In this case, the receiving implementation would try all available private keys, checking for a valid decrypted session key.
 This format helps reduce traffic analysis of messages.
 
