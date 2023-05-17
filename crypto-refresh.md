@@ -2362,10 +2362,26 @@ Furthermore, an implementation MUST reject as unusable any secret key material w
 
 ### Key IDs and Fingerprints {#key-ids-fingerprints}
 
+Every OpenPGP key has a fingerprint and a key ID.
+The computation of these values differs based on the key version.
+The fingerprint length varies with the key version, but the key ID (which is only used in v3 PKESK packets, see {{v3-pkesk}}) is always 64 bits.
+The following registry represents the subsections below:
+
+{: title="Key ID and Fingerprint registry" #key-id-fingerprint-registry}
+Key Version | Fingerprint | Fingerprint Length (bits) | Key ID | Reference
+---|---|---|---|---
+3 | MD5(MPIs without length octets) | 128 | low 64 bits of RSA modulus | {{v3-key-id-fingerprint}}
+4 | SHA1(normalized pubkey packet) | 160 | last 64 bits of fingerprint | {{v4-key-id-fingerprint}}
+6 | SHA256(normalized pubkey packet) | 256 | first 64 bits of fingerprint | {{v6-key-id-fingerprint}}
+
+#### Version 3 Key ID and Fingerprint {#v3-key-id-fingerprint}
+
 For a v3 key, the eight-octet Key ID consists of the low 64 bits of the public modulus of the RSA key.
 
 The fingerprint of a v3 key is formed by hashing the body (but not the two-octet length) of the MPIs that form the key material (public modulus n, followed by exponent e) with MD5.
 Note that both v3 keys and MD5 are deprecated.
+
+#### Version 4 Key ID and Fingerprint {#v4-key-id-fingerprint}
 
 A v4 fingerprint is the 160-bit SHA-1 hash of the octet 0x99, followed by the two-octet packet length, followed by the entire Public-Key packet starting with the version field.
 The Key ID is the low-order 64 bits of the fingerprint.
@@ -2386,6 +2402,8 @@ e) Algorithm-specific fields.
 Algorithm-Specific Fields for Ed25519 keys (example):
 
 e.1) 32 octets representing the public key.
+
+#### Version 6 Key ID and Fingerprint {#v6-key-id-fingerprint}
 
 A v6 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9B, followed by the four-octet packet length, followed by the entire Public-Key packet starting with the version field.
 The Key ID is the high-order 64 bits of the fingerprint.
@@ -3503,13 +3521,18 @@ The following registries use the RFC REQUIRED registration policy, as described 
 
 - Packet Type registry ({{packet-type-registry}})
 - Key and Signature Versions registry ({{signed-packet-versions-registry}})
+- Key ID and Fingerprint registry ({{key-id-fingerprint-registry}})
 - Encrypted Message Packet Versions registry ({{encrypted-packet-versions-registry}})
 
 ## Registries to be Removed {#removed-registries}
 
 The current IANA OpenPGP registries include an empty registry called "New Packet Versions".
 That registry has never been used, and it is unclear how it would be used.
-That registry should be removed; new versions of the relevant packets should be registered in the registries defined by {{signed-packet-versions-registry}} and {{encrypted-packet-versions-registry}}.
+That registry should be removed; new versions of the relevant packets should be registered in the registries defined by {{signed-packet-versions-registry}}, {{key-id-fingerprint-registry}}, and {{encrypted-packet-versions-registry}}.
+
+## Key Versions
+
+When defining a new version of OpenPGP keys, two registries need to be updated with information about the new version: {{signed-packet-versions-registry}} and {{key-id-fingerprint-registry}}.
 
 ## Algorithms
 
