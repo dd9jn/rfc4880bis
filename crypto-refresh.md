@@ -1064,7 +1064,7 @@ An implementation MUST NOT generate ElGamal v6 PKESKs.
 - The encrypted session key.
 
 See {{Section 6.1 of RFC7748}} for more details on the computation of the ephemeral public key and the shared secret.
-HKDF (see {{RFC5869}}) is then used with SHA256 and an info parameter of "OpenPGP X25519".
+HKDF (see {{RFC5869}}) is then used with SHA256 and an info parameter of "OpenPGP X25519" and no salt.
 The input of HKDF is the concatenation of the following three values:
 
 - 32 octets of the ephemeral X25519 public key from this packet.
@@ -1089,7 +1089,7 @@ In this case, the symmetric algorithm used MUST be AES-128, AES-192 or AES-256 (
 - The encrypted session key.
 
 See {{Section 6.2 of RFC7748}} for more details on the computation of the ephemeral public key and the shared secret.
-HKDF (see {{RFC5869}}) is then used with SHA512 and an info parameter of "OpenPGP X448".
+HKDF (see {{RFC5869}}) is then used with SHA512 and an info parameter of "OpenPGP X448" and no salt.
 The input of HKDF is the concatenation of the following three values:
 
 - 56 octets of the ephemeral X448 public key from this packet.
