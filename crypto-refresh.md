@@ -1213,7 +1213,7 @@ Only revocation signatures by the key being revoked, or by a (deprecated) Revoca
 
 #### Subkey revocation signature (sigtype 0x28) {#sigtype-subkey-revocation}
 
-The signature is calculated directly on the subkey being revoked.
+The signature is calculated directly on the primary key and the subkey being revoked.
 A revoked subkey is not to be used.
 Only revocation signatures by the top-level signature key that is bound to this subkey, or by a (deprecated) Revocation Key, should be considered valid revocation signatures.
 
