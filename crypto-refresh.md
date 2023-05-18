@@ -3607,9 +3607,12 @@ Entries in square brackets are optional and ellipses indicate repetition.
 
 In addition to these rules, a marker packet ({{marker-packet}}) can appear anywhere in the sequence.
 
-Note, that a v6 key uses a Direct-Key Signature to store algorithm preferences.
+Note, that a v6 key uses a self-signed Direct-Key Signature to store algorithm preferences.
 
 Every subkey for a v6 primary key MUST be a v6 subkey.
+Every subkey MUST have at least one subkey binding signature.
+Every subkey binding signature MUST be a self-signature (that is, made by the v6 primary key).
+Like all other signatures, every self-signature made by a v6 key MUST be a v6 signature.
 
 When a primary v6 Public Key is revoked, it is sometimes distributed with only the revocation signature:
 
