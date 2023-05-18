@@ -2048,6 +2048,7 @@ For example, it might encounter any of the following problems (this is not an ex
 - A known-weak hash algorithm (e.g. MD5)
 - A mismatch between the hash algorithm expected salt length and the actual salt length
 - A mismatch between the One-Pass Signature version and the Signature version (see {{signed-message-versions}})
+- A signature with a version other than 6, made by a v6 key
 
 When an implementation encounters such a malformed or unknown signature, it MUST ignore the signature for validation purposes.
 It MUST NOT indicate a successful signature validation for such a signature.
@@ -3790,22 +3791,23 @@ v2 SEIPD ({{version-two-seipd}}) | v6 SKESK ({{v6-skesk}}) | v6 PKESK ({{v6-pkes
 
 An implementation processing an Encrypted Message MUST discard any preceding ESK packet with a version that does not align with the version of the payload.
 
-#### Packet Versions in Signed Messages {#signed-message-versions}
+#### Packet Versions in Signatures {#signed-message-versions}
 
 OpenPGP key packets and signature packets are also versioned.
 The version of a Signature typically matches the version of the signing key.
+When a v6 key produces a signature packet, it MUST produce a version 6 signature packet, regardless of the signature packet type.
 When a message is signed or verified using the one-pass construction, the version of the One-Pass Signature packet ({{one-pass-sig}}) should also be aligned to the other versions.
 
 Some legacy implementations have produced unaligned signature versions for older key material, which are also described in the table below for purpose of historic interoperability.
 A conforming implementation MUST only generate signature packets with version numbers matching rows with "Yes" in the "Generate?" column.
 
 {: title="Key and Signature Versions registry" #signed-packet-versions-registry}
-Signing key version | OPS packet version | Signature packet version | Generate?
+Signing key version | Signature packet version | OPS packet version | Generate?
 ---|--------------|--------|----
-3 ({{v3-pubkeys}}) | 3 {{one-pass-sig}} | 3 ({{version-three-sig}}) | No
-4 ({{v4-pubkeys}}) | 3 {{one-pass-sig}} | 3 ({{version-three-sig}}) | No
-4 ({{v4-pubkeys}}) | 3 {{one-pass-sig}} | 4 ({{version-four-and-six-sig}}) | Yes
-6 ({{v6-pubkeys}}) | 6 {{one-pass-sig}} | 6 ({{version-four-and-six-sig}}) | Yes
+3 ({{v3-pubkeys}}) | 3 ({{version-three-sig}}) | 3 {{one-pass-sig}} | No
+4 ({{v4-pubkeys}}) | 3 ({{version-three-sig}}) | 3 {{one-pass-sig}} | No
+4 ({{v4-pubkeys}}) | 4 ({{version-four-and-six-sig}}) | 3 {{one-pass-sig}} | Yes
+6 ({{v6-pubkeys}}) | 6 ({{version-four-and-six-sig}}) | 6 {{one-pass-sig}} | Yes
 
 Note, however, that a version mismatch between these packets does not invalidate the packet sequence as a whole, it merely invalidates the signature, as a signature with an unknown version SHOULD be discarded (see {{malformed-signatures}}).
 
