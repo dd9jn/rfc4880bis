@@ -4898,7 +4898,7 @@ c70663877fe319000000208693248367f9e5015db922f8f48095dda784987f2d
 5985b12fbad16caf5e4435
 ~~~
 
-## Sample Cleartext Signed Message
+## Sample Cleartext Signed Message {#sample-csf-message}
 
 Here is a signed message that uses the cleartext signature framework ({{cleartext-signature}}).
 It can be verified with the certificate from ({{v6-cert}}).
@@ -5005,6 +5005,16 @@ The calculated SHA2-512 hash digest over this data is:
 ~~~
 69365bf44a97af1f0844f1f6ab83fdf6b36f26692efaa621a8aac91c4e29ea07
 e894cabc6e2f20eedfce6c03b89141a2cc7cbe245e6e7a5654addbec5000b89b
+~~~
+
+## Sample inline-signed message
+
+This is the same message and signature as in {{sample-csf-message}}, but as inline-signed message.
+The hashed data is exactly the same, and all intermediate values and annotated hex dumps are also applicable.
+
+{: sourcecode-name="inline-signed-message.pgp"}
+~~~ text/plain
+{::include test-vectors/inline-signed-message.pgp}
 ~~~
 
 ## Sample AEAD-EAX encryption and decryption
