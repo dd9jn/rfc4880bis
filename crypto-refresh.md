@@ -3484,6 +3484,8 @@ Implementations MAY implement other algorithms.
 Implementations SHOULD NOT create messages which require the use of SHA-1 with the exception of computing version 4 key fingerprints and for purposes of the Modification Detection Code (MDC) in version 1 Symmetrically Encrypted Integrity Protected Data packets.
 Implementations MUST NOT generate signatures with MD5, SHA-1, or RIPEMD-160.
 Implementations MUST NOT use MD5, SHA-1, or RIPEMD-160 as a hash function in an ECDH KDF.
+Implementations MUST NOT generate packets using MD5, SHA-1, or RIPEMD-160 as a hash function in an S2K KDF.
+Implementations MUST NOT decrypt a secret using MD5, SHA-1, or RIPEMD-160 as a hash function in an S2K KDF in a version 6 (or later) packet.
 Implementations MUST NOT validate any recent signature that depends on MD5, SHA-1, or RIPEMD-160.
 Implementations SHOULD NOT validate any old signature that depends on MD5, SHA-1, or RIPEMD-160 unless the signature's creation date predates known weakness of the algorithm used, and the implementation is confident that the message has been in the secure custody of the user the whole time.
 
