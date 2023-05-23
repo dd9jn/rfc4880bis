@@ -3136,8 +3136,6 @@ Armor Header | Use
 
 Note that all these Armor Header Lines are to consist of a complete line.
 The header lines, therefore, MUST start at the beginning of a line, and MUST NOT have text other than whitespace following them on the same line.
-These line endings are considered a part of the Armor Header Line for the purposes of determining the content they delimit.
-This is particularly important when computing a cleartext signature (see {{cleartext-signature}}).
 
 ### Armor Headers
 
@@ -3225,9 +3223,11 @@ The cleartext signed message consists of:
 
 - If the message is signed using v6 Signatures, one or more "SaltedHash" Armor Headers,
 
-- Exactly one empty line not included into the message digest,
+- An empty line (not included into the message digest),
 
 - The dash-escaped cleartext,
+
+- A line ending separating the cleartext and following armored signature (not included into the message digest),
 
 - The ASCII armored signature(s) including the `-----BEGIN PGP SIGNATURE-----` Armor Header and Armor Tail Lines.
 
@@ -3244,7 +3244,7 @@ If neither a "Hash" nor a "SaltedHash" Armor Header is given, or the message dig
 Current message digest names are described with the algorithm IDs in {{hash-algos}}.
 
 As with binary signatures on text documents, a cleartext signature is calculated on the text using canonical \<CR>\<LF> line endings.
-The line ending (that is, the \<CR>\<LF>) before the `-----BEGIN PGP SIGNATURE-----` line that terminates the signed text is not considered part of the signed text.
+As described above, the line ending before the `-----BEGIN PGP SIGNATURE-----` Armor Header Line of the armored signature is not considered part of the signed text.
 
 Also, any trailing whitespace --- spaces (0x20) and tabs (0x09) --- at the end of any line is removed before signing or verifying a cleartext signed message.
 
