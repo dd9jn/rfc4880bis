@@ -995,9 +995,13 @@ The v6 PKESK packet consists of:
 
 - A one-octet version number with value 6.
 
-- A one octet key version number and N octets of the fingerprint of the public key or subkey to which the session key is encrypted.
+- A one-octet size of the following two fields.
+  The size may also be zero, and the key version and fingerprint omitted for an "anonymous recipient" (see {{pkesk-notes}}).
+
+- A one octet key version number.
+
+- The fingerprint of the public key or subkey to which the session key is encrypted.
   Note that the length N of the fingerprint for a version 4 key is 20 octets; for a version 6 key N is 32.
-  The key version number may also be zero, and the fingerprint omitted (that is, the length N is zero in this case), for an "anonymous recipient" (see {{pkesk-notes}}).
 
 - A one-octet number giving the public-key algorithm used.
 
@@ -1105,7 +1109,7 @@ In this case, the symmetric algorithm used MUST be AES-128, AES-192 or AES-256 (
 
 ### Notes on PKESK {#pkesk-notes}
 
-An implementation MAY accept or use a Key ID of all zeros, or a key version of zero and no key fingerprint, to hide the intended decryption key.
+An implementation MAY accept or use a Key ID of all zeros, or an omitted key fingerprint, to hide the intended decryption key.
 In this case, the receiving implementation would try all available private keys, checking for a valid decrypted session key.
 This format helps reduce traffic analysis of messages.
 
@@ -5017,6 +5021,183 @@ The hashed data is exactly the same, and all intermediate values and annotated h
 {: sourcecode-name="inline-signed-message.pgp"}
 ~~~ text/plain
 {::include test-vectors/inline-signed-message.pgp}
+~~~
+
+## Sample X25519-AEAD-OCB encryption and decryption
+
+This example encrypts the cleartext string `Hello, world!` for the sample cert (see {{v6-cert}}), using AES-128 with AEAD-OCB encryption.
+
+### Sample public-key encrypted session key packet (v6)
+
+This packet contains the following series of octets:
+
+{: sourcecode-name="v6pkesk-x25519.hexdump"}
+~~~
+{::include test-vectors/v6pkesk-x25519.hexdump}
+~~~
+
+The same data, broken out by octet and semantics:
+
+~~~
+0x0000  c1                       packet tag: PKESK
+0x0001     5d                    packet length
+0x0002        06                 PKESK version 6
+0x0003           21              length of fingerprint
+0x0004              06           Key version 6
+0x0005                 12 c8 3f  Key fingerprint
+0x0008  1e 70 6f 63 08 fe 15 1a
+0x0010  41 77 43 a1 f0 33 79 0e
+0x0018  93 e9 97 84 88 d1 db 37
+0x0020  8d a9 93 08 85
+0x0025                 19        algorithm: X25519
+0x0026                    87 cf  Ephemeral key
+0x0028  18 d5 f1 b5 3f 81 7c ce
+0x0030  5a 00 4c f3 93 cc 89 58
+0x0038  bd dc 06 5f 25 f8 4a f5
+0x0040  09 b1 7d d3 67 64
+0x0046                    18     ESK length
+0x0047                       de  ESK
+0x0048  a3 55 43 79 56 61 79 01
+0x0050  e0 69 57 fb ca 8a 6a 47
+0x0058  a5 b5 15 3e 8d 3a b7
+~~~
+
+### X25519 encryption/decryption of the session key
+
+Ephemeral key:
+
+      87 cf 18 d5 f1 b5 3f 81 7c ce 5a 00 4c f3 93 cc
+      89 58 bd dc 06 5f 25 f8 4a f5 09 b1 7d d3 67 64
+
+This ephemeral key is derived from the following ephemeral secret key material, which is never placed on the wire:
+
+      af 1e 43 c0 d1 23 ef e8 93 a7 d4 d3 90 f3 a7 61
+      e3 fa c3 3d fc 7f 3e da a8 30 c9 01 13 52 c7 79
+
+Public key from target certificate (see {{v6-cert}}):
+
+      86 93 24 83 67 f9 e5 01 5d b9 22 f8 f4 80 95 dd
+      a7 84 98 7f 2d 59 85 b1 2f ba d1 6c af 5e 44 35
+
+The corresponding long-lived X25519 private key material (see {{v6-key}}):
+
+      4d 60 0a 4f 79 4d 44 77 5c 57 a2 6e 0f ee fe d5
+      58 e9 af ff d6 ad 0d 58 2d 57 fb 2b a2 dc ed b8
+
+Shared point:
+
+      67 e3 0e 69 cd c7 ba b2 a2 68 0d 78 ac a4 6a 2f
+      8b 6e 2a e4 4d 39 8b dc 6f 92 c5 ad 4a 49 25 14
+
+HKDF output:
+
+      f6 6d ad cf f6 45 92 23 9b 25 45 39 b6 4f f6 07
+
+Decrypted session key:
+
+      dd 70 8f 6f a1 ed 65 11 4d 68 d2 34 3e 7c 2f 1d
+
+### Sample v2 SEIPD packet
+
+This packet contains the following series of octets:
+
+{: sourcecode-name="x25519-v2seipd-aes128-ocb.hexdump"}
+~~~
+{::include test-vectors/x25519-v2seipd-aes128-ocb.hexdump}
+~~~
+
+The same data, broken out by octet and semantics:
+
+~~~
+0x0000  d2                       packet tag: SEIPD
+0x0001     69                    packet length
+0x0002        02                 SEIPD version 2
+0x0003           07              cipher: AES128
+0x0004              02           AEAD mode: OCB
+0x0005                 06        chunk size (2**12 octets)
+0x0006                    61 64  salt
+0x0008  16 53 5b e0 b0 71 6d 60
+0x0010  e0 52 a5 6c 4c 40 7f 9e
+0x0018  b3 6b 0e fa fe 9a d0 a0
+0x0020  df 9b 03 3c 69 a2
+0x0026                    1b a9  chunk #0 encrypted data
+0x0028  eb d2 c0 ec 95 bf 56 9d
+0x0030  25 c9 99 ee 4a 3d e1 70
+0x0038  58 f4 0d fa 8b 4c 68 2b
+0x0040  e3 fb bb d7 b2 7e b0 f5
+0x0048  9b b5 00
+0x004b           5f 80 c7 c6 f4  chunk #0 AEAD tag
+0x0050  03 88 c3 0a d4 06 ab 05
+0x0058  13 dc d6
+0x005b           f9 fd 73 76 56  final AEAD tag (#1)
+0x0060  28 6e 11 77 d0 0f 88 8a
+0x0068  db 31 c4
+~~~
+
+### Decryption of data
+
+Starting AEAD-OCB decryption of data, using the session key.
+
+HKDF info:
+
+      d2 02 07 02 06
+
+HKDF output:
+
+      45 12 f7 14 9d 86 33 41 52 7c 65 67 d5 bf fc 42
+      5f af 32 50 21 2f f9
+
+Message key:
+
+      45 12 f7 14 9d 86 33 41 52 7c 65 67 d5 bf fc 42
+
+Initialization vector:
+
+      5f af 32 50 21 2f f9
+
+Chunk #0:
+
+Nonce:
+
+      5f af 32 50 21 2f f9 00 00 00 00 00 00 00 00
+
+Additional authenticated data:
+
+      d2 02 07 02 06
+
+Encrypted data chunk:
+
+      1b a9 eb d2 c0 ec 95 bf 56 9d 25 c9 99 ee 4a 3d
+      e1 70 58 f4 0d fa 8b 4c 68 2b e3 fb bb d7 b2 7e
+      b0 f5 9b b5 00 5f 80 c7 c6 f4 03 88 c3 0a d4 06
+      ab 05 13 dc d6
+
+Decrypted chunk #0.
+
+Literal data packet with the string contents `Hello, world!`:
+
+      cb 13 62 00 00 00 00 00 48 65 6c 6c 6f 2c 20 77
+      6f 72 6c 64 21
+
+Padding packet:
+
+      d5 0e c5 a2 93 07 29 91 62 81 47 d7 2c 8f 86 b7
+
+Authenticating final tag:
+
+Final nonce:
+
+      5f af 32 50 21 2f f9 00 00 00 00 00 00 00 01
+
+Final additional authenticated data:
+
+      d2 02 07 02 06 00 00 00 00 00 00 00 25
+
+### Complete X25519-AEAD-OCB encrypted packet sequence
+
+{: sourcecode-name="v6pkesk-aes128-ocb.pgp"}
+~~~ application/pgp-encrypted
+{::include test-vectors/v6pkesk-aes128-ocb.pgp}
 ~~~
 
 ## Sample AEAD-EAX encryption and decryption
