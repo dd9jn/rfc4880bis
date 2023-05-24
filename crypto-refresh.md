@@ -2164,10 +2164,8 @@ The body of this packet consists of:
 
 - Only for v3 packets, an eight-octet number holding the Key ID of the signing key.
 
-- Only for v6 packets, a one octet key version number and N octets of the fingerprint of the signing key.
-  Note that the length N of the fingerprint for a version 6 key is 32.
-  Since a v6 signature can only be made by a v6 key, the key version number MUST be 6.
-  An application that encounters a v6 One-Pass Signature packet where the key version number is not 6 MUST treat the signature as invalid (see {{malformed-signatures}}).
+- Only for v6 packets, 32 octets of the fingerprint of the signing key.
+  Since a v6 signature can only be made by a v6 key, the length of the fingerprint is fixed.
 
 - A one-octet number holding a flag showing whether the signature is nested.
   A zero value indicates that the next packet is another One-Pass Signature packet that describes another signature to be applied to the same message data.
