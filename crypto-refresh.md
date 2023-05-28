@@ -3197,14 +3197,6 @@ An implementation MAY implement this key and any translations it cares to; an im
 
 The Armor Tail Line is composed in the same manner as the Armor Header Line, except the string "BEGIN" is replaced by the string "END".
 
-## Example of an ASCII Armored Message
-
-~~~
-{::include test-vectors/ascii-armored-message.pgp}
-~~~
-
-Note that this example has extra indenting; an actual armored message would have no leading whitespace.
-
 # Cleartext Signature Framework {#cleartext-signature}
 
 It is desirable to be able to sign a textual octet stream without ASCII armoring the stream itself, so the signed text is still readable without special software.
