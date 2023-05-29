@@ -3165,7 +3165,6 @@ Key | Summary | Reference
 `Version` | Implementation information | {{armor-header-key-version}}
 `Comment` | Arbitrary text | {{armor-header-key-comment}}
 `Hash` | Hash algorithms used in v4 cleartext signed messages | {{armor-header-key-hash}}
-`SaltedHash` | Hash algorithm and salt used in v6 cleartext signed messages | {{armor-header-key-saltedhash}}
 `Charset` | Character set | {{armor-header-key-charset}}
 
 #### "Version" Armor Header {#armor-header-key-version}
@@ -3185,11 +3184,6 @@ Consequently, if a comment has characters that are outside the US-ASCII range of
 
 The armor header key `Hash` contains a comma-separated list of hash algorithms used in this message.
 This is used only in cleartext signed messages that are followed by a v4 Signature.
-
-#### "SaltedHash" Armor Header {#armor-header-key-saltedhash}
-
-The armor header key `SaltedHash` contains a salt and hash algorithm used in this message.
-This is used only in cleartext signed messages that are followed by a v6 Signature.
 
 #### "Charset" Armor Header {#armor-header-key-charset}
 
@@ -3224,9 +3218,7 @@ The cleartext signed message consists of:
 
 - The cleartext header `-----BEGIN PGP SIGNED MESSAGE-----` on a single line,
 
-- If the message is signed using v3 or v4 Signatures, one or more "Hash" Armor Headers,
-
-- If the message is signed using v6 Signatures, one or more "SaltedHash" Armor Headers,
+- If the message is signed using v3 or v4 Signatures, one or more "Hash" Armor Headers MAY be provided (see below),
 
 - Exactly one empty line not included into the message digest,
 
@@ -3234,15 +3226,11 @@ The cleartext signed message consists of:
 
 - The ASCII armored signature(s) including the `-----BEGIN PGP SIGNATURE-----` Armor Header and Armor Tail Lines.
 
-If the "Hash" Armor Header is given, the specified message digest algorithm(s) are used for the signature.
-If more than one message digest is used in the signatures, each digest algorithm has to be specified.
+If no "Hash" Armor Header is given, the message digest algorithms (and salts) must be read from the signatures.
+
+If the optional "Hash" Armor Header is given, the specified message digest algorithm(s) are used for the signature.
+If more than one message digest is used in the signatures, each digest algorithm may be specified.
 To that end, the "Hash" Armor Header contains a comma-delimited list of used message digests, and the "Hash" Armor Header can be given multiple times.
-
-If the "SaltedHash" Armor Header is given, the specified message digest algorithm and salt are used for a signature.
-The message digest name is followed by a colon (`:`) followed by a random value encoded in base64 without padding, which decoded length depends on the hash as specified in {{hash-registry}}.
-Note: The "SaltedHash" Armor Header contains digest algorithm and salt for a single signature; a second signature requires a second "SaltedHash" Armor Header.
-
-If neither a "Hash" nor a "SaltedHash" Armor Header is given, or the message digest algorithms (and salts) used in the signatures do not match the information in the headers, the signature MUST be considered invalid.
 
 Current message digest names are described with the algorithm IDs in {{hash-algos}}.
 
