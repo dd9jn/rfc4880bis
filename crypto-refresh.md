@@ -3139,8 +3139,6 @@ Armor Header | Use
 
 Note that all these Armor Header Lines are to consist of a complete line.
 The header lines, therefore, MUST start at the beginning of a line, and MUST NOT have text other than whitespace following them on the same line.
-These line endings are considered a part of the Armor Header Line for the purposes of determining the content they delimit.
-This is particularly important when computing a cleartext signature (see {{cleartext-signature}}).
 
 ### Armor Headers
 
@@ -3220,9 +3218,11 @@ The cleartext signed message consists of:
 
 - If the message is signed using v3 or v4 Signatures, one or more "Hash" Armor Headers MAY be provided (see below),
 
-- Exactly one empty line not included into the message digest,
+- An empty line (not included into the message digest),
 
-- The dash-escaped cleartext that is included into the message digest,
+- The dash-escaped cleartext,
+
+- A line ending separating the cleartext and following armored signature (not included into the message digest),
 
 - The ASCII armored signature(s) including the `-----BEGIN PGP SIGNATURE-----` Armor Header and Armor Tail Lines.
 
@@ -3234,8 +3234,10 @@ To that end, the "Hash" Armor Header contains a comma-delimited list of used mes
 
 Current message digest names are described with the algorithm IDs in {{hash-algos}}.
 
-An implementation SHOULD add a line break after the cleartext, but MAY omit it if the cleartext ends with a line break.
-This is for visual clarity.
+As with binary signatures on text documents, a cleartext signature is calculated on the text using canonical \<CR>\<LF> line endings.
+As described above, the line ending before the `-----BEGIN PGP SIGNATURE-----` Armor Header Line of the armored signature is not considered part of the signed text.
+
+Also, any trailing whitespace --- spaces (0x20) and tabs (0x09) --- at the end of any line is removed before signing or verifying a cleartext signed message.
 
 ## Dash-Escaped Text {#dash-escaping}
 
@@ -3246,23 +3248,18 @@ This prevents the parser from recognizing armor headers of the cleartext itself.
 An implementation MAY dash-escape any line, SHOULD dash-escape lines commencing "From" followed by a space, and MUST dash-escape any line commencing in a dash.
 The message digest is computed using the cleartext itself, not the dash-escaped form.
 
-As with binary signatures on text documents, a cleartext signature is calculated on the text using canonical \<CR>\<LF> line endings.
-The line ending (that is, the \<CR>\<LF>) before the `-----BEGIN PGP SIGNATURE-----` line that terminates the signed text is not considered part of the signed text.
-
 When reversing dash-escaping, an implementation MUST strip the string `- ` if it occurs at the beginning of a line, and SHOULD warn on `-` and any character other than a space at the beginning of a line.
-
-Also, any trailing whitespace --- spaces (0x20) and tabs (0x09) --- at the end of any line is removed when the cleartext signature is generated.
 
 ## Incompatibilities with Cleartext Signature Framework
 
-Since dash-escaping ({{dash-escaping}}) also involves trimming trailing whitespace on every line, the Cleartext Signature Framework will fail to safely round-trip any textual stream that may include semantically meaningful whitespace.
+Since creating a cleartext signed message involves trimming trailing whitespace on every line, the Cleartext Signature Framework will fail to safely round-trip any textual stream that may include semantically meaningful whitespace.
 
 For example, the Unified Diff format {{UNIFIED-DIFF}} contains semantically meaningful whitespace: an empty line of context will consist of a line with a single <u> </u> character, and any line that has trailing whitespace added or removed will represent such a change with semantically meaningful whitespace.
 
 An implementation that knows it is working with such a textual stream SHOULD NOT use the Cleartext Signature Framework.
 Safe alternatives for a semantically meaningful OpenPGP signature over such a file format are:
 
-- A Signed Message or One-Pass Signed Message object, as described in {{openpgp-messages}}.
+- A Signed Message, as described in {{openpgp-messages}}.
 - A Detached Signature as described in {{detached-signatures}}.
 
 Either of these alternatives may be ASCII-armored (see {{forming-ascii-armor}}) if they need to be transmitted across a text-only (or 7-bit clean) channel.
