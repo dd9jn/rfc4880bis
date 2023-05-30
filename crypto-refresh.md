@@ -429,6 +429,9 @@ This document obsoletes: RFC 4880 (OpenPGP), RFC 5581 (Camellia in OpenPGP) and 
 
 The key words "PRIVATE USE", "SPECIFICATION REQUIRED", and "RFC REQUIRED" that appear in this document when used to describe namespace allocation are to be interpreted as described in {{RFC8126}}.
 
+Some terminology used in this document has been improved from previous versions of the OpenPGP specification.
+See {{terminology-changes}} for more details.
+
 # General functions
 
 OpenPGP provides data confidentiality and integrity for messages and data files by using public-key and/or symmetric encryption, and digital signatures.
@@ -5799,6 +5802,16 @@ Cryptographic algorithms marked with an asterisk (*) are mandatory to implement.
     - Do not emit "Version" armor header ({{armor-header-key-version}})
   - Cleartext Signature Framework:
     - Ignore, avoid emitting unnecessary Hash: headers ({{armor-header-key-hash}})
+
+## Terminology Changes {#terminology-changes}
+
+Note that some of the words used in previous revisions of the OpenPGP standard have been improved in this document.
+
+In previous revisions, the following terms were used:
+
+- "Radix-64" was used to refer to OpenPGP's ASCII Armor base64 encoding ({{base64}}).
+- "Old packet format" was used to refer to the Legacy packet format ({{legacy-packet-format}}).
+- "New packet format" was used to refer to the OpenPGP packet format ({{openpgp-packet-format}}).
 
 # Acknowledgements
 
