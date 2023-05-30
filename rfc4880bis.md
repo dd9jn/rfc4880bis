@@ -3736,6 +3736,8 @@ ASN.1 Object Identifier | OID len | Curve OID bytes in hexadecimal representatio
 1.3.36.3.3.2.8.1.1.13   | 9  | 2B 24 03 03 02 08 01 01 0D    | brainpoolP512r1
 1.3.6.1.4.1.11591.15.1  | 9  | 2B 06 01 04 01 DA 47 0F 01    | Ed25519
 1.3.6.1.4.1.3029.1.5.1  | 10 | 2B 06 01 04 01 97 55 01 05 01 | Curve25519
+1.3.101.112             | 3  | 2B 65 70                      | Ed25519(1)
+1.3.102.110             | 3  | 2B 65 6E                      | Curve25519(1)
 1.3.101.113             | 3  | 2B 65 71                      | Ed448
 1.3.101.111             | 3  | 2B 65 6F                      | X448
 
@@ -3749,6 +3751,10 @@ complete ASN.1 DER encoding for the NIST P-256 curve OID is "06 08 2A
 86 48 CE 3D 03 01 07", from which the first entry in the table above
 is constructed by omitting the first two octets.  Only the truncated
 sequence of octets is the valid representation of a curve OID.
+
+The alternative OIDs for Ed25519 and Curve25519 marked with (1) SHOULD
+only be used with v5 keys.
+
 
 ## Symmetric-Key Algorithms
 
