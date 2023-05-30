@@ -5815,6 +5815,9 @@ In previous revisions, the following terms were used:
 - "New packet format" was used to refer to the OpenPGP packet format ({{openpgp-packet-format}}).
 - "Certificate" was used ambiguously to mean multiple things.
   In this document, it is used to mean "Transferable Public Key" exclusively.
+- "Preferred Symmetric Algorithms" was the old name for the "Preferred Symmetric Ciphers for v1 SEIPD" subpacket ({{preferred-v1-seipd}})
+- "Modification Detection Code" or "MDC" was originally described as a distinct packet (packet tag 19), and its corresponding flag in the Features subpacket ({{features-subpacket}}) was known as "Modification Detection".
+  It is now described as an intrinsic part of v1 SEIPD ({{version-one-seipd}}), and the same corresponding flag is known as "Symmetrically Encrypted Integrity Protected Data packet version 1".
 
 # Acknowledgements
 
