@@ -2863,6 +2863,7 @@ HKDF is used with SHA256 as hash algorithm, the session key as Initial Keying Ma
 
 The KDF mechanism provides key separation between cipher and AEAD algorithms.
 Furthermore, an implementation can securely reply to a message even if a recipient's certificate is unknown by reusing the encrypted session key packets and replying with a different salt yielding a new, unique message key.
+See {{secure-sessionkey-reuse}} for guidance on how applications can securely implement this feature.
 
 A v2 SEIPD packet consists of one or more chunks of data.
 The plaintext of each chunk is of a size specified using the chunk size octet using the method specified below.
@@ -4514,6 +4515,32 @@ In particular:
 Implementers should implement AEAD (v2 SEIPD and S2K usage octet 253) promptly and encourage its spread.
 
 Users should migrate to AEAD with all due speed.
+
+## Secure Use of the v2 SEIPD Session-Key-Reuse Feature {#secure-sessionkey-reuse}
+
+The salted key derivation of v2 SEIPD packets ({{version-two-seipd}}) allows the recipient of an encrypted message to reply to the sender and all other recipients without needing their public keys but by using the same v6 PKESK packets he received and a different random salt value.
+This ensures a secure mechanism on the cryptographic level that enables the use of message encryption in cases where a sender does not have a copy of an encryption-capable certificate for one or more participants in the conversation and thus can enhance the overall security of an application.
+However, care must be taken when using this mechanism not to create security vulnerabilities, such as the following.
+
+- Replying to only a subset of the original recipients and the original sender by use of the session-key-reuse feature would mean that the remaining recipients (including the sender) of the original message could read the encrypted reply message, too.
+- Adding a further recipient to the reply that is encrypted using the session-key-reuse feature gives that further recipient also cryptographic access to the original message that is being replied to (and potentially to a longer history of previous messages).
+- A modification of the list of recipients addressed in the above points needs also to be safeguarded when a message is initially composed as a reply with session-key reuse but then first stored (e.g. as a draft) and later reopened for further editing and finally sent.
+- There is the potential threat that an attacker with network or mailbox access, who is at the same time a recipient of the original message, silently removes themselves from the message before the victim's client receives it.
+  The victim's client that then uses the mechanism for replying with session-key reuse would unknowingly compose an encrypted message that could be read by the attacker.
+  Implementations are encouraged to use the Intended Recipient Fingerprint ({{intended-recipient-fingerprint}}) subpacket when composing messages and to use it to check the consistency of the set of recipients of a message before replying to it with session-key reuse.
+- When using the session-key-reuse feature in any higher-layer protocol, care should be taken that there is no other potentially interfering practice of session-key reuse established in that protocol.
+  Such interfering session-key reuse could for instance be given if an initial message is already composed by reusing the session key of an existing encrypted file the access to which may be shared among a group of users already.
+  Using the session-key-reuse feature to compose an encrypted reply to such a message would unknowingly give this whole group of users cryptographic access to the encrypted message.
+- Generally, the use of the session-key-reuse feature should be under the control of the user.
+  Specifically, care should be taken that this feature is not silently used when the user assumes that proper public-key encryption is used.
+  This can be the case for instance when the public key of one of the recipients of the reply is known but has has expired.
+  Special care should be taken to ensure that users do not get caught in continued use of the session-key reuse unknowingly but instead receive the chance to switch to proper fresh public-key encryption as soon as possible.
+- Whenever possible, a client should prefer a fresh public key encryption over the session-key reuse.
+
+Even though this not necessarily being a security aspect, note that initially composing an encrypted reply using the session-key-reuse feature on one client and storing it (e.g. as a draft) and later reopening the stored unfinished reply with another client that does not support the session-key-reuse feature may lead to interoperability problems.
+
+Avoiding the pitfalls described above requires context-specific expertise.
+An implementation should only make use of the session-key-reuse feature in any particular application layer when it can follow reasonable documentation about how to deploy the feature safely in the specific application.
 
 ## Escrowed Revocation Signatures {#escrowed-revocations}
 
