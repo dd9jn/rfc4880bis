@@ -1,7 +1,7 @@
 ---
 title: OpenPGP Message Format
-docname: draft-koch-openpgp-2015-rfc4880bis-01
-date: 2023-02-07
+docname: draft-koch-openpgp-2015-rfc4880bis-02
+date: 2023-05-30
 category: std
 
 obsoletes: 4880, 5581, 6637
@@ -252,21 +252,6 @@ normative:
 
 --- abstract
 
-{ Work in progress to update the OpenPGP specification from RFC4880.
-  Editorial notes are enclosed in curly braces. }
-
-{ This draft is based on the Git head as pf rfc4880bis-10 before the great
-  refactoring.  That refactoring, dubbed crypto-refresh, basically
-  started from scratch with lots of re-formatting and switching to a
-  Gitlab based approach with merge requests mainly prepared in advance
-  by one of the chairs.  This was done despite that -10 was basically
-  ready for last call after a long iterative process adding feature by
-  feature with rough consent from the WG.
-
-  Due to the IETF submission system the draft was renamed but
-  nevertheless is in apostolic succession of
-  draft-ietf-openpgp-rfc4880bis-10 }
-
 This document specifies the message formats used in OpenPGP.  OpenPGP
 provides encryption with public-key or symmetric cryptographic
 algorithms, digital signatures, compression and key management.
@@ -279,6 +264,9 @@ check, generate, and write conforming packets crossing any network.
 It does not deal with storage and implementation questions.  It does,
 however, discuss implementation issues necessary to avoid security
 flaws.
+
+This document obsoletes: RFC 4880 (OpenPGP), RFC 5581 (Camellia in
+OpenPGP) and RFC 6637 (Elliptic Curves in OpenPGP).
 
 --- middle
 
@@ -1591,7 +1579,7 @@ partial trust and 120 for complete trust.
 
 (null-terminated regular expression)
 
-Used in conjunction with trust Signature packets (of level \> 0) to
+Used in conjunction with Trust Signature packets (of level \> 0) to
 limit the scope of trust that is extended.  Only signatures by the
 target key on User IDs that match the regular expression in the body
 of this packet have trust extended by the trust Signature
@@ -3884,7 +3872,6 @@ found in [](#user-id-attribute-subpacket):
 Value | Attribute | Reference
 -----:|-----------|----------
     1 |  Image    | This Document
- TBD1 |  User ID  | This Document
 
 ### Image Format Subpacket Types
 
@@ -5596,6 +5583,13 @@ other values might also be interesting for other ECC specifications:
   - Added Attested Certifications signature subpacket and signature class.
   - Added Key Block signature subpacket.
   - Added Literal Data Meta Hash subpacket.
+
+  Changes since draft-koch-openpgp-2015-rfc4880bis-01:
+
+  - Changed Secret-Key Packet Format for OCB mode to include the
+    entire public key has additional data.
+  - Added Trust Alias subpacket.
+  - Added alternative OIDs for Ed25519 and Curve25519.
 
 # The principal authors of RFC-4880
 
