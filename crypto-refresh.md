@@ -3599,6 +3599,8 @@ Every subkey MUST have at least one subkey binding signature.
 Every subkey binding signature MUST be a self-signature (that is, made by the v6 primary key).
 Like all other signatures, every self-signature made by a v6 key MUST be a v6 signature.
 
+### OpenPGP v6 Revocation Certificate {#v6-revocation-certificate}
+
 When a primary v6 Public Key is revoked, it is sometimes distributed with only the revocation signature:
 
     Primary Key
@@ -3626,7 +3628,7 @@ Subkeys that can issue signatures MUST have a v4 binding signature due to the RE
 Every subkey for a v4 primary key MUST be a v4 subkey.
 
 When a primary v4 Public Key is revoked, the revocation signature is sometimes distributed by itself, without the primary key packet it applies to. This is referred to as a "revocation certificate".
-Instead, a v6 revocation certificate MUST include the primary key packet, as described above.
+Instead, a v6 revocation certificate MUST include the primary key packet, as described in {{v6-revocation-certiifcate}}.
 
 ### OpenPGP v3 Key Structure
 
@@ -5758,7 +5760,8 @@ Cryptographic algorithms marked with an asterisk (*) are mandatory to implement.
   - Version 6 One-Pass Signatures ({{one-pass-sig}})
 - Certificate (Transferable Public Key) Structure:
   - Preferences subpackets in Direct-Key Signatures ({{self-sigs}})
-  - Simple revocation certificate ({{v6-certificate-structures}})
+  - Self-verifying revocation certificate ({{v6-revocation-certificate}})
+  - User ID is explicitly optional ({{v6-certificate-structures}})
 - S2K: Argon2 ({{s2k-argon2}})
 - Subpacket: Intended Recipient Fingerprint ({{intended-recipient-fingerprint}})
 - Digest algorithms: SHA3-256 and SHA3-512 ({{hash-algos}})
