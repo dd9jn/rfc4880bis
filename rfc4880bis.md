@@ -2571,12 +2571,14 @@ If the string-to-key usage octet is 253, the encrypted MPI values are
 encrypted as one combined plaintext using OCB mode.  Note that no
 chunks are used and that there is only one authentication tag.  The
 Packet Tag in new format encoding (bits 7 and 6 set, bits 5-0 carry
-the packet tag), the packet version number, the cipher algorithm
-octet, and an octet with value 0x02, to indicate OCB mode, are given as
-additional data.  For example, the additional data used with AES-128
-in a Secret-Key Packet of version 4 consists of the octets 0xC5, 0x04,
-0x07, and 0x02; in a Secret-Subkey Packet the first octet would be
-0xC7.
+the packet tag), the cipher algorithm octet, an octet with value 0x02
+(to indicate OCB mode), followed by the public-key packet fields,
+starting with its packet version number are given as additional data.
+For example, the additional data used with AES-128 in a Secret-Key
+Packet of version 4 consists of the octets 0xC5, 0x07, 0x02, 0x04,
+followed by the creation time field up to the last value of the
+public-key material; in a Secret-Subkey Packet the first octet would
+be 0xC7.
 
 The two-octet checksum that follows the algorithm-specific portion is
 the algebraic sum, mod 65536, of the plaintext of all the algorithm-
