@@ -1361,6 +1361,7 @@ Type | Description
  38 | Key Block
  39 | Reserved
  40 | Literal Data Meta Hash
+ 41 | Trust Alias
 100 to 110 | Private or  experimental
 
 An implementation SHOULD ignore any subpacket of a type that it does
@@ -1597,6 +1598,33 @@ of this packet have trust extended by the trust Signature
 subpacket.  The regular expression uses the same syntax as the Henry
 Spencer's "almost public domain" regular expression [REGEX] package. A
 description of the syntax is found in [](#regular-expressions) below.
+
+#### Trust Alias
+
+(String)
+
+This subpacket allows a keyholder to state an alias for a mail address
+in the User ID.  The value is expected to be the UTF-8 encoded
+addr-spec part of a mail address.
+
+If used in conjunction with a Trust Signature subpacket of level \> 0
+and a Regular Expression subpacket the User ID is not considered and
+the trust is only extended if at least one Trust Alias matches the
+regular expression.
+
+If this subpacket is found on a self-signature, a signature done with
+a Trust Signature subpacket of level \> 0 and a Regular Expression
+subpacket is computed over the User ID, an octet 0x00, and the value
+of the Trust Alias subpacket.  If more than one Trust Alias subpacket
+exists all those subpackets are first sorted using binary ordering and
+then concatenated using an octet 0x00 as separator.
+
+This subpacket is useful to handle the common case that mails with and
+without subdomains are used. For example alice@example.org is her
+canonical address but she receives mail also under the address
+alice@lab.example.org.  All other properties are identical for the
+second address and thus a second User ID packet is not useful here.
+
 
 #### Revocation Key
 
