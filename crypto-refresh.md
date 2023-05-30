@@ -422,6 +422,7 @@ This document provides information on the message-exchange packet formats used b
 It is a revision of RFC 4880, "OpenPGP Message Format", which is a revision of RFC 2440, which itself replaces RFC 1991, "PGP Message Exchange Formats" {{RFC1991}} {{RFC2440}} {{RFC4880}}.
 
 This document obsoletes: RFC 4880 (OpenPGP), RFC 5581 (Camellia in OpenPGP) and RFC 6637 (Elliptic Curves in OpenPGP).
+Software that has already implemented those previous standards may want to review {{upgrade-guidance}} for pointers to what has changed.
 
 ## Terms
 
@@ -5729,7 +5730,7 @@ In all cases, the Argon2 parameters are t = 1, p = 4, and m = 21.
 {::include test-vectors/v4skesk-argon2-aes256.pgp}
 ~~~
 
-# Upgrade Guidance (Adapting Implementations from RFC 4880 and RFC 6637)
+# Upgrade Guidance (Adapting Implementations from RFC 4880 and RFC 6637) {#upgrade-guidance}
 
 This subsection offers a concise, non-normative summary of the substantial additions to and departures from {{RFC4880}} and {{RFC6637}}.
 It is intended to help implementers who are augmenting an existing implementation from those standards to this standard.
