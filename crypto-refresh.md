@@ -3163,7 +3163,7 @@ Key | Summary | Reference
 -----|---------|----------
 `Version` | Implementation information | {{armor-header-key-version}}
 `Comment` | Arbitrary text | {{armor-header-key-comment}}
-`Hash` | Hash algorithms used in v4 cleartext signed messages | {{armor-header-key-hash}}
+`Hash` | Hash algorithms used in some v4 cleartext signed messages | {{armor-header-key-hash}}
 `Charset` | Character set | {{armor-header-key-charset}}
 
 #### "Version" Armor Header {#armor-header-key-version}
@@ -3181,8 +3181,15 @@ Consequently, if a comment has characters that are outside the US-ASCII range of
 
 #### "Hash" Armor Header {#armor-header-key-hash}
 
-The armor header key `Hash` contains a comma-separated list of hash algorithms used in this message.
-This is used only in cleartext signed messages that are followed by a v4 Signature.
+This header is deprecated, but some older implementations expect it in messages using the Cleartext Signature Framework ({{cleartext-signature}}).
+When present, The armor header key `Hash` contains a comma-separated list of hash algorithms used in the signatures on message, with digest names as specified in "Text Name" column in {{hash-registry}}.
+These headers SHOULD NOT be emitted unless:
+
+- The cleartext signed message contains a v4 signature made using a SHA2-based digest (`SHA224`, `SHA256`, `SHA384`, or `SHA512`), and
+- The cleartext signed message might be verified by a legacy client.
+
+An implementation that is verifying a cleartext signed message MUST ignore this header.
+The digest algorithm is indicated in the signature itself.
 
 #### "Charset" Armor Header {#armor-header-key-charset}
 
@@ -3217,7 +3224,7 @@ The cleartext signed message consists of:
 
 - The cleartext header `-----BEGIN PGP SIGNED MESSAGE-----` on a single line,
 
-- If the message is signed using v3 or v4 Signatures, one or more "Hash" Armor Headers MAY be provided (see below),
+- Some implementations MAY include one or more legacy "Hash" Armor Headers, which MUST be ignored (see {{armor-header-key-hash}}),
 
 - An empty line (not included into the message digest),
 
@@ -3226,14 +3233,6 @@ The cleartext signed message consists of:
 - A line ending separating the cleartext and following armored signature (not included into the message digest),
 
 - The ASCII armored signature(s) including the `-----BEGIN PGP SIGNATURE-----` Armor Header and Armor Tail Lines.
-
-If no "Hash" Armor Header is given, the message digest algorithms (and salts) must be read from the signatures.
-
-If the optional "Hash" Armor Header is given, the specified message digest algorithm(s) are used for the signature.
-If more than one message digest is used in the signatures, each digest algorithm may be specified.
-To that end, the "Hash" Armor Header contains a comma-delimited list of used message digests, and the "Hash" Armor Header can be given multiple times.
-
-Current message digest names are described with the algorithm IDs in {{hash-algos}}.
 
 As with binary signatures on text documents, a cleartext signature is calculated on the text using canonical \<CR>\<LF> line endings.
 As described above, the line ending before the `-----BEGIN PGP SIGNATURE-----` Armor Header Line of the armored signature is not considered part of the signed text.
@@ -3257,7 +3256,11 @@ Since creating a cleartext signed message involves trimming trailing whitespace 
 
 For example, the Unified Diff format {{UNIFIED-DIFF}} contains semantically meaningful whitespace: an empty line of context will consist of a line with a single <u> </u> character, and any line that has trailing whitespace added or removed will represent such a change with semantically meaningful whitespace.
 
-An implementation that knows it is working with such a textual stream SHOULD NOT use the Cleartext Signature Framework.
+Furthermore, a Cleartext Signature Framework message that is very large is unlikely to work well.
+In particular, it will be difficult for any human reading the message to know which part of the message is covered by the signature because they can't understand the whole message at once, in case an Armor Header line is placed somewhere in the body.
+And, very large Cleartext Signature Framework messages cannot be processed in a single pass, since the signature salt and digest algorithms are only discovered at the end.
+
+An implementation that knows it is working with a textual stream with any of the above characteristics SHOULD NOT use the Cleartext Signature Framework.
 Safe alternatives for a semantically meaningful OpenPGP signature over such a file format are:
 
 - A Signed Message, as described in {{openpgp-messages}}.
@@ -5761,7 +5764,6 @@ Cryptographic algorithms marked with an asterisk (*) are mandatory to implement.
   - Version 6 Secret keys ({{secret-key-packet-formats}})
   - Version 6 Signatures ({{version-four-and-six-sig}})
   - Version 6 One-Pass Signatures ({{one-pass-sig}})
-  - Cleartext Signature Framework: SaltedHash Armor Header ({{armor-header-key-saltedhash}})
 - Certificate (Transferable Public Key) Structure:
   - Preferences subpackets in Direct-Key Signatures ({{self-sigs}})
   - Simple revocation certificate ({{v6-certificate-structures}})
@@ -5800,6 +5802,8 @@ Cryptographic algorithms marked with an asterisk (*) are mandatory to implement.
   - ASCII Armor:
     - Ignore, do not emit CRC ({{optional-crc24}})
     - Do not emit "Version" armor header ({{armor-header-key-version}})
+  - Cleartext Signature Framework:
+    - Ignore, avoid emitting unnecessary Hash: headers ({{armor-header-key-hash}})
 
 # Acknowledgements
 
