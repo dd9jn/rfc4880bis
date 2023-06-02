@@ -422,12 +422,16 @@ This document provides information on the message-exchange packet formats used b
 It is a revision of RFC 4880, "OpenPGP Message Format", which is a revision of RFC 2440, which itself replaces RFC 1991, "PGP Message Exchange Formats" {{RFC1991}} {{RFC2440}} {{RFC4880}}.
 
 This document obsoletes: RFC 4880 (OpenPGP), RFC 5581 (Camellia in OpenPGP) and RFC 6637 (Elliptic Curves in OpenPGP).
+Software that has already implemented those previous standards may want to review {{upgrade-guidance}} for pointers to what has changed.
 
 ## Terms
 
 {::boilerplate bcp14-tagged}
 
 The key words "PRIVATE USE", "SPECIFICATION REQUIRED", and "RFC REQUIRED" that appear in this document when used to describe namespace allocation are to be interpreted as described in {{RFC8126}}.
+
+Some terminology used in this document has been improved from previous versions of the OpenPGP specification.
+See {{terminology-changes}} for more details.
 
 # General functions
 
@@ -493,7 +497,7 @@ Thus, it may even be wise for a space-constrained implementation to implement de
 
 ## Conversion to Base64
 
-OpenPGP's underlying native representation for encrypted messages, signature certificates, and keys is a stream of arbitrary octets.
+OpenPGP's underlying native representation for encrypted messages, signatures, keys, and certificates is a stream of arbitrary octets.
 Some systems only permit the use of blocks consisting of seven-bit, printable text.
 For transporting OpenPGP's native raw binary octets through channels that are not safe to raw binary data, a printable encoding of these binary octets is needed.
 OpenPGP allows converting the raw 8-bit binary octet stream to a stream of printable ASCII characters using base64 encoding, in a format called ASCII Armor (see {{base64}}).
@@ -748,7 +752,7 @@ This section describes the packets used by OpenPGP.
 
 An OpenPGP message is constructed from a number of records that are traditionally called packets.
 A packet is a chunk of data that has a tag specifying its meaning.
-An OpenPGP message, keyring, certificate, and so forth consists of a number of packets.
+An OpenPGP message, keyring, certificate, detached signature, and so forth consists of a number of packets.
 Some of those packets may contain other OpenPGP packets (for example, a compressed data packet, when uncompressed, contains OpenPGP packets).
 
 Each packet consists of a packet header, followed by the packet body.
@@ -1225,7 +1229,7 @@ Only revocation signatures by the top-level signature key that is bound to this 
 
 This signature revokes an earlier User ID certification signature (signature class 0x10 through 0x13) or direct-key signature (0x1F).
 It should be issued by the same key that issued the revoked signature or by a (deprecated) Revocation Key.
-The signature is computed over the same data as the certificate that it revokes, and should have a later creation date than that certificate.
+The signature is computed over the same data as the certification that it revokes, and should have a later creation date than that certification.
 
 #### Timestamp signature (sigtype 0x40) {#sigtype-timestamp}
 
@@ -1869,7 +1873,7 @@ This subpacket is not appropriate to use to refer to a User Attribute packet.
 (1 octet of revocation code, N octets of reason string)
 
 This subpacket is used only in key revocation and certification revocation signatures.
-It describes the reason why the key or certificate was revoked.
+It describes the reason why the key or certification was revoked.
 
 The first octet contains a machine-readable code that denotes the reason for the revocation:
 
@@ -3551,7 +3555,7 @@ This section describes the rules for how packets should be placed into sequences
 
 There are three distinct sequences of packets:
 
-- Transferable Public Keys ({{transferable-public-keys}}) and its close counterpart, Transferable Secret Keys ({{transferable-secret-keys}})
+- Transferable Public Keys ({{transferable-public-keys}}) and their close counterpart, Transferable Secret Keys ({{transferable-secret-keys}})
 - OpenPGP Messages ({{openpgp-messages}})
 - Detached Signatures ({{detached-signatures}})
 
@@ -3574,10 +3578,11 @@ When consuming a sequence of OpenPGP packets according to one of the three gramm
 
 OpenPGP users may transfer public keys.
 This section describes the structure of public keys in transit to ensure interoperability.
+An OpenPGP Transferable Public Key is also known as an OpenPGP certificate, in order to distinguish it from both its constituent Public-Key packets ({{pubkey}} and {{pubsubkey}}) and the underlying cryptographic key material.
 
-### OpenPGP v6 Key Structure {#v6-certificate-structures}
+### OpenPGP v6 Certificate Structure {#v6-certificate-structures}
 
-The format of an OpenPGP v6 key is as follows.
+The format of an OpenPGP v6 certificate is as follows.
 Entries in square brackets are optional and ellipses indicate repetition.
 
     Primary Key
@@ -3608,7 +3613,7 @@ When a primary v6 Public Key is revoked, it is sometimes distributed with only t
 
 In this case, the direct-key signature is no longer necessary, since the primary key itself has been marked as unusable.
 
-### OpenPGP v4 Key Structure
+### OpenPGP v4 Certificate Structure
 
 The format of an OpenPGP v4 key is as follows.
 
@@ -4586,7 +4591,7 @@ That implementation MAY synthesize an Issuer Fingerprint subpacket and store it 
 
 Some subpackets are only useful when they are in the hashed section, and implementations SHOULD ignore them when they are found with unknown provenance in the unhashed section.
 For example, a Preferred AEAD Ciphersuites subpacket ({{preferred-v2-seipd}}) in a direct-key self-signature indicates the preferences of the key holder when encrypting SEIPD v2 data to the key.
-An implementation that observes such a subpacket found in the unhashed section would open itself to an attack where the certificate is tampered with to encourage the use of a specific cipher or mode of operation.
+An implementation that observes such a subpacket found in the unhashed section would open itself to an attack where the recipient's certificate is tampered with to encourage the use of a specific cipher or mode of operation.
 
 # Implementation Nits
 
@@ -5725,7 +5730,7 @@ In all cases, the Argon2 parameters are t = 1, p = 4, and m = 21.
 {::include test-vectors/v4skesk-argon2-aes256.pgp}
 ~~~
 
-# Upgrade Guidance (Adapting Implementations from RFC 4880 and RFC 6637)
+# Upgrade Guidance (Adapting Implementations from RFC 4880 and RFC 6637) {#upgrade-guidance}
 
 This subsection offers a concise, non-normative summary of the substantial additions to and departures from {{RFC4880}} and {{RFC6637}}.
 It is intended to help implementers who are augmenting an existing implementation from those standards to this standard.
@@ -5799,6 +5804,21 @@ Cryptographic algorithms marked with an asterisk (*) are mandatory to implement.
     - Do not emit "Version" armor header ({{armor-header-key-version}})
   - Cleartext Signature Framework:
     - Ignore, avoid emitting unnecessary Hash: headers ({{armor-header-key-hash}})
+
+## Terminology Changes {#terminology-changes}
+
+Note that some of the words used in previous revisions of the OpenPGP standard have been improved in this document.
+
+In previous revisions, the following terms were used:
+
+- "Radix-64" was used to refer to OpenPGP's ASCII Armor base64 encoding ({{base64}}).
+- "Old packet format" was used to refer to the Legacy packet format ({{legacy-packet-format}}).
+- "New packet format" was used to refer to the OpenPGP packet format ({{openpgp-packet-format}}).
+- "Certificate" was used ambiguously to mean multiple things.
+  In this document, it is used to mean "Transferable Public Key" exclusively.
+- "Preferred Symmetric Algorithms" was the old name for the "Preferred Symmetric Ciphers for v1 SEIPD" subpacket ({{preferred-v1-seipd}})
+- "Modification Detection Code" or "MDC" was originally described as a distinct packet (packet tag 19), and its corresponding flag in the Features subpacket ({{features-subpacket}}) was known as "Modification Detection".
+  It is now described as an intrinsic part of v1 SEIPD ({{version-one-seipd}}), and the same corresponding flag is known as "Symmetrically Encrypted Integrity Protected Data packet version 1".
 
 # Acknowledgements
 
