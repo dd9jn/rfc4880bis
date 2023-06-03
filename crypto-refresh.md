@@ -473,7 +473,7 @@ Finally, the session key is encrypted using public-key encryption and prefixed t
 
 ## Authentication via Digital Signature
 
-The digital signature uses a cryptographic hash function, and a public-key signature algorithm.
+The digital signature uses a cryptographic hash function and a public-key signature algorithm.
 The sequence is as follows:
 
 1. The sender creates a message.
@@ -492,22 +492,22 @@ The sequence is as follows:
 ## Compression
 
 An OpenPGP implementation MAY support the compression of data.
-If an implementation does not implement compression, its authors should be aware that many existing OpenPGP messages are compressed.
-Thus, it may even be wise for a space-constrained implementation to implement decompression, but not compression.
+Many existing OpenPGP messages are compressed.
+Implementers, such as those working on constrained implementations that do not want to support compression, might want to consider at least implementing decompression.
 
 ## Conversion to Base64
 
 OpenPGP's underlying native representation for encrypted messages, signatures, keys, and certificates is a stream of arbitrary octets.
 Some systems only permit the use of blocks consisting of seven-bit, printable text.
-For transporting OpenPGP's native raw binary octets through channels that are not safe to raw binary data, a printable encoding of these binary octets is needed.
-OpenPGP allows converting the raw 8-bit binary octet stream to a stream of printable ASCII characters using base64 encoding, in a format called ASCII Armor (see {{base64}}).
+For transporting OpenPGP's native raw binary octets through channels that are not safe to transport raw binary data, a printable encoding of these binary octets is defined.
+The raw 8-bit binary octet stream can be converted to a stream of printable ASCII characters using base64 encoding, in a format called ASCII Armor (see {{base64}}).
 
-Implementations SHOULD provide base64 conversions.
+Implementations SHOULD support base64 conversions.
 
 ## Signature-Only Applications
 
-OpenPGP is designed for applications that use both encryption and signatures, but there are a number of problems that are solved by a signature-only implementation.
-Although this specification requires both encryption and signatures, it is reasonable for there to be subset implementations that are non-conformant only in that they omit encryption.
+OpenPGP is designed for applications that use both encryption and signatures, but there are a number of use cases that only require a signature-only implementation.
+Although this specification requires both encryption and signatures, it is reasonable for there to be subset implementations that are non-conformant only in that they omit encryption support.
 
 # Data Element Formats
 
@@ -708,7 +708,7 @@ Legacy implementations indicated a protected key by storing a symmetric cipher a
 In this case, the MD5 hash function was always used to convert the passphrase to a key for the specified cipher algorithm.
 
 Modern implementations indicate a protected secret key by storing a special value 253 (AEAD), 254 (CFB), or 255 (MalleableCFB) in the S2K usage octet.
-The S2K usage octet is then followed immediately a set of fields that describe how to convert a passphrase to a symmetric key that can unlock the secret material, plus other parameters relevant to the type of encryption used.
+The S2K usage octet is then followed immediately by a set of fields that describe how to convert a passphrase to a symmetric key that can unlock the secret material, plus other parameters relevant to the type of encryption used.
 
 The wire format fields also differ based on the version of the enclosing OpenPGP packet.
 The table below, indexed by S2K usage octet, summarizes the specifics described in {{secret-key-packet-formats}}.
@@ -726,13 +726,13 @@ Known symmetric cipher algo ID (see {{symmetric-algos}}) | LegacyCFB | IV | CFB(
 255 | MalleableCFB | cipher-algo, S2K-specifier, IV | CFB(S2K(passphrase), secrets \|\| check(secrets)) | No
 
 When emitting a secret key (with or without passphrase-protection) an implementation MUST only produce data from a row with "Generate?" marked as "Yes".
-Each row with "Generate?" marked as "No" is described for backward compatibility (for reading v4 and earlier keys only), and MUST NOT be generated.
+Each row with "Generate?" marked as "No" is described for backward compatibility (for reading v4 and earlier keys only), and MUST NOT be used to generate new keys.
 Version 6 secret keys using these formats MUST be rejected.
 
 Note that compared to a version 4 secret key, the parameters of a passphrase-protected version 6 secret key are stored with an additional pair of length counts, each of which is one octet wide.
 
 Argon2 is only used with AEAD (S2K usage octet 253).
-An implementation MUST NOT create and MUST reject as malformed a secret key packet where the S2K usage octet is anything but AEAD (253) and the S2K specifier type is Argon2.
+An implementation MUST NOT create and MUST reject as malformed any secret key packet where the S2K usage octet is not AEAD (253) and the S2K specifier type is Argon2.
 
 #### Symmetric-Key Message Encryption
 
