@@ -574,16 +574,16 @@ A keyring is a collection of one or more keys in a file or database.
 Traditionally, a keyring is simply a sequential list of keys, but may be any suitable database.
 It is beyond the scope of this standard to discuss the details of keyrings or other databases.
 
-## String-to-Key (S2K) Specifiers
+## String-to-Key (S2K) Specifier
 
-A string-to-key (S2K) specifier is used to convert a passphrase string into a symmetric-key encryption/decryption key.
+A string-to-key (S2K) specifier type is used to convert a passphrase string into a symmetric-key encryption/decryption key.
 Passphrases requiring use of S2K conversion are currently used in two places: to encrypt the secret part of private keys, and for symmetrically encrypted messages.
 
 ### String-to-Key (S2K) Specifier Types {#s2k-types}
 
-There are four types of S2K specifiers currently specified, and some reserved values:
+There are four types of S2K Specifier Types currently specified, and some reserved values:
 
-{: title="S2K type registry"}
+{: title="String-to-Key (S2K) Types registry" #s2k-types-registry}
 ID | S2K Type | S2K field size (octets) | Reference | Generate?
 ---:|------------------|-----|-------|--
   0 | Simple S2K | 2 | {{s2k-simple}} | No
@@ -716,7 +716,7 @@ The table below, indexed by S2K usage octet, summarizes the specifics described 
 In the table below, `check(x)` means the "2-octet checksum" meaning the sum of all octets in x mod 65536.
 The `info` and `packetprefix` parameters are described in detail in {{secret-key-packet-formats}}.
 
-{: title="Secret Key Encryption (S2K Usage Octet) registry" #secret-key-protection-summary}
+{: title="Secret Key Encryption (S2K Usage Octet) registry" #secret-key-protection-registry}
 S2K usage octet | Shorthand | Encryption parameter fields | Encryption | Generate?
 --|---|--------------------------------------------------|---|---|---
 0 | Unprotected | - | **v3 or v4 keys:** \[cleartext secrets \|\| check(secrets)\] <br/> **v6 keys:** \[cleartext secrets\] | Yes
@@ -907,10 +907,10 @@ Please note that in all of these explanations, the total length of the packet is
 ## Packet Tags {#packet-tags}
 
 The packet tag denotes what type of packet the body holds.
-Note that Legacy format headers can only have tags less than 16, whereas OpenPGP format headers can have tags as great as 63.
+Note that Legacy format headers can only have tags less than 16, whereas the OpenPGP format headers can have tags as great as 63.
 The defined tags (in decimal) are as follows:
 
-{: title="Packet type registry" #packet-type-registry}
+{: title="Packet Types/Tags registry" #packet-types-registry}
 Tag | Critical | Packet Type | Reference | Shorthand
 ---:|----------|-------------|-----------|-----------
   0 | yes      | Reserved - a packet tag MUST NOT have this value
@@ -1140,7 +1140,7 @@ Please note that the vagueness of these meanings is not a flaw, but a feature of
 Because OpenPGP places final authority for validity upon the receiver of a signature, it may be that one signer's casual act might be more rigorous than some other authority's positive act.
 See {{computing-signatures}} for detailed information on how to compute and verify signatures of each type.
 
-{: title="Signature type registry"}
+{: title="Signature Types registry" #signature-types-registry}
 Sigtype | Name | Reference
 ---|------|-----------
 0x00 | Binary Signature | {{sigtype-binary}}
@@ -1320,7 +1320,7 @@ The body of a v4 or v6 Signature packet contains:
 
 - Only for v6 signatures, a variable-length field containing:
 
-  - A one-octet salt size. The value MUST match the value defined for the hash algorithm as specified in {{hash-registry}}.
+  - A one-octet salt size. The value MUST match the value defined for the hash algorithm as specified in {{hash-algorithms-registry}}.
 
   - The salt; a random value value of the specified size.
 
@@ -1333,7 +1333,7 @@ The body of a v4 or v6 Signature packet contains:
 
 With RSA signatures, the hash value is encoded using PKCS#1 encoding type EMSA-PKCS1-v1_5 as described in {{Section 9.2 of RFC8017}} (see also {{emsa-pkcs1-v1-5}}).
 This requires inserting the hash value as an octet string into an ASN.1 structure.
-The object identifier (OID) for the hash algorithm itself is also included in the structure, see the OIDs in {{emsa-hash-oids}}.
+The object identifier (OID) for the hash algorithm itself is also included in the structure, see the OIDs in {{emsa-hash-oids-registry}}.
 
 #### Algorithm-Specific Fields for DSA or ECDSA signatures {#sig-dsa}
 
@@ -1429,7 +1429,7 @@ That is:
 
 The value of the subpacket type octet may be:
 
-{: title="Subpacket type registry"}
+{: title="Subpacket Types registry" #subpacket-types-registry}
 Type | Description | Reference
 ---:|--------------|----------
   0 | Reserved
@@ -1483,7 +1483,7 @@ To avoid surreptitious forwarding (see {{surreptitious-forwarding}}), implementa
 Note that if an implementation chooses not to implement some of the preferences subpackets, it MUST default to the mandatory-to-implement algorithms to ensure interoperability.
 An encrypting implementation that does not implement the "Features" subpacket SHOULD select the type of encrypted data format based instead on the versions of the recipient keys or external inference (see {{ciphertext-malleability}} for more details).
 
-#### Signature Subpacket Types
+#### (Signature???) Subpacket Types
 
 A number of subpackets are currently defined.
 Some subpackets apply to the signature itself and some are attributes of the key.
@@ -1617,7 +1617,7 @@ For example, a subpacket with content of these six octets:
 
 Indicates that the keyholder prefers to receive v2 SEIPD using AES-256 with OCB, then AES-256 with GCM, then Camellia-256 with OCB, and finally the implicit AES-128 with OCB.
 
-Note that support for version 2 of the Symmetrically Encrypted Integrity Protected Data packet ({{version-two-seipd}}) in general is indicated by a Feature Flag ({{features-subpacket}}).
+Note that support for version 2 of the Symmetrically Encrypted Integrity Protected Data packet ({{version-two-seipd}}) in general is indicated by a Features Flag ({{features-subpacket}}).
 
 This subpacket is only found on a self-signature.
 
@@ -1748,7 +1748,7 @@ The "flags" field holds four octets of flags.
 All undefined flags MUST be zero.
 Defined flags are as follows:
 
-{: title="Signature Notation Data Subpacket Notation Flag registry"}
+{: title="Signature Notation Data Subpacket Notation Flags registry" #sig-note-data-note-flags-registry}
 Flag Position | Shorthand | Description | Reference
 -----|-----------|-------------|----------------
 0x80000000 (first bit of first octet) | human-readable | Notation value is UTF-8 text. | This document
@@ -1760,7 +1760,7 @@ The IETF namespace is registered with IANA.
 These names MUST NOT contain the "@" character (0x40).
 This is a tag for the user namespace.
 
-{: title="Signature Notation Data Subpacket registry"}
+{: title="Signature Notation Data Subpacket Types registry" #sig-note-data-subpacket-types}
 Notation Name | Data Type | Allowed Values | Reference
 --------------|-----------|----------------|----------
  | | |
@@ -1788,7 +1788,7 @@ If there is a critical notation, the criticality applies to that specific notati
 This is a list of one-bit flags that indicate preferences that the key holder has about how the key is handled on a key server.
 All undefined flags MUST be zero.
 
-{: title="Key server preferences flag registry"}
+{: title="Key Server Preference Flags registry" #key-server-preference-flags-registry}
 Flag | Shorthand | Definition
 ---|---|---
 0x80... | No-modify | The key holder requests that this key only be modified or updated by the key holder or an administrator of the key server.
@@ -1832,7 +1832,7 @@ This is so it can grow over time.
 If a list is shorter than an implementation expects, the unstated flags are considered to be zero.
 The defined flags are as follows:
 
-{: title="Key flags registry"}
+{: title="Key Flags registry" #key-flags-registry}
 Flag | Definition
 ---|-------------
 0x01... | This key may be used to make User ID certifications (signature types 0x10-0x13) or direct-key signatures (signature type 0x1F) over other keys.
@@ -1877,7 +1877,7 @@ It describes the reason why the key or certification was revoked.
 
 The first octet contains a machine-readable code that denotes the reason for the revocation:
 
-{: title="Reason for Revocation registry"}
+{: title="Reason for Revocation Code registry" #reason-for-revocation-code-registry}
 Code | Reason
 ---:|------------------------------------------------------------
   0 | No reason specified (key revocations or cert revocations)
@@ -1918,7 +1918,7 @@ Defined features are as follows:
 
 First octet:
 
-{: title="Features flag registry"}
+{: title="Features Flags registry" #features-flags-registry}
 Feature | Definition | Reference
 ---|--------------|--------
 0x01... | Symmetrically Encrypted Integrity Protected Data packet version 1 | {{version-one-seipd}}
@@ -2163,7 +2163,7 @@ The body of this packet consists of:
 
 - Only for v6 packets, a variable-length field containing:
 
-  - A one-octet salt size. The value MUST match the value defined for the hash algorithm as specified in {{hash-registry}}.
+  - A one-octet salt size. The value MUST match the value defined for the hash algorithm as specified in {{hash-algorithms-registry}}.
 
   - The salt; a random value value of the specified size. The value MUST match the salt field of the corresponding Signature packet.
 
@@ -2323,7 +2323,7 @@ The packet contains:
 
 - Only for a version 3 or 4 packet where the string-to-key usage octet is zero, a two-octet checksum of the algorithm-specific portion (sum of all octets, mod 65536).
 
-The details about storing algorithm-specific secrets above are summarized in {{secret-key-protection-summary}}.
+The details about storing algorithm-specific secrets above are summarized in {{secret-key-protection-registry}}.
 
 Note that the version 6 packet format adds two count values to help parsing packets with unknown S2K or public key algorithms.
 
@@ -2801,7 +2801,7 @@ and is followed by the subpacket specific data.
 
 The following table lists the currently known subpackets:
 
-{: title="User Attribute type registry"}
+{: title="User Attribute Types registry" #user-attr-types-registry}
 Type | Attribute Subpacket
 ---:|---------------------------------------------------------
  1 | Image Attribute Subpacket
@@ -2820,7 +2820,7 @@ The image header length is followed by a single octet for the image header versi
 The only currently defined version of the image header is 1, which is a 16-octet image header.
 The first three octets of a version 1 image header are thus 0x10, 0x00, 0x01.
 
-{: title="Image Attribute Version registry}
+{: title="Image Attribute Version registry" #image-attribute-version-registry}
 Version | Reference
 ---:|-----
 1 | {{uat-image}}
@@ -2830,7 +2830,7 @@ The only currently defined encoding format is the value 1 to indicate JPEG.
 Image format types 100 through 110 are reserved for private or experimental use.
 The rest of the version 1 image header is made up of 12 reserved octets, all of which MUST be set to 0.
 
-{: title="Image Attribute Encoding Format registry"}
+{: title="Image Attribute Encoding Format registry" #image-attr-encoding-format-registry}
 Value | Encoding | Reference
 --:|----|----
 1 | JPEG | JPEG File Interchange Format ({{JFIF}})
@@ -3134,7 +3134,7 @@ An Armor Header Line consists of the appropriate header line text surrounded by 
 The header line text is chosen based upon the type of data that is being encoded in Armor, and how it is being encoded.
 Header line texts include the following strings:
 
-{: title="Armor Header Line registry"}
+{: title="Armor Header Line registry" #armor-header-line-registry}
 Armor Header | Use
 ----|-------
 `BEGIN PGP MESSAGE` | Used for signed, encrypted, or compressed files.
@@ -3162,7 +3162,7 @@ One way to do this is to repeat an Armor Header Key multiple times with differen
 
 Currently defined Armor Header Keys are as follows:
 
-{: title="Armor Header Key registry"}
+{: title="Armor Header Key registry" #armor-header-key-registry}
 Key | Summary | Reference
 -----|---------|----------
 `Version` | Implementation information | {{armor-header-key-version}}
@@ -3186,7 +3186,7 @@ Consequently, if a comment has characters that are outside the US-ASCII range of
 #### "Hash" Armor Header {#armor-header-key-hash}
 
 This header is deprecated, but some older implementations expect it in messages using the Cleartext Signature Framework ({{cleartext-signature}}).
-When present, The armor header key `Hash` contains a comma-separated list of hash algorithms used in the signatures on message, with digest names as specified in "Text Name" column in {{hash-registry}}.
+When present, The armor header key `Hash` contains a comma-separated list of hash algorithms used in the signatures on message, with digest names as specified in "Text Name" column in {{hash-algorithms-registry}}.
 These headers SHOULD NOT be emitted unless:
 
 - The cleartext signed message contains a v4 signature made using a SHA2-based digest (`SHA224`, `SHA256`, `SHA384`, or `SHA512`), and
@@ -3296,7 +3296,7 @@ See {{notes-on-algorithms}} for more discussion of the algorithms.
 
 ## Public-Key Algorithms {#pubkey-algos}
 
-{: title="Public-key algorithm registry"}
+{: title="Public Key Algorithms registry" #pubkey-algo-registry}
 ID | Algorithm | Public Key Format | Secret Key Format | Signature Format | PKESK Format
 ---:|--------------------------|---|---|---|---
  0 | Reserved
@@ -3340,7 +3340,7 @@ The parameter curve OID is an array of octets that defines a named curve.
 The table below specifies the exact sequence of octets for each named curve referenced in this document.
 It also specifies which public key algorithms the curve can be used with, as well as the size of expected elements in octets:
 
-{: title="ECC Curve OID and usage registry" #ecc-oid-usage}
+{: title="ECC Curve OID and Usage registry" #ecc-oid-usage-registry}
 ASN.1 Object Identifier | OID len | Curve OID octets in hex | Curve name | Usage | Field Size (fsize)
 ------------------------|----|-------------------------------|-------------|-----|-----|-----
 1.2.840.10045.3.1.7     | 8  | 2A 86 48 CE 3D 03 01 07       | NIST P-256 | ECDSA, ECDH | 32
@@ -3372,7 +3372,7 @@ Some Elliptic Curve Public Key Algorithms use different conventions for specific
 Each field is always formatted as an MPI, but with a curve-specific framing.
 This table summarizes those distinctions.
 
-{: title="ECC Curve-specific Wire Formats registry" #ecc-wire-formats}
+{: title="ECC Curve-specific Wire Formats registry" #ecc-wire-formats-registry}
 Curve | ECDH Point Format | ECDH Secret Key MPI | EdDSA Secret Key MPI | EdDSA Signature first MPI | EdDSA Signature second MPI
 ------|-----------------|------------------|---------------------------|---------------------------
 NIST P-256 | SEC1 | integer | N/A | N/A | N/A
@@ -3389,7 +3389,7 @@ For the native octet-string forms of Curve25519Legacy secret scalars and points,
 
 ## Symmetric-Key Algorithms {#symmetric-algos}
 
-{: title="Symmetric-key algorithm registry"}
+{: title="Symmetric Key Algorithms registry" #symkey-algorithms-registry}
 ID | Algorithm
 ---:|------------------------------------
   0 | Plaintext or unencrypted data
@@ -3407,7 +3407,7 @@ ID | Algorithm
  12 | Camellia with 192-bit key
  13 | Camellia with 256-bit key
 100 to 110 | Private/Experimental algorithm
-253, 254 and 255 | Reserved to avoid collision with Secret Key Encryption (see {{secret-key-protection-summary}} and {{secret-key-packet-formats}})
+253, 254 and 255 | Reserved to avoid collision with Secret Key Encryption (see {{secret-key-protection-registry}} and {{secret-key-packet-formats}})
 
 Implementations MUST implement AES-128.
 Implementations SHOULD implement AES-256.
@@ -3418,7 +3418,7 @@ Implementations MAY implement any other algorithm.
 
 ## Compression Algorithms {#compression-algos}
 
-{: title="Compression algorithm registry"}
+{: title="Compression Algorithms registry" #compression-algorithms-registry}
 ID | Algorithm
 ---:|-----------------
  0 | Uncompressed
@@ -3434,7 +3434,7 @@ Implementations MAY implement any other algorithm.
 
 ## Hash Algorithms {#hash-algos}
 
-{: title="Hash algorithm registry" #hash-registry}
+{: title="Hash Algorithms registry" #hash-algorithms-registry}
 ID | Algorithm | Text Name | V6 signature salt size
 ---:|----------|-----------|---------
   1 | MD5 {{HAC}} | "MD5" | N/A
@@ -3453,7 +3453,7 @@ ID | Algorithm | Text Name | V6 signature salt size
  14 | SHA3-512 {{FIPS202}} | "SHA3-512" | 32
 100 to 110 | Private/Experimental algorithm
 
-{: title="Hash Algorithm Identifiers for RSA Signatures use of EMSA-PKCS1-v1_5 Padding registry" #emsa-hash-oids}
+{: title="Hash Algorithm Identifiers for RSA Signatures use of EMSA-PKCS1-v1_5 Padding registry" #emsa-hash-oids-registry}
 Hash Algorithm | OID | Full hash prefix
 ---|---|---
 MD5 | 1.2.840.113549.2.5 | 0x30, 0x20, 0x30, 0x0C, 0x06, 0x08, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x02, 0x05, 0x05, 0x00, 0x04, 0x10
@@ -3479,7 +3479,7 @@ Implementations SHOULD NOT validate any old signature that depends on MD5, SHA-1
 
 ## AEAD Algorithms {#aead-algorithms}
 
-{: title="AEAD algorithm registry"}
+{: title="AEAD Algorithms registry" #aead-algorithms-registry}
 ID | Name | Reference | Nonce length (octets) | authentication tag length (octets)
 ---:|-----|-----------|---|---
  1 | EAX | {{EAX}} | 16 | 16
@@ -3489,63 +3489,6 @@ ID | Name | Reference | Nonce length (octets) | authentication tag length (octet
 
 Implementations MUST implement OCB.
 Implementations MAY implement EAX, GCM and other algorithms.
-
-# IANA Considerations
-
-Because this document obsoletes {{RFC4880}}, IANA is requested to update all registration information that references {{RFC4880}} to instead reference this RFC.
-
-OpenPGP is highly parameterized, and consequently there are a number of considerations for allocating parameters for extensions.
-Every table in this document with a name that ends in "registry" describes the current state of an OpenPGP registry.
-
-This section describes the updated IANA registration policies.
-Aside from the few registries identified in {{rfc-required-registries}}, the registries all now use the SPECIFICATION REQUIRED registration policy, see {{Section 4.6 of RFC8126}}.
-This policy means that review and approval by a designated expert is required, and that the values and their meanings must be documented in a permanent and readily available public specification, in sufficient detail so that interoperability between independent implementations is possible.
-The designated expert will determine whether the new code points retain the security properties that are expected by the base implementation and that these new code points do not cause interoperability issues with existing implementations other than not producing or consuming these new code points.
-Code point proposals that fail to meet these criteria should instead be proposed as work items for the OpenPGP working group or its successor.
-
-The designated expert should also consider {{meta-considerations-for-expansion}} when reviewing proposed additions to any OpenPGP registry.
-
-## Registries that are RFC REQUIRED {#rfc-required-registries}
-
-The following registries use the RFC REQUIRED registration policy, as described in {{Section 4.7 of RFC8126}}:
-
-- Packet Type registry ({{packet-type-registry}})
-- Key and Signature Versions registry ({{signed-packet-versions-registry}})
-- Key ID and Fingerprint registry ({{key-id-fingerprint-registry}})
-- Encrypted Message Packet Versions registry ({{encrypted-packet-versions-registry}})
-
-## Registries to be Removed {#removed-registries}
-
-The current IANA OpenPGP registries include an empty registry called "New Packet Versions".
-That registry has never been used, and it is unclear how it would be used.
-That registry should be removed; new versions of the relevant packets should be registered in the registries defined by {{signed-packet-versions-registry}}, {{key-id-fingerprint-registry}}, and {{encrypted-packet-versions-registry}}.
-
-## Key Versions
-
-When defining a new version of OpenPGP keys, two registries need to be updated with information about the new version: {{signed-packet-versions-registry}} and {{key-id-fingerprint-registry}}.
-
-## Algorithms
-
-{{constants}} lists the cryptographic and compression algorithms that OpenPGP uses.
-Adding in a new algorithm is usually simple, in some cases as little as allocating a codepoint and pointing to a reference.
-But some algorithm registries need some subtle additional details when a new algorithm is introduced.
-
-### Elliptic Curve Algorithms
-
-To register a new elliptic curve for use with OpenPGP, its OID needs to be registered in {{ecc-oid-usage}}, its wire format needs to be documented in {{ecc-wire-formats}}, and if used for ECDH, its KDF and KEK parameters must be populated in {{ecdh-kdf-kek-parameters}}.
-If the wire format(s) used are not already defined in {{ec-point-wire-formats-registry}} or {{ec-scalar-wire-formats-registry}}, they should be defined there as well.
-
-### Symmetric-Key Algorithms
-
-When registering a new symmetric cipher with a block size of 64 or 128 bits and a key size that is a multiple of 64 bits, no new considerations are needed.
-
-If the new cipher has a different block size, there needs to be additional documentation describing how to use the cipher in CFB mode.
-
-If the new cipher has an unusual key size, then padding needs to be considered for X25519 and X448 keywrap, which currently needs no padding.
-
-### Hash Algorithms
-
-When registering a new hash algorithm (in {{hash-registry}}), if the algorithm is also to be used with RSA signing schemes, it must also have an entry in {{emsa-hash-oids}}.
 
 # Packet Composition {#packet-composition}
 
@@ -3559,7 +3502,7 @@ There are three distinct sequences of packets:
 - OpenPGP Messages ({{openpgp-messages}})
 - Detached Signatures ({{detached-signatures}})
 
-Each sequence has an explicit grammar of what packet types ({{packet-type-registry}}) can appear in what place.
+Each sequence has an explicit grammar of what packet types ({{packet-types-registry}}) can appear in what place.
 The presence of an unknown critical packet, or a known but unexpected packet is a critical error, invalidating the entire sequence (see {{packet-criticality}}).
 On the other hand, unknown non-critical packets can appear anywhere within any sequence.
 This provides a structured way to introduce new packets into the protocol, while making sure that certain packets will be handled strictly.
@@ -4064,7 +4007,7 @@ An implementation MUST NOT encrypt any message to a v6 ECDH key over a listed cu
 For v4 keys, the following algorithms SHOULD be used depending on the curve.
 An implementation SHOULD only use an AES algorithm as a KEK algorithm.
 
-{: title="ECDH KDF and KEK parameters registry" #ecdh-kdf-kek-parameters}
+{: title="ECDH KDF and KEK Parameters registry" #ecdh-kdf-kek-parameters-registry}
 Curve | Hash algorithm | Symmetric algorithm
 ------|----------------|--------------------
 NIST P-256 | SHA2-256 | AES-128
@@ -4593,7 +4536,7 @@ Some subpackets are only useful when they are in the hashed section, and impleme
 For example, a Preferred AEAD Ciphersuites subpacket ({{preferred-v2-seipd}}) in a direct-key self-signature indicates the preferences of the key holder when encrypting SEIPD v2 data to the key.
 An implementation that observes such a subpacket found in the unhashed section would open itself to an attack where the recipient's certificate is tampered with to encourage the use of a specific cipher or mode of operation.
 
-# Implementation Nits
+# Implementation Considerations
 
 This section is a collection of comments to help an implementer, particularly with an eye to backward compatibility.
 Often the differences are small, but small differences are frequently more vexing than large differences.
@@ -4625,6 +4568,137 @@ For example, {{OPENPGPCARD}} reserves 20 octets for each stored fingerprint.
 
 An OpenPGP implementation MUST NOT attempt to map any part of a v6 fingerprint to such a constrained field unless the relevant spec for the constrained environment has explicit guidance for storing a v6 fingerprint that distinguishes it from a v4 fingerprint.
 An implementation interacting with such a constrained field SHOULD directly calculate the v6 fingerprint from public key material and associated metadata instead of relying on the constrained field.
+
+# IANA Considerations
+
+This document obsoletes {{RFC4880}}. IANA is requested to update all registration information that references {{RFC4880}} to instead reference this RFC.
+
+## Registry to be Renamed and Updated
+
+IANA is requested to update the name of the "Pretty Good Privacy (PGP)" registry to the "OpenPGP" registry.
+All further updates specified below are for registries under the OpenPGP registry.
+
+IANA is requested to rename the "PGP String-to-Key (S2K)" registry to "String-to-Key (S2K) Types" and update its content to {{s2k-types-registry}}.
+
+IANA is requested to rename the "PGP Packet Types/Tags" registry to "Packet Types/Tags" and update its content to {{packet-types-registry}}.
+
+IANA is requested to rename the "PGP User Attribute Types" registry to "User Attribute Types" and update its content to {{user-attr-types-registry}}
+
+IANA is requested to rename the "Image Format Subpacket Types" registry to "Image Attribute Encoding Format" and update its content to {{image-attr-encoding-format-registry}}.
+
+IANA is requested to rename the "Signature Subpacket Types" registry to "Subpacket Types" and update its content to {{subpacket-types-registry}}.
+
+IANA is requested to rename the "Key Server Preference Extensions" registry to "Key Server Preference Flags" and update its contents to {{key-server-preference-flags-registry}}.
+
+IANA is requested to rename the "Reason for Revocation Extensions" registry to "Reason for Revocation Code" and update its contents to {{reason-for-revocation-code-registry}}
+
+IANA is requested to rename the "Key Flags Extensions" registry to "Key Flags" and update its contents to {{key-flags-registry}}.
+
+IANA is requested to rename the "Implementation Features" registry to "Features Flags" and update its contents to {{features-flags-registry}}
+
+## Registries to be Updated {#updated-registries}
+
+IANA is requested to update the "Public Key Algorithms" registry with the contents of {{pubkey-algo-registry}}.
+
+IANA is requested to update the "Symmetric Key Algorithms" registry with the contents of {{symkey-algorithms-registry}}.
+
+IANA is requested to update the "Compression Algorithms" registry with the contents of {{compression-algorithms-registry}}.
+
+IANA is requested to update the "Hash Algorithms" registry with the contents of {{hash-algorithms-registry}}.
+
+## Registries to be Removed {#removed-registries}
+
+IANA is requested to remove the empty "New Packet Versions" registry.
+
+A tombstone note should be added to the OpenPGP registry with the following content: Those wishing to use the removed "New Packet Versions" registry should instead register new versions of the relevant packets in the "Key and Signature Versions", "Key ID and Fingerprint" and "Encrypted Message Packet Versions" registries.
+
+## Registries to be Added {#added-registries}
+
+IANA is requested to add the following registries in the OpenPGP registry:
+
+- Secret Key Encryption (S2K Usage Octet) containing {{secret-key-protection-registry}}.
+
+- Signature Types containing {{signature-types-registry}}
+
+- Signature Notation Data Subpacket Notation Flags containing {{sig-note-data-note-flags-registry}}.
+
+- Signature Notation Data Subpacket Types containing {{sig-note-data-subpacket-types}}.
+
+- Key ID and Fingerprint containing {{key-id-fingerprint-registry}}.
+
+- Image Attribute Version containing {{image-attribute-version-registry}}.
+
+- Armor Header Line containing {{armor-header-line-registry}}.
+
+- Armor Header Key containing {{armor-header-key-registry}}.
+
+- ECC Curve OID and Usage containing {{ecc-oid-usage-registry}}.
+
+- ECC Curve-specific Wire Formats containing {{ecc-wire-formats-registry}}.
+
+- Hash Algorithm Identifiers for RSA Signatures use of EMSA-PKCS1-v1_5 Padding containing {{emsa-hash-oids-registry}}.
+
+- AEAD Algorithms containing {{aead-algorithms-registry}}.
+
+- Encrypted Message Packet Versions containing {{encrypted-packet-versions-registry}}.
+
+- Key and Signature Versions containing {{signed-packet-versions-registry}}.
+
+- Elliptic Curve Point Wire Formats containing {{ec-point-wire-formats-registry}}.
+
+- Elliptic Curve Scalar Encodings containing {{ec-scalar-wire-formats-registry}}.
+
+- ECDH KDF and KEK Parameters containing {{ecdh-kdf-kek-parameters-registry}}.
+
+## Registration content updates
+
+## Registration Policies
+
+IANA is requested to set all registries within the OpenPGP registry to use the SPECIFICATION REQUIRED registration policy, see {{Section 4.6 of RFC8126}} with the exception of the registries listed in {{rfc-required-registries}}.
+This policy means that review and approval by a designated expert is required, and that the values and their meanings must be documented in a permanent and readily available public specification, in sufficient detail so that interoperability between independent implementations is possible.
+
+## Registries that are RFC REQUIRED {#rfc-required-registries}
+
+The following registries use the RFC REQUIRED registration policy, as described in {{Section 4.7 of RFC8126}}:
+
+- Packet Type/Tags registry ({{packet-types-registry}})
+- Key and Signature Versions registry ({{signed-packet-versions-registry}})
+- Key ID and Fingerprint registry ({{key-id-fingerprint-registry}})
+- Encrypted Message Packet Versions registry ({{encrypted-packet-versions-registry}})
+
+## Designated Experts
+
+The designated experts will determine whether the new code points retain the security properties that are expected by the base implementation and that these new code points do not cause interoperability issues with existing implementations other than not producing or consuming these new code points.
+Code point proposals that fail to meet these criteria could instead be proposed as new work items for the OpenPGP working group or its successor.
+
+The designated experts should also consider {{meta-considerations-for-expansion}} when reviewing proposed additions to the OpenPGP registries.
+
+### Key Versions
+
+When defining a new version of OpenPGP keys, two registries need to be updated with information about the new version: {{signed-packet-versions-registry}} and {{key-id-fingerprint-registry}}.
+
+### Algorithms
+
+{{constants}} lists the cryptographic and compression algorithms that OpenPGP uses.
+Adding new algorithms is usually simple, in some cases as little as allocating a codepoint and pointing to a reference.
+But some algorithm registries require some subtle additional details when a new algorithm is introduced.
+
+#### Elliptic Curve Algorithms
+
+To register a new elliptic curve for use with OpenPGP, its OID needs to be registered in {{ecc-oid-usage-registry}}, its wire format needs to be documented in {{ecc-wire-formats-registry}}, and if used for ECDH, its KDF and KEK parameters must be populated in {{ecdh-kdf-kek-parameters-registry}}.
+If the wire format(s) used are not already defined in {{ec-point-wire-formats-registry}} or {{ec-scalar-wire-formats-registry}}, they should be defined there as well.
+
+#### Symmetric-Key Algorithms
+
+When registering a new symmetric cipher with a block size of 64 or 128 bits and a key size that is a multiple of 64 bits, no new considerations are needed.
+
+If the new cipher has a different block size, there needs to be additional documentation describing how to use the cipher in CFB mode.
+
+If the new cipher has an unusual key size, then padding needs to be considered for X25519 and X448 keywrap, which currently needs no padding.
+
+#### Hash Algorithms
+
+When registering a new hash algorithm (in {{hash-algorithms-registry}}), if the algorithm is also to be used with RSA signing schemes, it must also have an entry in {{emsa-hash-oids-registry}}.
 
 --- back
 
