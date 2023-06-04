@@ -4536,6 +4536,12 @@ Some subpackets are only useful when they are in the hashed section, and impleme
 For example, a Preferred AEAD Ciphersuites subpacket ({{preferred-v2-seipd}}) in a direct-key self-signature indicates the preferences of the key holder when encrypting SEIPD v2 data to the key.
 An implementation that observes such a subpacket found in the unhashed section would open itself to an attack where the recipient's certificate is tampered with to encourage the use of a specific cipher or mode of operation.
 
+## Malicious Compressed Data {#compress-bomb}
+
+It is possible to form a compression quine that produces itself upon decompression, leading to infinite regress in any implementation willing to parse arbitrary numbers of layers of compression.
+This could cause resource exhaustion which itself could lead to it being terminated by the operating system.
+If the operating system would create a "crash report", that report could contain confidential information.
+
 # Implementation Considerations
 
 This section is a collection of comments to help an implementer, particularly with an eye to backward compatibility.
