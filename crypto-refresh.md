@@ -4294,7 +4294,7 @@ If the proposal contains neither an extension to the Features system nor an expl
 
 - Some of the encryption algorithms mentioned in this document have been analyzed less than others.
   For example, although TWOFISH is presently considered reasonably strong, it has been analyzed much less than AES.
-  Other algorithms may have other controversies surrounding them.
+  Other algorithms may have other concerns surrounding them.
 
 - In late summer 2002, Jallad, Katz, and Schneier published an interesting attack on older versions of the OpenPGP protocol and some of its implementations {{JKS02}}.
   In this attack, the attacker modifies a message and sends it to a user who then returns the erroneously decrypted message to the attacker.
@@ -4305,7 +4305,7 @@ If the proposal contains neither an extension to the Features system nor an expl
 ## SHA-1 Collision Detection {#sha1cd}
 
 As described in {{SHAMBLES}}, the SHA-1 digest algorithm is not collision-resistant.
-However, an OpenPGP implementation cannot completely discard the SHA-1 algorithm, because it is required for implementing and reasoning about v4 public keys.
+However, an OpenPGP implementation cannot completely discard the SHA-1 algorithm, because it is required for implementing v4 public keys.
 In particular, the v4 fingerprint derivation uses SHA-1.
 So as long as an OpenPGP implementation supports v4 public keys, it will need to implement SHA-1 in at least some scenarios.
 
@@ -4321,8 +4321,8 @@ V6 signatures include a salt that is hashed first, which size depends on the has
 This makes v6 OpenPGP signatures non-deterministic and protects against a broad class of attacks that depend on creating a signature over a predictable message.
 By selecting a new random salt for each signature made, the signed hashes and the signatures are not predictable.
 
-When the material to be signed may be attacker-controlled, hashing the salt first means that there is no attacker controlled hashed prefix.
-An example of this kind of attack is described in the paper SHA-1 Is A Shambles (see {{SHAMBLES}}), which leverages a chosen prefix collision attack against SHA-1.
+While the material to be signed could be attacker-controlled, hashing the salt first means that there is no attacker controlled hashed prefix.
+An example of this kind of attack is described in the paper "SHA-1 Is A Shambles" {{SHAMBLES}}, which leverages a chosen prefix collision attack against SHA-1.
 This means that an adversary carrying out a chosen-message attack will not be able to control the hash that is being signed, and will need to break second-preimage resistance instead of the simpler collision resistance to create two messages having the same signature.
 The size of the salt is bound to the hash function to match the expected collision resistance level, and at least 16 octets.
 
@@ -4346,7 +4346,7 @@ There is a danger to using the quick check if timing or error information about 
 
 Disabling the quick check prevents the attack.
 
-For very large legacy encrypted data whose session key is protected by a passphrase (v4 SKESK), while the quick check may be convenient to the user to be informed early on that they typed the wrong passphrase, the implementation should use the quick check with care.
+For very large legacy encrypted data whose session key is protected by a passphrase (v4 SKESK), the quick check may be convenient to the user to be informed early on that they typed the wrong passphrase, but the implementation should use the quick check with care.
 The recommended approach for secure and early detection of decryption failure is to encrypt data using v2 SEIPD.
 If the session key is public-key encrypted, the quick check is not useful as the public-key encryption of the session key should guarantee that it is the right session key.
 
@@ -4373,16 +4373,16 @@ Additionally, some OpenPGP users have historically used manual fingerprint compa
 For a version 4 fingerprint, this has typically been done with the fingerprint represented as 40 hexadecimal digits, often broken into groups of four digits with whitespace between each group.
 
 When a human is actively involved, the result of such a verification is dubious.
-We have little evidence that most humans are good at precise comparison of high-entropy data, particularly when that data is represented in compact textual form like a hexadecimal fingerprint.
+There is little evidence that most humans are good at precise comparison of high-entropy data, particularly when that data is represented in compact textual form like a hexadecimal fingerprint.
 
-The version 6 Fingerprint makes the challenge for a human verifier even worse.
+The version 6 fingerprint makes the challenge for a human verifier even worse.
 At 256 bits (compared to v4's 160 bit fingerprint), a v6 fingerprint is even harder for a human to successfully compare.
 
 An OpenPGP implementation should prioritize mechanical fingerprint transfer and comparison where possible, and SHOULD NOT promote manual transfer or comparison of full fingerprints by a human unless there is no other way to achieve the desired result.
 
 While this subsection acknowledges existing practice for human-representable v4 fingerprints, this document does not attempt to standardize any specific human-readable form of v6 fingerprint for this discouraged use case.
 
-NOTE: the topic of interoperable human-in-the-loop key verification needs more work, probably in a separate document.
+NOTE: the topic of interoperable human-in-the-loop key verification needs more work, to be done in a separate document.
 
 ## Avoiding Ciphertext Malleability {#ciphertext-malleability}
 
