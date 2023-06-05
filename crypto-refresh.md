@@ -4543,6 +4543,8 @@ It is possible to form a compression quine that produces itself upon decompressi
 This could cause resource exhaustion which itself could lead to it being terminated by the operating system.
 If the operating system would create a "crash report", that report could contain confidential information.
 
+An OpenPGP implementation SHOULD limit the number of layers of compression it is willing to decompress in a single message.
+
 # Implementation Considerations
 
 This section is a collection of comments to help an implementer, particularly with an eye to backward compatibility.
