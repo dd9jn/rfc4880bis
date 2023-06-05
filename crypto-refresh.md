@@ -2801,10 +2801,10 @@ and is followed by the subpacket specific data.
 
 The following table lists the currently known subpackets:
 
-{: title="User Attribute Types registry" #user-attr-types-registry}
-Type | Attribute Subpacket
----:|---------------------------------------------------------
- 1 | Image Attribute Subpacket
+{: title="User Attribute Subpacket Types registry" #user-attr-subpacket-types-registry}
+Type | Attribute Subpacket | Reference
+---:|----------------------|----
+ 1 | Image Attribute Subpacket | {{uat-image}}
 100-110 | Private/Experimental Use
 
 An implementation SHOULD ignore any subpacket of a type that it does not recognize.
@@ -4588,7 +4588,7 @@ IANA is requested to rename the "PGP String-to-Key (S2K)" registry to "String-to
 
 IANA is requested to rename the "PGP Packet Types/Tags" registry to "Packet Types/Tags" and update its content to {{packet-types-registry}}.
 
-IANA is requested to rename the "PGP User Attribute Types" registry to "User Attribute Types" and update its content to {{user-attr-types-registry}}
+IANA is requested to rename the "PGP User Attribute Types" registry to "User Attribute Subpacket Types" and update its content to {{user-attr-subpacket-types-registry}}
 
 IANA is requested to rename the "Image Format Subpacket Types" registry to "Image Attribute Encoding Format" and update its content to {{image-attr-encoding-format-registry}}.
 
