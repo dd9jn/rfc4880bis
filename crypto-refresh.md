@@ -1,6 +1,6 @@
 ---
 title: OpenPGP
-docname: draft-ietf-openpgp-crypto-refresh-10
+docname: draft-ietf-openpgp-crypto-refresh-09
 category: std
 obsoletes: 4880, 5581, 6637
 ipr: trust200902
