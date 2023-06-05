@@ -4669,7 +4669,7 @@ IANA is requested to add the following registries in the OpenPGP protocol group:
 IANA is requested to set all registries within the OpenPGP protocol group to use the SPECIFICATION REQUIRED registration policy, see {{Section 4.6 of RFC8126}} with the exception of the registries listed in {{rfc-required-registries}}, below.
 This policy means that review and approval by a designated expert is required, and that the values and their meanings must be documented in a permanent and readily available public specification, in sufficient detail so that interoperability between independent implementations is possible.
 
-## Registries that are RFC REQUIRED {#rfc-required-registries}
+### Registries that are RFC REQUIRED {#rfc-required-registries}
 
 The following registries use the RFC REQUIRED registration policy, as described in {{Section 4.7 of RFC8126}}:
 
@@ -4682,6 +4682,8 @@ The following registries use the RFC REQUIRED registration policy, as described 
 
 The designated experts will determine whether the new code points retain the security properties that are expected by the base implementation and that these new code points do not cause interoperability issues with existing implementations other than not producing or consuming these new code points.
 Code point proposals that fail to meet these criteria could instead be proposed as new work items for the OpenPGP working group or its successor.
+
+The subsections below describe specific guidance for classes of registry updates that a designated expert will consider.
 
 The designated experts should also consider {{meta-considerations-for-expansion}} when reviewing proposed additions to the OpenPGP registries.
 
