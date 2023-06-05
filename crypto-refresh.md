@@ -4346,7 +4346,8 @@ There is a danger to using the quick check if timing or error information about 
 
 Disabling the quick check prevents the attack.
 
-For very large legacy encrypted data whose session key is protected by a passphrase (v4 SKESK), the quick check may be convenient to the user to be informed early on that they typed the wrong passphrase, but the implementation should use the quick check with care.
+For very large legacy encrypted data whose session key is protected by a passphrase (v4 SKESK), the quick check may be convenient to the user, by informing them early that they typed the wrong passphrase.
+But the implementation should use the quick check with care.
 The recommended approach for secure and early detection of decryption failure is to encrypt data using v2 SEIPD.
 If the session key is public-key encrypted, the quick check is not useful as the public-key encryption of the session key should guarantee that it is the right session key.
 
