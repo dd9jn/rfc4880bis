@@ -4580,7 +4580,7 @@ An implementation interacting with such a constrained field SHOULD directly calc
 This document obsoletes {{RFC4880}}.
 IANA is requested to update all registration information that references {{RFC4880}} to instead reference this RFC.
 
-## Registry to be Renamed and Updated
+## Registries to be Renamed and Updated
 
 IANA is requested to update the name of the "Pretty Good Privacy (PGP)" registry to the "OpenPGP" registry.
 All further updates specified below are for registries under the OpenPGP registry.
