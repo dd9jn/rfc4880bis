@@ -4581,10 +4581,14 @@ An implementation interacting with such a constrained field SHOULD directly calc
 This document obsoletes {{RFC4880}}.
 IANA is requested to update all registration information that references {{RFC4880}} to instead reference this RFC.
 
-## Registries to be Renamed and Updated
+## Rename "Pretty Good Privacy (PGP)" Protocol Group to "OpenPGP"
 
-IANA is requested to update the name of the "Pretty Good Privacy (PGP)" registry to the "OpenPGP" registry.
-All further updates specified below are for registries under the OpenPGP registry.
+IANA bundles a set of registries associated with a particular protocol into a "protocol group".
+This document requests IANA to update the name of the "Pretty Good Privacy (PGP)" protocol group (i.e., the group of registries described at `https://www.iana.org/assignments/pgp-parameters/`) to "OpenPGP".
+If renaming the protocol group results in new URLs for the registries in this protocol group, please arrange for a permanent redirection (e.g., HTTP 301) from the existing URLs to the new URLs.
+All further updates specified below are for registries within this same "OpenPGP" protocol group.
+
+## Registries to be Renamed and Updated
 
 IANA is requested to rename the "PGP String-to-Key (S2K)" registry to "String-to-Key (S2K) Types" and update its content to {{s2k-types-registry}}.
 
@@ -4618,11 +4622,11 @@ IANA is requested to update the "Signature Subpacket Types" registry with the co
 
 IANA is requested to remove the empty "New Packet Versions" registry.
 
-A tombstone note should be added to the OpenPGP registry with the following content: Those wishing to use the removed "New Packet Versions" registry should instead register new versions of the relevant packets in the "Key and Signature Versions", "Key ID and Fingerprint" and "Encrypted Message Packet Versions" registries.
+A tombstone note should be added to the OpenPGP protocol group with the following content: Those wishing to use the removed "New Packet Versions" registry should instead register new versions of the relevant packets in the "Key and Signature Versions", "Key ID and Fingerprint" and "Encrypted Message Packet Versions" registries.
 
 ## Registries to be Added {#added-registries}
 
-IANA is requested to add the following registries in the OpenPGP registry:
+IANA is requested to add the following registries in the OpenPGP protocol group:
 
 - Secret Key Encryption (S2K Usage Octet) containing {{secret-key-protection-registry}}.
 
@@ -4662,7 +4666,7 @@ IANA is requested to add the following registries in the OpenPGP registry:
 
 ## Registration Policies
 
-IANA is requested to set all registries within the OpenPGP registry to use the SPECIFICATION REQUIRED registration policy, see {{Section 4.6 of RFC8126}} with the exception of the registries listed in {{rfc-required-registries}}.
+IANA is requested to set all registries within the OpenPGP protocol group to use the SPECIFICATION REQUIRED registration policy, see {{Section 4.6 of RFC8126}} with the exception of the registries listed in {{rfc-required-registries}}, below.
 This policy means that review and approval by a designated expert is required, and that the values and their meanings must be documented in a permanent and readily available public specification, in sufficient detail so that interoperability between independent implementations is possible.
 
 ## Registries that are RFC REQUIRED {#rfc-required-registries}
