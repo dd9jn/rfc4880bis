@@ -1429,7 +1429,7 @@ That is:
 
 The value of the subpacket type octet may be:
 
-{: title="Subpacket Types registry" #subpacket-types-registry}
+{: title="Signature Subpacket Types registry" #signature-subpacket-types-registry}
 Type | Description | Reference
 ---:|--------------|----------
   0 | Reserved
@@ -1483,9 +1483,9 @@ To avoid surreptitious forwarding (see {{surreptitious-forwarding}}), implementa
 Note that if an implementation chooses not to implement some of the preferences subpackets, it MUST default to the mandatory-to-implement algorithms to ensure interoperability.
 An encrypting implementation that does not implement the "Features" subpacket SHOULD select the type of encrypted data format based instead on the versions of the recipient keys or external inference (see {{ciphertext-malleability}} for more details).
 
-#### (Signature???) Subpacket Types
+#### Signature Subpacket Types
 
-A number of subpackets are currently defined.
+A number of subpackets are currently defined for OpenPGP signatures.
 Some subpackets apply to the signature itself and some are attributes of the key.
 Subpackets that are found on a self-signature are placed on a certification made by the key itself.
 Note that a key may have more than one User ID, and thus may have more than one self-signature, and differing subpackets.
@@ -4592,8 +4592,6 @@ IANA is requested to rename the "PGP User Attribute Types" registry to "User Att
 
 IANA is requested to rename the "Image Format Subpacket Types" registry to "Image Attribute Encoding Format" and update its content to {{image-attr-encoding-format-registry}}.
 
-IANA is requested to rename the "Signature Subpacket Types" registry to "Subpacket Types" and update its content to {{subpacket-types-registry}}.
-
 IANA is requested to rename the "Key Server Preference Extensions" registry to "Key Server Preference Flags" and update its contents to {{key-server-preference-flags-registry}}.
 
 IANA is requested to rename the "Reason for Revocation Extensions" registry to "Reason for Revocation Code" and update its contents to {{reason-for-revocation-code-registry}}
@@ -4611,6 +4609,8 @@ IANA is requested to update the "Symmetric Key Algorithms" registry with the con
 IANA is requested to update the "Compression Algorithms" registry with the contents of {{compression-algorithms-registry}}.
 
 IANA is requested to update the "Hash Algorithms" registry with the contents of {{hash-algorithms-registry}}.
+
+IANA is requested to update the "Signature Subpacket Types" registry with the contents of {{signature-subpacket-types-registry}}.
 
 ## Registries to be Removed {#removed-registries}
 
