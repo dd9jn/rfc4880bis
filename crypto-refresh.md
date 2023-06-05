@@ -4662,8 +4662,6 @@ IANA is requested to add the following registries in the OpenPGP protocol group:
 
 - ECDH KDF and KEK Parameters containing {{ecdh-kdf-kek-parameters-registry}}.
 
-## Registration content updates
-
 ## Registration Policies
 
 IANA is requested to set all registries within the OpenPGP protocol group to use the SPECIFICATION REQUIRED registration policy, see {{Section 4.6 of RFC8126}} with the exception of the registries listed in {{rfc-required-registries}}, below.
