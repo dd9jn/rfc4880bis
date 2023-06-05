@@ -726,7 +726,7 @@ Known symmetric cipher algo ID (see {{symmetric-algos}}) | LegacyCFB | IV | CFB(
 255 | MalleableCFB | cipher-algo, S2K-specifier, IV | CFB(S2K(passphrase), secrets \|\| check(secrets)) | No
 
 When emitting a secret key (with or without passphrase-protection) an implementation MUST only produce data from a row with "Generate?" marked as "Yes".
-Each row with "Generate?" marked as "No" is described for backward compatibility (for reading v4 and earlier keys only), and MUST NOT be used to generate new keys.
+Each row with "Generate?" marked as "No" is described for backward compatibility (for reading v4 and earlier keys only), and MUST NOT be used to generate new output.
 Version 6 secret keys using these formats MUST be rejected.
 
 Note that compared to a version 4 secret key, the parameters of a passphrase-protected version 6 secret key are stored with an additional pair of length counts, each of which is one octet wide.
@@ -1429,7 +1429,7 @@ That is:
 
 The value of the subpacket type octet may be:
 
-{: title="Subpacket Types registry" #subpacket-types-registry}
+{: title="Signature Subpacket Types registry" #signature-subpacket-types-registry}
 Type | Description | Reference
 ---:|--------------|----------
   0 | Reserved
@@ -1483,9 +1483,9 @@ To avoid surreptitious forwarding (see {{surreptitious-forwarding}}), implementa
 Note that if an implementation chooses not to implement some of the preferences subpackets, it MUST default to the mandatory-to-implement algorithms to ensure interoperability.
 An encrypting implementation that does not implement the "Features" subpacket SHOULD select the type of encrypted data format based instead on the versions of the recipient keys or external inference (see {{ciphertext-malleability}} for more details).
 
-#### (Signature???) Subpacket Types
+#### Signature Subpacket Types
 
-A number of subpackets are currently defined.
+A number of subpackets are currently defined for OpenPGP signatures.
 Some subpackets apply to the signature itself and some are attributes of the key.
 Subpackets that are found on a self-signature are placed on a certification made by the key itself.
 Note that a key may have more than one User ID, and thus may have more than one self-signature, and differing subpackets.
@@ -2801,10 +2801,10 @@ and is followed by the subpacket specific data.
 
 The following table lists the currently known subpackets:
 
-{: title="User Attribute Types registry" #user-attr-types-registry}
-Type | Attribute Subpacket
----:|---------------------------------------------------------
- 1 | Image Attribute Subpacket
+{: title="User Attribute Subpacket Types registry" #user-attr-subpacket-types-registry}
+Type | Attribute Subpacket | Reference
+---:|----------------------|----
+ 1 | Image Attribute Subpacket | {{uat-image}}
 100-110 | Private/Experimental Use
 
 An implementation SHOULD ignore any subpacket of a type that it does not recognize.
@@ -4346,7 +4346,8 @@ There is a danger to using the quick check if timing or error information about 
 
 Disabling the quick check prevents the attack.
 
-For very large legacy encrypted data whose session key is protected by a passphrase (v4 SKESK), the quick check may be convenient to the user to be informed early on that they typed the wrong passphrase, but the implementation should use the quick check with care.
+For very large legacy encrypted data whose session key is protected by a passphrase (v4 SKESK), the quick check may be convenient to the user, by informing them early that they typed the wrong passphrase.
+But the implementation should use the quick check with care.
 The recommended approach for secure and early detection of decryption failure is to encrypt data using v2 SEIPD.
 If the session key is public-key encrypted, the quick check is not useful as the public-key encryption of the session key should guarantee that it is the right session key.
 
@@ -4542,6 +4543,8 @@ It is possible to form a compression quine that produces itself upon decompressi
 This could cause resource exhaustion which itself could lead to it being terminated by the operating system.
 If the operating system would create a "crash report", that report could contain confidential information.
 
+An OpenPGP implementation SHOULD limit the number of layers of compression it is willing to decompress in a single message.
+
 # Implementation Considerations
 
 This section is a collection of comments to help an implementer, particularly with an eye to backward compatibility.
@@ -4577,22 +4580,25 @@ An implementation interacting with such a constrained field SHOULD directly calc
 
 # IANA Considerations
 
-This document obsoletes {{RFC4880}}. IANA is requested to update all registration information that references {{RFC4880}} to instead reference this RFC.
+This document obsoletes {{RFC4880}}.
+IANA is requested to update all registration information that references {{RFC4880}} to instead reference this RFC.
 
-## Registry to be Renamed and Updated
+## Rename "Pretty Good Privacy (PGP)" Protocol Group to "OpenPGP"
 
-IANA is requested to update the name of the "Pretty Good Privacy (PGP)" registry to the "OpenPGP" registry.
-All further updates specified below are for registries under the OpenPGP registry.
+IANA bundles a set of registries associated with a particular protocol into a "protocol group".
+This document requests IANA to update the name of the "Pretty Good Privacy (PGP)" protocol group (i.e., the group of registries described at `https://www.iana.org/assignments/pgp-parameters/`) to "OpenPGP".
+If renaming the protocol group results in new URLs for the registries in this protocol group, please arrange for a permanent redirection (e.g., HTTP 301) from the existing URLs to the new URLs.
+All further updates specified below are for registries within this same "OpenPGP" protocol group.
+
+## Registries to be Renamed and Updated
 
 IANA is requested to rename the "PGP String-to-Key (S2K)" registry to "String-to-Key (S2K) Types" and update its content to {{s2k-types-registry}}.
 
 IANA is requested to rename the "PGP Packet Types/Tags" registry to "Packet Types/Tags" and update its content to {{packet-types-registry}}.
 
-IANA is requested to rename the "PGP User Attribute Types" registry to "User Attribute Types" and update its content to {{user-attr-types-registry}}
+IANA is requested to rename the "PGP User Attribute Types" registry to "User Attribute Subpacket Types" and update its content to {{user-attr-subpacket-types-registry}}
 
 IANA is requested to rename the "Image Format Subpacket Types" registry to "Image Attribute Encoding Format" and update its content to {{image-attr-encoding-format-registry}}.
-
-IANA is requested to rename the "Signature Subpacket Types" registry to "Subpacket Types" and update its content to {{subpacket-types-registry}}.
 
 IANA is requested to rename the "Key Server Preference Extensions" registry to "Key Server Preference Flags" and update its contents to {{key-server-preference-flags-registry}}.
 
@@ -4612,15 +4618,17 @@ IANA is requested to update the "Compression Algorithms" registry with the conte
 
 IANA is requested to update the "Hash Algorithms" registry with the contents of {{hash-algorithms-registry}}.
 
+IANA is requested to update the "Signature Subpacket Types" registry with the contents of {{signature-subpacket-types-registry}}.
+
 ## Registries to be Removed {#removed-registries}
 
 IANA is requested to remove the empty "New Packet Versions" registry.
 
-A tombstone note should be added to the OpenPGP registry with the following content: Those wishing to use the removed "New Packet Versions" registry should instead register new versions of the relevant packets in the "Key and Signature Versions", "Key ID and Fingerprint" and "Encrypted Message Packet Versions" registries.
+A tombstone note should be added to the OpenPGP protocol group with the following content: Those wishing to use the removed "New Packet Versions" registry should instead register new versions of the relevant packets in the "Key and Signature Versions", "Key ID and Fingerprint" and "Encrypted Message Packet Versions" registries.
 
 ## Registries to be Added {#added-registries}
 
-IANA is requested to add the following registries in the OpenPGP registry:
+IANA is requested to add the following registries in the OpenPGP protocol group:
 
 - Secret Key Encryption (S2K Usage Octet) containing {{secret-key-protection-registry}}.
 
@@ -4656,14 +4664,12 @@ IANA is requested to add the following registries in the OpenPGP registry:
 
 - ECDH KDF and KEK Parameters containing {{ecdh-kdf-kek-parameters-registry}}.
 
-## Registration content updates
-
 ## Registration Policies
 
-IANA is requested to set all registries within the OpenPGP registry to use the SPECIFICATION REQUIRED registration policy, see {{Section 4.6 of RFC8126}} with the exception of the registries listed in {{rfc-required-registries}}.
+IANA is requested to set all registries within the OpenPGP protocol group to use the SPECIFICATION REQUIRED registration policy, see {{Section 4.6 of RFC8126}} with the exception of the registries listed in {{rfc-required-registries}}, below.
 This policy means that review and approval by a designated expert is required, and that the values and their meanings must be documented in a permanent and readily available public specification, in sufficient detail so that interoperability between independent implementations is possible.
 
-## Registries that are RFC REQUIRED {#rfc-required-registries}
+### Registries that are RFC REQUIRED {#rfc-required-registries}
 
 The following registries use the RFC REQUIRED registration policy, as described in {{Section 4.7 of RFC8126}}:
 
@@ -4677,11 +4683,13 @@ The following registries use the RFC REQUIRED registration policy, as described 
 The designated experts will determine whether the new code points retain the security properties that are expected by the base implementation and that these new code points do not cause interoperability issues with existing implementations other than not producing or consuming these new code points.
 Code point proposals that fail to meet these criteria could instead be proposed as new work items for the OpenPGP working group or its successor.
 
+The subsections below describe specific guidance for classes of registry updates that a designated expert will consider.
+
 The designated experts should also consider {{meta-considerations-for-expansion}} when reviewing proposed additions to the OpenPGP registries.
 
 ### Key Versions
 
-When defining a new version of OpenPGP keys, two registries need to be updated with information about the new version: {{signed-packet-versions-registry}} and {{key-id-fingerprint-registry}}.
+When defining a new version of OpenPGP keys, three registries need to be updated with information about the new version: {{signed-packet-versions-registry}}, {{key-id-fingerprint-registry}}, and {{key-id-fingerprint-registry}}.
 
 ### Algorithms
 
