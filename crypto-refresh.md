@@ -4687,7 +4687,7 @@ The designated experts should also consider {{meta-considerations-for-expansion}
 
 ### Key Versions
 
-When defining a new version of OpenPGP keys, two registries need to be updated with information about the new version: {{signed-packet-versions-registry}} and {{key-id-fingerprint-registry}}.
+When defining a new version of OpenPGP keys, three registries need to be updated with information about the new version: {{signed-packet-versions-registry}}, {{key-id-fingerprint-registry}}, and {{key-id-fingerprint-registry}}.
 
 ### Algorithms
 
