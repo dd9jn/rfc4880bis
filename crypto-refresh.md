@@ -3151,7 +3151,7 @@ The Armor Headers are pairs of strings that can give the user or the receiving O
 The Armor Headers are a part of the armor, not a part of the message, and hence are not protected by any signatures applied to the message.
 
 The format of an Armor Header is that of a key-value pair.
-A colon (`:` 0x38) and a single space (0x20) separate the key and value.
+A colon (`:` 0x3A) and a single space (0x20) separate the key and value.
 An OpenPGP implementation may consider improperly formatted Armor Headers to be corruption of the ASCII Armor, but SHOULD make an effort to recover.
 Unknown keys should be silently ignored, and an OpenPGP implementation SHOULD continue to process the message.
 
