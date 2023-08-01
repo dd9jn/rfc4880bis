@@ -2220,8 +2220,10 @@ depends on the version of the signature.
        stopping right before the 0x05, 0xff octets.
 
        The three data items hashed for document signatures need to
-       mirror the values of the Literal Data packet.  For detached
-       and cleartext signatures 6 zero bytes are hashed instead.
+       mirror the values of the Literal Data packet.  Note that for a
+       detached signatures this means to hash 6 0x00 octets and for a
+       cleartext signature this means to hash a 't' followed by 5 0x00
+       octets.
 
 
 After all this has been hashed in a single hash context, the resulting
