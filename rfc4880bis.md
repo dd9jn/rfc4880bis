@@ -1,7 +1,8 @@
 ---
-title: OpenPGP Message Format
-docname: draft-koch-openpgp-2015-rfc4880bis-02
-date: 2023-05-30
+title: LibrePGP Message Format
+docname: draft-koch-librepgp-00
+date: 2023-11-29
+submissiontype: IETF
 category: std
 
 obsoletes: 4880, 5581, 6637
@@ -18,34 +19,16 @@ author:
  -
     ins: W. Koch
     name: Werner Koch
-    org: GnuPG e.V.
-    street: Rochusstr. 44
-    city: Duesseldorf
-    code: 40479
+    org: g10 Code GmbH
     country: Germany
     email: wk@gnupg.org
-    uri: https://gnupg.org/verein
- -
-    ins: B. Carlson
-    name: brian m. carlson
-    email: sandals@crustytoothpaste.net
  -
     ins: R. H. Tse
     name: Ronald Henry Tse
     org: Ribose
-    street: Suite 1111, 1 Pedder Street
-    city: Central, Hong Kong
     country: Hong Kong
     email: ronald.tse@ribose.com
-    uri: https://www.ribose.com
- -
-    ins: D. A. Atkins
-    name: Derek Atkins
-    email: derek@ihtfp.com
- -
-    ins: D. K. Gillmor
-    name: Daniel Kahn Gillmor
-    email: dkg@fifthhorseman.net
+
 informative:
  BLEICHENBACHER:
     title: Generating ElGamal Signatures Without Knowing the Secret Key
@@ -158,6 +141,12 @@ normative:
     author:
      org: National Institute of Standards and Technology, U.S. Department of Commerce
     date: August 2015
+ FIPS203:
+    target: https://doi.org/10.6028/NIST.FIPS.203.ipd
+    title: "Module-Lattice-Based Key-Encapsulation Mechanism Standard"
+    author:
+     org: National Institute of Standards and Technology, U.S. Department of Commerce
+    date: August 2023
  HAC:
     title: Handbook of Applied Cryptography
     date: 1996
@@ -252,40 +241,47 @@ normative:
 
 --- abstract
 
-This document specifies the message formats used in OpenPGP.  OpenPGP
+This document specifies the message formats used in LibrePGP.
+LibrePGP is an extension of the OpenPGP format which
 provides encryption with public-key or symmetric cryptographic
 algorithms, digital signatures, compression and key management.
 
 This document is maintained in order to publish all necessary
 information needed to develop interoperable applications based on the
-OpenPGP format.  It is not a step-by-step cookbook for writing an
+LibrePGP format.  It is not a step-by-step cookbook for writing an
 application.  It describes only the format and methods needed to read,
 check, generate, and write conforming packets crossing any network.
 It does not deal with storage and implementation questions.  It does,
 however, discuss implementation issues necessary to avoid security
 flaws.
 
-This document obsoletes: RFC 4880 (OpenPGP), RFC 5581 (Camellia in
-OpenPGP) and RFC 6637 (Elliptic Curves in OpenPGP).
+This document is based on: RFC 4880 (OpenPGP), RFC 5581 (Camellia in
+OpenPGP), and RFC 6637 (Elliptic Curves in OpenPGP).
 
 --- middle
 
 # Introduction
 
 This document provides information on the message-exchange packet
-formats used by OpenPGP to provide encryption, decryption, signing,
+formats used by LibrePGP to provide encryption, decryption, signing,
 and key management functions.  It is a revision of RFC 4880, "OpenPGP
 Message Format", which is a revision of RFC 2440, which itself
 replaces RFC 1991, "PGP Message Exchange Formats" [](#RFC1991)
 [](#RFC2440) [](#RFC4880).
 
-This document obsoletes: RFC 4880 (OpenPGP), RFC 5581 (Camellia
-cipher) and RFC 6637 (ECC for OpenPGP).
+LibrePGP is fully compatible to the OpenPGP specification it is based
+on: RFC 4880 (OpenPGP), RFC 5581 (Camellia cipher), and RFC 6637 (ECC
+for OpenPGP).
 
 ## Terms
 
+  * LibrePGP - This is a term for security software that is based on
+    OpenPGP with updates for newer algorithms and an advertency to
+    long-term stability and critical deployments.  It is formalized
+    in this document.
+
   * OpenPGP - This is a term for security software that uses PGP 5
-    as a basis, formalized in this document.
+    as a basis.
 
   * PGP - Pretty Good Privacy.  PGP is a family of software systems
     developed by Philip R. Zimmermann from which OpenPGP is based.
@@ -301,15 +297,16 @@ cipher) and RFC 6637 (ECC for OpenPGP).
     software was the first release of the "PGP 3" code base.
 
   * GnuPG - GNU Privacy Guard, also called GPG, is the leading Open
-    Source implementation of OpenPGP and has been developed along with
-    the OpenPGP standard since 1997.
+    Source implementation of OpenPGP and LibrePGP and has been
+    developed along with the OpenPGP standard since 1997.
 
-  * RNP - Ribose Network PGP is a newer OpenPGP implemention and
-    prominently used by the mail client Thunderbird.
+  * RNP - Ribose Network PGP is a newer OpenPGP and LibrePGP
+    implemention and prominently used by the mail client Thunderbird.
 
 "PGP" is a trademark of CA, INC.  The use of this, or any other, marks
-is solely for identification purposes.  The term "OpenPGP" refers to
-the protocol described in this and related documents.
+is solely for identification purposes.  The terms "OpenPGP" and
+"LibrePGP" refer to the protocol described in this and related
+documents.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
@@ -322,7 +319,7 @@ interpreted as described in  [](#RFC8126).
 
 # General functions
 
-OpenPGP provides data integrity services for messages and data files
+LibrePGP provides data integrity services for messages and data files
 by using these core technologies:
 
  - digital signatures
@@ -333,12 +330,12 @@ by using these core technologies:
 
  - Radix-64 conversion
 
-In addition, OpenPGP provides key management and certificate services,
+In addition, LibrePGP provides key management and certificate services,
 but many of these are beyond the scope of this document.
 
 ## Confidentiality via Encryption
 
-OpenPGP combines symmetric-key encryption and public-key encryption to
+LibrePGP combines symmetric-key encryption and public-key encryption to
 provide confidentiality.  When made confidential, first the object is
 encrypted using a symmetric encryption algorithm.  Each symmetric key
 is used only once, for a single object. A new "session key" is
@@ -349,20 +346,20 @@ encrypted with the receiver's public key.  The sequence is as follows:
 
 1.  The sender creates a message.
 
-2.  The sending OpenPGP generates a random number to be used as a
+2.  The sending LibrePGP generates a random number to be used as a
     session key for this message only.
 
 3.  The session key is encrypted using each recipient's public key.
     These "encrypted session keys" start the message.
 
-4.  The sending OpenPGP encrypts the message using the session key,
+4.  The sending LibrePGP encrypts the message using the session key,
     which forms the remainder of the message.  Note that the message is
     also usually compressed.
 
-5.  The receiving OpenPGP decrypts the session key using the recipient's
+5.  The receiving LibrePGP decrypts the session key using the recipient's
     private key.
 
-6.  The receiving OpenPGP decrypts the message using the session key.  If
+6.  The receiving LibrePGP decrypts the message using the session key.  If
     the message was compressed, it will be decompressed.
 
 With symmetric-key encryption, an object may be encrypted with a
@@ -399,11 +396,11 @@ and a public-key signature algorithm.  The sequence is as follows:
 
 ## Compression
 
-OpenPGP implementations SHOULD compress the message after applying the
+LibrePGP implementations SHOULD compress the message after applying the
 signature but before encryption.
 
 If an implementation does not implement compression, its authors
-should be aware that most OpenPGP messages in the world are
+should be aware that most OpenPGP and LibrePGP messages in the world are
 compressed.  Thus, it may even be wise for a space-constrained
 implementation to implement decompression, but not compression.
 
@@ -416,12 +413,12 @@ Codes as described in sections following.
 
 ## Conversion to Radix-64
 
-OpenPGP's underlying native representation for encrypted messages,
+LibrePGP's underlying native representation for encrypted messages,
 signature certificates, and keys is a stream of arbitrary octets.  Some
 systems only permit the use of blocks consisting of seven-bit,
-printable text.  For transporting OpenPGP's native raw binary octets
+printable text.  For transporting LibrePGP's native raw binary octets
 through channels that are not safe to raw binary data, a printable
-encoding of these binary octets is needed.  OpenPGP provides the
+encoding of these binary octets is needed.  LibrePGP provides the
 service of converting the raw 8-bit binary octet stream to a stream of
 printable ASCII characters, called Radix-64 encoding or ASCII Armor.
 
@@ -429,7 +426,7 @@ Implementations SHOULD provide Radix-64 conversions.
 
 ## Signature-Only Applications
 
-OpenPGP is designed for applications that use both encryption and
+LibrePGP is designed for applications that use both encryption and
 signatures, but there are a number of problems that are solved by a
 signature-only implementation.  Although this specification requires
 both encryption and signatures, it is reasonable for there to be
@@ -438,7 +435,7 @@ encryption.
 
 # Data Element Formats
 
-This section describes the data elements used by OpenPGP.
+This section describes the data elements used by LibrePGP.
 
 ## Scalar Numbers
 
@@ -644,7 +641,7 @@ they are encrypted, and then the secret-key values themselves.
 
 #### Symmetric-Key Message Encryption
 
-OpenPGP can create a Symmetric-key Encrypted Session Key (ESK) packet
+LibrePGP can create a Symmetric-key Encrypted Session Key (ESK) packet
 at the front of a message.  This is used to allow S2K specifiers to be
 used for the passphrase conversion or to create messages with a mix of
 symmetric-key ESKs and public-key ESKs.  This allows a message to be
@@ -656,16 +653,16 @@ but MAY be used for backward-compatibility.
 
 #  Packet Syntax
 
-This section describes the packets used by OpenPGP.
+This section describes the packets used by LibrePGP.
 
 ## Overview
 
-An OpenPGP message is constructed from a number of records that are
+An LibrePGP message is constructed from a number of records that are
 traditionally called packets. A packet is a chunk of data that has a
-tag specifying its meaning.  An OpenPGP message, keyring, certificate,
+tag specifying its meaning.  An LibrePGP message, keyring, certificate,
 and so forth consists of a number of packets.  Some of those packets
-may contain other OpenPGP packets (for example, a compressed data
-packet, when uncompressed, contains OpenPGP packets).
+may contain other LibrePGP packets (for example, a compressed data
+packet, when uncompressed, contains LibrePGP packets).
 
 Each packet consists of a packet header, followed by the packet body.
 The packet header is of variable length.
@@ -874,7 +871,7 @@ a Symmetrically Encrypted Data Packet, which holds an encrypted
 message.  The message is encrypted with the session key, and the
 session key is itself encrypted and stored in the Encrypted Session
 Key packet(s).  The Symmetrically Encrypted Data Packet is preceded by
-one Public-Key Encrypted Session Key packet for each OpenPGP key to
+one Public-Key Encrypted Session Key packet for each LibrePGP key to
 which the message is encrypted.  The recipient of the message finds a
 session key that is encrypted to their public key, decrypts the
 session key, and then uses the session key to decrypt the message.
@@ -912,6 +909,25 @@ The body of this packet consists of:
       - a one-octet size, followed by a symmetric key encoded using the
         method described in [](#ecdh-algorithm).
 
+    Algorithm-Specific Fields for ML-KEM (Kyber) encryption:
+    {Note: This part is not finalized and subject to change}
+
+      - A fixed-length octet string representing an ECC ephemeral
+        public key in the format associated with the curve.  For
+        ML-KEM-768+X25519 these are 32 octets, for ML-KEM-1024+X448
+        these are 56 octets.
+
+      - A fixed-length octet string of the ML-KEM ciphertext, whose
+        length depends on the algorithm. For ML-KEM-768+X25519 these
+        are 1088 octets, for ML-KEM-1024+X448 these are 1568 octets.
+
+      - A one-octet algorithm identifier which must indicate one of
+        the AES algorithms (7, 8, or 9).
+
+      - a one-octet size, followed by a symmetric key wrapped using the
+        method described in [](#kyber-algorithm).
+
+
 The value "m" in the above formulas is derived from the session key as
 follows.  First, the session key is prefixed with a one-octet algorithm
 identifier that specifies the symmetric encryption algorithm used to
@@ -920,17 +936,21 @@ two-octet checksum is appended, which is equal to the sum of the
 preceding session key octets, not including the algorithm identifier,
 modulo 65536.  This value is then encoded as described in PKCS\#1 block
 encoding EME-PKCS1-v1\_5 in Section 7.2.1 of [](#RFC3447) to form the "m"
-value used in the formulas above.  See [](#pkcs1-encoding-in-openpgp)
-of this document for notes on OpenPGP's use of PKCS\#1.
+value used in the formulas above.  See [](#pkcs1-encoding-in-librepgp)
+of this document for notes on LibrePGP's use of PKCS\#1.
 
 Note that when an implementation forms several PKESKs with one session
 key, forming a message that can be decrypted by several keys, the
-implementation MUST make a new PKCS\#1 encoding for each key.
+implementation MUST make a new PKCS\#1 encoding or for each key.
 
 An implementation MAY accept or use a Key ID of zero as a "wild card"
 or "speculative" Key ID.  In this case, the receiving implementation
 would try all available private keys, checking for a valid decrypted
 session key.  This format helps reduce traffic analysis of messages.
+
+Note that the confidentiality of a message is only post-quantum secure
+when encrypting to multiple recipients iff only ML-KEM algorithms are
+used for all recipients.
 
 
 ## Signature Packet (Tag 2)
@@ -956,7 +976,7 @@ version 3 signatures; they MAY accept version 3 signatures.
 There are a number of possible meanings for a signature, which are
 indicated in a signature type octet in any given signature.  Please
 note that the vagueness of these meanings is not a flaw, but a feature
-of the system.  Because OpenPGP places final authority for validity
+of the system.  Because LibrePGP places final authority for validity
 upon the receiver of a signature, it may be that one signer's casual
 act might be more rigorous than some other authority's positive
 act.  See [](#computing-signatures), "Computing Signatures", for detailed
@@ -1003,7 +1023,7 @@ These meanings are as follows:
       issuer of this certification has done substantial verification
       of the claim of identity.
 
-      Most OpenPGP implementations make their "key signatures" as 0x10
+      Most LibrePGP implementations make their "key signatures" as 0x10
       certifications.  Some implementations can issue 0x11-0x13
       certifications, but few differentiate between the types.
 
@@ -1078,7 +1098,7 @@ These meanings are as follows:
 
 0x50
   :   Third-Party Confirmation signature.  This signature is a
-      signature over some other OpenPGP Signature packet(s).  It is
+      signature over some other LibrePGP Signature packet(s).  It is
       analogous to a notary seal on the signed data. A third-party
       signature SHOULD include Signature Target subpacket(s) to
       give easy identification.  Note that we really do mean
@@ -1460,7 +1480,7 @@ MUST be present in the hashed area.
 
 (8-octet Key ID)
 
-The OpenPGP Key ID of the key issuing the signature.  If the version
+The LibrePGP Key ID of the key issuing the signature.  If the version
 of that key is greater than 4, this subpacket MUST NOT be included in
 the signature.
 
@@ -1629,15 +1649,20 @@ second address and thus a second User ID packet is not useful here.
 (1 octet of class, 1 octet of public-key algorithm ID, 20 or 32 octets
 of fingerprint)
 
-V4 keys use the full 20 octet fingerprint; V5 keys use the
-full 32 octet fingerprint
+<!-- FIXME: Does the 0x20 class really makes sense?  We can use it -->
+<!-- only as a second subpacket because the exetdned fingerprint does -->
+<!-- not allow to find the key.  What would the attack model be? -->
+V4 keys use the full 20 octet fingerprint; V4 keys with the Class
+octet bit 0x20 set use the extended 32 octet v4 fingerprint; V5 keys
+use the full 32 octet fingerprint.
 
 Authorizes the specified key to issue revocation signatures for this
 key.  Class octet must have bit 0x80 set.  If the bit 0x40 is set,
-then this means that the revocation information is sensitive.  Other
-bits are for future expansion to other kinds of authorizations.  This
-is only found on a direct-key self-signature (type 0x1f).  The use on
-other types of self-signatures is unspecified.
+then this means that the revocation information is sensitive.  Bit
+0x20 is used as described above.  Other bits are for future expansion
+to other kinds of authorizations.  This is only found on a direct-key
+self-signature (type 0x1f).  The use on other types of self-signatures
+is unspecified.
 
 If the "sensitive" flag is set, the keyholder feels this subpacket
 contains private trust information that describes a real-world
@@ -1956,9 +1981,9 @@ certification is no longer a part of validity calculations.
 
 (N octets of flags)
 
-The Features subpacket denotes which advanced OpenPGP features a
+The Features subpacket denotes which advanced LibrePGP features a
 user's implementation supports.  This is so that as features are added
-to OpenPGP that cannot be backwards-compatible, a user can state that
+to LibrePGP that cannot be backwards-compatible, a user can state that
 they can use that feature.  The flags are single bits that indicate
 that a given feature is supported.
 
@@ -2012,7 +2037,7 @@ needs to refer to, or be incorporated in, another signature.
 
 (1 octet key version number, N octets of fingerprint)
 
-The OpenPGP Key fingerprint of the key issuing the signature.  This
+The LibrePGP Key fingerprint of the key issuing the signature.  This
 subpacket SHOULD be included in all signatures.  If the version of the
 issuing key is 4 and an Issuer subpacket is also included in the
 signature, the key ID of the Issuer subpacket MUST match the low
@@ -2025,7 +2050,7 @@ octets; for a version 5 key N is 32.
 
 (1 octet key version number, N octets of fingerprint)
 
-The OpenPGP Key fingerprint of the intended recipient primary key.  If
+The LibrePGP Key fingerprint of the intended recipient primary key.  If
 one or more subpackets of this type are included in a signature, it
 SHOULD be considered valid only in an encrypted context, where the key
 it was encrypted to is one of the indicated primary keys, or one of
@@ -2043,7 +2068,7 @@ This subpacket MUST only appear as a hashed subpacket of an
 Attestation Key Signature.  It has no meaning in any other signature
 type.  It is used by the primary key to attest to a set of third-party
 certifications over the associated User ID or User Attribute.  This
-enables the holder of an OpenPGP primary key to mark specific
+enables the holder of an LibrePGP primary key to mark specific
 third-party certifications as re-distributable with the rest of the
 Transferable Public Key (see the "No-modify" flag in "Key Server
 Preferences", above).  Implementations MUST include exactly one
@@ -2113,7 +2138,7 @@ This subpacket MAY be used to convey key data along with a signature
 of class 0x00, 0x01, or 0x02.  It MUST contain the key used to create
 the signature; either as the primary key or as a subkey.  The key
 SHOULD contain a primary or subkey capable of encryption and the
-entire key must be a valid OpenPGP key including at least one User ID
+entire key must be a valid LibrePGP key including at least one User ID
 packet and the corresponding self-signatures.
 
 Implementations MUST ignore this subpacket if the first octet does not
@@ -2206,16 +2231,16 @@ depends on the version of the signature.
      - the two octets 0x04 and 0xFF,
      - a four-octet big-endian number that is the length
        of the hashed data from the Signature packet
-       stopping right before the 0x04, 0xff octets.
+       stopping right before the 0x04, 0XFF octets.
 
        The four-octet big-endian number is considered to be an unsigned
        integer modulo 2^32.
 
- * A V5 or V6 signature hashes the packet body starting from its first
+ * A V5 signature hashes the packet body starting from its first
    field, the version number, through the end of the hashed subpacket
    data and a final extra trailer.  Thus, the hashed fields are:
 
-     - the signature version (0x05 or 0x06),
+     - the signature version (0x05),
      - the signature type,
      - the public-key algorithm,
      - the hash algorithm,
@@ -2224,29 +2249,27 @@ depends on the version of the signature.
 
 <!-- FIXME: The next is not in the crypto-refresh version for V6 Not
             sure what do do here - let it run into a conflict?  or use
-            some other indicator.  The actual reason why we want to
-            implement support vor V6 is due to the support for huge
-            subppackets.  -->
+            some other indicator.  The actual reason why we may want to
+            implement support vor V6 is due to its support for huge
+            subpackets.  -->
      - Only for document signatures (type 0x00 or 0x01) the following
        three data items are hashed here:
          - the one-octet content format,
          - the file name as a string (one octet length, followed by
            the file name),
          - a four-octet number that indicates a date,
-     - the two octets 0x05 or 0x06 followed by0xFF,
+     - the two octets 0x05 and 0xFF,
 
 <!-- FIXME: The crypto refresh uses 4 octets % 2^32 for V6.
-            We could do the same.  ->
+            We could do the same if we want to V6  -->
      - a eight-octet big-endian number that is the length
        of the hashed data from the Signature packet
-       stopping right before the 0x05, 0xff octets.
+       stopping right before the 0x05, 0XFF octets.
 
-       The three data items hashed for document signatures need to
-       mirror the values of the Literal Data packet.  Note that for a
-       detached signatures this means to hash 6 0x00 octets and for a
-       cleartext signature this means to hash a 't' followed by 5 0x00
-       octets.
-
+   The three data items hashed for document signatures need to mirror
+   the values of the Literal Data packet.  Note that for a detached
+   signatures this means to hash 6 0x00 octets and for a cleartext
+   signature this means to hash a 't' followed by 5 0x00 octets.
 
 After all this has been hashed in a single hash context, the resulting
 hash field is used in the signature algorithm and placed at the end of
@@ -2326,7 +2349,7 @@ A version 5 Symmetric-Key Encrypted Session Key packet consists of:
 
   * A one-octet cipher algorithm.
 
-  * A one-octet encryption mode number which SHOULD be 2 to indicate
+  * A one-octet encryption mode number which MUST be 2 to indicate
     OCB.
 
   * A string-to-key (S2K) specifier, length as defined above.
@@ -2407,8 +2430,8 @@ major versions.  Consequently, this section is complex.
 
 #### Public-Key Packet (Tag 6)
 
-A Public-Key packet starts a series of packets that forms an OpenPGP
-key (sometimes called an OpenPGP certificate).
+A Public-Key packet starts a series of packets that forms an LibrePGP
+key (sometimes called an LibrePGP certificate).
 
 #### Public-Subkey Packet (Tag 14)
 
@@ -2439,9 +2462,9 @@ packet and has exactly the same format.
 
 There are three versions of key-material packets.  Version 3 packets were
 first generated by PGP version 2.6.  Version 4 keys first appeared in PGP 5
-and are the preferred key version for OpenPGP.
+and are the preferred key version for LibrePGP.
 
-OpenPGP implementations MUST create keys with version 4 format. V3
+LibrePGP implementations MUST create keys with version 4 format. V3
 keys are deprecated; an implementation MUST NOT generate a V3 key, but
 MAY accept it.
 
@@ -2756,6 +2779,34 @@ The secret key is this single multiprecision integer:
     scalar of the public EC point.
 
 
+### Algorithm-Specific Part for ML-KEM Keys
+
+{Note: This part is not finalized and subject to change}
+
+The public key is this series of values:
+
+  * A fixed-length octet string representing an ECC public key in the
+    format associated with the curve.  For ML-KEM-768+X25519 these are
+    32 octets, for ML-KEM-1024+X448 these are 56 octets.
+
+  * A fixed-length octet string containing the ML-KEM public key,
+    whose length depends on the algorithm.  For ML-KEM-768+X25519
+    these are 1184 octets, for ML-KEM-1024+X448 these are 1568 octets.
+
+The secret key is this series of values:
+
+  * A fixed-length octet string of the encoded secret scalar, whose
+    encoding and length depend on the algorithm.  For
+    ML-KEM-768+X25519 these are 32 octets, for ML-KEM-1024+X448 these
+    are 56 octets.
+
+  * A fixed-length octet string containing the ML-KEM secret key,
+    whose length depends on the algorithm.  For ML-KEM-768+X25519
+    these are 2400 octets, for ML-KEM-1024+X448 these are 3168 octets.
+
+Observe that the format of the ECC keys differ from the format used
+with ECDH.  This has been chosen to avoid prefix octets.
+
 ## Compressed Data Packet (Tag 8)
 
 The Compressed Data packet contains compressed data.  Typically, this
@@ -2790,7 +2841,7 @@ The Symmetrically Encrypted Data packet contains data encrypted with a
 symmetric-key algorithm.  When it has been decrypted, it contains other
 packets (usually a literal data packet or compressed data packet, but
 in theory other Symmetrically Encrypted Data packets or sequences of
-packets that form whole OpenPGP messages).
+packets that form whole LibrePGP messages).
 
 This packet is obsolete.  An implementation MUST NOT create this
 packet.  An implementation MAY process such a packet but it MUST
@@ -2801,7 +2852,7 @@ this case and stop processing.
 The body of this packet consists of:
 
   * Encrypted data, the output of the selected symmetric-key cipher
-    operating in OpenPGP's variant of Cipher Feedback (CFB) mode.
+    operating in LibrePGP's variant of Cipher Feedback (CFB) mode.
 
 The symmetric cipher used may be specified in a Public-Key or
 Symmetric-Key Encrypted Session Key packet that precedes the
@@ -2813,7 +2864,7 @@ hash of the passphrase, though this use is deprecated.
 
 The data is encrypted in CFB mode, with a CFB shift size equal to the
 cipher's block size.  The Initial Vector (IV) is specified as all
-zeros.  Instead of using an IV, OpenPGP prefixes a string of length
+zeros.  Instead of using an IV, LibrePGP prefixes a string of length
 equal to the block size of the cipher plus two to the data before it
 is encrypted.  The first block-size octets (for example, 8 octets for
 a 64-bit block length) are random, and the following two octets are
@@ -2929,7 +2980,7 @@ may be certified by the key owner ("self-signed") or any other key
 owner who cares to certify it.  Except as noted, a User Attribute
 packet may be used anywhere that a User ID packet may be used.
 
-While User Attribute packets are not a required part of the OpenPGP
+While User Attribute packets are not a required part of the LibrePGP
 standard, implementations SHOULD provide at least enough compatibility
 to properly handle a certification signature on the User Attribute
 packet. A simple way to do this is by treating the User Attribute
@@ -2996,7 +3047,7 @@ A User ID Attribute subpacket, just like a User ID packet, consists of
 UTF-8 text that is intended to represent the name and email address of
 the key holder.  By convention, it includes an RFC 2822 [](#RFC2822)
 mail name-addr, but there are no restrictions on its content.  For
-devices using OpenPGP for device certificates, it may just be the
+devices using LibrePGP for device certificates, it may just be the
 device identifier.  The packet length in the header specifies the
 length of the User ID.
 
@@ -3008,7 +3059,7 @@ Attribute subpacket that includes a User ID Attribute subpacket.
 
 The Symmetrically Encrypted Integrity Protected Data packet is a
 variant of the Symmetrically Encrypted Data packet.  It is a new
-feature created for OpenPGP that addresses the problem of detecting a
+feature created for LibrePGP that addresses the problem of detecting a
 modification to encrypted data.  It is used in combination with a
 Modification Detection Code packet.
 
@@ -3054,7 +3105,7 @@ algorithm octet is prefixed to the session key before it is encrypted.
 
 The data is encrypted in CFB mode, with a CFB shift size equal to the
 cipher's block size.  The Initial Vector (IV) is specified as all
-zeros.  Instead of using an IV, OpenPGP prefixes an octet string to
+zeros.  Instead of using an IV, LibrePGP prefixes an octet string to
 the data before it is encrypted.  The length of the octet string equals
 the block size of the cipher in octets, plus two.  The first octets in
 the group, of length equal to the block size of the cipher, are
@@ -3064,7 +3115,7 @@ octets, the prefix data will contain 16 random octets, then two more
 octets, which are copies of the 15th and 16th octets,
 respectively.  Unlike the Symmetrically Encrypted Data Packet, no
 special CFB resynchronization is done after encrypting this prefix
-data.  See "OpenPGP CFB Mode" below for more details.
+data.  See "LibrePGP CFB Mode" below for more details.
 
 The repetition of 16 bits in the random data prefixed to the message
 allows the receiver to immediately check whether the session key is
@@ -3118,7 +3169,7 @@ plaintext.  Any failure SHOULD be reported to the user.
       consider properties such as deniability to be as valuable as
       integrity.
 
-      OpenPGP addresses this desire to have more security than raw
+      LibrePGP addresses this desire to have more security than raw
       encryption and yet preserve deniability with the MDC system.  An
       MDC is intentionally not a MAC.  Its name was not selected by
       accident.  It is analogous to a checksum.
@@ -3140,7 +3191,7 @@ plaintext.  Any failure SHOULD be reported to the user.
       identification and with a threat model that includes forgers, he
       has a problem that transcends mere cryptography.)
 
-      Note also that unlike nearly every other OpenPGP subsystem,
+      Note also that unlike nearly every other LibrePGP subsystem,
       there are no parameters in the MDC system.  It hard-defines
       SHA-1 as its hash function.  This is not an accident.  It is an
       intentional choice to avoid downgrade and cross-grade attacks
@@ -3303,18 +3354,18 @@ fulfilling this requirement.
 
 #  Radix-64 Conversions
 
-As stated in the introduction, OpenPGP's underlying native
+As stated in the introduction, LibrePGP's underlying native
 representation for objects is a stream of arbitrary octets, and some
 systems desire these objects to be immune to damage caused by
 character set translation, data conversions, etc.
 
 In principle, any printable encoding scheme that met the requirements
 of the unsafe channel would suffice, since it would not change the
-underlying binary bit streams of the native OpenPGP data
-structures.  The OpenPGP standard specifies one such printable encoding
+underlying binary bit streams of the native LibrePGP data
+structures.  The LibrePGP standard specifies one such printable encoding
 scheme to ensure interoperability.
 
-OpenPGP's Radix-64 encoding is composed of two parts: a base64
+LibrePGP's Radix-64 encoding is composed of two parts: a base64
 encoding of the binary data and a checksum.  The base64 encoding is
 identical to the MIME base64 content-transfer-encoding [](#RFC2045).
 
@@ -3359,10 +3410,10 @@ initialization.
 
 ## Forming ASCII Armor
 
-When OpenPGP encodes data into ASCII Armor, it puts specific headers
-around the Radix-64 encoded data, so OpenPGP can reconstruct the data
-later.  An OpenPGP implementation MAY use ASCII armor to protect raw
-binary data.  OpenPGP informs the user what kind of data is encoded in
+When LibrePGP encodes data into ASCII Armor, it puts specific headers
+around the Radix-64 encoded data, so LibrePGP can reconstruct the data
+later.  An LibrePGP implementation MAY use ASCII armor to protect raw
+binary data.  LibrePGP informs the user what kind of data is encoded in
 the ASCII armor through the use of the headers.
 
 Concatenating the following data creates ASCII Armor:
@@ -3404,7 +3455,7 @@ BEGIN PGP MESSAGE, PART X
     to be used.
 
 BEGIN PGP SIGNATURE
-:   Used for detached signatures, OpenPGP/MIME signatures, and
+:   Used for detached signatures, LibrePGP/MIME signatures, and
     cleartext signatures.  Note that PGP 2 uses BEGIN PGP MESSAGE for
     detached signatures.
 
@@ -3419,16 +3470,16 @@ purposes of determining the content they delimit.  This is particularly
 important when computing a cleartext signature (see below).
 
 The Armor Headers are pairs of strings that can give the user or the
-receiving OpenPGP implementation some information about how to decode
+receiving LibrePGP implementation some information about how to decode
 or use the message.  The Armor Headers are a part of the armor, not a
 part of the message, and hence are not protected by any signatures
 applied to the message.
 
 The format of an Armor Header is that of a key-value pair. A colon
 (`:` 0x38) and a single space (0x20) separate the key and
-value.  OpenPGP should consider improperly formatted Armor Headers to
+value.  LibrePGP should consider improperly formatted Armor Headers to
 be corruption of the ASCII Armor.  Unknown keys should be reported to
-the user, but OpenPGP should continue to process the message.
+the user, but LibrePGP should continue to process the message.
 
 Note that some transport methods are sensitive to line length.  While
 there is a limit of 76 characters for the Radix-64 data
@@ -3440,10 +3491,10 @@ one line is overly long.
 
 Currently defined Armor Header Keys are as follows:
 
-  - "Version", which states the OpenPGP implementation and version
+  - "Version", which states the LibrePGP implementation and version
     used to encode the message.
 
-  - "Comment", a user-defined comment.  OpenPGP defines all text to
+  - "Comment", a user-defined comment.  LibrePGP defines all text to
     be in UTF-8.  A comment may be any UTF-8 string.  However, the
     whole point of armoring is to provide seven-bit-clean data.
     Consequently, if a comment has characters that are outside the
@@ -3469,7 +3520,7 @@ Currently defined Armor Header Keys are as follows:
     information.
 
   - "Charset", a description of the character set that the
-    plaintext is in.  Please note that OpenPGP defines text to be
+    plaintext is in.  Please note that LibrePGP defines text to be
     in UTF-8.  An implementation will get best results by
     translating into and out of UTF-8.  However, there are many
     instances where this is easier said than done.  Also, there are
@@ -3701,7 +3752,7 @@ include a literal `-`, make it the first or last character.
 
 #  Constants
 
-This section describes the constants used in OpenPGP.
+This section describes the constants used in LibrePGP.
 
 Note that these tables are not exhaustive lists; an implementation MAY
 implement an algorithm not on these lists, so long as the algorithm
@@ -3864,7 +3915,7 @@ this specification.
 
 # IANA Considerations
 
-OpenPGP is highly parameterized, and consequently there are a number
+LibrePGP is highly parameterized, and consequently there are a number
 of considerations for allocating parameters for extensions.  This
 section describes how IANA should look at extensions to the protocol
 as described in this document.
@@ -3875,7 +3926,7 @@ as described in this document.
 
 ## New String-to-Key Specifier Types
 
-OpenPGP S2K specifiers contain a mechanism for new algorithms to turn
+LibrePGP S2K specifiers contain a mechanism for new algorithms to turn
 a string into a key.  This specification creates a registry of S2K
 specifier types.  The registry includes the S2K type, the name of the
 S2K, and a reference to the defining specification.  The initial
@@ -3886,7 +3937,7 @@ in [](#RFC8126).
 
 ## New Packets
 
-Major new features of OpenPGP are defined through new packet types.
+Major new features of LibrePGP are defined through new packet types.
 This specification creates a registry of packet types.  The registry
 includes the packet type, the name of the packet, and a reference to
 the defining specification.  The initial values for this registry can
@@ -3925,7 +3976,7 @@ as described in [](#RFC8126).
 
 ### New Signature Subpackets
 
-OpenPGP signatures contain a mechanism for signed (or unsigned) data
+LibrePGP signatures contain a mechanism for signed (or unsigned) data
 to be added to them for a variety of purposes in the Signature
 subpackets as discussed in [](#signature-subpacket-specification).
 This specification creates a registry of Signature subpacket types.
@@ -3938,7 +3989,7 @@ described in [](#RFC8126).
 
 #### Signature Notation Data Subpackets
 
-OpenPGP signatures further contain a mechanism for extensions in
+LibrePGP signatures further contain a mechanism for extensions in
 signatures.  These are the Notation Data subpackets, which contain a
 key/value pair.  Notations contain a user space that is completely
 unmanaged and an IETF space.
@@ -3979,7 +4030,7 @@ SPECIFICATION REQUIRED method, as described in [](#RFC8126).
 
 #### Key Server Preference Extensions
 
-OpenPGP signatures contain a mechanism for preferences to be specified
+LibrePGP signatures contain a mechanism for preferences to be specified
 about key servers.  This specification creates a registry of key server
 preferences.  The registry includes the key server preference, the name
 of the preference, and a reference to the defining specification.  The
@@ -3989,7 +4040,7 @@ SPECIFICATION REQUIRED method, as described in [](#RFC8126).
 
 #### Key Flags Extensions
 
-OpenPGP signatures contain a mechanism for flags to be specified about
+LibrePGP signatures contain a mechanism for flags to be specified about
 key usage.  This specification creates a registry of key usage
 flags.  The registry includes the key flags value, the name of the
 flag, and a reference to the defining specification.  The initial
@@ -3999,7 +4050,7 @@ method, as described in [](#RFC8126).
 
 #### Reason for Revocation Extensions
 
-OpenPGP signatures contain a mechanism for flags to be specified about
+LibrePGP signatures contain a mechanism for flags to be specified about
 why a key was revoked.  This specification creates a registry of
 "Reason for Revocation" flags.  The registry includes the "Reason for
 Revocation" flags value, the name of the flag, and a reference to the
@@ -4009,7 +4060,7 @@ through the SPECIFICATION REQUIRED method, as described in [](#RFC8126).
 
 #### Implementation Features
 
-OpenPGP signatures contain a mechanism for flags to be specified
+LibrePGP signatures contain a mechanism for flags to be specified
 stating which optional features an implementation supports.  This
 specification creates a registry of feature-implementation flags.  The
 registry includes the feature-implementation flags value, the name of
@@ -4023,7 +4074,7 @@ about when feature flags are needed.
 
 ### New Packet Versions
 
-The core OpenPGP packets all have version numbers, and can be revised
+The core LibrePGP packets all have version numbers, and can be revised
 by introducing a new version of an existing packet.  This
 specification creates a registry of packet types.  The registry
 includes the packet type, the number of the version, and a reference
@@ -4033,12 +4084,12 @@ be done through the RFC REQUIRED method, as described in [](#RFC8126).
 
 ## New Algorithms
 
-[](#constants) lists the core algorithms that OpenPGP uses.  Adding in a new
+[](#constants) lists the core algorithms that LibrePGP uses.  Adding in a new
 algorithm is usually simple.  For example, adding in a new symmetric
 cipher usually would not need anything more than allocating a constant
 for that cipher.  If that cipher had other than a 64-bit or 128-bit
 block size, there might need to be additional documentation describing
-how OpenPGP-CFB mode would be adjusted.  Similarly, when DSA was
+how LibrePGP-CFB mode would be adjusted.  Similarly, when DSA was
 expanded from a maximum of 1024-bit public keys to 3072-bit public
 keys, the revision of FIPS 186 contained enough information itself to
 allow implementation.  Changes to this document were made mainly for
@@ -4046,7 +4097,7 @@ emphasis.
 
 ### Public-Key Algorithms
 
-OpenPGP specifies a number of public-key algorithms.  This
+LibrePGP specifies a number of public-key algorithms.  This
 specification creates a registry of public-key algorithm
 identifiers.  The registry includes the algorithm name, its key sizes
 and parameters, and a reference to the defining specification.  The
@@ -4071,7 +4122,7 @@ ID | Algorithm | Reference
 
 ### Symmetric-Key Algorithms
 
-OpenPGP specifies a number of symmetric-key algorithms.  This
+LibrePGP specifies a number of symmetric-key algorithms.  This
 specification creates a registry of symmetric-key algorithm
 identifiers.  The registry includes the algorithm name, its key sizes
 and block size, and a reference to the defining specification.  The
@@ -4081,7 +4132,7 @@ SPECIFICATION REQUIRED method, as described in [](#RFC8126).
 
 ### Hash Algorithms
 
-OpenPGP specifies a number of hash algorithms.  This specification
+LibrePGP specifies a number of hash algorithms.  This specification
 creates a registry of hash algorithm identifiers.  The registry
 includes the algorithm name, a text representation of that name, its
 block size, an OID hash prefix, and a reference to the defining
@@ -4107,7 +4158,7 @@ ID | Algorithm | Reference
 
 ### Compression Algorithms
 
-OpenPGP specifies a number of compression algorithms.  This
+LibrePGP specifies a number of compression algorithms.  This
 specification creates a registry of compression algorithm
 identifiers.  The registry includes the algorithm name and a reference
 to the defining specification.  The initial values for this registry
@@ -4117,14 +4168,14 @@ SPECIFICATION REQUIRED method, as described in [](#RFC8126).
 
 # Packet Composition
 
-OpenPGP packets are assembled into sequences in order to create
+LibrePGP packets are assembled into sequences in order to create
 messages and to transfer keys.  Not all possible packet sequences are
 meaningful and correct.  This section describes the rules for how
 packets should be placed into sequences.
 
 ## Transferable Public Keys
 
-OpenPGP users may transfer public keys.  The essential elements of a
+LibrePGP users may transfer public keys.  The essential elements of a
 transferable public key are as follows:
 
   - One Public-Key packet
@@ -4198,7 +4249,7 @@ transferring multiple public keys in one operation.
 
 ## Transferable Secret Keys
 
-OpenPGP users may transfer secret keys.  The format of a transferable
+LibrePGP users may transfer secret keys.  The format of a transferable
 secret key is the same as a transferable public key except that
 secret-key and secret-subkey packets are used instead of the public
 key and public-subkey packets.  Implementations SHOULD include self-
@@ -4208,13 +4259,13 @@ key.  Implementations MAY choose to omit the self-signatures,
 especially if a transferable public key accompanies the transferable
 secret key.
 
-## OpenPGP Messages
+## LibrePGP Messages
 
-An OpenPGP message is a packet or sequence of packets that corresponds
+An LibrePGP message is a packet or sequence of packets that corresponds
 to the following grammatical rules (comma represents sequential
 composition, and vertical bar separates alternatives):
 
-    OpenPGP Message :- Encrypted Message | Signed Message |
+    LibrePGP Message :- Encrypted Message | Signed Message |
                        Compressed Message | Literal Message.
 
     Compressed Message :- Compressed Data Packet.
@@ -4233,19 +4284,19 @@ composition, and vertical bar separates alternatives):
     Encrypted Message :- Encrypted Data | ESK Sequence, Encrypted Data.
 
     One-Pass Signed Message :- One-Pass Signature Packet,
-                OpenPGP Message, Corresponding Signature Packet.
+                LibrePGP Message, Corresponding Signature Packet.
 
-    Signed Message :- Signature Packet, OpenPGP Message |
+    Signed Message :- Signature Packet, LibrePGP Message |
                       One-Pass Signed Message.
 
 In addition, decrypting a Symmetrically Encrypted Data packet or a
 Symmetrically Encrypted Integrity Protected Data packet as well as
-decompressing a Compressed Data packet must yield a valid OpenPGP
+decompressing a Compressed Data packet must yield a valid LibrePGP
 Message.
 
 ## Detached Signatures
 
-Some OpenPGP applications use so-called "detached signatures".  For
+Some LibrePGP applications use so-called "detached signatures".  For
 example, a program bundle may contain a file, and with it a second
 file that is a detached signature of the first file.  These detached
 signatures are simply a Signature packet stored separately from the
@@ -4255,7 +4306,7 @@ data for which they are a signature.
 
 ##  Key Structures
 
-The format of an OpenPGP V3 key is as follows.  Entries in square
+The format of an LibrePGP V3 key is as follows.  Entries in square
 brackets are optional and ellipses indicate repetition.
 
     RSA Public Key
@@ -4268,7 +4319,7 @@ The RSA public key can have many User IDs and each User ID can have
 many signatures. V3 keys are deprecated.  Implementations MUST NOT
 generate new V3 keys, but MAY continue to use existing ones.
 
-The format of an OpenPGP V4 key that uses multiple public keys is
+The format of an LibrePGP V4 key that uses multiple public keys is
 similar except that the other keys are added to the end as "subkeys"
 of the primary key.
 
@@ -4651,17 +4702,35 @@ brainpoolP512r1 | SHA2-512       | AES-256
 Curve25519      | SHA2-256       | AES-128
 X448            | SHA2-512       | AES-256
 
+# Post-Quantum Cryptography
+
+{Note: This part is not finalized and subject to change}
+
+This section descripes algorithms and parameters used with
+post-quantum cryptography.  Specifically, it defines composite
+public-key encryption based on ML-KEM.
+
+## Kyber Algorithm
+
+ML-KEM [](#FIPS203), which is also known as CRYSTALS-Kyber, is based
+on the hardness of solving the learning-with-errors problem in module
+lattices (MLWE).  The scheme is believed to provide security against
+cryptanalytic attacks by classical as well as quantum computers.  This
+specification defines ML-KEM only in composite combination with
+ECC-based encryption schemes in order to provide a pre-quantum
+security fallback.
+
 
 # Notes on Algorithms
 
-##  PKCS\#1 Encoding in OpenPGP
+##  PKCS\#1 Encoding in LibrePGP
 
 This standard makes use of the PKCS\#1 functions EME-PKCS1-v1\_5 and
 EMSA-PKCS1-v1\_5.  However, the calling conventions of these functions
 has changed in the past.  To avoid potential confusion and
 interoperability problems, we are including local copies in this
 document, adapted from those in PKCS\#1 v2.1 [](#RFC3447).  RFC 3447
-should be treated as the ultimate authority on PKCS\#1 for OpenPGP.
+should be treated as the ultimate authority on PKCS\#1 for LibrePGP.
 Nonetheless, we believe that there is value in having a self-
 contained document that avoids problems in the future with needed
 changes in the conventions.
@@ -4823,7 +4892,7 @@ preferences.
 ### Compression Preferences
 
 Compression has been an integral part of PGP since its first days.
-OpenPGP and all previous versions of PGP have offered compression.  In
+LibrePGP and all previous versions of PGP have offered compression.  In
 this specification, the default is for messages to be compressed,
 although an implementation is not required to do so.  Consequently, the
 compression preference gives a way for a keyholder to request that
@@ -4915,7 +4984,7 @@ An implementation SHOULD NOT implement Elgamal keys of size less than
 ## EdDSA
 
 Although the EdDSA algorithm allows arbitrary data as input, its use
-with OpenPGP requires that a digest of the message is used as input
+with LibrePGP requires that a digest of the message is used as input
 (pre-hashed).  See section [](#computing-signatures), "Computing
 Signatures" for details.  Truncation of the resulting digest is never
 applied; the resulting digest value is used verbatim as input to the
@@ -4925,7 +4994,7 @@ EdDSA algorithm.
 ## Reserved Algorithm Numbers
 
 A number of algorithm IDs have been reserved for algorithms that would
-be useful to use in an OpenPGP implementation, yet there are issues
+be useful to use in an LibrePGP implementation, yet there are issues
 that prevent an implementer from actually implementing the
 algorithm.  These are marked in [](#public-key-algorithms),
 "Public-Key Algorithms", as "reserved for".
@@ -4935,14 +5004,14 @@ necessary parameters, parameter order, or semantics defined.  The same
 is currently true for reserved public-key algorithms AEDH (23) and
 AEDSA (24).
 
-Previous versions of OpenPGP permitted Elgamal [](#ELGAMAL) signatures
+Previous versions of LibrePGP permitted Elgamal [](#ELGAMAL) signatures
 with a public-key identifier of 20.  These are no longer permitted.  An
 implementation MUST NOT generate such keys.  An implementation MUST NOT
 generate Elgamal signatures.  See [](#BLEICHENBACHER).
 
-## OpenPGP CFB Mode
+## LibrePGP CFB Mode
 
-OpenPGP does symmetric encryption using a variant of Cipher Feedback
+LibrePGP does symmetric encryption using a variant of Cipher Feedback
 mode (CFB mode).  This section describes the procedure it uses in
 detail.  This mode is what is used for Symmetrically Encrypted Data
 Packets; the mechanism used for encrypting secret-key material is
@@ -4954,7 +5023,7 @@ Twofish have a block size of 16 octets.  Also note that the description
 below assumes that the IV and CFB arrays start with an index of 1
 (unlike the C language, which assumes arrays start with a zero index).
 
-OpenPGP CFB mode uses an initialization vector (IV) of all zeros, and
+LibrePGP CFB mode uses an initialization vector (IV) of all zeros, and
 prefixes the plaintext with BS+2 octets of random data, such that
 octets BS+1 and BS+2 match octets BS-1 and BS.  It does a CFB
 resynchronization after encrypting those BS+2 octets.
@@ -5020,7 +5089,7 @@ original, limited system.
 
 ## Meta-Considerations for Expansion
 
-If OpenPGP is extended in a way that is not backwards-compatible,
+If LibrePGP is extended in a way that is not backwards-compatible,
 meaning that old implementations will not gracefully handle their
 absence of a new feature, the extension proposal can be declared in
 the key holder's self-signature as part of the Features signature
@@ -5053,7 +5122,7 @@ SHOULD be rejected.
 
   - The MD5 hash algorithm has been found to have weaknesses, with
     collisions found in a number of cases.  MD5 is deprecated for use in
-    OpenPGP.  Implementations MUST NOT generate new signatures using MD5
+    LibrePGP.  Implementations MUST NOT generate new signatures using MD5
     as a hash function.  They MAY continue to consider old signatures
     that used MD5 as valid.
 
@@ -5082,7 +5151,7 @@ SHOULD be rejected.
     requests it.
 
   - In late summer 2002, Jallad, Katz, and Schneier published an
-    interesting attack on the OpenPGP protocol and some of its
+    interesting attack on the LibrePGP protocol and some of its
     implementations [JKS02].  In this attack, the attacker modifies a
     message and sends it to a user who then returns the erroneously
     decrypted message to the attacker.  The attacker is thus using the
@@ -5140,7 +5209,7 @@ SHOULD be rejected.
     control in some countries.
 
   - In winter 2005, Serge Mister and Robert Zuccherato from Entrust
-    released a paper describing a way that the "quick check" in OpenPGP
+    released a paper describing a way that the "quick check" in LibrePGP
     CFB mode can be used with a random oracle to decrypt two octets of
     every cipher block [MZ05].  They recommend as prevention not using
     the quick check at all.
@@ -5214,7 +5283,7 @@ SHOULD be rejected.
     [](#iterated-and-salted-s2k), "Iterated and Salted S2K".
 
     Side channel attacks are a concern when a compliant application's
-    use of the OpenPGP format can be modeled by a decryption or signing
+    use of the LibrePGP format can be modeled by a decryption or signing
     oracle model, for example, when an application is a network service
     performing decryption to unauthenticated remote users.  ECC scalar
     multiplication operations used in ECDSA and ECDH are vulnerable to
@@ -5229,7 +5298,7 @@ SHOULD be rejected.
     used with a digest algorithms weaker than SHA2-256.
 
 
-OpenPGP was designed with security in mind, with many smart,
+LibrePGP was designed with security in mind, with many smart,
 intelligent people spending a lot of time thinking about the
 ramifications of their decisions.  Removing the requirement for
 self-certifying User ID (and User Attribute) packets on a key means
@@ -5248,7 +5317,7 @@ IDs, because the verification is all done based on who has signed
 those IDs.
 
 When a key can self-sign, it is still suggested to self-certify IDs,
-even if it no longer required by this modification to OpenPGP.  This
+even if it no longer required by this modification to LibrePGP.  This
 at least signals to recipients of keys that yes, the owner of this key
 asserts that this identity belongs to herself.  Note, however, that
 mallet could still assert that he is 'alice' and could even
@@ -5282,7 +5351,7 @@ signature.
 
 # Compatibility Profiles
 
-## OpenPGP ECC Profile
+## LibrePGP ECC Profile
 
 A compliant application MUST implement NIST curve P-256, SHOULD
 implement NIST curve P-521, SHOULD implement brainpoolP256r1 and
@@ -5311,7 +5380,7 @@ encryption be no less secure than the KEK algorithm.
 
 This section is a collection of comments to help an implementer,
 particularly with an eye to backward compatibility.  Previous
-implementations of PGP are not OpenPGP compliant.  Often the
+implementations of PGP are not LibrePGP compliant.  Often the
 differences are small, but small differences are frequently more
 vexing than large differences.  Thus, this is a non-comprehensive list
 of potential problems and gotchas for a developer who is trying to be
@@ -5349,22 +5418,22 @@ backward-compatible.
     the wild that do not have these back signatures.  Implementing
     software may handle these keys as it sees fit.
 
-  * OpenPGP does not put limits on the size of public keys.
+  * LibrePGP does not put limits on the size of public keys.
     However, larger keys are not necessarily better keys.  Larger
     keys take more computation time to use, and this can quickly
-    become impractical.  Different OpenPGP implementations may also
+    become impractical.  Different LibrePGP implementations may also
     use different upper bounds for public key sizes, and so care
     should be taken when choosing sizes to maintain
     interoperability.  As of 2007 most implementations have an
     upper bound of 4096 bits for RSA, DSA, and Elgamal
 
-  * ASCII armor is an optional feature of OpenPGP.  The OpenPGP
+  * ASCII armor is an optional feature of LibrePGP.  The LibrePGP
     working group strives for a minimal set of
     mandatory-to-implement features, and since there could be
     useful implementations that only use binary object formats,
     this is not a "MUST" feature for an implementation.  For
-    example, an implementation that is using OpenPGP as a mechanism
-    for file signatures may find ASCII armor unnecessary.  OpenPGP
+    example, an implementation that is using LibrePGP as a mechanism
+    for file signatures may find ASCII armor unnecessary.  LibrePGP
     permits an implementation to declare what features it does and
     does not support, but ASCII armor is not one of these.  Since
     most implementations allow binary and armored objects to be
@@ -5391,7 +5460,7 @@ The secret key used for this example is:
 
 Note that this is the raw secret key used as input to the EdDSA
 signing operation.  The key was created on 2014-08-19 14:28:27 and
-thus the fingerprint of the OpenPGP key is:
+thus the fingerprint of the LibrePGP key is:
 
        C959 BDBA FA32 A2F8 9A15  3B67 8CFD E121 9796 5A9A
 
@@ -5412,7 +5481,7 @@ The entire public key packet is thus:
 ## Sample EdDSA signature
 
 The signature is created using the sample key over the input data
-"OpenPGP" on 2015-09-16 12:24:53 and thus the input to the hash
+"LibrePGP" on 2015-09-16 12:24:53 and thus the input to the hash
 function is:
 
   m: 4f70656e504750040016080006050255f95f9504ff0000000c
@@ -5629,7 +5698,16 @@ other values might also be interesting for other ECC specifications:
   - Added Trust Alias subpacket.
   - Added alternative OIDs for Ed25519 and Curve25519.
 
-# The principal authors of RFC-4880
+  Changes since draft-koch-openpgp-2015-rfc4880bis-02:
+
+  - Add ML-KEM parts from draft-wussler-openpgp-pqc-03.txt
+  - Changed name of the specification to LibrePGP.
+
+# Acknowledgments
+
+There have been a number of authors involved with the development of
+the OpenPGP specification as described by RFC-4880, RFC-5581, and
+RFC-6637:
 
       Jon Callas
       EMail: jon@callas.org
@@ -5644,3 +5722,29 @@ other values might also be interesting for other ECC specifications:
 
       Rodney Thayer
       EMail: rodney@canola-jones.com
+
+      Andrey Jivsov
+      EMail: Andrey_Jivsov@symantec.com
+
+The work to update RFC-4880 was mainly conducted by the authors of
+this document and the following authors:
+
+      brian m. carlson
+      Email: sandals@crustytoothpaste.net
+
+      Derek Atkins
+      Email: derek@ihtfp.com
+
+      Daniel Kahn Gillmor
+      Email: dkg@fifthhorseman.net
+
+The PQC algorithm extension was conducted by the following authors:
+
+      Stavros Kousidis
+      Email: stavros.kousidis@bsi.bund.de
+
+      Falko Strenzke
+      Email: falko.strenzke@mtg.de
+
+      Aron Wussler
+      Email: aron@wussler.it
