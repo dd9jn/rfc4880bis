@@ -941,7 +941,7 @@ of this document for notes on LibrePGP's use of PKCS\#1.
 
 Note that when an implementation forms several PKESKs with one session
 key, forming a message that can be decrypted by several keys, the
-implementation MUST make a new PKCS\#1 encoding or for each key.
+implementation MUST make a new PKCS\#1 encoding for each key.
 
 An implementation MAY accept or use a Key ID of zero as a "wild card"
 or "speculative" Key ID.  In this case, the receiving implementation
@@ -2405,7 +2405,7 @@ The body of this packet consists of:
 * Only for V3 signatures: an eight-octet number holding the Key ID
   of the signing key.
 
-* Only for V6 sigmatures: a one octet key version number and N octets
+* Only for V6 signatures: a one octet key version number and N octets
   of the fingerprint of the signing key.  Note that the length N of
   the fingerprint for a version 6 key is 32.
 
