@@ -477,6 +477,19 @@ Unused bits of an MPI MUST be zero.
 Also note that when an MPI is encrypted, the length refers to the
 plaintext MPI.  It may be ill-formed in its ciphertext.
 
+## Simple Octet Strings
+
+Simple Octet Strings (also called SOSs) are used to convey arbitrary octet
+strings with a length of up to 8191 octets.
+
+An SOS consists of two pieces: a two-octet scalar that is the length
+of the octet string measured in bits followed by an opaque string of
+octets of this length.  An SOS is compatible to the format of an MPI.
+
+The entire size of an SOS is ((SOS.length + 7) / 8) + 2 octets.  The
+length of a well-formed SOS is always a multiple of 8 but
+implementations SHOULD gracefully handle non-well-formed SOSs.
+
 ## Key IDs
 
 A Key ID is an eight-octet scalar that identifies a
@@ -904,7 +917,7 @@ The body of this packet consists of:
 
     Algorithm-Specific Fields for ECDH encryption:
 
-      - MPI of an EC point representing an ephemeral public key.
+      - SOS of an EC point representing an ephemeral public key.
 
       - a one-octet size, followed by a symmetric key encoded using the
         method described in [](#ecdh-algorithm).
@@ -2702,20 +2715,16 @@ The secret key is this single multiprecision integer:
 
 The public key is this series of values:
 
-  * a variable-length field containing a curve OID, formatted
-    as follows:
+  * a variable-length field containing a curve OID, formatted as: a
+    one-octet size of the following field with values 0 and 0xFF
+    reserved for future extensions and the octets representing a
+    curve OID, defined in [](#ecc-curve-oid);
 
-      - a one-octet size of the following field; values 0 and
-        0xFF are reserved for future extensions,
-
-      - the octets representing a curve OID, defined in
-        [](#ecc-curve-oid);
-
-  * a MPI of an EC point representing a public key.
+  * a SOS of an EC point representing a public key.
 
 The secret key is this single multiprecision integer:
 
-  * MPI of an integer representing the secret key, which is a
+  * a SOS of the secret key, which is a
     scalar of the public EC point.
 
 
@@ -2723,21 +2732,17 @@ The secret key is this single multiprecision integer:
 
 The public key is this series of values:
 
-  * a variable-length field containing a curve OID, formatted
-    as follows:
+  * a variable-length field containing a curve OID, formatted as: a
+    one-octet size of the following field with values 0 and 0xFF
+    reserved for future extensions and the octets representing a
+    curve OID, defined in [](#ecc-curve-oid);
 
-      - a one-octet size of the following field; values 0 and
-        0xFF are reserved for future extensions,
-
-      - the octets representing a curve OID, defined in
-        [](#ecc-curve-oid);
-
-  * a MPI of an EC point representing a public key Q as described
+  * a SOS with an EC point representing a public key Q as described
     under EdDSA Point Format below.
 
 The secret key is this single multiprecision integer:
 
-  * MPI of an integer representing the secret key, which is a
+  * a SOS representing the secret key, which is a
     scalar of the public EC point.
 
 
@@ -2745,16 +2750,12 @@ The secret key is this single multiprecision integer:
 
 The public key is this series of values:
 
-  * a variable-length field containing a curve OID, formatted
-    as follows:
+  * a variable-length field containing a curve OID, formatted as: a
+    one-octet size of the following field with values 0 and 0xFF
+    reserved for future extensions and the octets representing a
+    curve OID, defined in [](#ecc-curve-oid);
 
-      - a one-octet size of the following field; values 0 and
-        0xFF are reserved for future extensions,
-
-      - the octets representing a curve OID, defined in
-        [](#ecc-curve-oid);
-
-  * a MPI of an EC point representing a public key;
+  * a SOS with an EC point representing a public key;
 
   * a variable-length field containing KDF parameters,
     formatted as follows:
@@ -2775,8 +2776,8 @@ fields that define an ECDSA key, plus the KDF parameters field.
 
 The secret key is this single multiprecision integer:
 
-  * MPI of an integer representing the secret key, which is a
-    scalar of the public EC point.
+  * a SOS representing the secret key, which is a scalar of the public
+    EC point.
 
 
 ### Algorithm-Specific Part for ML-KEM Keys
@@ -4468,9 +4469,9 @@ in detail how this sequence of bytes is formed.
 
 This document defines the uncompressed point format for ECDSA and ECDH
 and a custom compression format for certain curves. The point is
-encoded in the Multiprecision Integer (MPI) format.
+encoded in the Simple Octet String (SOS) format.
 
-For an uncompressed point the content of the MPI is:
+For an uncompressed point the content of the SOS is:
 
     B = 04 || x || y
 
@@ -4488,7 +4489,7 @@ where x is the x coordinate of the point P encoded to the rules
 defined for the specified curve.  This format is used for ECDH keys
 based on curves expressed in Montgomery form.
 
-Therefore, the exact size of the MPI payload is 515 bits for "Curve
+Therefore, the exact size of the SOS payload is 515 bits for "Curve
 P-256", 771 for "Curve P-384", 1059 for "Curve P-521", and 263 for
 Curve25519.
 
