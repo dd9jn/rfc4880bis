@@ -925,21 +925,20 @@ The body of this packet consists of:
     Algorithm-Specific Fields for ML-KEM (Kyber) encryption:
     {Note: This part is not finalized and subject to change}
 
-      - A fixed-length octet string representing an ECC ephemeral
-        public key in the format associated with the curve.  For
-        ML-KEM-768+X25519 these are 32 octets, for ML-KEM-1024+X448
-        these are 56 octets.
+      - SOS of an EC point representing an ephemeral public key.
+        {Note that we use an SOS instead of a one-octet count to allow
+         re-use of existing ECDH code.  Not sure whether this is a
+         good or bad idea. However, it is aligned with the key format. }
 
-      - A fixed-length octet string of the ML-KEM ciphertext, whose
-        length depends on the algorithm. For ML-KEM-768+X25519 these
-        are 1088 octets, for ML-KEM-1024+X448 these are 1568 octets.
+      - A four-octet scalar octet count of the following ML-KEM
+        ciphertext.  The value for the count is 1088 for ML-KEM-768
+        and 1568 for ML-KEM-1024.
 
       - A one-octet algorithm identifier which must indicate one of
         the AES algorithms (7, 8, or 9).
 
-      - a one-octet size, followed by a symmetric key wrapped using the
-        method described in [](#kyber-algorithm).
-
+      - a one-octet size, followed by a symmetric key wrapped using
+        the method described in [](#kyber-algorithm).
 
 The value "m" in the above formulas is derived from the session key as
 follows.  First, the session key is prefixed with a one-octet algorithm
@@ -2786,24 +2785,26 @@ The secret key is this single multiprecision integer:
 
 The public key is this series of values:
 
-  * A fixed-length octet string representing an ECC public key in the
-    format associated with the curve.  For ML-KEM-768+X25519 these are
-    32 octets, for ML-KEM-1024+X448 these are 56 octets.
+  * a variable-length field containing a curve OID, formatted as: a
+    one-octet size of the following field with values 0 and 0xFF
+    reserved for future extensions and the octets representing a
+    curve OID, defined in [](#ecc-curve-oid).  For Curve25519 the
+    alternative OID (1.3.102.110) MUST be used;
 
-  * A fixed-length octet string containing the ML-KEM public key,
-    whose length depends on the algorithm.  For ML-KEM-768+X25519
-    these are 1184 octets, for ML-KEM-1024+X448 these are 1568 octets.
+  * a SOS with an EC point representing a public key;
+
+  * A four-octet scalar octet count of the following octet string
+    containing the ML-KEM public key.  Valid octet counts are 1184 for
+    ML-KEM-768 and 1568 for ML-KEM-1024.
 
 The secret key is this series of values:
 
-  * A fixed-length octet string of the encoded secret scalar, whose
-    encoding and length depend on the algorithm.  For
-    ML-KEM-768+X25519 these are 32 octets, for ML-KEM-1024+X448 these
-    are 56 octets.
+  * a SOS representing the secret key, which is a scalar of the public
+    EC point;
 
-  * A fixed-length octet string containing the ML-KEM secret key,
-    whose length depends on the algorithm.  For ML-KEM-768+X25519
-    these are 2400 octets, for ML-KEM-1024+X448 these are 3168 octets.
+  * A four-octet scalar octet count of the follwoing octet string
+    containing the ML-KEM secret key. Valid octet counts are 2400 for
+    ML-KEM-768 and 3168 for ML-KEM-1024.
 
 Observe that the format of the ECC keys differ from the format used
 with ECDH.  This has been chosen to avoid prefix octets.
