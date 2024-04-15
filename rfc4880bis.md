@@ -907,13 +907,13 @@ The body of this packet consists of:
 
     Algorithm Specific Fields for RSA encryption:
 
-      - Multiprecision integer (MPI) of RSA encrypted value m**e mod n.
+      - Multiprecision integer (MPI) of RSA encrypted value m^e mod n.
 
     Algorithm Specific Fields for Elgamal encryption:
 
-      - MPI of Elgamal (Diffie-Hellman) value g**k mod p.
+      - MPI of Elgamal (Diffie-Hellman) value g^k mod p.
 
-      - MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
+      - MPI of Elgamal (Diffie-Hellman) value m * y^k mod p.
 
     Algorithm-Specific Fields for ECDH encryption:
 
@@ -1152,7 +1152,7 @@ The body of a version 3 Signature Packet contains:
 
     Algorithm-Specific Fields for RSA signatures:
 
-      * Multiprecision integer (MPI) of RSA signature value m**d mod n.
+      * Multiprecision integer (MPI) of RSA signature value m^d mod n.
 
     Algorithm-Specific Fields for DSA and ECDSA signatures:
 
@@ -1283,7 +1283,7 @@ The body of a V4, V5, and V6 Signature packet contains:
 
     Algorithm-Specific Fields for RSA signatures:
 
-      * Multiprecision integer (MPI) of RSA signature value m**d mod n.
+      * Multiprecision integer (MPI) of RSA signature value m^d mod n.
 
     Algorithm-Specific Fields for DSA or ECDSA signatures:
 
@@ -2689,7 +2689,7 @@ The public key is this series of multiprecision integers:
 
   * MPI of DSA group generator g;
 
-  * MPI of DSA public-key value y (= g**x mod p where x is secret).
+  * MPI of DSA public-key value y (= g^x mod p where x is secret).
 
 The secret key is this single multiprecision integer:
 
@@ -2704,7 +2704,7 @@ The public key is this series of multiprecision integers:
 
   * MPI of Elgamal group generator g;
 
-  * MPI of Elgamal public key value y (= g**x mod p where x is secret).
+  * MPI of Elgamal public key value y (= g^x mod p where x is secret).
 
 The secret key is this single multiprecision integer:
 
@@ -4401,7 +4401,7 @@ with the example of a DSA key:
 
     e.3) MPI of DSA group generator g;
 
-    e.4) MPI of DSA public-key value y (= g**x mod p where x is secret).
+    e.4) MPI of DSA public-key value y (= g^x mod p where x is secret).
 
 A V5 fingerprint is the 256-bit SHA2-256 hash of the octet 0x9A, followed
 by the four-octet packet length, followed by the entire Public-Key
@@ -4431,7 +4431,7 @@ with the example of a DSA key:
 
     f.3) MPI of DSA group generator g;
 
-    f.4) MPI of DSA public-key value y (= g**x mod p where x
+    f.4) MPI of DSA public-key value y (= g^x mod p where x
          is secret).
 
 Note that it is possible for there to be collisions of Key IDs --- two
