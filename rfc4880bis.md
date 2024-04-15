@@ -919,8 +919,8 @@ The body of this packet consists of:
 
       - SOS of an EC point representing an ephemeral public key.
 
-      - a one-octet size, followed by a symmetric key encoded using the
-        method described in [](#ecdh-algorithm).
+      - a one-octet scalar octet count of the following symmetric key
+        encoded using the method described in [](#ecdh-algorithm).
 
     Algorithm-Specific Fields for ML-KEM (Kyber) encryption:
     {Note: This part is not finalized and subject to change}
@@ -935,10 +935,11 @@ The body of this packet consists of:
         and 1568 for ML-KEM-1024.
 
       - A one-octet algorithm identifier which must indicate one of
-        the AES algorithms (7, 8, or 9).
+        the AES algorithms (7, 8, or 9) to be used for the session
+        key.
 
-      - a one-octet size, followed by a symmetric key wrapped using
-        the method described in [](#kyber-algorithm).
+      - a one-octet scalar octet count of the following symmetric key
+        wrapped using the method described in [](#kyber-algorithm).
 
 The value "m" in the above formulas is derived from the session key as
 follows.  First, the session key is prefixed with a one-octet algorithm
@@ -2273,7 +2274,7 @@ depends on the version of the signature.
      - the two octets 0x05 and 0xFF,
 
 <!-- FIXME: The crypto refresh uses 4 octets % 2^32 for V6.
-            We could do the same if we want to V6  -->
+            We could do the same if we want to do V6  -->
      - a eight-octet big-endian number that is the length
        of the hashed data from the Signature packet
        stopping right before the 0x05, 0XFF octets.
