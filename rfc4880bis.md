@@ -484,11 +484,12 @@ strings with a length of up to 8191 octets.
 
 An SOS consists of two pieces: a two-octet scalar that is the length
 of the octet string measured in bits followed by an opaque string of
-octets of this length.  An SOS is compatible to the format of an MPI.
+octets of this length.  An SOS is compatible to the format of a
+well-formed MPI.  However if the value of an SOS starts with a zero
+byte it does not represent a well-format MPI and in this case the
+length is measured as 8-times the number of octets.
 
-The entire size of an SOS is ((SOS.length + 7) / 8) + 2 octets.  The
-length of a well-formed SOS is always a multiple of 8 but
-implementations SHOULD gracefully handle non-well-formed SOSs.
+The entire size of an SOS is always ((SOS.length + 7) / 8) + 2 octets.
 
 ## Key IDs
 
@@ -877,7 +878,7 @@ Tag | Packet Type
 
 ##  Public-Key Encrypted Session Key Packets (Tag 1)
 
-A Public-Key Encrypted Session Key packet holds the session key used
+A Public-Key Encrypted Session Key (PKESK) packet holds the session key used
 to encrypt a message.  Zero or more Public-Key Encrypted Session Key
 packets and/or Symmetric-Key Encrypted Session Key packets may precede
 a Symmetrically Encrypted Data Packet, which holds an encrypted
@@ -3232,10 +3233,10 @@ the data hash.  While this is a bit restrictive, it reduces complexity.
 
 ## OCB Encrypted Data Packet (Tag 20)
 
-This packet contains data encrypted with an authenticated encryption and
-additional data (AEAD) construction.  When it has been decrypted, it
-will typically contain other packets (often a Literal Data packet or
-Compressed Data packet).
+The OCBED packet contains data encrypted with an authenticated
+encryption and additional data (AEAD) construction.  When it has been
+decrypted, it will typically contain other packets (often a Literal
+Data packet or Compressed Data packet).
 
 The body of this packet consists of:
 
@@ -4721,7 +4722,110 @@ lattices (MLWE).  The scheme is believed to provide security against
 cryptanalytic attacks by classical as well as quantum computers.  This
 specification defines ML-KEM only in composite combination with
 ECC-based encryption schemes in order to provide a pre-quantum
-security fallback.
+security fallback.  This scheme is built according to the following
+principal design:
+
+  - The encapsulation algorithm of an ECC-based KEM, is invoked to
+    create an ECC ciphertext together with an ECC symmetric key share.
+
+  - The ML-KEM encapsulation algorithm is invoked to create a ML-KEM
+    ciphertext together with a ML-KEM symmetric key share.
+
+  - A Key-Encryption-Key (KEK) is computed as the output of a
+    Key-Combiner that receives as input both of the above created
+    symmetric key shares and the protocol binding information.
+
+  - The session key for content encryption is then wrapped as
+    described in [](#RFC3394) using AES-256 as algorithm and the KEK
+    as key.
+
+  - The PKESK package's algorithm-specific parts are made up of the
+    ML-KEM ciphertext, the ECC ciphertext, the session key algorithm
+    id, and the wrapped session key.
+
+
+### KEM Fixed Information
+
+For the composite KEM schemes defined the following procedure,
+justified in Section XXXX, MUST be used to derive a string to use as
+binding between the KEK and the communication parties.
+
+  - A one octet algorithm ID describing the symmetric algorithm used
+    for the bulk data in the in the SEIPD (packet 18) or the OCBED
+    (packet 20).
+
+  - The 32 octet version 5 fingerprint of the public key.
+
+Note that the fingerprint includes the packet format and all other
+parameters of the public key.
+
+ {FIXME: Shall we also include the used packet type and persion of the
+        SEIPD or OCBED}
+
+### KEM Key Combiner
+
+For the composite KEM schemes the following procedure MUST be used to
+compute the KEK that wraps a session key.  The construction is a
+one-step key derivation function compliant to [](#SP800-56C) Section
+4, based on KMAC256 [](#SP800-185).  It is given by the following
+algorithm:
+
+    multiKeyCombine (eccKeyShare, eccCipherText,
+                     mlkemKeyShare, mlkemCipherText,
+                     fixedInfo, oBits)
+
+    Input:
+    eccKeyShare     - the ECC key share encoded as an octet string
+    eccCipherText   - the ECC ciphertext encoded as an octet string
+    mlkemKeyShare   - the ML-KEM key share encoded as an octet string
+    mlkemCipherText - the ML-KEM ciphertext encoded as an octet string
+    fixedInfo       - the fixed information octet string
+    oBits           - the size of the output keying material in bits
+
+    Constants:
+    domSeparation       - the UTF-8 encoding of the string
+                          "OpenPGPCompositeKeyDerivationFunction"
+    counter             - the four-octet big-endian value 0x00000001
+    customizationString - the UTF-8 encoding of the string "KDF"
+
+    eccData = eccKeyShare || eccCipherText
+    mlkemData = mlkemKeyShare || mlkemCipherText
+    encData = counter || eccData || mlkemData || fixedInfo
+
+    result = KMAC256 (domSeparation, encData, oBits, customizationString)
+
+
+
+### KEM Encryption Procedure
+
+The procedure to perform public-key encryption with a ML-KEM + ECC
+composite scheme is as follows:
+
+  - Extract the eccPublicKey and mlkemPublicKey component from the
+    algorithm specific data of the piblic key packet.
+
+  - Compute (eccCipherText, eccKeyShare) := ECC-KEM.Encaps(eccPublicKey)
+
+  - Compute (mlkemCipherText, mlkemKeyShare) := ML-KEM.Encaps(mlkemPublicKey)
+
+  - Prepare fixedInfo as specified in section [](#KEM-Fixed-Information)
+
+  - Compute KEK := multiKeyCombine(eccKeyShare, eccCipherText,
+    mlkemKeyShare, mlkemCipherText, fixedInfo, 256) as defined in
+    Section [](#KEM-Key-Combiner).
+
+  - Compute C := AESKeyWrap(KEK, sessionKey) with AES-256 as per
+    [](#RFC3394) that includes a 64 bit integrity check
+
+  - Output eccCipherText, mlkemCipherText, sessionKeyAlgo, and C as
+    specified in the Kyber specific part of the PKESK (packet 1).
+
+### KEM Decryption Procedure
+
+The decryption procedure is the inverse of the method given above for
+encryption.  Implementations MAY check that the session key algorithm
+is the same as actually used but there is no need for it because the
+algorithm ID is covered by the key combining process.
 
 
 # Notes on Algorithms
