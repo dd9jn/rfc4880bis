@@ -1664,7 +1664,7 @@ second address and thus a second User ID packet is not useful here.
 of fingerprint)
 
 <!-- FIXME: Does the 0x20 class really makes sense?  We can use it -->
-<!-- only as a second subpacket because the exetdned fingerprint does -->
+<!-- only as a second subpacket because the extended fingerprint does -->
 <!-- not allow to find the key.  What would the attack model be? -->
 V4 keys use the full 20 octet fingerprint; V4 keys with the Class
 octet bit 0x20 set use the extended 32 octet v4 fingerprint; V5 keys
@@ -4759,8 +4759,6 @@ binding between the KEK and the communication parties.
 Note that the fingerprint includes the packet format and all other
 parameters of the public key.
 
- {FIXME: Shall we also include the used packet type and persion of the
-        SEIPD or OCBED}
 
 ### KEM Key Combiner
 
