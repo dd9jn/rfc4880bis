@@ -1,7 +1,7 @@
 ---
 title: LibrePGP Message Format
 docname: draft-koch-librepgp-00
-date: 2023-11-29
+date: 2024-04-30
 submissiontype: IETF
 category: std
 
@@ -90,7 +90,7 @@ normative:
     title: FIPS PUB 197, Advanced Encryption Standard (AES)
     author:
      org: NIST
-    date: November 2001'
+    date: November 2001
  BLOWFISH:
     target: http://www.counterpane.com/bfsverlag.html
     title: Description of a New Variable-Length Key, 64-Bit Block Cipher (Blowfish)
@@ -211,6 +211,7 @@ normative:
      name: Bruce Schneier
     date: 1996
  SP800-56A:
+    target: https://doi.org/10.6028/NIST.SP.800-56Ar3
     title: Recommendation for Pair-Wise Key Establishment Schemes Using Discrete Logarithm Cryptography
     author:
      -
@@ -222,6 +223,47 @@ normative:
     date: March 2007
     seriesinfo:
      NIST Special Publication: 800-56A Revision 1
+ SP800-56C:
+    target: https\://doi.org/10.6028/NIST.SP.800-56Cr2
+    title: Recommendation for Key-Derivation Methods in Key-Establishment Schemes
+    author:
+     -
+      ins: E. Barker
+     -
+      ins: L. Chen
+     -
+      ins: R. Davis
+    date: August 2020
+    seriesinfo:
+     NIST Special Publication: 800-56C Revision 2
+ SP800-185:
+    target: https://doi.org/10.6028/NIST.SP.800-185
+    title: "SHA-3 Derived Functions: cSHAKE, KMAC, TupleHash, and ParallelHash"
+    author:
+     -
+      ins: J. Kelsey
+     -
+      ins: S. Chang
+     -
+      ins: R. Perlner
+    date: December 2016,
+    seriesinfo:
+      NIST Special Publication: 800-185
+ SP800-186:
+    target: https://doi.org/10.6028/NIST.SP.800-186
+    title: "Recommendations for Discrete Logarithm-Based Cryptography: Elliptic Curve Domain Parameters"
+    author:
+     -
+      ins: L. Chen
+     -
+      ins: D. Moody
+     -
+      ins: A. Regenscheid
+     -
+      ins: K. Randal
+    date: February 2023
+    seriesinfo:
+     NIST Special Publication: 800-186
  TWOFISH:
     title: The Twofish Encryption Algorithm
     author:
@@ -924,7 +966,6 @@ The body of this packet consists of:
         encoded using the method described in [](#ecdh-algorithm).
 
     Algorithm-Specific Fields for ML-KEM (Kyber) encryption:
-    {Note: This part is not finalized and subject to change}
 
       - SOS of an EC point representing an ephemeral public key.
         {Note that we use an SOS instead of a one-octet count to allow
@@ -2783,8 +2824,6 @@ The secret key is this single multiprecision integer:
 
 ### Algorithm-Specific Part for ML-KEM Keys
 
-{Note: This part is not finalized and subject to change}
-
 The public key is this series of values:
 
   * a variable-length field containing a curve OID, formatted as: a
@@ -3781,6 +3820,7 @@ ID | Algorithm
  22 | EdDSA  [](#RFC8032)
  23 | Reserved for AEDH
  24 | Reserved for AEDSA
+ 29 | Kyber
 100--110 | Private/Experimental algorithm
 
 Implementations MUST implement RSA (1) and ECDSA (19) for signatures,
@@ -4708,11 +4748,9 @@ X448            | SHA2-512       | AES-256
 
 # Post-Quantum Cryptography
 
-{Note: This part is not finalized and subject to change}
-
 This section descripes algorithms and parameters used with
 post-quantum cryptography.  Specifically, it defines composite
-public-key encryption based on ML-KEM.
+public-key encryption based on ECC-KEM and ML-KEM.
 
 ## Kyber Algorithm
 
@@ -4744,20 +4782,132 @@ principal design:
     id, and the wrapped session key.
 
 
-### KEM Fixed Information
+Valid combinations of ECC curve and ML-KEM version along with the to
+be used functions are:
 
-For the composite KEM schemes defined the following procedure,
-justified in Section XXXX, MUST be used to derive a string to use as
-binding between the KEK and the communication parties.
+Curve           | ML-KEM | ECC-KEM | SHAFunc  | Requirement
+---------------:|--------|---------|----------|------------
+X25519          | 768    | XKem    | SHA3-256 | SHOULD
+X448            | 768    | XKem    | SHA3-512 | MAY
+X25519          | 1024   | XKem    | SHA3-256 | MAY
+X448            | 1024   | XKem    | SHA3-512 | SHOULD
+brainpoolP256r1 | 768    | ecdhKem | SHA3-256 | MAY
+brainpoolP384r1 | 768    | ecdhKem | SHA3-512 | SHOULD
+brainpoolP512r1 | 768    | ecdhKem | SHA3-512 | MAY
+brainpoolP512r1 | 1024   | ecdhKem | SHA3-512 | SHOULD
+brainpoolP256r1 | 1024   | ecdhKem | SHA3-256 | MAY
+brainpoolP384r1 | 1024   | ecdhKem | SHA3-512 | MAY
+NIST P-256      | 768    | ecdhKem | SHA3-256 | MAY
+NIST P-384      | 768    | ecdhKem | SHA3-512 | MAY
+NIST P-521      | 768    | ecdhKem | SHA3-512 | MAY
+NIST P-256      | 1024   | ecdhKem | SHA3-256 | MAY
+NIST P-384      | 1024   | ecdhKem | SHA3-512 | MAY
+NIST P-521      | 1024   | ecdhKem | SHA3-512 | MAY
 
-  - A one octet algorithm ID describing the symmetric algorithm used
-    for the bulk data in the in the SEIPD (packet 18) or the OCBED
-    (packet 20).
 
-  - The 32 octet version 5 fingerprint of the public key.
+### ECC-KEM for curves X25519 and KEM-X448
 
-Note that the fingerprint includes the packet format and all other
-parameters of the public key.
+The encapsulation and decapsulation operations of XKem are described
+using the functions and encodings defined in [RFC7748].  With the
+defintions:
+
+    XFunc         = X25519() for curve X25519 or X448() for curve X448.
+    SHAFunc       = See table above.
+    U(P)          = u-coordinate of the base point of the curve.
+    r             = eccSecretKey.
+    R             = eccPublicKey = XFunc (r, U(P))
+    v             = ephemeral secret key
+    eccCipherText = ephemeral public key = XFunc(v,U(P)),
+    X             = shared coordinate
+    eccKeyShare   = SHAFunc(X || eccCipherText || R).
+
+The operation XKem.Encaps() is defined as follows:
+
+  - Create a random scalar v as ephemeral secret key,
+
+  - Generate the ephemeral public key:  eccCipherText = XFunc(v,U(P)),
+
+  - Compute the shared coordinate:  X = XFunc(v, R),
+
+  - Compute the key share: \\
+      eccKeyShare = SHAFunc(X || eccCipherText || R).
+
+  - Output eccKeyShare and eccCipherText.
+
+The operation XKem.Decaps() is defined as follows:
+
+  - Compute the shared coordinate:  X = XFunc(r, eccCipherText),
+
+  - Output the key share: \\
+      eccKeyShare = SHAFunc(X || eccCipherText || R).
+
+
+### ECC-KEM for Weierstrass curves
+
+The encapsulation and decapsulation operations of ecdhKEM are
+described using the functions and encodings defined in [](#SP800-186) and
+[](#RFC5639).  With the defintions:
+
+    SHAFunc       = See table above.
+    G             = base point of the curve.
+    r             = eccSecretKey.
+    R             = eccPublicKey R = rG.
+    v             = ephemeral secret key.
+    V             = ephemeral public key V = vG.
+    S             = shared point S = vR or S = rV
+    S_x           = x-coordinate of S
+    eccPublicKey  = SEC1_encoding(R)
+    eccCipherText = SEC1_encoding(V)
+    eccKeyShare   = SHAFunc(S_x || eccCipherText || eccPublicKey).
+
+The operation ecdhKem.Encaps() is defined as follows:
+
+  - Create a random scalar v as ephemeral secret key,
+
+  - Generate an ephemeral public key:  V = vG,
+
+  - Compute the shared point:  S = vR,
+
+  - Output the eccCipherText as the [](#SEC1) encoding of V,
+
+  - Output the key share: \\
+        eccKeyShare = SHAFunc(S_x || eccCipherText \|\| eccPublicKey)
+
+The operation ecdhKem.Decaps() is defined as follows:
+
+  - Compute the shared point:  S = rV
+
+  - Output the key share: \\
+      eccKeyShare = SHAFunc(S\_x || eccCipherText || eccPublicKey)
+
+
+### ML-KEM
+
+The ML-KEM operations ML-KEM.Encaps and ML-KEM.Decaps as well as the
+encodings are defined in [](#FIPS203).  The artifact lengths in octetst
+are given by this table:
+
+ML-KEM      | Public Key | Secret Key | Ciphertext
+-----------:|------------|------------|------------
+ML-KEM-768  | 1184       | 2400       | 1088
+ML-KEM-1024 | 1568       | 3168       | 1568
+
+
+The operation ML-KEM.Encaps() is defined as follows:
+
+  - Invoke (mlkemCipherText, mlkemKeyShare) = \\
+      ML-KEM.Encaps(mlkemPublicKey),
+
+  - Output mlkemCipherText as the ML-KEM ciphertext,
+
+  - Output mlkemKeyShare as the ML-KEM symmetric key share.
+
+The operation ML-KEM.Decaps() is defined as follows:
+
+  - Invoke mlkemKeyShare = \\
+      ML-KEM.Decaps(mlkemCipherText, mlkemSecretKey),
+
+  - Output mlkemKeyShare as the ML-KEM symmetric key share
 
 
 ### KEM Key Combiner
@@ -4777,7 +4927,7 @@ algorithm:
     eccCipherText   - the ECC ciphertext encoded as an octet string
     mlkemKeyShare   - the ML-KEM key share encoded as an octet string
     mlkemCipherText - the ML-KEM ciphertext encoded as an octet string
-    fixedInfo       - the fixed information octet string
+    fixedInfo       - the fixed information octet string (see below)
     oBits           - the size of the output keying material in bits
 
     Constants:
@@ -4793,6 +4943,17 @@ algorithm:
     result = KMAC256 (domSeparation, encData, oBits, customizationString)
 
 
+The fixedinfo is used to provide a binding between the KEK and the
+communication parties.  It is the concatenation of
+
+  - A one octet algorithm ID describing the symmetric algorithm used
+    for the bulk data in the in the SEIPD (packet 18) or the OCBED
+    (packet 20).
+
+  - The 32 octet version 5 fingerprint of the public key.  Note that
+    the fingerprint covers the packet format and all other parameters
+    of the public key.
+
 
 ### KEM Encryption Procedure
 
@@ -4800,17 +4961,17 @@ The procedure to perform public-key encryption with a ML-KEM + ECC
 composite scheme is as follows:
 
   - Extract the eccPublicKey and mlkemPublicKey component from the
-    algorithm specific data of the piblic key packet.
+    algorithm specific data of the public key packet.
 
-  - Compute (eccCipherText, eccKeyShare) := ECC-KEM.Encaps(eccPublicKey)
+  - Compute (eccCipherText, eccKeyShare) := ECC-Kem.Encaps(eccPublicKey)
 
   - Compute (mlkemCipherText, mlkemKeyShare) := ML-KEM.Encaps(mlkemPublicKey)
 
-  - Prepare fixedInfo as specified in section [](#KEM-Fixed-Information)
+  - Prepare fixedInfo as specified above
 
   - Compute KEK := multiKeyCombine(eccKeyShare, eccCipherText,
     mlkemKeyShare, mlkemCipherText, fixedInfo, 256) as defined in
-    Section [](#KEM-Key-Combiner).
+    Section [](#kem-key-combiner).
 
   - Compute C := AESKeyWrap(KEK, sessionKey) with AES-256 as per
     [](#RFC3394) that includes a 64 bit integrity check
@@ -4818,12 +4979,19 @@ composite scheme is as follows:
   - Output eccCipherText, mlkemCipherText, sessionKeyAlgo, and C as
     specified in the Kyber specific part of the PKESK (packet 1).
 
+Depending on the curve either XKem.Encaps() or ecdhKem.Encaps() is
+used for ECC-Kem.Encaps().
+
+
 ### KEM Decryption Procedure
 
 The decryption procedure is the inverse of the method given above for
 encryption.  Implementations MAY check that the session key algorithm
-is the same as actually used but there is no need for it because the
-algorithm ID is covered by the key combining process.
+is the same as actually used but there is no security related need for
+it because the algorithm ID is covered by the key combining process.
+
+Depending on the curve either XKem.Decaps() or ecdhKem.Decaps() is
+used for ECC-Kem.Decaps().
 
 
 # Notes on Algorithms
