@@ -1,7 +1,7 @@
 ---
 title: LibrePGP Message Format
 docname: draft-koch-librepgp-00
-date: 2024-04-30
+date: 2024-05-06
 submissiontype: IETF
 category: std
 
@@ -4791,12 +4791,12 @@ X25519          | 768    | XKem    | SHA3-256 | SHOULD
 X448            | 768    | XKem    | SHA3-512 | MAY
 X25519          | 1024   | XKem    | SHA3-256 | MAY
 X448            | 1024   | XKem    | SHA3-512 | SHOULD
-brainpoolP256r1 | 768    | ecdhKem | SHA3-256 | MAY
-brainpoolP384r1 | 768    | ecdhKem | SHA3-512 | SHOULD
+brainpoolP256r1 | 768    | ecdhKem | SHA3-256 | SHOULD
+brainpoolP384r1 | 768    | ecdhKem | SHA3-512 | MAY
 brainpoolP512r1 | 768    | ecdhKem | SHA3-512 | MAY
-brainpoolP512r1 | 1024   | ecdhKem | SHA3-512 | SHOULD
 brainpoolP256r1 | 1024   | ecdhKem | SHA3-256 | MAY
-brainpoolP384r1 | 1024   | ecdhKem | SHA3-512 | MAY
+brainpoolP384r1 | 1024   | ecdhKem | SHA3-512 | SHOULD
+brainpoolP512r1 | 1024   | ecdhKem | SHA3-512 | MAY
 NIST P-256      | 768    | ecdhKem | SHA3-256 | MAY
 NIST P-384      | 768    | ecdhKem | SHA3-512 | MAY
 NIST P-521      | 768    | ecdhKem | SHA3-512 | MAY
