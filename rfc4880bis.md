@@ -1,7 +1,7 @@
 ---
 title: LibrePGP Message Format
-docname: draft-koch-librepgp-00
-date: 2024-05-06
+docname: draft-koch-librepgp-01
+date: 2024-05-27
 submissiontype: IETF
 category: std
 
@@ -968,9 +968,6 @@ The body of this packet consists of:
     Algorithm-Specific Fields for ML-KEM (Kyber) encryption:
 
       - SOS of an EC point representing an ephemeral public key.
-        {Note that we use an SOS instead of a one-octet count to allow
-         re-use of existing ECDH code.  Not sure whether this is a
-         good or bad idea. However, it is aligned with the key format. }
 
       - A four-octet scalar octet count of the following ML-KEM
         ciphertext.  The value for the count is 1088 for ML-KEM-768
@@ -1707,7 +1704,7 @@ of fingerprint)
 <!-- FIXME: Does the 0x20 class really makes sense?  We can use it -->
 <!-- only as a second subpacket because the extended fingerprint does -->
 <!-- not allow to find the key.  What would the attack model be? -->
-V4 keys use the full 20 octet fingerprint; V4 keys with the Class
+V4 keys use the full 20 octet fingerprint; V4 keys with the class
 octet bit 0x20 set use the extended 32 octet v4 fingerprint; V5 keys
 use the full 32 octet fingerprint.
 
@@ -2847,8 +2844,6 @@ The secret key is this series of values:
     containing the ML-KEM secret key. Valid octet counts are 2400 for
     ML-KEM-768 and 3168 for ML-KEM-1024.
 
-Observe that the format of the ECC keys differ from the format used
-with ECDH.  This has been chosen to avoid prefix octets.
 
 ## Compressed Data Packet (Tag 8)
 
@@ -3964,9 +3959,9 @@ of considerations for allocating parameters for extensions.  This
 section describes how IANA should look at extensions to the protocol
 as described in this document.
 
-{ FIXME: Also add forward references, like
+<!-- FIXME: Also add forward references, like
   "The list of S2K specifier types is maintained by IANA as described in
-   Section 10." }
+   Section 10." -->
 
 ## New String-to-Key Specifier Types
 
@@ -4884,7 +4879,7 @@ The operation ecdhKem.Decaps() is defined as follows:
 ### ML-KEM
 
 The ML-KEM operations ML-KEM.Encaps and ML-KEM.Decaps as well as the
-encodings are defined in [](#FIPS203).  The artifact lengths in octetst
+encodings are defined in [](#FIPS203).  The artifact lengths in octets
 are given by this table:
 
 ML-KEM      | Public Key | Secret Key | Ciphertext
@@ -5973,8 +5968,17 @@ other values might also be interesting for other ECC specifications:
 
   Changes since draft-koch-openpgp-2015-rfc4880bis-02:
 
-  - Add ML-KEM parts from draft-wussler-openpgp-pqc-03.txt
+  - Added ML-KEM parts from draft-wussler-openpgp-pqc-03.txt
   - Changed name of the specification to LibrePGP.
+
+  Changes since draft-koch-librepgp-00:
+
+  - Introduced the SOS data type as compatible specification for MPIs.
+  - Rework the ML-KEM key and PKESK algorithm specific parts to be
+    aligned with other algorithms
+  - Descriped the ML-KEM encryption process.  Compatible to
+    draft-wussler-openpgp-pqc-03.txt but with a changed fixed-info.
+
 
 # Acknowledgments
 
