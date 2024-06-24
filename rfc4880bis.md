@@ -4345,7 +4345,7 @@ data for which they are a signature.
 
 ##  Key Structures
 
-The format of an LibrePGP V3 key is as follows.  Entries in square
+The format of a deprecated V3 key is as follows.  Entries in square
 brackets are optional and ellipses indicate repetition.
 
     RSA Public Key
@@ -4355,8 +4355,8 @@ brackets are optional and ellipses indicate repetition.
 
 Each signature certifies the RSA public key and the preceding User ID.
 The RSA public key can have many User IDs and each User ID can have
-many signatures. V3 keys are deprecated.  Implementations MUST NOT
-generate new V3 keys, but MAY continue to use existing ones.
+many signatures. Implementations MUST NOT generate new V3 keys, but
+MAY continue to use existing ones.
 
 The format of an LibrePGP V4 key that uses multiple public keys is
 similar except that the other keys are added to the end as "subkeys"
@@ -4365,10 +4365,13 @@ of the primary key.
     Primary-Key
        [Revocation Self Signature]
        [Direct Key Signature...]
+       User ID [Signature ...]
        [User ID [Signature ...] ...]
        [User Attribute [Signature ...] ...]
        [[Subkey [Binding-Signature-Revocation]
                Primary-Key-Binding-Signature] ...]
+
+Note that User Attributes may preceed or be intermixed with User IDs.
 
 A subkey always has a single signature after it that is issued using
 the primary key to tie the two keys together.  This binding signature
@@ -4400,6 +4403,10 @@ It is also possible to have a signature-only subkey.  This permits a
 primary key that collects certifications (key signatures), but is used
 only for certifying subkeys that are used for encryption and
 signatures.
+
+Implementations with no need for a user ID MAY create a key without
+any User ID or User Attribute but must be aware that other LibrePGP
+implementations may not accept such a key.
 
 ## Key IDs and Fingerprints
 
