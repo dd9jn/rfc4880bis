@@ -1012,13 +1012,12 @@ some data.  The most common signatures are a signature of a file or a
 block of text, and a signature that is a certification of a User ID.
 
 Three versions of Signature packets are defined.  Version 3 provides
-basic signature information, while versions 4, 5, and 6 provide an expandable
+basic signature information, while versions 4 and 5 provide an expandable
 format with subpackets that can specify more information about the
 signature.  PGP 2.6.x only accepts version 3 signatures.
 
 Implementations MUST generate version 5 signatures when using a
-version 5 key.  Version 6 signature MAY be generated if larger
-subpacket data needs to be used.  Implementations SHOULD generate V4
+version 5 key. Implementations SHOULD generate V4
 signatures with version 4 keys.  Implementations MUST NOT create
 version 3 signatures; they MAY accept version 3 signatures.
 
@@ -1280,10 +1279,10 @@ directly in the DSA signature algorithm.
 
 ### Version 4 and 5 Signature Packet Formats
 
-The body of a V4, V5, and V6 Signature packet contains:
+The body of a V4 and V5 Signature packet contains:
 
-  * One-octet version number.  This is 4 for V4 signatures,
-    5 for V5 signatures, and 6 vor V6 signature.
+  * One-octet version number.  This is 4 for V4 signatures
+    and 5 for V5 signatures.
 
   * One-octet signature type.
 
@@ -1292,30 +1291,21 @@ The body of a V4, V5, and V6 Signature packet contains:
   * One-octet hash algorithm.
 
   * Two-octet scalar octet count for following hashed subpacket data.
-    For V6 signatures this is a four-octet field.  Note that this is
-    the length in octets of all of the hashed subpackets; a pointer
-    incremented by this number will skip over the hashed subpackets.
+    Note that this is the length in octets of all of the hashed
+    subpackets; a pointer incremented by this number will skip over
+    the hashed subpackets.
 
   * Hashed subpacket data set (zero or more subpackets).
 
   * Two-octet scalar octet count for the following unhashed subpacket
-    data.  For V6 signatures this is a four-octet field.  Note that
-    this is the length in octets of all of the unhashed subpackets; a
-    pointer incremented by this number will skip over the unhashed
-    subpackets.
+    data.  Note that this is the length in octets of all of the
+    unhashed subpackets; a pointer incremented by this number will
+    skip over the unhashed subpackets.
 
   * Unhashed subpacket data set (zero or more subpackets).
 
   * Two-octet field holding the left 16 bits of the signed hash
     value.
-
-  * Only for V6 signatures, a variable-length field containing:
-
-      - A one-octet salt size.  If salted signatures are used the
-        value SHOULD match the digest length of the hash algorithm.
-        The common use case is not to use salted signatures.
-
-      - The salt; a random value of the specified size.
 
   * One or more multiprecision integers comprising the signature.
     This portion is algorithm specific:
@@ -2221,8 +2211,6 @@ V5 signature the signature MUST be deemed as invalid.
 All signatures are formed by producing a hash over the signature data,
 and then using the resulting hash in the signature algorithm.
 
-When a V6 signature with a salt is made, the salt is hashed first.
-
 For binary document signatures (type 0x00), the document data is
 hashed directly.  For text document signatures (type 0x01), the
 document is canonicalized by converting line endings to \<CR>\<LF>, and
@@ -2230,9 +2218,8 @@ the resulting data is hashed.
 
 When a V4 signature is made over a key, the hash data starts with the
 octet 0x99, followed by a two-octet length of the key, and then body
-of the key packet; when a V5 or V6 signature is made over a key, the hash
-data starts with the octet 0x9a for V5 and 0x9b for V6,
-followed by a four-octet length of
+of the key packet; when a V5 signature is made over a key, the hash
+data starts with the octet 0x9a for V5, followed by a four-octet length of
 the key, and then body of the key packet.  A subkey binding signature
 (type 0x18) or primary key binding signature (type 0x19) then hashes
 the subkey using the same format as the main key (also using 0x99 or
@@ -2298,12 +2285,6 @@ depends on the version of the signature.
      - the hash algorithm,
      - the hashed subpacket length,
      - the hashed subpacket body,
-
-<!-- FIXME: The next is not in the crypto-refresh version for V6 Not
-            sure what do do here - let it run into a conflict?  or use
-            some other indicator.  The actual reason why we may want to
-            implement support vor V6 is due to its support for huge
-            subpackets.  -->
      - Only for document signatures (type 0x00 or 0x01) the following
        three data items are hashed here:
          - the one-octet content format,
@@ -2311,9 +2292,6 @@ depends on the version of the signature.
            the file name),
          - a four-octet number that indicates a date,
      - the two octets 0x05 and 0xFF,
-
-<!-- FIXME: The crypto refresh uses 4 octets % 2^32 for V6.
-            We could do the same if we want to do V6  -->
      - a eight-octet big-endian number that is the length
        of the hashed data from the Signature packet
        stopping right before the 0x05, 0XFF octets.
@@ -2436,7 +2414,7 @@ A One-Pass Signature does not interoperate with PGP 2.6.x or earlier.
 
 The body of this packet consists of:
 
-* A one-octet version number.  The currently specified versions are 3 and 6.
+* A one-octet version number.  The currently specified version is 3.
 
 * A one-octet signature type.  Signature types are described in
   [](#signature-types).
@@ -2445,21 +2423,7 @@ The body of this packet consists of:
 
 * A one-octet number describing the public-key algorithm used.
 
-* Only for V6 signatures, a variable-length field containing:
-
-    - A one-octet salt size.  If salted signatures are used the value
-      SHOULD match the digest length of the hash algorithm.  The
-      common use case is not to use salted signatures.
-
-    - The salt; a random value of the specified size. The value MUST
-      match the salt field of the corresponding Signature packet.
-
-* Only for V3 signatures: an eight-octet number holding the Key ID
-  of the signing key.
-
-* Only for V6 signatures: a one octet key version number and N octets
-  of the fingerprint of the signing key.  Note that the length N of
-  the fingerprint for a version 6 key is 32.
+* An eight-octet number holding the Key ID of the signing key.
 
 * A one-octet number holding a flag showing whether the signature
   is nested.  A zero value indicates that the next packet is
