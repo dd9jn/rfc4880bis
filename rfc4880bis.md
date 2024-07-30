@@ -342,8 +342,8 @@ for OpenPGP).
     Source implementation of OpenPGP and LibrePGP and has been
     developed along with the OpenPGP standard since 1997.
 
-  * RNP - Ribose Network PGP is a newer OpenPGP and LibrePGP
-    implemention and prominently used by the mail client Thunderbird.
+  * RNP - LibrePGP and OpenPGP implementation by Ribose.  Relied upon
+    by the mail client Thunderbird for secure email.
 
 "PGP" is a trademark of CA, INC.  The use of this, or any other, marks
 is solely for identification purposes.  The terms "OpenPGP" and
