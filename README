@@ -1,18 +1,45 @@
 # LibrePGP specification                                   -*- org -*-
 
-* Editing
+** Editing
 
  The draft document is the librepgp.md file
 
-* Building
+** Building
 
 Make sure ruby-kramdown-rfc2629 and xml2rfc are installed. Then run
 
 : make
 
-* Publishing
+** Publishing
 
 Before uploding to the IETF site rename the generated files:
 
 : mv librepgp.txt draft-xxx-librepgp-nn.txt
 : mv librepgp.xml draft-xxx-librepgp-nn.xml
+
+** Published versions
+
+This is the history of specifications leading from RFC4880 to
+LibgrePGP.
+
+|       Date | Name                                      |
+|------------+-------------------------------------------|
+| 2015-11-03 | draft-koch-openpgp-rfc4880bis-00.txt      |
+| 2015-11-04 | draft-koch-openpgp-rfc4880bis-01.txt      |
+| 2016-03-17 | draft-koch-openpgp-rfc4880bis-02.txt      |
+| 2016-07-06 | draft-ietf-openpgp-rfc4880bis-00.txt      |
+| 2017-01-02 | draft-ietf-openpgp-rfc4880bis-01.txt      |
+| 2017-06-30 | draft-ietf-openpgp-rfc4880bis-02.txt      |
+| 2017-12-29 | draft-ietf-openpgp-rfc4880bis-03.txt      |
+| 2018-01-25 | draft-ietf-openpgp-rfc4880bis-04.txt      |
+| 2018-07-26 | draft-ietf-openpgp-rfc4880bis-05.txt      |
+| 2018-11-15 | draft-ietf-openpgp-rfc4880bis-06.txt      |
+| 2019-05-13 | draft-ietf-openpgp-rfc4880bis-07.txt      |
+| 2019-11-06 | draft-ietf-openpgp-rfc4880bis-08.txt      |
+| 2020-03-09 | draft-ietf-openpgp-rfc4880bis-09.txt      |
+| 2020-08-31 | draft-ietf-openpgp-rfc4880bis-10.txt      |
+| 2022-09-07 | draft-koch-openpgp-2015-rfc4880bis-00.txt |
+| 2023-02-07 | draft-koch-openpgp-2015-rfc4880bis-01.txt |
+| 2023-05-30 | draft-koch-openpgp-2015-rfc4880bis-02.txt |
+| 2023-11-29 | draft-koch-librepgp-00.txt                |
+| 2024-05-27 | draft-koch-librepgp-01.txt                |
