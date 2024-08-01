@@ -1,8 +1,18 @@
-How to build an I-D:
+# LibrePGP specification                                   -*- org -*-
 
-  pandoc2rfc abstract.mkd middle.mkd back.mkd
+* Editing
 
-RFC references can be found at
+ The draft document is the librepgp.md file
 
-  http://xml2rfc.ietf.org/public/rfc/bibxml-rfcs/reference.RFC.NNNN.xml
+* Building
 
+Make sure ruby-kramdown-rfc2629 and xml2rfc are installed. Then run
+
+: make
+
+* Publishing
+
+Before uploding to the IETF site rename the generated files:
+
+: mv librepgp.txt draft-xxx-librepgp-nn.txt
+: mv librepgp.xml draft-xxx-librepgp-nn.xml

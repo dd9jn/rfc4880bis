@@ -4,7 +4,7 @@
 #
 # For pdf output, also:     apt install weasyprint
 
-draft = rfc4880bis
+draft = librepgp
 OUTPUT = $(draft).txt $(draft).html $(draft).xml
 
 all: $(OUTPUT)
