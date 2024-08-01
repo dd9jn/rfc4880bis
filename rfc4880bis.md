@@ -311,8 +311,8 @@ Message Format", which is a revision of RFC 2440, which itself
 replaces RFC 1991, "PGP Message Exchange Formats" [](#RFC1991)
 [](#RFC2440) [](#RFC4880).
 
-LibrePGP is fully compatible to the OpenPGP specification it is based
-on: RFC 4880 (OpenPGP), RFC 5581 (Camellia cipher), and RFC 6637 (ECC
+LibrePGP is fully compatible to the OpenPGP specification as specified
+by: RFC 4880 (OpenPGP), RFC 5581 (Camellia cipher), and RFC 6637 (ECC
 for OpenPGP).
 
 ## Terms
@@ -339,7 +339,7 @@ for OpenPGP).
     software was the first release of the "PGP 3" code base.
 
   * GnuPG - GNU Privacy Guard, also called GPG, is the leading Open
-    Source implementation of OpenPGP and LibrePGP and has been
+    Source implementation of LibrePGP and OpenPGP and has been
     developed along with the OpenPGP standard since 1997.
 
   * RNP - LibrePGP and OpenPGP implementation by Ribose.  Relied upon
@@ -3770,6 +3770,7 @@ ID | Algorithm
   1 | RSA (Encrypt or Sign) [](#HAC)
   2 | RSA Encrypt-Only [](#HAC)
   3 | RSA Sign-Only [](#HAC)
+  8 | Kyber
  16 | Elgamal (Encrypt-Only) [](#ELGAMAL) [](#HAC)
  17 | DSA (Digital Signature Algorithm) [](#FIPS186) [](#HAC)
  18 | ECDH public key algorithm
@@ -3779,7 +3780,7 @@ ID | Algorithm
  22 | EdDSA  [](#RFC8032)
  23 | Reserved for AEDH
  24 | Reserved for AEDSA
- 29 | Kyber
+ 29 | Kyber (Experimental use as described by FIPS.203.ipd)
 100--110 | Private/Experimental algorithm
 
 Implementations MUST implement RSA (1) and ECDSA (19) for signatures,
