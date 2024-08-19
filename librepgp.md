@@ -142,11 +142,11 @@ normative:
      org: National Institute of Standards and Technology, U.S. Department of Commerce
     date: August 2015
  FIPS203:
-    target: https://doi.org/10.6028/NIST.FIPS.203.ipd
+    target: https://doi.org/10.6028/NIST.FIPS.203
     title: "Module-Lattice-Based Key-Encapsulation Mechanism Standard"
     author:
      org: National Institute of Standards and Technology, U.S. Department of Commerce
-    date: August 2023
+    date: August 2024
  HAC:
     title: Handbook of Applied Cryptography
     date: 1996
@@ -3770,7 +3770,7 @@ ID | Algorithm
   1 | RSA (Encrypt or Sign) [](#HAC)
   2 | RSA Encrypt-Only [](#HAC)
   3 | RSA Sign-Only [](#HAC)
-  8 | Kyber
+  8 | Kyber [](#FIPS203)
  16 | Elgamal (Encrypt-Only) [](#ELGAMAL) [](#HAC)
  17 | DSA (Digital Signature Algorithm) [](#FIPS186) [](#HAC)
  18 | ECDH public key algorithm
@@ -3780,7 +3780,7 @@ ID | Algorithm
  22 | EdDSA  [](#RFC8032)
  23 | Reserved for AEDH
  24 | Reserved for AEDSA
- 29 | Kyber (Experimental use as described by FIPS.203.ipd)
+ 29 | Experimental use as described by FIPS.203.ipd
 100--110 | Private/Experimental algorithm
 
 Implementations MUST implement RSA (1) and ECDSA (19) for signatures,
