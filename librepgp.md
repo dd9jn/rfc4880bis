@@ -1,7 +1,7 @@
 ---
 title: LibrePGP Message Format
-docname: draft-koch-librepgp-01
-date: 2024-05-27
+docname: draft-koch-librepgp-02
+date: 2024-09-09
 submissiontype: IETF
 category: std
 
@@ -5950,6 +5950,13 @@ other values might also be interesting for other ECC specifications:
     aligned with other algorithms
   - Descriped the ML-KEM encryption process.  Compatible to
     draft-wussler-openpgp-pqc-03.txt but with a changed fixed-info.
+
+  Changes since draft-koch-librepgp-01:
+
+  - Switched to the final algorithm ID for Kyber.
+  - Drop the remains of support for V6 signatures.  (see commit
+    b1193e2216)
+  - Add a note on user and attribute ID requirements.
 
 
 # Acknowledgments
